@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { logActivity } from "@/lib/activity-logger"
 import { cache } from "react"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 import { sendEmailWithTemplate } from "../email-templates/email-template-actions"
 
 // Types for alert condition creation/update

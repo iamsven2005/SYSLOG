@@ -40,20 +40,19 @@ export default function EditWorkflowPage() {
       try {
         // Fetch workflow
         const workflowResult = await getWorkflowById(id as string)
-        if (workflowResult.success) {
-          setWorkflow(workflowResult.data)
+        if (workflowResult.success && workflowResult.data) {
+          setWorkflow(workflowResult.data) // ✅ no more TS error
           setName(workflowResult.data.name)
           setDescription(workflowResult.data.description || "")
           setSteps([...workflowResult.data.steps].sort((a, b) => a.position - b.position))
-        } else {
+        }
+        else {
           setError(workflowResult.error || "Failed to load workflow")
         }
 
         // Fetch users
         const usersResult = await getUsers()
-        if (usersResult.success) {
-          setUsers(usersResult.data)
-        }
+        setUsers(usersResult.data)
       } catch (err) {
         setError("An unexpected error occurred")
         console.error(err)

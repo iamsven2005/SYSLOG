@@ -69,7 +69,7 @@ import {
   deleteMultipleAuthLogs,
   getAuthLogs,
 } from "./auth-actions"
-import { exportToExcel, prepareAuthLogsForExport } from "../export-utils"
+import { exportToExcel, prepareAuthLogsForExport } from "../../lib/export-utils"
 import { getAllRuleGroupsAndRules } from "../rules/rule-actions"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"

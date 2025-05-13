@@ -36,13 +36,14 @@ export function EditStepItem({ step, users, onUpdate, onDelete }: EditStepItemPr
     })
   }
 
-  const handleDateChange = (newDate: Date | undefined) => {
-    setDate(newDate)
-    onUpdate({
-      ...step,
-      dueDate: newDate?.toISOString() || null,
-    })
-  }
+const handleDateChange = (newDate: Date | undefined) => {
+  setDate(newDate)
+  onUpdate({
+    ...step,
+    dueDate: newDate ?? null, // ✅ ensures it's either Date or null
+  })
+}
+
 
   const getStatusColor = (status: string) => {
     switch (status) {

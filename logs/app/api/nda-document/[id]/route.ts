@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"

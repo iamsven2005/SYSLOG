@@ -3,7 +3,7 @@
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { sendEmailWithTemplate } from "../email-templates/email-template-actions"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 // Import the toast at the top of the file
 import { toast } from "sonner"
 

@@ -27,8 +27,9 @@ export function StepLogs({ stepId, workflowId }: StepLogsProps) {
         // Fetch logs
         const logsResult = await getLogsByStepId(stepId)
         if (logsResult.success) {
-          setLogs(logsResult.data)
-        } else {
+          setLogs(logsResult.data ?? []) // ✅ ensure it’s never undefined
+        }
+        else {
           setError(logsResult.error || "Failed to load logs")
         }
 
@@ -58,12 +59,13 @@ export function StepLogs({ stepId, workflowId }: StepLogsProps) {
         createdBy: currentUser.username || currentUser.email || `User ${currentUser.id}`,
       })
 
-      if (result.success) {
+      if (result.success && result.data) {
         setLogs([result.data, ...logs])
         setNewLogMessage("")
       } else {
         setError(result.error || "Failed to add log")
       }
+
     } catch (err) {
       setError("An unexpected error occurred")
       console.error(err)

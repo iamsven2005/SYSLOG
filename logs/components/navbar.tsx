@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { db } from "@/lib/db" // Assuming you have a db client setup
 import { UserIcon, HomeIcon, CogIcon, FolderIcon, TicketIcon, MessageCircleIcon as MessageIcon, Cone } from "lucide-react"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 import { UserNav } from "./user-nav"
 import { ThemeToggle } from "@/app/theme-toggle"
 

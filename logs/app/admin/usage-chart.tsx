@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { getDeviceUsageData } from "../logs/actions"
-import { exportToExcel, prepareChartDataForExport } from "../export-utils"
+import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 
 // Color palette for different devices
 const COLORS = [

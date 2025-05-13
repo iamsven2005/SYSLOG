@@ -54,7 +54,7 @@ import {
   removeDeviceFromUser,
 } from "../email-templates/user-actions"
 import { getDevices } from "../devices/device-actions"
-import { exportToExcel, prepareUsersForExport, generateUserImportTemplate } from "../export-utils"
+import { exportToExcel, prepareUsersForExport, generateUserImportTemplate } from "../../lib/export-utils"
 import * as XLSX from "xlsx"
 import { MultiCombobox } from "@/components/multi-combobox"
 import { Textarea } from "@/components/ui/textarea"

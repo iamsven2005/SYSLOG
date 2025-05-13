@@ -13,7 +13,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { exportToExcel, prepareChartDataForExport } from "../export-utils"
+import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 import { getSensorData } from "../logs/actions"
 
 // Color palette for different sensors

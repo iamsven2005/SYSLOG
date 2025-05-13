@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 
 // Types
 interface CreateTicketParams {

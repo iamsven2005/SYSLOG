@@ -39,9 +39,11 @@ export function WorkflowSteps({ workflowId }: { workflowId: string }) {
 
         // Fetch users
         const usersResult = await getUsers()
-        if (usersResult.success) {
-          setUsers(usersResult.data)
-        }
+if (usersResult.success) {
+  setUsers(usersResult.data) // ✅ safe now
+}
+
+
       } catch (err) {
         setError("An unexpected error occurred")
         console.error(err)
@@ -118,10 +120,11 @@ export function WorkflowSteps({ workflowId }: { workflowId: string }) {
         // If server update fails, revert to original order
         setError("Failed to reorder steps: " + result.error)
         const originalSteps = await getStepsByWorkflowId(workflowId)
-        if (originalSteps.success) {
-          setSteps(originalSteps.data)
-          setFilteredSteps(originalSteps.data)
-        }
+if (originalSteps.success && originalSteps.data) {
+  setSteps(originalSteps.data)
+  setFilteredSteps(originalSteps.data)
+}
+
       }
     } catch (err) {
       setError("An unexpected error occurred while reordering steps")
@@ -147,14 +150,15 @@ export function WorkflowSteps({ workflowId }: { workflowId: string }) {
         setError("Failed to update step: " + result.error)
         // Revert to original data if server update fails
         const stepsResult = await getStepsByWorkflowId(workflowId)
-        if (stepsResult.success) {
-          setSteps(stepsResult.data)
-          setFilteredSteps(stepsResult.data)
-          const currentStep = stepsResult.data.find((s) => s.id === updatedStep.id)
-          if (currentStep) {
-            setSelectedStep(currentStep)
-          }
-        }
+if (stepsResult.success) {
+  setSteps(stepsResult.data ?? [])            // ✅ Fallback to empty array
+  setFilteredSteps(stepsResult.data ?? [])
+  const currentStep = (stepsResult.data ?? []).find((s) => s.id === updatedStep.id)
+  if (currentStep) {
+    setSelectedStep(currentStep)
+  }
+}
+
       }
     } catch (err) {
       setError("An unexpected error occurred while updating the step")

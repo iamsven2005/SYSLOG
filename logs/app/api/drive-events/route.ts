@@ -1,4 +1,3 @@
-import { createSSEStream } from "@/lib/sse"
 import { NextRequest } from "next/server"
 
 let clients: any[] = []
@@ -27,8 +26,24 @@ export function broadcastChange(data: any) {
   clients.forEach((push) => push(JSON.stringify(data)))
 }
 export async function POST(req: NextRequest) {
-    const data = await req.json()
-    broadcastChange(data)
-    return new Response("OK")
+  const data = await req.json()
+  broadcastChange(data)
+  return new Response("OK")
+}
+
+
+export function createSSEStream() {
+  let controller: ReadableStreamDefaultController
+
+  const readable = new ReadableStream({
+    start(c) {
+      controller = c
+    },
+  })
+
+  const push = (data: string) => {
+    controller.enqueue(`data: ${data}\n\n`)
   }
-  
+
+  return { readable, push }
+}

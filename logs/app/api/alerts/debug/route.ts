@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { evaluateAlertCondition, getAlertConditions, createAlertEvent } from "@/app/actions/alert-actions"
+import { evaluateAlertCondition, getAlertConditions, createAlertEvent } from "@/app/alerts/alert-actions"
 import { revalidatePath } from "next/cache"
 
 

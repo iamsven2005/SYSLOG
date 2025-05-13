@@ -13,10 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createContact, updateContact } from "@/app/crm/actions/contacts"
-=import Link from "next/link"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { HardHat, ArrowLeft } from "lucide-react"
 import { getCompanies } from "../../actions/companies"
+import { Company } from "@/prisma/generated/main"
 const contactSchema = z.object({
   name: z.string().min(2, { message: "Contact name must be at least 2 characters." }),
   title: z.string().optional(),
@@ -26,11 +27,12 @@ const contactSchema = z.object({
   remarks: z.string().optional(),
   companyId: z.coerce.number(),
 })
+type ContactFormData = z.infer<typeof contactSchema>
 
 export default function ContactForm({ contact = null }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [companies, setCompanies] = useState([])
+const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
 
   const form = useForm({
@@ -69,7 +71,7 @@ export default function ContactForm({ contact = null }) {
     fetchCompanies()
   }, [])
 
-  async function onSubmit(data) {
+async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true)
 
     try {
@@ -191,11 +193,12 @@ export default function ContactForm({ contact = null }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id.toString()}>
-                        {company.name}
-                      </SelectItem>
-                    ))}
+{companies.map((company) => (
+  <SelectItem key={company.id} value={company.id.toString()}>
+    {company.name}
+  </SelectItem>
+))}
+
                   </SelectContent>
                 </Select>
                 <FormMessage />

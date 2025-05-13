@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getAlertConditions, getAlertEvents } from "../actions/alert-actions"
+import { getAlertConditions, getAlertEvents } from "./alert-actions"
 import { AlertCircle, Bell, CheckCircle, Clock } from "lucide-react"
 
 export function AlertStats() {

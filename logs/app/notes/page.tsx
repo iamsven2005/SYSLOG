@@ -23,7 +23,7 @@ import { Search, RefreshCw, Trash2, Edit, Plus, FileText, Download } from "lucid
 
 import Link from "next/link"
 import { deleteMultipleNotes, getNotes } from "./note-actions"
-import { exportToExcel } from "@/app/export-utils"
+import { exportToExcel } from "@/lib/export-utils"
 import { NoteEditor } from "./note-editor"
 
 // Debounce function to limit how often a function can run

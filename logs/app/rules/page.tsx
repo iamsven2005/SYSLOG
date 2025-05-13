@@ -46,7 +46,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import * as XLSX from "xlsx"
-import { exportToExcel } from "../export-utils"
+import { exportToExcel } from "../../lib/export-utils"
 import {
   getRuleGroups,
   createRuleGroup,

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { runAlertEvaluation } from "@/app/actions/alert-actions"
+import { runAlertEvaluation } from "@/app/alerts/alert-actions"
 import { revalidatePath } from "next/cache"
 
 // Reduced cache time for testing

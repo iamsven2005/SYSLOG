@@ -14,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
-import { getUnresolvedAlertCount } from "@/app/actions/alert-actions"
 import { toast } from "sonner"
+import { getUnresolvedAlertCount } from "@/app/alerts/alert-actions"
 
 // Add this interface to define the shape of an alert
 interface AlertEventProps {

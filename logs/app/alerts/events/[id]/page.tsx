@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { getAlertEvent, resolveAlertEvent } from "@/app/actions/alert-actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,6 +8,7 @@ import { AlertCircle, Bell, CheckCircle } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "@/app/login/actions"
 import { checkUserPermission } from "@/app/permissions/permission-actions"
+import { getAlertEvent, resolveAlertEvent } from "../../alert-actions"
 
 export const metadata: Metadata = {
   title: "Alert Event Details",

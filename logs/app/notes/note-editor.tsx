@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { createNote, updateNote } from "./tables/notes/note-actions"
+import { createNote, updateNote } from "./note-actions"
 import {
   Bold,
   Italic,

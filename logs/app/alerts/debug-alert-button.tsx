@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { runAlertEvaluation } from "@/app/actions/alert-actions"
+import { runAlertEvaluation } from "./alert-actions"
 import { toast } from "sonner"
 
 export function DebugAlertButton() {

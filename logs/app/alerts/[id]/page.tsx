@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { getAlertCondition, getAlertEvents } from "@/app/actions/alert-actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +9,7 @@ import { Edit, Bell, Clock, AlertCircle, CheckCircle, ExternalLink } from "lucid
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "@/app/login/actions"
 import { checkUserPermission } from "@/app/permissions/permission-actions"
+import { getAlertCondition, getAlertEvents } from "../alert-actions"
 
 export const metadata: Metadata = {
   title: "Alert Condition Details",

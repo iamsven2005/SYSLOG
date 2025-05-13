@@ -54,7 +54,7 @@ import { generatePassword } from "@/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 import { useDeviceStatus } from "./use-device-status"
-import { exportToExcel, generateDeviceImportTemplate, prepareDevicesForExport } from "@/app/export-utils"
+import { exportToExcel, generateDeviceImportTemplate, prepareDevicesForExport } from "@/lib/export-utils"
 
 // Debounce function to limit how often a function can run
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {

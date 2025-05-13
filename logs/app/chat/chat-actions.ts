@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "../login/actions"
 import { parseXMLDate, type XMLMessage } from "../utils/xml-utils"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 
 // Get all groups for the current user
 export async function getUserGroups() {

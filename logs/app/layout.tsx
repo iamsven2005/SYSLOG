@@ -4,7 +4,7 @@ import "./globals.css"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
-import { AlertMonitorWrapper } from "@/components/alert-monitor-wrapper"
+import { AlertMonitorWrapper } from "@/components/alert/alert-monitor-wrapper"
 import { getCurrentUser } from "./login/actions"
 import Navbar from "@/components/navbar"
 

@@ -25,7 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { getAlertEvents, resolveAlertEvent } from "../actions/alert-actions"
+import { getAlertEvents, resolveAlertEvent } from "./alert-actions"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export function AlertEventsTable({

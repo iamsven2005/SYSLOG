@@ -511,7 +511,7 @@ export async function getEquipmentStats() {
       },
     })
 
-    const categoryMap = categories.reduce((acc, category) => {
+    const categoryMap = categories.reduce((acc: any, category: any) => {
       acc[category.id] = category.name
       return acc
     }, {})

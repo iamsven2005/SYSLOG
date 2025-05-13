@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { resolveAllAlertEvents } from "@/app/actions/alert-actions"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
+import { resolveAllAlertEvents } from "@/app/alerts/alert-actions"
 
 export async function POST(request: Request) {
   try {

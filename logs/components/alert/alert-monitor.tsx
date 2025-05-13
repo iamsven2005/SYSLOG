@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { checkAlertConditionsRealtime } from "@/app/actions/alert-actions"
 import { AlertNotification } from "./alert-notification"
+import { checkAlertConditionsRealtime } from "@/app/alerts/alert-actions"
 
 export function AlertMonitor() {
   const [alerts, setAlerts] = useState<any[]>([])

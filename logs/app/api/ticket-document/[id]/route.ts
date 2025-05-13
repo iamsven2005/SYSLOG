@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { readFile } from "fs/promises"
 import { join } from "path"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

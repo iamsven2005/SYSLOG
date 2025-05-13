@@ -63,7 +63,7 @@ import {
 import { Clock, AlertTriangle, Download } from "lucide-react"
 import { deleteLogsByTimePeriod, deleteMultipleLogs, getLogs } from "./actions"
 import { getAllDeviceNames } from "../devices/device-actions"
-import { exportToExcel, prepareLogsForExport } from "../export-utils"
+import { exportToExcel, prepareLogsForExport } from "../../lib/export-utils"
 import { getAllRuleGroupsAndRules } from "../rules/rule-actions"
 import { processBatchForCommandMatches } from "../command-matches/command-monitoring-actions"
 import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"

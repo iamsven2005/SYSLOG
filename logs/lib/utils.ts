@@ -98,3 +98,5 @@ export function formatLdapTimestamp(timestamp: bigint | null | undefined): strin
   const jsTimestamp = Number(timestamp) / 10000 - 11644473600000
   return new Date(jsTimestamp).toLocaleString()
 }
+
+

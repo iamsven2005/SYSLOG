@@ -18,7 +18,12 @@ import { getCurrentUser, logoutUser } from "@/app/login/actions"
 
 export function UserNav() {
   const router = useRouter()
-  const [user, setUser] = useState<{ id: number; username: string; email: string | null } | null>(null)
+  const [user, setUser] = useState<{
+    id: number
+    username: string | null
+    email: string | null
+    role?: string[]
+  } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -69,8 +74,9 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {user.username.charAt(0).toUpperCase()}
+              {user.username ? user.username.charAt(0).toUpperCase() : "?"}
             </AvatarFallback>
+
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

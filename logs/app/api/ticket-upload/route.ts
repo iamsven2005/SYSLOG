@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/auth"
+import { getSession } from "@/lib/utils"
 
 export async function POST(request: NextRequest) {
   try {

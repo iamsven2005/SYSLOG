@@ -31,13 +31,6 @@ export default async function TicketsPage({
       return notFound()
     }
     const isAdmin = currentUser.role.includes("admin")
-  const search = typeof  searchParams.search === "string" ?   searchParams.search : ""
-  const status = typeof  searchParams.status === "string" ?  searchParams.status : ""
-  const priority = typeof  searchParams.priority === "string" ?  searchParams.priority : ""
-  const assignedToId = typeof  searchParams.assignedToId === "string" ?  searchParams.assignedToId : ""
-  const createdById = typeof  searchParams.createdById === "string" ?  searchParams.createdById : ""
-  const page = typeof  searchParams.page === "string" ? Number.parseInt( searchParams.page) : 1
-  const pageSize = typeof  searchParams.pageSize === "string" ? Number.parseInt( searchParams.pageSize) : 10
 
   return (
     <div className="container mx-auto py-6 p-5">

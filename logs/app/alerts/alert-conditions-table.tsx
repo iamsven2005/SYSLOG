@@ -11,7 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Check, Download, Edit, MoreHorizontal, Trash, Upload, X } from 'lucide-react'
 import { toast } from "sonner"
 import { formatDate } from "@/lib/utils"
-import { deleteAlertCondition, getAlertConditions, toggleAlertConditionStatus } from "../actions/alert-actions"
+import { deleteAlertCondition, getAlertConditions, toggleAlertConditionStatus } from "./alert-actions"
 import Link from "next/link"
 import {
   AlertDialog,
@@ -26,8 +26,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "../login/actions"
 import { checkUserPermission } from "../permissions/permission-actions"
+import { AlertCondition } from "@/prisma/generated/main"
 
-export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: any[] }) {
+export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: AlertCondition[] }) {
   const router = useRouter()
   const [alertConditions, setAlertConditions] = useState<any[]>(initialAlertConditions || [])
   const [isLoading, setIsLoading] = useState(!initialAlertConditions)
