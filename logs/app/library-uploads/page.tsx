@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { checkUserPermission } from "../actions/permission-actions";
+import { checkUserPermission } from "../permissions/permission-actions";
 import { getCurrentUser } from "../login/actions";
 import UploadForm from "./upload-form";
 // This page is for upload of books from html file

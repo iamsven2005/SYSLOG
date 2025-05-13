@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { AlertCircle, Bell, CheckCircle } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export const metadata: Metadata = {
   title: "Alert Event Details",

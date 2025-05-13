@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { updateNotification, deleteNotification } from "@/app/actions/notification-actions"
+import { updateNotification, deleteNotification } from "@/app/notifications/notification-actions"
 import { getCurrentUser } from "@/app/login/actions"
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {

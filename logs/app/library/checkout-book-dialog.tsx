@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { checkoutBook, returnBook } from "@/app/actions/library-actions"
+import { checkoutBook, returnBook } from "@/app/library/library-actions"
 import type { LibraryEntry } from "@prisma/client"
 import { format } from "date-fns"
 

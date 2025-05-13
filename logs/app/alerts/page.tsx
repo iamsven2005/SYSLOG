@@ -9,7 +9,7 @@ import Link from "next/link"
 import { PlusCircle } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 import { notFound, redirect } from "next/navigation"
 
 export default async function AlertsPage() {

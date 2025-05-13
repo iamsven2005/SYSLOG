@@ -13,7 +13,7 @@ import {
   searchUsers,
   addUserToGroup,
   searchUsersByRole,
-} from "../actions/chat-actions"
+} from "./chat-actions"
 import { toast } from "sonner"
 import { Loader2, Search, UserPlus, X, Shield, Filter } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"

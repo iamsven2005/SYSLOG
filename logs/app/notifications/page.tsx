@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import NotificationsClient from "./notifications-client"
 import { getCurrentUser } from "@/app/login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export default async function NotificationsPage() {
       const currentUser = await getCurrentUser()

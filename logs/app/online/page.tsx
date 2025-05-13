@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 
 import { db } from "@/lib/db"
 import { subDays, startOfDay, endOfDay, format } from "date-fns"
-import UserActivityChart from "../charts/user-activity-chart"
-import UserActivityTable from "../tables/user-activity-table"
+import UserActivityChart from "./user-activity-chart"
+import UserActivityTable from "./user-activity-table"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export const metadata: Metadata = {
   title: "User Activity",

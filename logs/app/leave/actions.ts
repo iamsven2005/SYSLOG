@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 const leaveFormSchema = z.object({
   startDate: z.date(),

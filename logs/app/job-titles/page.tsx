@@ -8,12 +8,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { FileUploader } from "./file-uploader"
 import { parseHtmlContent } from "./utils"
-import { bulkInsertJobTitles, deleteJobTitles, getJobTitles } from "../actions/job-title"
+import { bulkInsertJobTitles, deleteJobTitles, getJobTitles } from "./job-title"
 import { Trash2 } from 'lucide-react'
-import { JobTitle } from "@prisma/client"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
+import { JobTitle } from "@/prisma/generated/main"
 
 export default function JobTitlesPage() {
   const [jobTitles, setJobTitles] = useState<JobTitle[]>([])

@@ -22,7 +22,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { ModelEntry, User } from "@prisma/client"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { db } from "@/lib/db"
-import { getAllUsers } from "../actions/chat-actions"
+import { getAllUsers } from "../chat/chat-actions"
 
 interface ModelEntryModalProps {
   projectId: number

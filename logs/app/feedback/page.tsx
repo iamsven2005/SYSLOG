@@ -11,8 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { getCurrentUser } from "../login/actions"
 import FeedbackForm from "./feedback-form"
 import { toast } from "sonner"
-import { getReceivedFeedback, getSentFeedback, markFeedbackAsRead } from "../actions/feedback-actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { getReceivedFeedback, getSentFeedback, markFeedbackAsRead } from "./feedback-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export default function FeedbackPage() {
   const [activeTab, setActiveTab] = useState("overview")

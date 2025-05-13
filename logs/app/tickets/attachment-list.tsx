@@ -5,7 +5,7 @@ import { FileText, Image, File, X, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatBytes } from "@/lib/utils"
 import { toast } from "sonner"
-import { deleteAttachment } from "@/app/actions/ticket-actions"
+import { deleteAttachment } from "@/app/tickets/ticket-actions"
 import {
   AlertDialog,
   AlertDialogAction,

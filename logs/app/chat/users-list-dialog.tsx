@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { getAllUsers } from "../actions/chat-actions"
+import { getAllUsers } from "./chat-actions"
 import { toast } from "sonner"
 import { Loader2, Search, Shield } from "lucide-react"
 

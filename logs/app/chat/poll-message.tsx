@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { PollComponent } from "./poll-component"
-import { getPollResults } from "../actions/poll-actions"
+import { getPollResults } from "./poll-actions"
 
 interface PollMessageProps {
   messageId: number

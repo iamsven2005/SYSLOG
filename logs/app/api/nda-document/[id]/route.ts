@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth"
 import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
-import { getUserById } from "@/app/actions/user-actions"
+import { getUserById } from "@/app/email-templates/user-actions"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

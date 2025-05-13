@@ -1,10 +1,10 @@
 import { notFound, redirect } from "next/navigation"
-import { AlertConditionForm } from "../../new/alert-condition-form"
-import { getAlertCondition } from "@/app/actions/alert-actions"
-import { getAllEmailTemplates } from "@/app/actions/email-template-actions"
+import { AlertConditionForm } from "../../alert-condition-form"
+import { getAllEmailTemplates } from "@/app/email-templates/email-template-actions"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
+import { getAlertCondition } from "../../alert-actions"
 
 
 export default async function EditAlertConditionPage({

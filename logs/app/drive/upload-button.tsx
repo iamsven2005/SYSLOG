@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { uploadFile } from "../actions/drive-actions"
+import { uploadFile } from "./drive-actions"
 import { toast } from "sonner"
 import { Progress } from "@/components/ui/progress"
 import * as pdfjsLib from "pdfjs-dist/build/pdf";

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { getGroupMessages, getGroupWithMembers, deleteMessage, editMessage } from "../actions/chat-actions"
+import { getGroupMessages, getGroupWithMembers, deleteMessage, editMessage } from "./chat-actions"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"

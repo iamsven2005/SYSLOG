@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { notFound, redirect, useSearchParams } from "next/navigation"
-import { getFolderContents, getFolderPath } from "../actions/drive-actions"
+import { getFolderContents, getFolderPath } from "./drive-actions"
 import { FolderBreadcrumb } from "./folder-breadcrumb"
 import { FileGrid } from "./file-grid"
 import { UploadButton } from "./upload-button"
 import { CreateFolderButton } from "./create-folder-button"
 import { FileDetails } from "./file-details"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export default function DriveExplorer() {
   const searchParams = useSearchParams()

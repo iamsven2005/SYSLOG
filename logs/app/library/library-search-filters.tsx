@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { CalendarIcon, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getCategories } from "@/app/actions/library-actions"
+import { getCategories } from "@/app/library/library-actions"
 
 interface LibrarySearchFiltersProps {
   onSearch: (filters: any) => void

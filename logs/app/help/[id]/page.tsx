@@ -1,4 +1,4 @@
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 import { getCurrentUser } from "@/app/login/actions"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"

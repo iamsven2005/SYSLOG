@@ -15,7 +15,7 @@ import ProjectListSkeleton from "./components/skeletons/project-list-skeleton"
 import InteractionListSkeleton from "./components/skeletons/interaction-list-skeleton"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export default async function Dashboard() {
   const { projects, error: projectsError } = await getProjects()

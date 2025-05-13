@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { updateLibraryEntry } from "@/app/actions/library-actions"
-import type { LibraryEntry } from "@prisma/client"
+import { updateLibraryEntry } from "@/app/library/library-actions"
+import { LibraryEntry } from "@/prisma/generated/main"
 
 interface EditLibraryEntryDialogProps {
   entry: LibraryEntry

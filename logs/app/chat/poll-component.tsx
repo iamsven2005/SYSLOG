@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { BarChart3, Users } from "lucide-react"
-import { votePoll, getPollResults } from "../actions/poll-actions"
+import { votePoll, getPollResults } from "./poll-actions"
 
 interface PollOption {
   id: number

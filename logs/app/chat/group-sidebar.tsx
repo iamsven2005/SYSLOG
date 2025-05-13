@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { CreateGroupDialog } from "./create-group-dialog"
 import { format, isToday, isYesterday } from "date-fns"
 import { PlusCircle, Search, Filter, Loader2 } from "lucide-react"
-import { searchGroups, getGroupsByMemberRole, getAvailableRoles } from "../actions/chat-actions"
+import { searchGroups, getGroupsByMemberRole, getAvailableRoles } from "./chat-actions"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 

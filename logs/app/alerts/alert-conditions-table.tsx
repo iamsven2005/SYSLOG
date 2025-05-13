@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: any[] }) {
   const router = useRouter()

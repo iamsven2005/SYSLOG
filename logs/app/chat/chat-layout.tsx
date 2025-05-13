@@ -1,10 +1,10 @@
-import { getUserGroups } from "../actions/chat-actions"
+import { getUserGroups } from "./chat-actions"
 import { GroupSidebar } from "./group-sidebar"
 import { ChatContainer } from "./chat-container"
 import { getSession } from "@/lib/auth"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export async function ChatLayout() {
   const groups = await getUserGroups()

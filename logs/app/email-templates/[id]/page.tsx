@@ -5,12 +5,12 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getEmailTemplate } from "@/app/actions/email-template-actions"
+import { getEmailTemplate } from "@/app/email-templates/email-template-actions"
 import { ArrowLeft, Edit, Eye } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
-import { EmailTemplateForm } from "@/components/email-template-form"
+import { EmailTemplateForm } from "@/app/email-templates/email-template-form"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export default function EmailTemplateDetailPage({ params }: { params: { id: string } }) {
   const id = Number.parseInt(params.id, 10)

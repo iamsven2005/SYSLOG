@@ -10,7 +10,7 @@ import { TicketStats } from "./ticket-stats"
 import { TicketsTable } from "./tickets-table"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export const metadata: Metadata = {
   title: "Support Tickets",

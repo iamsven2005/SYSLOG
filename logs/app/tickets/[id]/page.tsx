@@ -1,10 +1,10 @@
 import { notFound, redirect } from "next/navigation"
-import { getTicket, getAssignableUsers } from "@/app/actions/ticket-actions"
+import { getTicket, getAssignableUsers } from "@/app/tickets/ticket-actions"
 import { TicketDetailSkeleton } from "./ticket-detail-skeleton"
 import { TicketDetail } from "./ticket-detail"
 import { Suspense } from "react"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export default async function TicketPage({ params }: { params: { id: string } }) {
   const ticketId = Number.parseInt(params.id)

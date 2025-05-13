@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import { NewTicketForm } from "@/app/tickets/new/new-ticket-form"
-import { getAssignableUsers } from "@/app/actions/ticket-actions"
+import { getAssignableUsers } from "@/app/tickets/ticket-actions"
 import { db } from "@/lib/db"
 import { getCurrentUser } from "@/app/login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export const metadata: Metadata = {
   title: "Create New Ticket",

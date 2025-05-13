@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createFolder } from "../actions/drive-actions"
+import { createFolder } from "./drive-actions"
 import { toast } from "sonner"
 
 interface CreateFolderButtonProps {

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Trash2, Plus, X } from "lucide-react"
-import { createPoll } from "../actions/poll-actions"
+import { createPoll } from "./poll-actions"
 import { toast } from "sonner"
 
 interface PollCreatorProps {

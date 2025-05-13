@@ -18,7 +18,7 @@ import { toast } from "sonner"
 import { LibraryEntryDetailsModal } from "./library-entry-details-modal"
 import { EditLibraryEntryDialog } from "./edit-library-entry-dialog"
 import { CheckoutBookDialog } from "./checkout-book-dialog"
-import { deleteLibraryEntry } from "../actions/library-actions"
+import { deleteLibraryEntry } from "./library-actions"
 
 interface LibraryTableProps {
   entries: LibraryEntry[]

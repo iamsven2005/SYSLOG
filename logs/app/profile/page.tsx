@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation"
 import ProfileClient from "./profile-client"
-import { getUserById } from "../actions/user-actions"
+import { getUserById } from "../email-templates/user-actions"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export default async function ProfilePage() {
   const currentUser = await getCurrentUser()

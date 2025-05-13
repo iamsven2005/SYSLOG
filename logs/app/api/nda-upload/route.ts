@@ -4,7 +4,7 @@ import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
-import { getUserById } from "@/app/actions/user-actions"
+import { getUserById } from "@/app/email-templates/user-actions"
 
 export async function POST(request: NextRequest) {
   try {

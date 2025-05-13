@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { JSDOM } from "jsdom"
 import { writeFile } from "fs/promises"
-import { addUser } from "@/app/actions/user-actions"
+import { addUser } from "@/app/email-templates/user-actions"
 
 export const dynamic = "force-dynamic"
 

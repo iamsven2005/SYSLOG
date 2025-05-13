@@ -23,7 +23,7 @@ import {
   Check,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { deleteFile, deleteFolder, updateFolder, updateFile, updateFolder2, updateFileName } from "../actions/drive-actions"
+import { deleteFile, deleteFolder, updateFolder, updateFile, updateFolder2, updateFileName } from "./drive-actions"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"

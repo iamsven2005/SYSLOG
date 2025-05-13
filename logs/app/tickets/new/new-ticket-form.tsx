@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { createTicket } from "@/app/actions/ticket-actions"
+import { createTicket } from "@/app/tickets/ticket-actions"
 import { FileUpload } from "../file-upload"
 import NotesTable from "@/app/tables/notes-table"
 

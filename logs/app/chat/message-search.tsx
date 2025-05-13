@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { searchMessages } from "../actions/chat-actions"
+import { searchMessages } from "./chat-actions"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"

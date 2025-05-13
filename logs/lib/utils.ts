@@ -90,3 +90,11 @@ export function formatCurrency(amount: number | null | undefined): string {
     maximumFractionDigits: 0,
   }).format(amount)
 }
+// Helper function to format Windows FileTime to readable date
+export function formatLdapTimestamp(timestamp: bigint | null | undefined): string {
+  if (!timestamp || timestamp === BigInt(0)) return "Never"
+  // Windows FileTime is in 100-nanosecond intervals since January 1, 1601 UTC
+  // Convert to JavaScript timestamp (milliseconds since January 1, 1970 UTC)
+  const jsTimestamp = Number(timestamp) / 10000 - 11644473600000
+  return new Date(jsTimestamp).toLocaleString()
+}

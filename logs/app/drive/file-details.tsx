@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { X, Download, Share2, Clock, User, FileText, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getFileDetails, getUsersForSharing, shareFile, removeFilePermission } from "../actions/drive-actions"
+import { getFileDetails, getUsersForSharing, shareFile, removeFilePermission } from "./drive-actions"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"

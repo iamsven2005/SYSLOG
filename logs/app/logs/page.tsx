@@ -1,321 +1,1431 @@
 "use client"
-import { Suspense, useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import LogsTable from "../tables/logs-table"
-import AuthLogsTable from "../tables/auth-logs-table"
-import { LogsTableSkeleton } from "../tables/logs-table-skeleton"
-import UsageChart from "../charts/usage-chart"
-import MemoryUsageChart from "../charts/memory-usage-chart"
-import SensorChart from "../charts/sensor-chart"
-import DevicesTable from "../tables/devices-table"
-import NotesTable from "../tables/notes-table"
-import UsersTable from "../tables/users-table"
-import RulesTable from "../tables/rules-table"
+
+import React from "react"
+
+import { DialogFooter } from "@/components/ui/dialog"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Download, RefreshCcw, ChevronDown } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { Badge } from "@/components/ui/badge"
+import {
+  Check,
+  ChevronDown,
+  LogIn,
+  LogOut,
+  RefreshCw,
+  Search,
+  Trash2,
+  User,
+  Cpu,
+  MemoryStickIcon as Memory,
+  Filter,
+  ExternalLink,
+  Terminal,
+  Plus,
+  FileCode,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import ActivityLogsTable from "../tables/activity-logs-table"
-import EmailTemplateTable from "@/app/tables/email-template-table"
-import UsersRolesTable from "../tables/user-roles"
-import { DatabaseStatusBar } from "@/components/database-status-bar"
-import DiskUsageChart from "../charts/disk-usage-chart"
-import PermissionsTable from "../tables/permissions-table"
-import LocationsTable from "../tables/locations-table"
-import { LdapUsersTable } from "../tables/ldap-users-table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Clock, AlertTriangle, Download } from "lucide-react"
+import { deleteLogsByTimePeriod, deleteMultipleLogs, getLogs } from "./actions"
+import { getAllDeviceNames } from "../devices/device-actions"
+import { exportToExcel, prepareLogsForExport } from "../export-utils"
+import { getAllRuleGroupsAndRules } from "../rules/rule-actions"
+import { processBatchForCommandMatches } from "../command-matches/command-monitoring-actions"
+import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { addCommandToRule } from "../rules/rule-actions"
+import { Rule } from "@/prisma/generated/main"
 
-export default function LogsPage({ userId }: any) {
-  const [isBackingUp, setIsBackingUp] = useState(false)
-  const [isRestoring, setIsRestoring] = useState(false)
-  const [activeTab, setActiveTab] = useState("system-logs")
-  async function sendEmail() {
-    const response = await fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: "sven.tan@int.ywlgroup.com",
-        subject: "Hello from Next.js!",
-        text: "This is a plain text email.",
-        html: "<p>This is an <b>HTML</b> email.</p>",
-      }),
-    })
+// Debounce function to limit how often a function can run
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null
 
-    const data = await response.json()
-    if (data.success) {
-      alert("Email sent successfully!")
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), wait)
+  }
+}
+const pageSizeOptions = [10, 25, 50, 100, 1000, 5000]
+
+// Action types for filtering
+const actionOptions = [
+  { label: "All Actions", value: "all" },
+  { label: "Login", value: "login" },
+  { label: "Logout", value: "logout" },
+]
+
+export default function LogsTable() {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
+  const [selectedHosts, setSelectedHosts] = useState<string[]>(["all"])
+  const [selectedActions, setSelectedActions] = useState<string[]>(["all"])
+  const [selectedLogs, setSelectedLogs] = useState<number[]>([])
+  const [logs, setLogs] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [hostDropdownOpen, setHostDropdownOpen] = useState(false)
+  const [actionDropdownOpen, setActionDropdownOpen] = useState(false)
+
+  // Resource filters
+  const [cpuFilter, setCpuFilter] = useState<number | null>(null)
+  const [memFilter, setMemFilter] = useState<number | null>(null)
+  const [showResourceFilters, setShowResourceFilters] = useState(false)
+
+  // Command modal state
+  const [commandModalOpen, setCommandModalOpen] = useState(false)
+  const [selectedCommand, setSelectedCommand] = useState<{
+    id: number
+    command: string
+    timestamp: string
+    host: string
+    piuser: string
+    pid?: number
+    cpu?: number
+    mem?: number
+  } | null>(null)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  // Initialize resource filters state
+  const [isResourceFiltersEnabled, setIsResourceFiltersEnabled] = useState(false)
+
+  // Add this inside the LogsTable function, with the other state declarations:
+  const [hostOptions, setHostOptions] = useState<{ label: string; value: string }[]>([
+    { label: "All Devices", value: "all" },
+  ])
+
+  // Add these state variables inside the LogsTable component
+  const [timeDeleteDialogOpen, setTimeDeleteDialogOpen] = useState(false)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
+  const [isTimeDeleteLoading, setIsTimeDeleteLoading] = useState(false)
+
+  // Add state for rule groups and rules inside the LogsTable component
+  const [ruleGroups, setRuleGroups] = useState<any[]>([])
+  const [selectedRuleGroups, setSelectedRuleGroups] = useState<string[]>([])
+  const [selectedRules, setSelectedRules] = useState<string[]>([])
+  const [ruleGroupDropdownOpen, setRuleGroupDropdownOpen] = useState(false)
+  const [ruleDropdownOpen, setRuleDropdownOpen] = useState(false)
+  const [matchedCommands, setMatchedCommands] = useState<string[]>([])
+  // Add this state inside the LogsTable component
+  const [commandMatches, setCommandMatches] = useState<any[]>([])
+
+  // Add this state inside the LogsTable component, near the other state declarations
+  const [addToRuleDialogOpen, setAddToRuleDialogOpen] = useState(false)
+  const [selectedRuleId, setSelectedRuleId] = useState<string>("")
+  const [commandText, setCommandText] = useState<string>("")
+  const [isAddingCommand, setIsAddingCommand] = useState(false)
+
+  // Apply debounced search
+  const debouncedSearch = debounce((value: string) => {
+    setDebouncedSearchQuery(value)
+    // Reset to first page when search changes
+    setCurrentPage(1)
+  }, 300)
+
+  // Update search query and trigger debounced search
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchQuery(value)
+    debouncedSearch(value)
+  }
+
+  // Modify the fetchLogs function to check for command matches
+  const fetchLogs = async () => {
+    setIsLoading(true)
+    try {
+      const hosts = selectedHosts.includes("all") ? [] : selectedHosts
+
+      const actions = selectedActions.includes("all") ? [] : selectedActions
+
+      const result = await getLogs({
+        search: debouncedSearchQuery,
+        hosts,
+        actions,
+        ruleGroups: selectedRuleGroups,
+        rules: selectedRules,
+        cpuThreshold: isResourceFiltersEnabled ? cpuFilter : null,
+        memThreshold: isResourceFiltersEnabled ? memFilter : null,
+        page: currentPage,
+        pageSize: pageSize,
+      })
+      if(result){
+        setLogs(result.logs)
+        setTotalPages(result.pageCount)
+        setTotalItems(result.totalCount)
+        setMatchedCommands(result.matchedCommands || [])
+              // Check for command matches
+      const matches = await processBatchForCommandMatches(result.logs, "system")
+      setCommandMatches(matches)
+      if (matches.length > 0) {
+        matches.forEach((match: any) => {
+          toast.info(
+            <div>
+              <p className="font-medium">Command Match Detected</p>
+              <p className="text-sm">Rule: {match.ruleName}</p>
+              <p className="text-sm">
+                Command: <code className="bg-muted px-1 rounded">{match.command}</code>
+              </p>
+              {match.emailTemplateId && (
+                <p className="text-xs mt-1 text-muted-foreground">
+                  Email notification sent via template: {match.emailTemplateName}
+                </p>
+              )}
+            </div>,
+            {
+              duration: 5000,
+            },
+          )
+        })
+      }
+      }
+
+
+
+
+      // Show toast notifications for matches
+
+    } catch (error) {
+      toast.error("Failed to fetch logs")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Load logs when filters or pagination changes
+  useEffect(() => {
+    fetchLogs()
+  }, [
+    debouncedSearchQuery,
+    selectedHosts,
+    selectedActions,
+    selectedRuleGroups,
+    selectedRules,
+    currentPage,
+    pageSize,
+    isResourceFiltersEnabled,
+  ])
+
+  // Load logs when resource filters change
+  // useEffect(() => {
+  //   if (cpuFilter !== null || memFilter !== null) {
+  //     fetchLogs()
+  //   }
+  // }, [cpuFilter, memFilter])
+
+  // Handle host selection
+  const handleHostSelect = (value: string) => {
+    let newSelectedHosts: string[]
+
+    if (value === "all") {
+      newSelectedHosts = ["all"]
     } else {
-      alert("Failed to send email: " + data.error)
+      const currentWithoutAll = selectedHosts.filter((h) => h !== "all")
+
+      if (currentWithoutAll.includes(value)) {
+        // Remove if already selected
+        const filtered = currentWithoutAll.filter((h) => h !== value)
+        newSelectedHosts = filtered.length ? filtered : ["all"]
+      } else {
+        // Add if not selected
+        newSelectedHosts = [...currentWithoutAll, value]
+      }
+    }
+
+    setSelectedHosts(newSelectedHosts)
+    // Reset to first page when filters change
+    setCurrentPage(1)
+  }
+
+  // Handle action selection
+  const handleActionSelect = (value: string) => {
+    let newSelectedActions: string[]
+
+    if (value === "all") {
+      newSelectedActions = ["all"]
+    } else {
+      const currentWithoutAll = selectedActions.filter((a) => a !== "all")
+
+      if (currentWithoutAll.includes(value)) {
+        // Remove if already selected
+        const filtered = currentWithoutAll.filter((a) => a !== value)
+        newSelectedActions = filtered.length ? filtered : ["all"]
+      } else {
+        // Add if not selected
+        newSelectedActions = [...currentWithoutAll, value]
+      }
+    }
+
+    setSelectedActions(newSelectedActions)
+    // Reset to first page when filters change
+    setCurrentPage(1)
+  }
+
+  // Handle log selection
+  const handleSelectLog = (id: number) => {
+    if (selectedLogs.includes(id)) {
+      setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
+    } else {
+      setSelectedLogs([...selectedLogs, id])
     }
   }
 
-  const handleBackupDatabase = async (dbType = "both") => {
-    setIsBackingUp(true)
+  // Handle select all logs
+  const handleSelectAll = () => {
+    if (selectedLogs.length === logs.length) {
+      setSelectedLogs([])
+    } else {
+      setSelectedLogs(logs.map((log) => log.id))
+    }
+  }
+
+  // Handle delete selected logs
+  const handleDeleteSelected = async () => {
+    if (!selectedLogs.length) return
 
     try {
-      if (dbType === "both") {
-        // Call both endpoints sequentially
-        const mainResponse = await fetch("/api/backup", { method: "POST" })
-        const mainData = await mainResponse.json()
-
-        if (!mainResponse.ok) throw new Error(mainData.message || "Main database backup failed")
-
-        const vectorResponse = await fetch("/api/backup2", { method: "POST" })
-        const vectorData = await vectorResponse.json()
-
-        if (!vectorResponse.ok) throw new Error(vectorData.message || "Vector database backup failed")
-
-        toast.success("All databases backup successful!", {
-          description: "Main and vector databases backed up successfully.",
-        })
-
-        // Handle downloads if available
-        if (mainData.downloadUrl) {
-          const link = document.createElement("a")
-          link.href = mainData.downloadUrl
-          link.download = mainData.fileName || "main_database_backup.sql"
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        }
-
-        if (vectorData.downloadUrl) {
-          const link = document.createElement("a")
-          link.href = vectorData.downloadUrl
-          link.download = vectorData.fileName || "vector_database_backup.sql"
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        }
-      } else {
-        // Original logic for single database backup
-        const endpoint = dbType === "main" ? "/api/backup" : "/api/backup2"
-        const response = await fetch(endpoint, { method: "POST" })
-        const data = await response.json()
-
-        if (!response.ok) throw new Error(data.message || "Backup failed")
-
-        toast.success(`${dbType === "main" ? "Main database" : "Vector database"} backup successful!`, {
-          description: data.filePath ? `Saved to: ${data.filePath}` : "Download available.",
-        })
-
-        // If backup is available for download, trigger a file download
-        if (data.downloadUrl) {
-          const link = document.createElement("a")
-          link.href = data.downloadUrl
-          link.download = data.fileName || `${dbType}_database_backup.sql`
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        }
-      }
+      await deleteMultipleLogs(selectedLogs)
+      toast.success(`Deleted ${selectedLogs.length} logs`)
+      setSelectedLogs([])
+      fetchLogs()
+      router.refresh()
     } catch (error) {
-      console.error("Backup error:", error)
-      toast.error(
-        `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} backup failed.`,
-        {
-          description: error.message,
-        },
-      )
-    } finally {
-      setIsBackingUp(false)
+      toast.error("Failed to delete logs")
     }
   }
 
-  const handleRestoreDatabase = async (dbType = "both") => {
-    setIsRestoring(true)
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  // Handle page size change
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when changing page size
+  }
+
+  // Handle CPU filter change
+  const handleCpuFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value ? Number.parseFloat(e.target.value) : null
+    setCpuFilter(value)
+  }
+
+  // Handle Memory filter change
+  const handleMemFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value ? Number.parseFloat(e.target.value) : null
+    setMemFilter(value)
+  }
+
+  // Reset resource filters
+  const resetResourceFilters = () => {
+    setCpuFilter(null)
+    setMemFilter(null)
+    setIsResourceFiltersEnabled(false)
+  }
+
+  // Open command modal
+  const openCommandModal = (log: any) => {
+    if (!log.command) return
+
+    setSelectedCommand({
+      id: log.id,
+      command: log.command,
+      timestamp: log.timestamp,
+      host: log.host || "Unknown",
+      piuser: log.piuser || "Unknown",
+      pid: log.pid,
+      cpu: log.cpu,
+      mem: log.mem,
+    })
+    setCommandModalOpen(true)
+  }
+
+  // Generate pagination items
+  const getPaginationItems = () => {
+    const items = []
+    const maxVisiblePages = 5
+
+    // Always show first page
+    items.push(
+      <PaginationItem key="first">
+        <PaginationLink onClick={() => handlePageChange(1)} isActive={currentPage === 1}>
+          1
+        </PaginationLink>
+      </PaginationItem>,
+    )
+
+    // Calculate range of pages to show
+    const startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2))
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 3)
+
+    // Adjust if we're near the beginning
+    if (startPage > 2) {
+      items.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>,
+      )
+    }
+
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink onClick={() => handlePageChange(i)} isActive={currentPage === i}>
+            {i}
+          </PaginationLink>
+        </PaginationItem>,
+      )
+    }
+
+    // Add ellipsis if needed
+    if (endPage < totalPages - 1) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>,
+      )
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink onClick={() => handlePageChange(totalPages)} isActive={currentPage === totalPages}>
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>,
+      )
+    }
+
+    return items
+  }
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString()
+  }
+
+  // Add this useEffect to fetch device names when component mounts
+  useEffect(() => {
+    const fetchDeviceNames = async () => {
+      try {
+        const deviceNames = await getAllDeviceNames()
+        const options = [
+          { label: "All Devices", value: "all" },
+          ...(deviceNames || []).map((name) => ({ label: name, value: name })),
+        ]
+        setHostOptions(options)
+      } catch (error) {
+        console.error("Failed to fetch device names:", error)
+        toast.error("Failed to load device list")
+      }
+    }
+
+    fetchDeviceNames()
+  }, [])
+
+  // Add this function inside the LogsTable component
+  const handleDeleteByTimePeriod = async () => {
+    if (!selectedTimePeriod) return
+
+    setIsTimeDeleteLoading(true)
     try {
-      if (dbType === "both") {
-        // Call both restore endpoints sequentially
-        const mainResponse = await fetch("/api/restore", { method: "POST" })
-        const mainData = await mainResponse.json()
-
-        if (!mainResponse.ok) throw new Error(mainData.message || "Main database restore failed")
-
-        const vectorResponse = await fetch("/api/restore2", { method: "POST" })
-        const vectorData = await vectorResponse.json()
-
-        if (!vectorResponse.ok) throw new Error(vectorData.message || "Vector database restore failed")
-
-        toast.success("All databases restored successfully!", {
-          description: `Main DB: ${mainData.latestBackup}, Vector DB: ${vectorData.latestBackup}`,
-        })
+      const result = await deleteLogsByTimePeriod(selectedTimePeriod)
+      if (result) {
+        toast.success(result.message)
       } else {
-        // Original logic for single database restore
-        const endpoint = dbType === "main" ? "/api/restore" : "/api/restore2"
-        const response = await fetch(endpoint, { method: "POST" })
-        const data = await response.json()
-
-        if (!response.ok) throw new Error(data.message || "Restore failed")
-
-        toast.success(`${dbType === "main" ? "Main database" : "Vector database"} restored!`, {
-          description: `Restored from: ${data.latestBackup}`,
-        })
+        toast.success("Logs deleted successfully")
       }
+      fetchLogs()
+      router.refresh()
     } catch (error) {
-      console.error("Restore error:", error)
-      toast.error(
-        `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} restore failed.`,
-        {
-          description: error.message,
-        },
-      )
+      toast.error("Failed to delete logs by time period")
     } finally {
-      setIsRestoring(false)
+      setIsTimeDeleteLoading(false)
+      setTimeDeleteDialogOpen(false)
     }
   }
-  const handleRefreshData = () => {
-    // Refresh data logic here
-    toast.success("Refreshing data...")
-    window.location.reload()
+
+  const handleExport = () => {
+    if (logs.length === 0) {
+      toast.error("No data to export")
+      return
+    }
+
+    try {
+      const exportData = prepareLogsForExport(logs)
+      exportToExcel(exportData, `system-logs-export-${new Date().toISOString().split("T")[0]}`)
+      toast.success("Logs exported successfully")
+    } catch (error) {
+      console.error("Export error:", error)
+      toast.error("Failed to export logs")
+    }
   }
+
+  // Add useEffect to fetch rule groups and rules
+  useEffect(() => {
+    const fetchRuleGroupsAndRules = async () => {
+      try {
+        const ruleGroupsData = await getAllRuleGroupsAndRules()
+        setRuleGroups(ruleGroupsData)
+      } catch (error) {
+        console.error("Failed to fetch rule groups and rules:", error)
+        toast.error("Failed to load rule groups and rules")
+      }
+    }
+
+    fetchRuleGroupsAndRules()
+  }, [])
+
+  // Add handlers for rule group and rule selection
+  const handleRuleGroupSelect = (value: string) => {
+    if (selectedRuleGroups.includes(value)) {
+      setSelectedRuleGroups(selectedRuleGroups.filter((id) => id !== value))
+    } else {
+      setSelectedRuleGroups([...selectedRuleGroups, value])
+    }
+    setCurrentPage(1)
+  }
+
+  const handleRuleSelect = (value: string) => {
+    if (selectedRules.includes(value)) {
+      setSelectedRules(selectedRules.filter((id) => id !== value))
+    } else {
+      setSelectedRules([...selectedRules, value])
+    }
+    setCurrentPage(1)
+  }
+
+  // Add this function inside the LogsTable component
+  const openAddToRuleDialog = (log: any) => {
+    if (!log.command) return
+
+    setSelectedCommand({
+      id: log.id,
+      command: log.command,
+      timestamp: log.timestamp,
+      host: log.host || "Unknown",
+      piuser: log.piuser || "Unknown",
+      pid: log.pid,
+      cpu: log.cpu,
+      mem: log.mem,
+    })
+    setCommandText(log.command)
+    setSelectedRuleId("")
+    setAddToRuleDialogOpen(true)
+  }
+
+  // Add this function inside the LogsTable component
+  const handleAddCommandToRule = async () => {
+    if (!selectedCommand || !selectedRuleId || !commandText.trim()) {
+      toast.error("Please select a rule and enter a command")
+      return
+    }
+
+    setIsAddingCommand(true)
+    try {
+      await addCommandToRule(Number.parseInt(selectedRuleId), commandText)
+
+      toast.success(`Command added to rule successfully`)
+      setAddToRuleDialogOpen(false)
+
+      // Refresh rule groups to show the new command
+      const ruleGroupsData = await getAllRuleGroupsAndRules()
+      setRuleGroups(ruleGroupsData)
+    } catch (error) {
+      toast.error(`Failed to add command: ${error instanceof Error ? error.message : "Unknown error"}`)
+    } finally {
+      setIsAddingCommand(false)
+    }
+  }
+
   return (
-    <div className="container py-10 px-4 md:px-6">
-      <DatabaseStatusBar onRetry={handleRefreshData} className="mb-6" />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Logs {userId}</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button disabled={isBackingUp}>
-                  {isBackingUp ? "Backing Up..." : "Backup Database"}
-                  <Download className="ml-2 h-4 w-4" />
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleBackupDatabase("main")}>Main Database</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleBackupDatabase("vector")}>Vector Database</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleBackupDatabase("both")}>Both Databases</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button disabled={isRestoring} variant="destructive">
-                  {isRestoring ? "Restoring..." : "Restore Database"}
-                  <RefreshCcw className="ml-2 h-4 w-4" />
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleRestoreDatabase("main")}>Main Database</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRestoreDatabase("vector")}>Vector Database</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRestoreDatabase("both")}>Both Databases</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search logs..."
+              className="pl-8 w-[200px] sm:w-[300px]"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </div>
-          <button onClick={sendEmail}>Send Test Email</button>
+          <Button variant="outline" size="icon" onClick={() => fetchLogs()} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowResourceFilters(!showResourceFilters)}
+            className={showResourceFilters ? "bg-muted" : ""}
+          >
+            <Filter className="h-4 w-4" />
+            <span className="sr-only">Resource Filters</span>
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Popover open={hostDropdownOpen} onOpenChange={setHostDropdownOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="justify-between">
+                {selectedHosts.includes("all")
+                  ? "All Devices"
+                  : selectedHosts.length > 1
+                    ? `${selectedHosts.length} hosts selected`
+                    : hostOptions.find((h) => h.value === selectedHosts[0])?.label}
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search hosts..." />
+                <CommandList>
+                  <CommandEmpty>No host found.</CommandEmpty>
+                  <CommandGroup>
+                    {hostOptions.map((host) => (
+                      <CommandItem key={host.value} onSelect={() => handleHostSelect(host.value)}>
+                        <Checkbox checked={selectedHosts.includes(host.value)} className="mr-2" />
+                        <span>{host.label}</span>
+                        {selectedHosts.includes(host.value) && <Check className="ml-auto h-4 w-4" />}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <Popover open={actionDropdownOpen} onOpenChange={setActionDropdownOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="justify-between">
+                {selectedActions.includes("all")
+                  ? "All Actions"
+                  : selectedActions.length > 1
+                    ? `${selectedActions.length} actions selected`
+                    : actionOptions.find((a) => a.value === selectedActions[0])?.label}
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search actions..." />
+                <CommandList>
+                  <CommandEmpty>No action found.</CommandEmpty>
+                  <CommandGroup>
+                    {actionOptions.map((action) => (
+                      <CommandItem key={action.value} onSelect={() => handleActionSelect(action.value)}>
+                        <Checkbox checked={selectedActions.includes(action.value)} className="mr-2" />
+                        <span>{action.label}</span>
+                        {selectedActions.includes(action.value) && <Check className="ml-auto h-4 w-4" />}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <Popover open={ruleGroupDropdownOpen} onOpenChange={setRuleGroupDropdownOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="justify-between">
+                {selectedRuleGroups.length > 0
+                  ? `${selectedRuleGroups.length} rule group${selectedRuleGroups.length > 1 ? "s" : ""} selected`
+                  : "Rule Groups"}
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Search rule groups..." />
+                <CommandList className="max-h-[300px]">
+                  <CommandEmpty>No rule group found.</CommandEmpty>
+                  <CommandGroup>
+                    {ruleGroups.map((group) => (
+                      <CommandItem key={group.id} onSelect={() => handleRuleGroupSelect(group.id.toString())}>
+                        <Checkbox checked={selectedRuleGroups.includes(group.id.toString())} className="mr-2" />
+                        <span>{group.name}</span>
+                        {selectedRuleGroups.includes(group.id.toString()) && <Check className="ml-auto h-4 w-4" />}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <Popover open={ruleDropdownOpen} onOpenChange={setRuleDropdownOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="justify-between">
+                {selectedRules.length > 0
+                  ? `${selectedRules.length} rule${selectedRules.length > 1 ? "s" : ""} selected`
+                  : "Rules"}
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Search rules..." />
+                <CommandList className="max-h-[300px]">
+                  <CommandEmpty>No rule found.</CommandEmpty>
+                  <CommandGroup>
+                    {ruleGroups.flatMap((group) =>
+                      group.rules.map((rule: Rule) => (
+                        <CommandItem key={rule.id} onSelect={() => handleRuleSelect(rule.id.toString())}>
+                          <Checkbox checked={selectedRules.includes(rule.id.toString())} className="mr-2" />
+                          <span>{rule.name}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">({group.name})</span>
+                          {selectedRules.includes(rule.id.toString()) && <Check className="ml-auto h-4 w-4" />}
+                        </CommandItem>
+                      )),
+                    )}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Clock className="h-4 w-4" />
+                Time-Based Delete
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Delete logs older than</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedTimePeriod("1day")
+                  setTimeDeleteDialogOpen(true)
+                }}
+              >
+                1 day
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedTimePeriod("7days")
+                  setTimeDeleteDialogOpen(true)
+                }}
+              >
+                7 days
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedTimePeriod("30days")
+                  setTimeDeleteDialogOpen(true)
+                }}
+              >
+                30 days
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedTimePeriod("90days")
+                  setTimeDeleteDialogOpen(true)
+                }}
+              >
+                90 days
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={() => {
+                  setSelectedTimePeriod("all")
+                  setTimeDeleteDialogOpen(true)
+                }}
+              >
+                Delete All Logs
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button variant="outline" onClick={handleExport} className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+
+          {selectedLogs.length > 0 && (
+            <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2">
+              <Trash2 className="h-4 w-4" />
+              Delete ({selectedLogs.length})
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 mb-6">
-        <Suspense fallback={<div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-md"></div>}>
-          <UsageChart />
-        </Suspense>
+      {/* Resource filters */}
+      {showResourceFilters && (
+        <div className="p-4 border rounded-md bg-muted/20 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium">Resource Filters</h3>
+            <Button variant="ghost" size="sm" onClick={resetResourceFilters}>
+              Reset
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-muted-foreground" />
+                <label htmlFor="cpu-filter" className="text-sm font-medium">
+                  CPU Usage (%) Above
+                </label>
+              </div>
+              <Input
+                id="cpu-filter"
+                type="number"
+                min="0"
+                max="100"
+                step="5"
+                placeholder="e.g. 50"
+                value={cpuFilter || ""}
+                onChange={handleCpuFilterChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Memory className="h-4 w-4 text-muted-foreground" />
+                <label htmlFor="mem-filter" className="text-sm font-medium">
+                  Memory Usage (%) Above
+                </label>
+              </div>
+              <Input
+                id="mem-filter"
+                type="number"
+                min="0"
+                max="100"
+                step="5"
+                placeholder="e.g. 50"
+                value={memFilter || ""}
+                onChange={handleMemFilterChange}
+              />
+            </div>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsResourceFiltersEnabled(true)}
+            className="w-full sm:w-auto"
+          >
+            Apply Filters
+          </Button>
+        </div>
+      )}
 
-        <Suspense fallback={<div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-md"></div>}>
-          <MemoryUsageChart />
-        </Suspense>
+      {/* Selected filters badges */}
+      <div className="flex flex-wrap gap-2">
+        {selectedHosts.length > 0 &&
+          !selectedHosts.includes("all") &&
+          selectedHosts.map((host) => (
+            <Badge key={host} variant="secondary" className="gap-1">
+              {hostOptions.find((h) => h.value === host)?.label}
+              <button onClick={() => handleHostSelect(host)} className="ml-1 rounded-full hover:bg-muted p-0.5">
+                ×
+              </button>
+            </Badge>
+          ))}
 
-        <Suspense fallback={<div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-md"></div>}>
-          <SensorChart />
-        </Suspense>
-        <Suspense fallback={<div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-md"></div>}>
-          <DiskUsageChart />
-        </Suspense>
+        {selectedActions.length > 0 &&
+          !selectedActions.includes("all") &&
+          selectedActions.map((action) => (
+            <Badge key={action} variant="secondary" className="gap-1">
+              {actionOptions.find((a) => a.value === action)?.label}
+              <button onClick={() => handleActionSelect(action)} className="ml-1 rounded-full hover:bg-muted p-0.5">
+                ×
+              </button>
+            </Badge>
+          ))}
+
+        {selectedRuleGroups.length > 0 &&
+          selectedRuleGroups.map((groupId) => {
+            const group = ruleGroups.find((g) => g.id.toString() === groupId)
+            return group ? (
+              <Badge key={`group-${groupId}`} variant="secondary" className="gap-1">
+                Group: {group.name}
+                <button
+                  onClick={() => handleRuleGroupSelect(groupId)}
+                  className="ml-1 rounded-full hover:bg-muted p-0.5"
+                >
+                  ×
+                </button>
+              </Badge>
+            ) : null
+          })}
+
+        {selectedRules.length > 0 &&
+          selectedRules.map((ruleId) => {
+            const rule = ruleGroups.flatMap((g) => g.rules).find((r) => r.id.toString() === ruleId)
+            return rule ? (
+              <Badge key={`rule-${ruleId}`} variant="secondary" className="gap-1">
+                Rule: {rule.name}
+                <button onClick={() => handleRuleSelect(ruleId)} className="ml-1 rounded-full hover:bg-muted p-0.5">
+                  ×
+                </button>
+              </Badge>
+            ) : null
+          })}
+
+        {cpuFilter && (
+          <Badge variant="secondary" className="gap-1">
+            CPU &gt; {cpuFilter}%
+            <button
+              onClick={() => {
+                setCpuFilter(null)
+                setIsResourceFiltersEnabled(false)
+              }}
+              className="ml-1 rounded-full hover:bg-muted p-0.5"
+            >
+              ×
+            </button>
+          </Badge>
+        )}
+
+        {memFilter && (
+          <Badge variant="secondary" className="gap-1">
+            Memory &gt; {memFilter}%
+            <button
+              onClick={() => {
+                setMemFilter(null)
+                setIsResourceFiltersEnabled(false)
+              }}
+              className="ml-1 rounded-full hover:bg-muted p-0.5"
+            >
+              ×
+            </button>
+          </Badge>
+        )}
+      </div>
+      {commandMatches.length > 0 && (
+        <div className="mb-4">
+          <CommandMatchAlert matches={commandMatches} />
+        </div>
+      )}
+
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[40px]">
+                <Checkbox
+                  checked={logs.length > 0 && selectedLogs.length === logs.length}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
+              <TableHead className="w-[60px]">ID</TableHead>
+              <TableHead className="w-[120px]">Name</TableHead>
+              <TableHead className="w-[80px]">Host</TableHead>
+              <TableHead className="w-[160px]">Timestamp</TableHead>
+              <TableHead className="w-[100px]">User</TableHead>
+              <TableHead className="w-[80px]">PID</TableHead>
+              <TableHead className="w-[100px]">Action</TableHead>
+              <TableHead className="w-[80px]">CPU %</TableHead>
+              <TableHead className="w-[80px]">MEM %</TableHead>
+              <TableHead className="w-[180px]">Session</TableHead>
+              <TableHead>Command</TableHead>
+              <TableHead className="w-[60px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {logs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={12} className="h-24 text-center">
+                  No logs found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              logs.map((log) => (
+                <TableRow key={log.id}>
+                  <TableCell>
+                    <Checkbox checked={selectedLogs.includes(log.id)} onCheckedChange={() => handleSelectLog(log.id)} />
+                  </TableCell>
+                  <TableCell>{log.id}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {log.name.toLowerCase().includes("login") && <LogIn className="h-4 w-4 text-green-500" />}
+                      {log.name.toLowerCase().includes("logout") && <LogOut className="h-4 w-4 text-red-500" />}
+                      {log.name}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {log.host ? (
+                      <Badge variant="outline">{log.host}</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{formatDate(log.timestamp)}</TableCell>
+                  <TableCell>
+                    {log.piuser ? (
+                      <div className="flex items-center gap-1">
+                        <User className="h-3 w-3 text-blue-500" />
+                        {log.piuser}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{log.pid !== null ? log.pid : <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell>
+                    {log.action ? (
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          log.action.toLowerCase() === "start" && "bg-green-50 text-green-700 border-green-200",
+                          log.action.toLowerCase() === "stop" && "bg-red-50 text-red-700 border-red-200",
+                          log.action.toLowerCase() === "restart" && "bg-amber-50 text-amber-700 border-amber-200",
+                        )}
+                      >
+                        {log.action}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {log.cpu !== null ? (
+                      <div className="flex items-center gap-1">
+                        <span
+                          className={cn(
+                            log.cpu > 80 ? "text-red-500" : log.cpu > 50 ? "text-amber-500" : "text-green-500",
+                          )}
+                        >
+                          {log.cpu.toFixed(1)}%
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {log.mem !== null ? (
+                      <div className="flex items-center gap-1">
+                        <span
+                          className={cn(
+                            log.mem > 80 ? "text-red-500" : log.mem > 50 ? "text-amber-500" : "text-green-500",
+                          )}
+                        >
+                          {log.mem.toFixed(1)}%
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {log.logoutTime && (
+                      <div className="flex flex-col text-sm">
+                        <span className="flex items-center gap-1">
+                          <LogIn className="h-3 w-3 text-green-500" />
+                          {formatDate(log.timestamp)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <LogOut className="h-3 w-3 text-red-500" />
+                          {formatDate(log.logoutTime)}
+                        </span>
+                      </div>
+                    )}
+                    {log.loginTime && (
+                      <div className="flex flex-col text-sm">
+                        <span className="flex items-center gap-1">
+                          <LogIn className="h-3 w-3 text-green-500" />
+                          {formatDate(log.loginTime)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <LogOut className="h-3 w-3 text-red-500" />
+                          {formatDate(log.timestamp)}
+                        </span>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {log.command ? (
+                      <div className="max-w-[200px] truncate" title={log.command}>
+                        <code className="text-xs bg-muted px-1 py-0.5 rounded">{log.command}</code>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {log.command && (
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openCommandModal(log)}
+                          title="View Command Details"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          <span className="sr-only">View Command Details</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openAddToRuleDialog(log)}
+                          title="Add to Rule"
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span className="sr-only">Add to Rule</span>
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      <Tabs defaultValue="system-logs" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="system-logs">System Logs</TabsTrigger>
-          <TabsTrigger value="auth-logs">Auth Logs</TabsTrigger>
-          <TabsTrigger value="activity">Activity Logs</TabsTrigger>
-          <TabsTrigger value="devices">Devices</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="roles">Roles</TabsTrigger>
-          <TabsTrigger value="rules">Rules</TabsTrigger>
-          <TabsTrigger value="email">Email Template</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
-          <TabsTrigger value="permissions">Perms</TabsTrigger>
-          <TabsTrigger value="samba">Samba</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Showing {logs.length} of {totalItems} results
+          </span>
+          <select
+            className="h-8 w-[70px] rounded-md border border-input bg-background px-2 text-sm"
+            value={pageSize}
+            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+          >
+            {pageSizeOptions.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-muted-foreground">per page</span>
+        </div>
 
-        <TabsContent value="system-logs">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <LogsTable />
-          </Suspense>
-        </TabsContent>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                isActive={currentPage > 1}
+              />
+            </PaginationItem>
 
-        <TabsContent value="auth-logs">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <AuthLogsTable />
-          </Suspense>
-        </TabsContent>
+            {getPaginationItems()}
 
-        <TabsContent value="activity">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <ActivityLogsTable />
-          </Suspense>
-        </TabsContent>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                isActive={currentPage < totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
 
-        <TabsContent value="devices">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <DevicesTable />
-          </Suspense>
-        </TabsContent>
+      {/* Command Detail Modal */}
+      <Dialog open={commandModalOpen} onOpenChange={setCommandModalOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Command Details</DialogTitle>
+            <DialogDescription>Detailed information about the executed command</DialogDescription>
+          </DialogHeader>
 
-        <TabsContent value="users">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <LocationsTable />
+          {selectedCommand && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">ID</h3>
+                  <p>{selectedCommand.id}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Timestamp</h3>
+                  <p>{formatDate(selectedCommand.timestamp)}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Host</h3>
+                  <p>{selectedCommand.host}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">User</h3>
+                  <p>{selectedCommand.piuser}</p>
+                </div>
+                {selectedCommand.pid !== undefined && (
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Process ID</h3>
+                    <p>{selectedCommand.pid}</p>
+                  </div>
+                )}
+              </div>
 
-            <UsersTable />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="roles">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <UsersRolesTable />
-          </Suspense>
-        </TabsContent>
+              <div className="flex flex-wrap gap-4">
+                {selectedCommand.cpu !== undefined && selectedCommand.cpu !== null && (
+                  <div className="flex items-center gap-2">
+                    <Cpu className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">CPU Usage:</span>
+                    <span
+                      className={cn(
+                        "text-sm",
+                        selectedCommand.cpu > 80
+                          ? "text-red-500"
+                          : selectedCommand.cpu > 50
+                            ? "text-amber-500"
+                            : "text-green-500",
+                      )}
+                    >
+                      {selectedCommand.cpu.toFixed(1)}%
+                    </span>
+                  </div>
+                )}
 
-        <TabsContent value="rules">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <RulesTable />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="email">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <EmailTemplateTable />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="notes">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <NotesTable isAdmin={true} />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="activity-logs" className="space-y-4">
-          <div className="grid gap-4">
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Activity Logs</CardTitle>
-                <CardDescription>Track user actions and system changes.</CardDescription>
-              </CardHeader>
-              <CardContent>{activeTab === "activity-logs" && <ActivityLogsTable />}</CardContent>
-            </Card>
+                {selectedCommand.mem !== undefined && selectedCommand.mem !== null && (
+                  <div className="flex items-center gap-2">
+                    <Memory className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Memory Usage:</span>
+                    <span
+                      className={cn(
+                        "text-sm",
+                        selectedCommand.mem > 80
+                          ? "text-red-500"
+                          : selectedCommand.mem > 50
+                            ? "text-amber-500"
+                            : "text-green-500",
+                      )}
+                    >
+                      {selectedCommand.mem.toFixed(1)}%
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Command</h3>
+                <div className="bg-muted p-4 rounded-md overflow-x-auto">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Terminal className="h-4 w-4 text-blue-500" />
+                    <span className="text-sm font-medium">Shell Command</span>
+                  </div>
+                  <code className="whitespace-pre-wrap text-sm break-all">{selectedCommand.command}</code>
+                </div>
+              </div>
+
+              {/* Command analysis section */}
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
+                <h3 className="text-sm font-medium text-blue-700 mb-2">Command Analysis</h3>
+                <div className="space-y-2">
+                  {selectedCommand.command.includes("sudo") && (
+                    <p className="text-sm text-blue-600">
+                      <span className="font-medium">Elevated Privileges:</span> This command was executed with sudo,
+                      granting root/administrator privileges.
+                    </p>
+                  )}
+
+                  {selectedCommand.command.includes("rm") && (
+                    <p className="text-sm text-blue-600">
+                      <span className="font-medium">File Deletion:</span> This command removes files or directories from
+                      the system.
+                    </p>
+                  )}
+
+                  {selectedCommand.command.includes("ssh") && (
+                    <p className="text-sm text-blue-600">
+                      <span className="font-medium">Remote Access:</span> This command establishes a secure shell
+                      connection to another system.
+                    </p>
+                  )}
+
+                  {selectedCommand.command.includes("apt") ||
+                    selectedCommand.command.includes("yum") ||
+                    (selectedCommand.command.includes("dnf") && (
+                      <p className="text-sm text-blue-600">
+                        <span className="font-medium">Package Management:</span> This command installs, updates, or
+                        removes software packages.
+                      </p>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCommandModalOpen(false)
+                setTimeout(() => {
+                  setCommandText(selectedCommand?.command || "")
+                  setSelectedRuleId("")
+                  setAddToRuleDialogOpen(true)
+                }, 100)
+              }}
+              className="gap-1"
+            >
+              <Plus className="h-4 w-4" />
+              Add to Rule
+            </Button>
+            <Button onClick={() => setCommandModalOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add to Rule Dialog */}
+      <Dialog open={addToRuleDialogOpen} onOpenChange={setAddToRuleDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileCode className="h-5 w-5 text-blue-500" />
+              Add Command to Rule
+            </DialogTitle>
+            <DialogDescription>Add this command to an existing rule for monitoring and automation.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="rule-select">Select Rule</Label>
+              <Select value={selectedRuleId} onValueChange={setSelectedRuleId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a rule" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ruleGroups.map((group) => (
+                    <React.Fragment key={group.id}>
+                      {group.rules.length > 0 && (
+                        <>
+                          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">{group.name}</div>
+                          {group.rules.map((rule: Rule) => (
+                            <SelectItem key={rule.id} value={rule.id.toString()}>
+                              {rule.name}
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="command-text">Command</Label>
+              <Input
+                id="command-text"
+                value={commandText}
+                onChange={(e) => setCommandText(e.target.value)}
+                placeholder="Enter command text"
+              />
+              <p className="text-xs text-muted-foreground">
+                Edit the command if needed to match the pattern you want to monitor.
+              </p>
+            </div>
           </div>
-        </TabsContent>
-        <TabsContent value="permissions">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <PermissionsTable />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="samba">
-          <Suspense fallback={<LogsTableSkeleton />}>
-            <LdapUsersTable />
-          </Suspense>
-        </TabsContent>
-      </Tabs>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddToRuleDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddCommandToRule}
+              disabled={!selectedRuleId || !commandText.trim() || isAddingCommand}
+            >
+              {isAddingCommand ? "Adding..." : "Add Command"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Time-based Delete Confirmation Dialog */}
+      <AlertDialog open={timeDeleteDialogOpen} onOpenChange={setTimeDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              Confirm Time-Based Deletion
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedTimePeriod === "all" ? (
+                <span className="text-red-500 font-medium">
+                  You are about to delete ALL system logs. This action cannot be undone.
+                </span>
+              ) : (
+                <>
+                  You are about to delete all system logs older than{" "}
+                  <span className="font-medium">
+                    {selectedTimePeriod === "1day" && "1 day"}
+                    {selectedTimePeriod === "7days" && "7 days"}
+                    {selectedTimePeriod === "30days" && "30 days"}
+                    {selectedTimePeriod === "90days" && "90 days"}
+                  </span>
+                  . This action cannot be undone.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isTimeDeleteLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleDeleteByTimePeriod()
+              }}
+              disabled={isTimeDeleteLoading}
+              className={selectedTimePeriod === "all" ? "bg-red-600 hover:bg-red-700" : ""}
+            >
+              {isTimeDeleteLoading ? "Deleting..." : "Delete Logs"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {matchedCommands.length > 0 && (
+        <div className="mt-4 p-4 border rounded-md bg-muted/20">
+          <h3 className="text-sm font-medium mb-2">Matching Commands</h3>
+          <div className="space-y-2">
+            {matchedCommands.map((cmd, index) => (
+              <div key={index} className="text-xs bg-muted p-2 rounded">
+                <code>{cmd}</code>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
+

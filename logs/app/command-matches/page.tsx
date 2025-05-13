@@ -1,12 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getCommandMatches } from "@/app/actions/command-monitoring-actions"
-import { CommandMatchNotification } from "@/components/command-match-notification"
-import { BulkAddressCommandMatches } from "@/components/bulk-address-command-matches"
-import { AddressedCommandMatchesTable } from "@/components/addressed-command-matches-table"
+import { getCommandMatches } from "@/app/command-matches/command-monitoring-actions"
+import { CommandMatchNotification } from "@/app/command-matches/command-match-notification"
+import { BulkAddressCommandMatches } from "@/app/command-matches/bulk-address-command-matches"
+import { AddressedCommandMatchesTable } from "@/app/command-matches/addressed-command-matches-table"
 import { Suspense } from "react"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0

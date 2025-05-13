@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { getTicketStats } from "@/app/actions/ticket-actions"
+import { getTicketStats } from "@/app/tickets/ticket-actions"
 import { toast } from "sonner"
 import { AlertCircle, CheckCircle2, Clock, XCircle, BarChart3, Users, Calendar, TrendingUp } from "lucide-react"
 

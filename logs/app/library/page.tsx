@@ -1,8 +1,8 @@
-import { getLibraryEntries } from "@/app/actions/library-actions"
+import { getLibraryEntries } from "@/app/library/library-actions"
 import { LibraryPage } from "./library-page"
 import { notFound, redirect } from "next/navigation"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../actions/permission-actions"
+import { checkUserPermission } from "../permissions/permission-actions"
 
 interface PageProps {
   searchParams: {

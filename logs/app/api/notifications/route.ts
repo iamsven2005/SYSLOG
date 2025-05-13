@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getNotifications, getAllNotificationsAdmin } from "@/app/actions/notification-actions"
+import { getNotifications, getAllNotificationsAdmin } from "@/app/notifications/notification-actions"
 import { getCurrentUser } from "@/app/login/actions"
 import { db } from "@/lib/db"
 

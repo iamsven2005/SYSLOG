@@ -9,7 +9,7 @@ import { AlertEventsTable } from "../alert-events-table"
 import { Edit, Bell, Clock, AlertCircle, CheckCircle, ExternalLink } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/actions/permission-actions"
+import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export const metadata: Metadata = {
   title: "Alert Condition Details",

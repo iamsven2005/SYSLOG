@@ -30,7 +30,7 @@ import {
   markNotificationAsRead,
   getNotifications,
   getAllNotificationsAdmin,
-} from "@/app/actions/notification-actions"
+} from "@/app/notifications/notification-actions"
 import { toast } from "sonner"
 
 interface NotificationBase {

@@ -18,7 +18,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Badge } from "@/components/ui/badge"
-import { getTickets } from "@/app/actions/ticket-actions"
+import { getTickets } from "@/app/tickets/ticket-actions"
 import { formatDate } from "@/lib/utils"
 
 // Status and priority options

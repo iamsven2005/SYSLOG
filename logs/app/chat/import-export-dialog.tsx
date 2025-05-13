@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, FileUp, FileDown, AlertCircle, Upload } from "lucide-react"
 import { toast } from "sonner"
 import { parseXMLTranscript, generateXMLTranscript, downloadXML } from "../utils/xml-utils"
-import { importXMLMessages, getGroupMessagesWithDetails } from "../actions/chat-actions"
+import { importXMLMessages, getGroupMessagesWithDetails } from "./chat-actions"
 
 export function ImportExportDialog({
   open,

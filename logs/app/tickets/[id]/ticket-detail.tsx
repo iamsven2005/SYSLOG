@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { updateTicket, addComment, deleteTicket, deleteComment } from "@/app/actions/ticket-actions"
+import { updateTicket, addComment, deleteTicket, deleteComment } from "@/app/tickets/ticket-actions"
 import { formatDate } from "@/lib/utils"
 import { FileUpload } from "../file-upload"
 import { AttachmentList } from "../attachment-list"
