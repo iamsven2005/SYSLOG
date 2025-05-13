@@ -65,12 +65,12 @@ import { deleteLogsByTimePeriod, deleteMultipleLogs, getLogs } from "../actions/
 import { getAllDeviceNames } from "../actions/device-actions"
 import { exportToExcel, prepareLogsForExport } from "../export-utils"
 import { getAllRuleGroupsAndRules } from "../actions/rule-actions"
-import type { Rule } from "@prisma/client"
 import { processBatchForCommandMatches } from "../actions/command-monitoring-actions"
 import { CommandMatchAlert } from "@/components/command-match-alert"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addCommandToRule } from "../actions/rule-actions"
+import { Rule } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
@@ -81,21 +81,6 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (..
     timeout = setTimeout(() => func(...args), wait)
   }
 }
-
-// Host options for filtering
-// Remove this static array:
-// const hostOptions = [
-// { label: "All Devices", value: "all" },
-// { label: "VM01", value: "vm01" },
-// { label: "VM02", value: "host" }
-// ]
-
-// Add this state inside the component
-// const [hostOptions, setHostOptions] = useState<{ label: string; value: string }[]>([
-//   { label: "All Devices", value: "all" },
-// ])
-
-// Page size options
 const pageSizeOptions = [10, 25, 50, 100, 1000, 5000]
 
 // Action types for filtering

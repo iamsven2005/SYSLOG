@@ -7,9 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { sendMessage } from "../actions/chat-actions"
 import { toast } from "sonner"
-import { Loader2, Send, Paperclip, X, Upload, Command, BarChart3 } from "lucide-react"
+import { Loader2, Send, Paperclip, X, Upload, Command, BarChart3, Smile } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { PollCreator } from "./poll-creator"
+import { DatePickerDialog } from "./date-picker-dialog"
+import { format } from "date-fns"
+import { CalculatorDialog } from "./calculator-dialog"
+import { EmojiPickerDialog } from "./emoji-picker-dialog"
 
 // Define slash commands
 interface SlashCommand {
@@ -30,6 +34,9 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
   const [commandInput, setCommandInput] = useState("")
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0)
   const [showPollCreator, setShowPollCreator] = useState(false)
+  const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const [calculatorOpen, setCalculatorOpen] = useState(false)
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dropZoneRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -49,6 +56,36 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
         setShowPollCreator(true)
         setShowCommands(false)
         setMessage("")
+      },
+    },
+    {
+      command: "/calendar",
+      description: "Insert a date or schedule an event",
+      icon: <span className="text-teal-500 mr-2">📅</span>,
+      action: () => {
+        setDatePickerOpen(true)
+        setShowCommands(false)
+        return ""
+      },
+    },
+    {
+      command: "/calculator",
+      description: "Open calculator to perform calculations",
+      icon: <span className="text-orange-500 mr-2">🧮</span>,
+      action: () => {
+        setCalculatorOpen(true)
+        setShowCommands(false)
+        return ""
+      },
+    },
+    {
+      command: "/emoji",
+      description: "Insert emojis into your message",
+      icon: <span className="text-yellow-500 mr-2">😊</span>,
+      action: () => {
+        setEmojiPickerOpen(true)
+        setShowCommands(false)
+        return ""
       },
     },
     {
@@ -419,6 +456,40 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
     setShowPollCreator(false)
   }
 
+  const handleDateSelect = (selectedDate: Date | undefined, title?: string) => {
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "EEEE, MMMM d, yyyy")
+      const eventText = title ? `📅 Event: ${title}\nDate: ${formattedDate}` : `📅 Selected date: ${formattedDate}`
+      setMessage(eventText)
+      textareaRef.current?.focus()
+    }
+  }
+
+  const handleCalculatorResult = (result: string) => {
+    setMessage(result)
+    textareaRef.current?.focus()
+  }
+
+  const handleEmojiSelect = (emoji: string) => {
+    // Insert emoji at cursor position or append to end
+    const textarea = textareaRef.current
+    if (textarea) {
+      const start = textarea.selectionStart || 0
+      const end = textarea.selectionEnd || 0
+      const newMessage = message.substring(0, start) + emoji + message.substring(end)
+      setMessage(newMessage)
+
+      // Set cursor position after the inserted emoji
+      setTimeout(() => {
+        textarea.focus()
+        textarea.selectionStart = start + emoji.length
+        textarea.selectionEnd = start + emoji.length
+      }, 0)
+    } else {
+      setMessage(message + emoji)
+    }
+  }
+
   return (
     <div
       ref={dropZoneRef}
@@ -545,6 +616,17 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
           multiple
         />
 
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setEmojiPickerOpen(true)}
+          disabled={sending || uploading || showPollCreator}
+          title="Add emoji"
+          className="dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
+        >
+          <Smile className="h-4 w-4" />
+        </Button>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -567,7 +649,7 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
                   key={cmd.command}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center"
                   onClick={() => {
-                    if (cmd.command === "/poll") {
+                    if (cmd.command === "/poll" || cmd.command === "/emoji") {
                       executeCommand(cmd)
                     } else {
                       setMessage(cmd.command + " ")
@@ -606,6 +688,9 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
           {sending || uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
       </div>
+      <DatePickerDialog open={datePickerOpen} onOpenChange={setDatePickerOpen} onSelect={handleDateSelect} />
+      <CalculatorDialog open={calculatorOpen} onOpenChange={setCalculatorOpen} onInsert={handleCalculatorResult} />
+      <EmojiPickerDialog open={emojiPickerOpen} onOpenChange={setEmojiPickerOpen} onEmojiSelect={handleEmojiSelect} />
     </div>
   )
 }

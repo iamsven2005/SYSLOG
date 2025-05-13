@@ -68,8 +68,11 @@ export default function UsersRolesTable() {
   const fetchRoles = async () => {
     try {
       const result = await getRoles()
+      if(result){
       setRoles(result.roles)
       setUsers(result.users)
+      }
+
 
     } catch (error) {
       toast.error("Failed to fetch roles")
