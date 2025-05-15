@@ -17,9 +17,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Clock, User, Info, RefreshCw, Filter, Calendar } from "lucide-react"
 import { format } from "date-fns"
 import { getCurrentUserActivityLogs, getAllActivityTypes, getAllTargetTypes } from "@/lib/activity-logger"
+interface LogEntry {
+  id: number
+  timestamp: Date
+  user: {
+    username: string | null
+  }
+  actionType: string
+  targetType: string
+  targetId?: number | null
+  details?: string | null
+}
 
 export default function ActivityLogsTable() {
-  const [logs, setLogs] = useState<any[]>([])
+const [logs, setLogs] = useState<LogEntry[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [pageCount, setPageCount] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
@@ -43,40 +54,39 @@ export default function ActivityLogsTable() {
 
     fetchActivityTypes()
   }, [])
-
-  useEffect(() => {
-    fetchLogs()
-  }, [actionType, targetType, page, dateRange])
-
   const fetchLogs = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const result = await getCurrentUserActivityLogs({
         actionType: actionType !== "all" ? actionType : undefined,
         targetType: targetType !== "all" ? targetType : undefined,
         page,
         pageSize,
-      });
-  
+      })
       if (result) {
-        setLogs(result.logs);
-        setTotalCount(result.totalCount);
-        setPageCount(result.pageCount);
+        setLogs(result.logs)
+        setTotalCount(result.totalCount)
+        setPageCount(result.pageCount)
       } else {
-        // Handle null case
-        setLogs([]);
-        setTotalCount(0);
-        setPageCount(1);
+        setLogs([])
+        setTotalCount(0)
+        setPageCount(1)
       }
     } catch (error) {
-      console.error("Error fetching activity logs:", error);
-      setLogs([]);
-      setTotalCount(0);
-      setPageCount(1);
+      console.error("Error fetching activity logs:", error)
+      setLogs([])
+      setTotalCount(0)
+      setPageCount(1)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
+useEffect(() => {
+
+
+  fetchLogs()
+}, [actionType, targetType, page, dateRange])
+
   
   const handlePageChange = (newPage: number) => {
     setPage(newPage)

@@ -13,13 +13,15 @@ import { Trash2, Edit, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { getRoles, addRole, updateRole, deleteRole } from "@/app/roles/role-actions"
 import { Textarea } from "@/components/ui/textarea"
+import { Roles, User } from "@/prisma/generated/main"
 
 
 export default function UsersRolesTable() {
-  const [roles, setRoles] = useState<any[]>([])
-  const [users, setUsers] = useState<any[]>([])
+  const [roles, setRoles] = useState<Roles[]>([])
+  const [users, setUsers] = useState<User[]>([])
+  const [selectedRole, setSelectedRole] = useState<Roles | null>(null)
+
   const [roleForm, setRoleForm] = useState({ name: "", description: "" })
-  const [selectedRole, setSelectedRole] = useState<any | null>(null)
   const [roleModalOpen, setRoleModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -32,17 +34,17 @@ export default function UsersRolesTable() {
       .split("\n")
       .map(line => line.trim().replace(/^\d+\.\s*/, "")) // removes leading numbers like "1. " and trims
       .filter(Boolean)
-  
+
     if (lines.length === 0) {
       toast.error("No roles to import")
       return
     }
-  
+
     setIsBulkImporting(true)
-  
+
     const created: string[] = []
     const failed: string[] = []
-  
+
     for (const name of lines) {
       try {
         // Avoid duplicates (case-insensitive)
@@ -52,29 +54,31 @@ export default function UsersRolesTable() {
           created.push(name)
         }
       } catch (err) {
+        console.log(err)
         failed.push(name)
       }
     }
-  
+
     setIsBulkImporting(false)
     setBulkRoleInput("")
     fetchRoles()
-  
+
     if (created.length) toast.success(`Added ${created.length} new roles`)
     if (failed.length) toast.error(`Failed to import ${failed.length} roles`)
   }
-  
+
   // Fetch roles
   const fetchRoles = async () => {
     try {
       const result = await getRoles()
-      if(result){
-      setRoles(result.roles)
-      setUsers(result.users)
+      if (result) {
+        setRoles(result.roles)
+        setUsers(result.users)
       }
 
 
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch roles")
     }
   }
@@ -92,7 +96,7 @@ export default function UsersRolesTable() {
   }, [])
 
   // Open role modal
-  const openRoleModal = (role: any | null = null) => {
+  const openRoleModal = (role: Roles | null = null) => {
     if (role) {
       setSelectedRole(role)
       setRoleForm({ name: role.name, description: role.description })
@@ -135,15 +139,12 @@ export default function UsersRolesTable() {
       toast.success("Role deleted successfully")
       fetchRoles()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete role")
     }
   }
-  const roleMap = roles.reduce((acc, role) => {
-    acc[role.name] = role
-    return acc
-  }, {} as Record<string, { id: number; name: string; description: string }>)
-  
-  const roleToUsersMap: Record<string, any[]> = {}
+
+  const roleToUsersMap: Record<string, User[]> = {}
 
   users.forEach((user) => {
     user.role.forEach((roleName: string) => {
@@ -153,16 +154,7 @@ export default function UsersRolesTable() {
       roleToUsersMap[roleName].push(user)
     })
   })
-  const filteredRoleKeys = Object.keys(roleToUsersMap).filter((roleName) => {
-  const role = roleMap[roleName]
-  const search = searchTerm.toLowerCase()
 
-  return (
-    roleName.toLowerCase().includes(search) ||
-    role?.description?.toLowerCase().includes(search) ||
-    role?.id?.toString().includes(search)
-  )
-})
 
   return (
     <div className="space-y-4">
@@ -173,23 +165,23 @@ export default function UsersRolesTable() {
         </Button>
       </div>
       <div className="space-y-2 mb-6">
-        
-  <Label htmlFor="bulk-role-input">Mass Import Roles</Label>
-  <Textarea
-    id="bulk-role-input"
-    placeholder="Enter roles, one per line..."
-    rows={8}
-    value={bulkRoleInput}
-    onChange={(e) => setBulkRoleInput(e.target.value)}
-  />
-  <Button onClick={handleBulkImport} disabled={isBulkImporting}>
-    {isBulkImporting ? "Importing..." : "Import Roles"}
-  </Button>
-</div>
+
+        <Label htmlFor="bulk-role-input">Mass Import Roles</Label>
+        <Textarea
+          id="bulk-role-input"
+          placeholder="Enter roles, one per line..."
+          rows={8}
+          value={bulkRoleInput}
+          onChange={(e) => setBulkRoleInput(e.target.value)}
+        />
+        <Button onClick={handleBulkImport} disabled={isBulkImporting}>
+          {isBulkImporting ? "Importing..." : "Import Roles"}
+        </Button>
+      </div>
 
       <span className="text-sm text-muted-foreground">
-            Showing {filteredRoles.length}
-          </span>
+        Showing {filteredRoles.length}
+      </span>
 
       <div className="mb-4">
         <Input
@@ -201,98 +193,98 @@ export default function UsersRolesTable() {
         />
       </div>
       <div className="rounded-md border">
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead>Name</TableHead>
-        <TableHead>Description</TableHead>
-        <TableHead>Users</TableHead>
-        <TableHead className="w-[100px]">Actions</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-  {filteredRoles.length === 0 ? (
-    <TableRow>
-      <TableCell colSpan={4} className="h-24 text-center">
-        {searchTerm ? "No matching roles found." : "No roles found."}
-      </TableCell>
-    </TableRow>
-  ) : (
-    filteredRoles.map((role) => {
-      const usersInRole = users.filter((user) =>
-        user.role.includes(role.name)
-      )
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Users</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredRoles.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center">
+                  {searchTerm ? "No matching roles found." : "No roles found."}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRoles.map((role) => {
+                const usersInRole = users.filter((user) =>
+                  user.role.includes(role.name)
+                )
 
-      return (
-        <TableRow key={role.id}>
-          <TableCell>{role.name}</TableCell>
-          <TableCell>{role.description || "—"}</TableCell>
-          <TableCell>
-  {/* Search input for this role */}
-  <Input
-    placeholder="Search users..."
-    value={roleUserSearch[role.id] || ""}
-    onChange={(e) =>
-      setRoleUserSearch((prev) => ({
-        ...prev,
-        [role.id]: e.target.value,
-      }))
-    }
-    className="mb-2"
-  />
+                return (
+                  <TableRow key={role.id}>
+                    <TableCell>{role.name}</TableCell>
+                    <TableCell>{role.description || "—"}</TableCell>
+                    <TableCell>
+                      {/* Search input for this role */}
+                      <Input
+                        placeholder="Search users..."
+                        value={roleUserSearch[role.id] || ""}
+                        onChange={(e) =>
+                          setRoleUserSearch((prev) => ({
+                            ...prev,
+                            [role.id]: e.target.value,
+                          }))
+                        }
+                        className="mb-2"
+                      />
 
-  {/* Filtered users */}
-  {usersInRole.length > 0 ? (
-    <ul className="list-disc list-inside space-y-1 max-h-40 overflow-y-auto pr-1">
-      {usersInRole
-        .filter((user) => {
-          const query = (roleUserSearch[role.id] || "").toLowerCase()
-          return (
-            user.username.toLowerCase().includes(query) ||
-            user.email?.toLowerCase().includes(query)
-          )
-        })
-        .map((user) => (
-          <li key={user.id}>
-            {user.username}{" "}
-            {user.email && (
-              <span className="text-muted-foreground">({user.email})</span>
+                      {/* Filtered users */}
+                      {usersInRole.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1 max-h-40 overflow-y-auto pr-1">
+                          {usersInRole
+                            .filter((user) => {
+                              const query = (roleUserSearch[role.id] || "").toLowerCase()
+                              return (
+                                user.username && user.username.toLowerCase().includes(query) ||
+                                user.email?.toLowerCase().includes(query)
+                              )
+                            })
+                            .map((user) => (
+                              <li key={user.id}>
+                                {user.username}{" "}
+                                {user.email && (
+                                  <span className="text-muted-foreground">({user.email})</span>
+                                )}
+                              </li>
+                            ))}
+                        </ul>
+                      ) : (
+                        <span className="text-muted-foreground">No users</span>
+                      )}
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openRoleModal(role)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteRole(role.id)}
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
             )}
-          </li>
-        ))}
-    </ul>
-  ) : (
-    <span className="text-muted-foreground">No users</span>
-  )}
-</TableCell>
+          </TableBody>
 
-          <TableCell>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => openRoleModal(role)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleDeleteRole(role.id)}
-                className="text-red-500 hover:text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </TableCell>
-        </TableRow>
-      )
-    })
-  )}
-</TableBody>
-
-  </Table>
-</div>
+        </Table>
+      </div>
 
 
 

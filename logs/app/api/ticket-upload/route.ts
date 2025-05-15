@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     // Generate a unique filename
     const timestamp = Date.now()
     const originalFilename = file.name
-    const fileExtension = originalFilename.split(".").pop() || ""
     const sanitizedFilename = originalFilename.replace(/[^a-zA-Z0-9.-]/g, "_").toLowerCase()
     const uniqueFilename = `${timestamp}-${sanitizedFilename}`
 

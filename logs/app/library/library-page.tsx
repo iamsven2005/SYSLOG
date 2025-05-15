@@ -6,8 +6,19 @@ import { LibrarySearchFilters } from "./library-search-filters"
 import { LibraryTable } from "./library-table"
 import { Button } from "@/components/ui/button"
 import { RefreshCw, Plus } from "lucide-react"
-import type { LibraryEntry } from "@prisma/client"
 import { AddLibraryEntryDialog } from "./add-library-entry-dialog"
+import { LibraryEntry } from "@/prisma/generated/main"
+interface LibraryFilters {
+  search?: string
+  category?: string
+  pubYearFrom?: number
+  pubYearTo?: number
+  creationDateFrom?: Date
+  creationDateTo?: Date
+  sortBy?: string
+  sortOrder?: string
+  hasAttachment?: boolean
+}
 
 interface LibraryPageProps {
   entries: LibraryEntry[]
@@ -30,7 +41,7 @@ export function LibraryPage({ entries, total, totalPages, currentPage, pageSize,
     setIsSearching(false)
   }, [entries])
 
-  const handleSearch = (filters: any) => {
+const handleSearch = (filters: LibraryFilters) => {
     setIsSearching(true)
     const params = new URLSearchParams(searchParams.toString())
 

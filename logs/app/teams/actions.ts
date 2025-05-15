@@ -11,24 +11,12 @@ export async function getTeams() {
       include: {
         leaders: {
           include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
+            user: true,
           },
         },
         members: {
           include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
+            user: true,
           },
         },
         locations: {
@@ -43,11 +31,6 @@ export async function getTeams() {
     })
 
     const users = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-      },
       orderBy: {
         username: "asc",
       },

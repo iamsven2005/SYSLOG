@@ -1,20 +1,7 @@
 "use server"
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import ExcelJS from "exceljs"
 
-type Role = {
-  id: number
-  name: string
-  description: string
-}
-
-type User = {
-  id: number
-  username: string
-  email?: string
-  role: string[]
-}
 export async function getRoles() {
   try {
     const roles = await db.roles.findMany({orderBy: {name: "asc"}});

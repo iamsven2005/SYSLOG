@@ -262,7 +262,7 @@ export default function ProjectTypesPage() {
           </DialogHeader>
           <div className="py-4">
             <p>
-              Are you sure you want to delete the project type "{currentProjectType?.name}"?
+              Are you sure you want to delete the project type &quot;{currentProjectType?.name}&quot;?
               {currentProjectType?._count?.projects ? (
                 <span className="text-red-500 font-semibold block mt-2">
                   Warning: This project type is assigned to {currentProjectType._count.projects} project(s).

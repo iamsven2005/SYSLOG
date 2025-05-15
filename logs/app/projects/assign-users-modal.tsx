@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-import type { User } from "@prisma/client"
+import type { User } from "@/prisma/generated/main"
 import { assignProjectAssignment, getProjectAssignments, removeProjectAssignment } from "./actions"
 import { db } from "@/lib/db"
 

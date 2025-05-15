@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import { diskmetric } from "@/prisma/generated/main"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
@@ -8,9 +9,16 @@ export async function POST(req: NextRequest) {
     if (!body.disks || !Array.isArray(body.disks)) {
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
     }
-
+    type diskmetrics ={
+      host: string,
+      name: string,
+      label: string,
+      totalGB: string,
+      usedGB: string,
+      freeGB: string
+    }
     const created = await db.$transaction(
-      body.disks.map((disk: any) =>
+      body.disks.map((disk: diskmetrics) =>
         db.diskmetric.create({
           data: {
             host: disk.host,

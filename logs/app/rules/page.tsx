@@ -58,12 +58,35 @@ import {
   importRuleGroups,
 } from "@/app/rules/rule-actions"
 import { EmailTemplateSelector } from "@/app/rules/email-template-selector"
+interface Command {
+  id: number
+  command: string
+  emailTemplate?: { name: string }
+}
+
+interface Rule {
+  id: number
+  name: string
+  description?: string
+  groupId: number
+  emailTemplateId?: number | null;
+  commands: Command[]
+}
+
+interface RuleGroup {
+  id: number
+  name: string
+  emailTemplateId?: number | null;
+  createdAt: string | Date
+  updatedAt: string | Date
+  rules: Rule[]
+}
 
 // Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+function debounce<T extends (...args: [string]) => void>(func: T, wait: number): (...args: [string]) => void {
   let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Parameters<T>) => {
+  return (...args: [string]) => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)
   }
@@ -72,12 +95,10 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (..
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
 
-// Function to prepare rule groups for export - moved to client side
-function prepareRuleGroupsForExport(ruleGroups: any[]) {
-  const exportData: any[] = []
+function prepareRuleGroupsForExport(ruleGroups: RuleGroup[]): Record<string, string | number>[] {
+  const exportData: Record<string, string | number>[] = []
 
   ruleGroups.forEach((group) => {
-    // Add the group as a row
     exportData.push({
       Type: "Group",
       ID: group.id,
@@ -88,8 +109,7 @@ function prepareRuleGroupsForExport(ruleGroups: any[]) {
       GroupName: "",
     })
 
-    // Add each rule as a row
-    group.rules.forEach((rule: any) => {
+    group.rules.forEach((rule) => {
       exportData.push({
         Type: "Rule",
         ID: rule.id,
@@ -100,8 +120,7 @@ function prepareRuleGroupsForExport(ruleGroups: any[]) {
         GroupName: group.name,
       })
 
-      // Add each command as a row
-      rule.commands.forEach((cmd: any) => {
+      rule.commands.forEach((cmd) => {
         exportData.push({
           Type: "Command",
           ID: cmd.id,
@@ -120,12 +139,13 @@ function prepareRuleGroupsForExport(ruleGroups: any[]) {
   return exportData
 }
 
+
 export default function RulesTable() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedGroups, setSelectedGroups] = useState<number[]>([])
-  const [ruleGroups, setRuleGroups] = useState<any[]>([])
+  const [ruleGroups, setRuleGroups] = useState<RuleGroup[]>([])
   const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -137,10 +157,10 @@ export default function RulesTable() {
   const [editRuleModalOpen, setEditRuleModalOpen] = useState(false)
   const [deleteRuleModalOpen, setDeleteRuleModalOpen] = useState(false)
   const [importModalOpen, setImportModalOpen] = useState(false)
-  const [currentGroup, setCurrentGroup] = useState<any | null>(null)
-  const [currentRule, setCurrentRule] = useState<any | null>(null)
+  const [currentGroup, setCurrentGroup] = useState<RuleGroup | null>(null)
+  const [currentRule, setCurrentRule] = useState<Rule | null>(null)
   const [importFile, setImportFile] = useState<File | null>(null)
-  const [importPreview, setImportPreview] = useState<any[]>([])
+  const [importPreview, setImportPreview] = useState<Record<string, string | number | undefined>[]>([])
   const [isImporting, setIsImporting] = useState(false)
 
   // Form states
@@ -182,10 +202,23 @@ export default function RulesTable() {
         pageSize: pageSize,
       })
 
-      setRuleGroups(result.ruleGroups)
+      setRuleGroups(
+        result.ruleGroups.map((group) => ({
+          ...group,
+          rules: group.rules
+            .filter((rule) => rule.groupId !== null) // Optional: filter invalid
+            .map((rule) => ({
+              ...rule,
+              groupId: rule.groupId ?? 0, // Replace null with 0 or a safe default
+              description: rule.description ?? undefined,
+            })),
+        }))
+      )
+
       setTotalPages(result.pageCount)
       setTotalItems(result.totalCount)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch rule groups")
     } finally {
       setIsLoading(false)
@@ -241,14 +274,14 @@ export default function RulesTable() {
   }
 
   // Open edit group modal
-  const openEditGroupModal = (group: any) => {
+  const openEditGroupModal = (group: RuleGroup) => {
     setCurrentGroup(group)
     setGroupForm({ name: group.name })
     setEditGroupModalOpen(true)
   }
 
   // Open delete group modal
-  const openDeleteGroupModal = (group: any) => {
+  const openDeleteGroupModal = (group: RuleGroup) => {
     setCurrentGroup(group)
     setDeleteGroupModalOpen(true)
   }
@@ -265,19 +298,19 @@ export default function RulesTable() {
   }
 
   // Open edit rule modal
-  const openEditRuleModal = (rule: any) => {
+  const openEditRuleModal = (rule: Rule) => {
     setCurrentRule(rule)
     setRuleForm({
       name: rule.name,
       description: rule.description || "",
       groupId: rule.groupId,
-      commands: rule.commands.map((cmd: any) => cmd.command),
+      commands: rule.commands.map((cmd: Command) => cmd.command),
     })
     setEditRuleModalOpen(true)
   }
 
   // Open delete rule modal
-  const openDeleteRuleModal = (rule: any) => {
+  const openDeleteRuleModal = (rule: Rule) => {
     setCurrentRule(rule)
     setDeleteRuleModalOpen(true)
   }
@@ -340,6 +373,8 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to add rule group")
     }
   }
@@ -361,6 +396,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update rule group")
     }
   }
@@ -376,6 +412,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete rule group")
     }
   }
@@ -404,6 +441,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to add rule")
     }
   }
@@ -433,6 +471,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update rule")
     }
   }
@@ -448,6 +487,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete rule")
     }
   }
@@ -463,6 +503,7 @@ export default function RulesTable() {
       fetchRuleGroups()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete rule groups")
     }
   }
@@ -565,10 +606,9 @@ export default function RulesTable() {
         const workbook = XLSX.read(binaryStr, { type: "binary" })
         const sheetName = workbook.SheetNames[0]
         const worksheet = workbook.Sheets[sheetName]
-        const data = XLSX.utils.sheet_to_json(worksheet)
-
-        // Preview the first 5 rows
+        const data = XLSX.utils.sheet_to_json<Record<string, string | number | undefined>>(worksheet)
         setImportPreview(data.slice(0, 5))
+
       } catch (error) {
         console.error("Error reading Excel file:", error)
         toast.error("Failed to read Excel file")
@@ -703,7 +743,7 @@ export default function RulesTable() {
           toast.error("Rule not found");
           return;
         }
-  
+
         // Update rule with existing values
         await updateRule({
           id,
@@ -718,7 +758,7 @@ export default function RulesTable() {
           toast.error("Group not found");
           return;
         }
-  
+
         // Update group with existing values
         await updateRuleGroup({
           id,
@@ -726,15 +766,16 @@ export default function RulesTable() {
           emailTemplateId: templateId, // Assign selected email template
         });
       }
-  
+
       toast.success(`${type === "rule" ? "Rule" : "Group"} email template updated successfully`);
       fetchRuleGroups(); // Refresh data
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update email template");
     }
   };
-  
-  
+
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
@@ -836,15 +877,16 @@ export default function RulesTable() {
                       <Badge variant="secondary">{group.rules.length} rules</Badge>
                     </TableCell>
                     <TableCell>
-  <EmailTemplateSelector
-    selectedTemplateId={group.emailTemplateId}
-    onChange={(templateId) => handleTemplateChange(group.id, templateId, "group")}
-    placeholder="Assign email template..."
-  />
-</TableCell>
+                      <EmailTemplateSelector
+                        selectedTemplateId={group.emailTemplateId ?? null}
+                        onChange={(templateId) => handleTemplateChange(group.id, templateId, "group")}
+                        placeholder="Assign email template..."
+                      />
 
-                    <TableCell>{formatDate(group.updatedAt)}</TableCell>
-                    <TableCell>{formatDate(group.createdAt)}</TableCell>
+                    </TableCell>
+
+                    <TableCell>{formatDate(new Date(group.updatedAt))}</TableCell>
+                    <TableCell>{formatDate(new Date(group.createdAt))}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => openAddRuleModal(group.id)} title="Add Rule">
@@ -888,7 +930,7 @@ export default function RulesTable() {
                               </TableHeader>
 
                               <TableBody>
-                                {group.rules.map((rule: any) => (
+                                {group.rules.map((rule: Rule) => (
                                   <TableRow key={rule.id}>
                                     <TableCell>{rule.id}</TableCell>
                                     <TableCell>
@@ -901,12 +943,12 @@ export default function RulesTable() {
                                       {rule.description || <span className="text-muted-foreground">—</span>}
                                     </TableCell>
                                     <TableCell>
-                                    <EmailTemplateSelector
-                                      selectedTemplateId={rule.emailTemplateId}
-                                      onChange={(templateId) => handleTemplateChange(rule.id, templateId, "rule")}
-                                      placeholder="Assign email template..."
-                                    />
-                                  </TableCell>
+                                      <EmailTemplateSelector
+                                        selectedTemplateId={rule.emailTemplateId}
+                                        onChange={(templateId) => handleTemplateChange(rule.id, templateId, "rule")}
+                                        placeholder="Assign email template..."
+                                      />
+                                    </TableCell>
 
                                     <TableCell>
                                       <Accordion type="single" collapsible className="w-full">
@@ -916,7 +958,7 @@ export default function RulesTable() {
                                           </AccordionTrigger>
                                           <AccordionContent>
                                             <div className="space-y-2 mt-2">
-                                              {rule.commands.map((cmd: any) => (
+                                              {rule.commands.map((cmd: Command) => (
                                                 <div key={cmd.id} className="flex items-center gap-2 text-sm">
                                                   <Terminal className="h-3.5 w-3.5 text-muted-foreground" />
                                                   <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
@@ -1076,7 +1118,7 @@ export default function RulesTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the rule group "{currentGroup?.name}"? This will also delete all rules and
+              Are you sure you want to delete the rule group &quot;{currentGroup?.name}&quot;? This will also delete all rules and
               commands in this group. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -1245,7 +1287,7 @@ export default function RulesTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the rule "{currentRule?.name}"? This will also delete all commands in this
+              Are you sure you want to delete the rule &quot;{currentRule?.name}&quot;? This will also delete all commands in this
               rule. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>

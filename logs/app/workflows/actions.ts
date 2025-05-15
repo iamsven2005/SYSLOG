@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import type { AuditStep } from "./types"
 import { db } from "@/lib/db"
-import { StepStatus } from "@/prisma/generated/main"
+import { Prisma, StepStatus } from "@/prisma/generated/main"
 
 // Workflow actions
 export async function getWorkflows(searchQuery?: string) {
@@ -183,7 +183,7 @@ export async function getStepsByWorkflowId(workflowId: string, searchQuery?: str
       return { success: false, error: "Workflow not found" }
     }
 
-    let whereClause: any = {
+    let whereClause: Prisma.AuditStepWhereInput = {
       workflowId: parsedWorkflowId,
     }
 
@@ -322,7 +322,7 @@ export async function updateStep(workflowId: string, stepId: string, data: Parti
     }
 
     // Prepare data for update
-    const updateData: any = {}
+    const updateData: Prisma.AuditStepUpdateInput = {}
 
     if (data.title !== undefined) updateData.title = data.title
     if (data.description !== undefined) updateData.description = data.description
@@ -332,11 +332,11 @@ export async function updateStep(workflowId: string, stepId: string, data: Parti
     // Handle assignedToId
     if (data.assignedToId !== undefined) {
       if (data.assignedToId === null) {
-        updateData.assignedToId = null
+        updateData.assignedTo = { disconnect: true }
       } else {
         const parsedAssignedToId = Number.parseInt(data.assignedToId.toString())
         if (!isNaN(parsedAssignedToId)) {
-          updateData.assignedToId = parsedAssignedToId
+          updateData.assignedTo = { connect: { id: parsedAssignedToId } }
         }
       }
     }
@@ -558,14 +558,7 @@ export async function createLog(
 // User actions
 export async function getUsers() {
   try {
-    const users = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        role: true,
-      },
-    })
+    const users = await db.user.findMany()
 
     return { success: true, data: users }
   } catch (error) {
@@ -575,8 +568,6 @@ export async function getUsers() {
 }
 
 export async function getCurrentUser() {
-  // In a real app, this would get the current authenticated user
-  // For now, we'll return a mock user
   try {
     const user = await db.user.findFirst({
       select: {

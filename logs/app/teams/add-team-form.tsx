@@ -87,6 +87,7 @@ export function AddTeamForm({ users, locations }: AddTeamFormProps) {
         toast.error("Failed to create team")
       }
     } catch (error) {
+      console.log(error)
       toast.error("An unexpected error occurred")
     } finally {
       setIsSubmitting(false)

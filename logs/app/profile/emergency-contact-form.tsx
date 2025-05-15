@@ -6,8 +6,39 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
-export default function EmergencyContactForm({ user, onSubmit, isSubmitting }: any) {
-  const [formData, setFormData] = useState({
+interface EmergencyContactData {
+  Mobile: number | string
+  PrimaryContact: string
+  MobileContact: number | string
+  Relationship: string
+  SecondContact: string
+  SecondMobile: number | string
+  SecondRelationship: string
+  Remarks: string
+}
+
+interface EmergencyContactFormProps {
+  user: {
+    username: string
+    updatedAt: string | Date
+    Mobile?: number | string
+    PrimaryContact?: string
+    MobileContact?: number | string
+    Relationship?: string
+    SecondContact?: string
+    SecondMobile?: number | string
+    SecondRelationship?: string
+    Remarks?: string
+  }
+  onSubmit: (data: EmergencyContactData) => void
+  isSubmitting: boolean
+}
+
+export default function EmergencyContactForm({
+  user,
+  onSubmit,
+  isSubmitting,
+}: EmergencyContactFormProps) {  const [formData, setFormData] = useState({
     Mobile: user.Mobile || "",
     PrimaryContact: user.PrimaryContact || "",
     MobileContact: user.MobileContact || "",
@@ -18,7 +49,7 @@ export default function EmergencyContactForm({ user, onSubmit, isSubmitting }: a
     Remarks: user.Remarks || "",
   })
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
@@ -26,7 +57,7 @@ export default function EmergencyContactForm({ user, onSubmit, isSubmitting }: a
     }))
   }
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     onSubmit(formData)
   }

@@ -6,7 +6,6 @@ import { logActivity } from "@/lib/activity-logger"
 
 // Get all locations with optional filtering and pagination
 export async function getLocations({
-  search = "",
   page = 1,
   pageSize = 10,
 }: {
@@ -15,13 +14,6 @@ export async function getLocations({
   pageSize?: number
 } = {}) {
   const skip = (page - 1) * pageSize
-
-  // Build the where clause for search
-  const where = search
-    ? {
-        OR: [{ code: { contains: search, mode: "insensitive" } }, { name: { contains: search, mode: "insensitive" } }],
-      }
-    : {}
 
   // Get locations with pagination
   const locations = await db.location.findMany({
@@ -84,9 +76,8 @@ export async function addLocation({
 
     revalidatePath("/locations")
     return location
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error adding location:", error)
-    throw new Error(error.message)
   }
 }
 
@@ -176,9 +167,8 @@ export async function updateLocation({
 
     revalidatePath("/logs")
     return location
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating location:", error)
-    throw new Error(error.message)
   }
 }
 
@@ -222,9 +212,8 @@ export async function deleteLocation(id: number) {
 
     revalidatePath("/logs")
     return location
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting location:", error)
-    throw new Error(error.message)
   }
 }
 

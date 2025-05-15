@@ -37,8 +37,13 @@ export function UsersListDialog({
     try {
       setLoading(true)
       const fetchedUsers = await getAllUsers()
-      setUsers(fetchedUsers)
+      const sanitizedUsers = fetchedUsers.map(user => ({
+        ...user,
+        username: user.username ?? "Unknown",
+      }))
+      setUsers(sanitizedUsers)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch users")
     } finally {
       setLoading(false)

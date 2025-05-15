@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { TextItem } from "pdfjs-dist/types/src/display/api";
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 import * as mammoth from "mammoth";
 import * as XLSX from "xlsx";
@@ -18,7 +19,7 @@ export default function FileTextExtractor() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, filename }),
     });
-  
+
     const result = await res.json();
     if (result.embedding) {
       setExtractedText(
@@ -28,8 +29,8 @@ export default function FileTextExtractor() {
       setExtractedText(`Filename: ${filename}\n\nText:\n${text}\n\nEmbedding: Failed to generate.`);
     }
   };
-  
-  
+
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -40,22 +41,22 @@ export default function FileTextExtractor() {
       // Send to API route for caption & embedding
       const formData = new FormData();
       formData.append("image", file);
-  
+
       const res = await fetch("/api/image-analyze", {
         method: "POST",
         body: formData,
       });
-  
+
       const result = await res.json();
       if (result.caption && result.embedding) {
         setExtractedText(`Caption: ${result.caption}\n\nEmbedding: [${result.embedding.slice(0, 5).join(", ")} ...]`);
       } else {
         setExtractedText("Error extracting caption or embedding.");
       }
-  
+
       return;
     }
-  
+
     if (fileType === "application/pdf" || fileName.endsWith(".pdf")) {
       const reader = new FileReader();
       reader.onload = async function () {
@@ -66,8 +67,14 @@ export default function FileTextExtractor() {
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const strings = content.items.map((item: any) => item.str);
-          text += strings.join(" ") + "\n";
+          if (Array.isArray(content.items)) {
+            const strings = content.items
+              .filter((item: TextItem): item is TextItem => (item as TextItem).str !== undefined)
+              .map((item: TextItem) => item.str);
+
+            text += strings.join(" ") + "\n";
+          }
+
         }
 
 
@@ -88,7 +95,7 @@ export default function FileTextExtractor() {
       reader.readAsText(file);
     } else if (
       fileType ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
       fileName.endsWith(".docx")
     ) {
       const reader = new FileReader();
@@ -100,7 +107,7 @@ export default function FileTextExtractor() {
       reader.readAsArrayBuffer(file);
     } else if (
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx")
     ) {
       const reader = new FileReader();

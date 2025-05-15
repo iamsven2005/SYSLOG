@@ -7,9 +7,47 @@ import { Badge } from "@/components/ui/badge"
 import { getTicketStats } from "@/app/tickets/ticket-actions"
 import { toast } from "sonner"
 import { AlertCircle, CheckCircle2, Clock, XCircle, BarChart3, Users, Calendar, TrendingUp } from "lucide-react"
+export type TicketStats = {
+  totalTickets: number
+  ticketsThisWeek: number
+  ticketsLastWeek: number
+  percentChange: number
+  avgResolutionTime: number
+  total?: number // Optional: in case it's used somewhere
+  byStatus: {
+    open: number
+    in_progress: number
+    resolved: number
+    closed: number
+  }
+  byPriority: {
+    low: number
+    medium: number
+    high: number
+    critical: number
+  }
+  topAssignees: {
+    id: number
+    username: string | null
+    ticketCount: number
+    resolvedCount: number
+  }[]
+  recentTickets: {
+    id: number
+    title: string
+    status: string
+    priority: string
+    createdAt: Date // ✅ match actual type
+    createdBy?: {
+      id: number
+      username: string | null
+    }
+  }[]
+}
+
 
 export function TicketStats() {
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<TicketStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -144,11 +182,11 @@ export function TicketStats() {
         <CardHeader className="pb-2">
           <CardTitle>Ticket Breakdown</CardTitle>
           <CardDescription>Current status of support tickets</CardDescription>
-                <div>5 emergency - problem is causing serious disruption to operation, must solve immediately</div>
-                <div>4 urgent - urgent but can still accept taking more than half a day to solve the problem</div>
-                <div>3 high</div>
-                <div>2 medium</div>
-                <div>1 low</div>
+          <div>5 emergency - problem is causing serious disruption to operation, must solve immediately</div>
+          <div>4 urgent - urgent but can still accept taking more than half a day to solve the problem</div>
+          <div>3 high</div>
+          <div>2 medium</div>
+          <div>1 low</div>
         </CardHeader>
         <CardContent >
           <Tabs defaultValue="status" >
@@ -246,7 +284,7 @@ export function TicketStats() {
               <div className="space-y-4">
                 {topAssignees.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {topAssignees.map((assignee: any) => (
+                    {topAssignees.map((assignee: TicketStats["topAssignees"][number]) => (
                       <div key={assignee.id} className="flex items-center gap-3 p-3 border rounded-md">
                         <div className="p-2 bg-primary/10 rounded-full">
                           <Users className="h-5 w-5 text-primary" />
@@ -280,7 +318,7 @@ export function TicketStats() {
             </div>
             <div className="space-y-2">
               {recentTickets && recentTickets.length > 0 ? (
-                recentTickets.map((ticket: any) => (
+                recentTickets.map((ticket: TicketStats["recentTickets"][number]) => (
                   <div key={ticket.id} className="flex items-center justify-between p-2 bg-muted/20 rounded-md">
                     <div>
                       <a href={`/tickets/${ticket.id}`} className="font-medium hover:underline">

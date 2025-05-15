@@ -2,8 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import CompanyForm from "@/app/crm/components/company-form"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { HardHat, ArrowLeft } from "lucide-react"
-import type { CompanyType } from "@prisma/client"
+import { ArrowLeft } from "lucide-react"
+import { CompanyType } from "@/prisma/generated/main"
 
 export default function NewCompanyPage({ searchParams }: { searchParams?: { type?: string } }) {
   // Convert the type query parameter to a CompanyType if it exists
@@ -28,7 +28,7 @@ export default function NewCompanyPage({ searchParams }: { searchParams?: { type
             <CardDescription>Add a new company to your CRM</CardDescription>
           </CardHeader>
           <CardContent>
-            <CompanyForm defaultType={defaultType} />
+            <CompanyForm />
           </CardContent>
         </Card>
       </main>

@@ -9,6 +9,14 @@ interface EditTeamPageProps {
   }
 }
 
+interface TeamUser {
+  user: { id: number }
+}
+
+interface TeamLocation {
+  location: { id: number }
+}
+
 export default async function EditTeamPage({ params }: EditTeamPageProps) {
   const teamId = Number.parseInt(params.id)
 
@@ -16,26 +24,21 @@ export default async function EditTeamPage({ params }: EditTeamPageProps) {
     notFound()
   }
 
-  try {
-    const { team } = await getTeamById(teamId)
-    const users = await db.user.findMany()
-    const locations = await db.location.findMany()
+  const { team } = await getTeamById(teamId)
+  const users = await db.user.findMany()
+  const locations = await db.location.findMany()
 
-    // Format the data for the form
-    const formattedTeam = {
-      ...team,
-      leaders: team.leaders.map((leader: any) => leader.user.id.toString()),
-      members: team.members.map((member: any) => member.user.id.toString()),
-      locations: team.locations.map((location: any) => location.location.id.toString()),
-    }
-
-    return (
-      <div className="container py-10">
-        <h1 className="text-2xl font-bold mb-6">Edit Team</h1>
-        <EditTeamForm team={formattedTeam} users={users} locations={locations} />
-      </div>
-    )
-  } catch (error) {
-    notFound()
+  const formattedTeam = {
+    ...team,
+    leaders: (team.leaders as TeamUser[]).map((leader) => leader.user.id.toString()),
+    members: (team.members as TeamUser[]).map((member) => member.user.id.toString()),
+    locations: (team.locations as TeamLocation[]).map((loc) => loc.location.id.toString()),
   }
+
+  return (
+    <div className="container py-10">
+      <h1 className="text-2xl font-bold mb-6">Edit Team</h1>
+      <EditTeamForm team={formattedTeam} users={users} locations={locations} />
+    </div>
+  )
 }

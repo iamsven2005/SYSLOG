@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { system_metrics } from "@/prisma/generated/main"
+import { diskmetric, Prisma, system_metrics } from "@/prisma/generated/main"
 
 // Log middleware for performance monitoring
 db.$use(async (params, next) => {
@@ -39,7 +39,7 @@ export async function getLogs({
 }: GetLogsParams) {
   try {
     // Build where conditions
-    const where: any = {}
+const where: Prisma.logsWhereInput = {}
 
     // Add search condition if provided
     if (search) {
@@ -679,7 +679,7 @@ export async function getDiskUsageData(timeRange: string) {
     const timeSeriesMap = new Map()
     const interval = getIntervalFromTimeRange(timeRange)
 
-    diskData.forEach((data: { host: any; name: any; timestamp: string | number | Date; label: any; totalgb: number; usedgb: number; freegb: any }) => {
+    diskData.forEach((data: diskmetric) => {
       if (!data.host || !data.name) return // Skip entries without host or disk name
 
       // Round timestamp to the nearest interval

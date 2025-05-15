@@ -27,6 +27,7 @@ import { updateTicket, addComment, deleteTicket, deleteComment } from "@/app/tic
 import { formatDate } from "@/lib/utils"
 import { FileUpload } from "../file-upload"
 import { AttachmentList } from "../attachment-list"
+import { devices, SupportTicket, TicketAttachment, TicketComment, User } from "@/prisma/generated/main"
 
 // Status and priority options
 const statusOptions = [
@@ -58,11 +59,17 @@ const priorityColors: Record<string, string> = {
   high: "bg-yellow-500 hover:bg-yellow-600",
   critical: "bg-red-500 hover:bg-red-600",
 }
+interface ExtendedTicket extends SupportTicket {
+  relatedDevice?: devices | null
+  comments: TicketComment[]
+  attachments: TicketAttachment[]
+  createdBy: User
+}
 
 interface TicketDetailProps {
-  ticket: any
-  currentUser: any
-  assignableUsers: any[]
+  ticket: ExtendedTicket
+  currentUser: User
+  assignableUsers: User[]
 }
 
 export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDetailProps) {
@@ -71,7 +78,7 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
   const router = useRouter()
   const [status, setStatus] = useState(ticket.status)
   const [priority, setPriority] = useState(ticket.priority)
-  const [assignedTo, setAssignedTo] = useState(ticket.assignedTo?.id?.toString() || "unassigned")
+  const [assignedTo, setAssignedTo] = useState(ticket.assignedToId?.toString() || "unassigned")
   const [comment, setComment] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -82,7 +89,7 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
   const commentIdRef = useRef<number | null>(null)
 
   const isAdmin = currentUser?.role?.includes("admin")
-  const isCreator = currentUser?.id === ticket.createdBy.id
+  const isCreator = currentUser?.id === ticket.createdById
   const canEdit = isAdmin || isCreator
 
   useEffect(() => {
@@ -148,7 +155,7 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
     } catch (error) {
       console.error("Error updating assignee:", error)
       toast.error("Failed to update ticket assignee")
-      setAssignedTo(ticket.assignedTo?.id?.toString() || "unassigned") // Revert on error
+      setAssignedTo(ticket.assignedToId?.toString() || "unassigned") // Revert on error
     } finally {
       setIsUpdating(false)
     }

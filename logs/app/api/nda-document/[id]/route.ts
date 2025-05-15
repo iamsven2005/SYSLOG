@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
@@ -42,6 +42,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     try {
       await fs.access(filePath)
     } catch (error) {
+            console.log(error)
+
       return new NextResponse("File not found", { status: 404 })
     }
 

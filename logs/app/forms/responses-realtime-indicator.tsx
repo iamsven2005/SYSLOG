@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useSSE } from "./use-sse"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 interface ResponsesRealTimeIndicatorProps {
   formId: number
@@ -19,10 +19,7 @@ export function ResponsesRealTimeIndicator({ formId }: ResponsesRealTimeIndicato
     onMessage: (data) => {
       if (data.type === "new-response") {
         setNewResponses((prev) => prev + 1)
-        toast({
-          title: "New response received",
-          description: "Someone has submitted a new response to this form.",
-        })
+        toast.success("Someone has submitted a new response to this form.")
       }
     },
   })

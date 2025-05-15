@@ -188,35 +188,35 @@ export default function LogsTable() {
         page: currentPage,
         pageSize: pageSize,
       })
-      if(result){
+      if (result) {
         setLogs(result.logs)
         setTotalPages(result.pageCount)
         setTotalItems(result.totalCount)
         setMatchedCommands(result.matchedCommands || [])
-              // Check for command matches
-      const matches = await processBatchForCommandMatches(result.logs, "system")
-      setCommandMatches(matches)
-      if (matches.length > 0) {
-        matches.forEach((match: any) => {
-          toast.info(
-            <div>
-              <p className="font-medium">Command Match Detected</p>
-              <p className="text-sm">Rule: {match.ruleName}</p>
-              <p className="text-sm">
-                Command: <code className="bg-muted px-1 rounded">{match.command}</code>
-              </p>
-              {match.emailTemplateId && (
-                <p className="text-xs mt-1 text-muted-foreground">
-                  Email notification sent via template: {match.emailTemplateName}
+        // Check for command matches
+        const matches = await processBatchForCommandMatches(result.logs, "system")
+        setCommandMatches(matches)
+        if (matches.length > 0) {
+          matches.forEach((match: any) => {
+            toast.info(
+              <div>
+                <p className="font-medium">Command Match Detected</p>
+                <p className="text-sm">Rule: {match.ruleName}</p>
+                <p className="text-sm">
+                  Command: <code className="bg-muted px-1 rounded">{match.command}</code>
                 </p>
-              )}
-            </div>,
-            {
-              duration: 5000,
-            },
-          )
-        })
-      }
+                {match.emailTemplateId && (
+                  <p className="text-xs mt-1 text-muted-foreground">
+                    Email notification sent via template: {match.emailTemplateName}
+                  </p>
+                )}
+              </div>,
+              {
+                duration: 5000,
+              },
+            )
+          })
+        }
       }
 
 
@@ -225,6 +225,7 @@ export default function LogsTable() {
       // Show toast notifications for matches
 
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch logs")
     } finally {
       setIsLoading(false)
@@ -329,6 +330,7 @@ export default function LogsTable() {
       fetchLogs()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete logs")
     }
   }
@@ -480,6 +482,7 @@ export default function LogsTable() {
       fetchLogs()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete logs by time period")
     } finally {
       setIsTimeDeleteLoading(false)
@@ -574,6 +577,7 @@ export default function LogsTable() {
       const ruleGroupsData = await getAllRuleGroupsAndRules()
       setRuleGroups(ruleGroupsData)
     } catch (error) {
+      console.log(error)
       toast.error(`Failed to add command: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsAddingCommand(false)

@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge"
 
 interface User {
   id: number
-  username: string
+  username: string | null
   email?: string | null
   role?: string[]
 }
@@ -61,7 +61,8 @@ export function CreateGroupDialog({
       setFilteredUsers(
         users.filter(
           (user) =>
-            user.username.toLowerCase().includes(query) || (user.email && user.email.toLowerCase().includes(query)),
+            (user.username ?? "").toLowerCase().includes(query) ||
+            (user.email ?? "").toLowerCase().includes(query)
         ),
       )
     }
@@ -79,6 +80,8 @@ export function CreateGroupDialog({
       const uniqueRoles = [...new Set(allRoles)]
       setAvailableRoles(uniqueRoles)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch users")
     } finally {
       setLoading(false)
@@ -100,6 +103,8 @@ export function CreateGroupDialog({
         setFilteredUsers(roleUsers)
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to filter users by role")
     } finally {
       setLoading(false)
@@ -124,6 +129,8 @@ export function CreateGroupDialog({
       onOpenChange(false)
       router.push(`/chat?groupId=${group.id}`)
     } catch (error) {
+      console.log(error)
+
       toast.error(error instanceof Error ? error.message : "Failed to create group")
     } finally {
       setCreating(false)
@@ -221,7 +228,7 @@ export function CreateGroupDialog({
                         />
                         <Avatar className="h-8 w-8">
                           <AvatarFallback className="dark:bg-gray-700 dark:text-gray-200">
-                            {getInitials(user.username)}
+                            {getInitials(user.username ?? "")}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">

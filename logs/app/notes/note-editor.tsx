@@ -33,9 +33,10 @@ import {
   Undo,
   Redo,
 } from "lucide-react"
+import { notes } from "@/prisma/generated/main"
 
 interface NoteEditorProps {
-  note: any | null
+  note: notes | null
   isCreating: boolean
   onSaved: () => void
   onCancel: () => void
@@ -204,15 +205,22 @@ export function NoteEditor({ note, isCreating, onSaved, onCancel }: NoteEditorPr
         })
         toast.success("Note created successfully")
       } else {
+        if (!note) {
+          toast.error("No note selected for update.")
+          return
+        }
+
         await updateNote({
           id: note.id,
           title: title.trim(),
           description: content,
         })
+
         toast.success("Note updated successfully")
       }
       onSaved()
     } catch (error) {
+      console.log(error)
       toast.error(isCreating ? "Failed to create note" : "Failed to update note")
     } finally {
       setIsSaving(false)

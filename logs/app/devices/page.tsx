@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/pagination"
 import { Badge } from "@/components/ui/badge"
 import {
-  Search,
   RefreshCw,
   Trash2,
   Edit,
@@ -117,7 +116,6 @@ export default function DevicesTable() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedDevices, setSelectedDevices] = useState<number[]>([])
   const [devices, setDevices] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   // Modal states
@@ -156,20 +154,21 @@ export default function DevicesTable() {
   useEffect(() => {
     const fetchAllIps = async () => {
       try {
-        const ips = await getAllDeviceIps()
-        setAssignedIps(ips)
+        const ips: (string | null)[] = await getAllDeviceIps()
+        setAssignedIps(ips.filter((ip): ip is string => ip !== null))
+
       } catch (error) {
         console.error("Failed to fetch IPs", error)
       }
     }
-  
+
     fetchAllIps()
   }, [])
   // Apply debounced search
   const handleSearchSuggestedIp = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchSuggestedIp(e.target.value)
   }
-  
+
   const debouncedSearch = debounce((value: string) => {
     setDebouncedSearchQuery(value)
     // Reset to first page when search changes
@@ -186,7 +185,6 @@ export default function DevicesTable() {
 
   // Fetch devices with filters
   const fetchDevices = async () => {
-    setIsLoading(true)
     try {
       const result = await getDevices({
         search: debouncedSearchQuery,
@@ -200,8 +198,6 @@ export default function DevicesTable() {
       }
     } catch (error) {
       toast.error("Failed to fetch devices")
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -272,7 +268,7 @@ export default function DevicesTable() {
   const handleSearchAvailableIp = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAvailableIp(e.target.value)
   }
-  
+
   // Handle form input change
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -337,6 +333,7 @@ export default function DevicesTable() {
       fetchDevices()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to add device")
     }
   }
@@ -367,6 +364,8 @@ export default function DevicesTable() {
       fetchDevices()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to update device")
     }
   }
@@ -382,23 +381,9 @@ export default function DevicesTable() {
       fetchDevices()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete device")
-    }
-  }
-
-  // Handle delete selected devices
-  const handleDeleteSelected = async () => {
-    if (!selectedDevices.length) return
-
-    try {
-      // Delete each selected device
-      await Promise.all(selectedDevices.map((id) => deleteDevice(id)))
-      toast.success(`Deleted ${selectedDevices.length} devices`)
-      setSelectedDevices([])
-      fetchDevices()
-      router.refresh()
-    } catch (error) {
-      toast.error("Failed to delete devices")
     }
   }
 
@@ -587,7 +572,7 @@ export default function DevicesTable() {
   const subnetParts = baseIp.split(".")
   const subnetPrefix = `${subnetParts[0]}.${subnetParts[1]}.${subnetParts[2]}`
   const allIps = Array.from({ length: 254 }, (_, i) => `${subnetPrefix}.${i + 1}`) // 1 to 254
-  
+
   // Remove already assigned IPs
   const availableIps = allIps.filter(ip => !assignedIps.includes(ip))
 
@@ -604,32 +589,32 @@ export default function DevicesTable() {
   return (
     <div className="space-y-4 flex flex-row gap-2 m-5 p-5">
       <div className="flex flex-col">
-      <Input
-    type="search"
-    placeholder="Available Ips"
-    value={searchAvailableIp}
-    onChange={handleSearchAvailableIp}
-    className="w-full"
-  />
-      {availableIps.length > 0 ? (
-  <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
-    {availableIps
-      .filter((ip) => ip.includes(searchAvailableIp))
-      .slice(0, 256)
-      .map((ip) => (
-        <Badge key={ip} variant="outline" className="font-mono w-full justify-center">
-          {ip}
-        </Badge>
-      ))}
-  </div>
-) : (
-  <p className="text-muted-foreground text-sm">No available IPs</p>
-)}
+        <Input
+          type="search"
+          placeholder="Available Ips"
+          value={searchAvailableIp}
+          onChange={handleSearchAvailableIp}
+          className="w-full"
+        />
+        {availableIps.length > 0 ? (
+          <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+            {availableIps
+              .filter((ip) => ip.includes(searchAvailableIp))
+              .slice(0, 256)
+              .map((ip) => (
+                <Badge key={ip} variant="outline" className="font-mono w-full justify-center">
+                  {ip}
+                </Badge>
+              ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">No available IPs</p>
+        )}
 
 
       </div>
-<div className="flex flex-col gap-4 w-full">
-<div className="flex">
+      <div className="flex flex-col gap-4 w-full">
+        <div className="flex">
           <Input
             type="search"
             placeholder="Search devices..."
@@ -652,7 +637,7 @@ export default function DevicesTable() {
             <Upload className="h-4 w-4" />
             Import
           </Button>
-</div>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -691,30 +676,30 @@ export default function DevicesTable() {
                   </TableCell>
                   <TableCell>{device.id}</TableCell>
                   <TableCell>
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer">
-          <Server className="h-4 w-4 text-blue-500" />
-          <span className="font-medium">{device.name}</span>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="p-2 border bg-white shadow-lg w-auto h-auto">
-      <Link href={`/uploads/${device.ip_address}.png`}>
-      <img
-  src={`/uploads/${device.ip_address}.png`}
-  alt={`Screenshot of ${device.name}`}
-  className="w-[300px] h-auto rounded cursor-zoom-in"
-  onError={(e) => {
-    e.currentTarget.style.display = "none"
-  }}
-/>
-</Link>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-2 cursor-pointer">
+                            <Server className="h-4 w-4 text-blue-500" />
+                            <span className="font-medium">{device.name}</span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="p-2 border bg-white shadow-lg w-auto h-auto">
+                          <Link href={`/uploads/${device.ip_address}.png`}>
+                            <img
+                              src={`/uploads/${device.ip_address}.png`}
+                              alt={`Screenshot of ${device.name}`}
+                              className="w-[300px] h-auto rounded cursor-zoom-in"
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none"
+                              }}
+                            />
+                          </Link>
 
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-</TableCell>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
 
                   <TableCell>
                     {device.ip_address ? (
@@ -778,47 +763,47 @@ export default function DevicesTable() {
           </TableBody>
         </Table>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Showing {devices.length} of {totalItems} results
-          </span>
-          <select
-            className="h-8 w-[70px] rounded-md border border-input bg-background px-2 text-sm"
-            value={pageSize}
-            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm text-muted-foreground">per page</span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Showing {devices.length} of {totalItems} results
+            </span>
+            <select
+              className="h-8 w-[70px] rounded-md border border-input bg-background px-2 text-sm"
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-muted-foreground">per page</span>
+          </div>
+
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  isActive={currentPage > 1}
+                />
+              </PaginationItem>
+
+              {getPaginationItems()}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  isActive={currentPage < totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+
+
         </div>
-
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                isActive={currentPage > 1}
-              />
-            </PaginationItem>
-
-            {getPaginationItems()}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                isActive={currentPage < totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-
-
-      </div>
       </div>
 
       {/* Add Device Modal */}
@@ -863,38 +848,38 @@ export default function DevicesTable() {
                 </div>
 
                 {showIpSuggestions && suggestedIps.length > 0 && (
-  <div className="mt-2 border rounded-md p-2">
-    <p className="text-xs text-muted-foreground mb-1">Available IPs in this subnet:</p>
+                  <div className="mt-2 border rounded-md p-2">
+                    <p className="text-xs text-muted-foreground mb-1">Available IPs in this subnet:</p>
 
-    {/* Search input for suggested IPs */}
-    <div className="mb-2">
-      <Input
-        type="search"
-        placeholder="Search suggested IPs..."
-        value={searchSuggestedIp}
-        onChange={handleSearchSuggestedIp}
-        className="w-full"
-      />
-    </div>
+                    {/* Search input for suggested IPs */}
+                    <div className="mb-2">
+                      <Input
+                        type="search"
+                        placeholder="Search suggested IPs..."
+                        value={searchSuggestedIp}
+                        onChange={handleSearchSuggestedIp}
+                        className="w-full"
+                      />
+                    </div>
 
-    {/* Filtered IP list */}
-    <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
-      {suggestedIps
-        .filter((ip) => ip.includes(searchSuggestedIp))
-        .slice(0, 50) // Optional: limit number shown
-        .map((ip) => (
-          <Badge
-            key={ip}
-            variant="outline"
-            className="cursor-pointer hover:bg-muted"
-            onClick={() => selectSuggestedIp(ip)}
-          >
-            {ip}
-          </Badge>
-        ))}
-    </div>
-  </div>
-)}
+                    {/* Filtered IP list */}
+                    <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
+                      {suggestedIps
+                        .filter((ip) => ip.includes(searchSuggestedIp))
+                        .slice(0, 50) // Optional: limit number shown
+                        .map((ip) => (
+                          <Badge
+                            key={ip}
+                            variant="outline"
+                            className="cursor-pointer hover:bg-muted"
+                            onClick={() => selectSuggestedIp(ip)}
+                          >
+                            {ip}
+                          </Badge>
+                        ))}
+                    </div>
+                  </div>
+                )}
 
               </div>
             </div>
@@ -954,7 +939,7 @@ export default function DevicesTable() {
                   </div>
                 </div>
               </div>
-              </div>
+            </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="notes" className="text-right pt-2">
                 Notes
@@ -1130,7 +1115,7 @@ export default function DevicesTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the device "{currentDevice?.name}"? This action cannot be undone.
+              Are you sure you want to delete the device &quot;{currentDevice?.name}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

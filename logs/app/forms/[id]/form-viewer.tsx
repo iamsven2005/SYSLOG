@@ -6,8 +6,8 @@ import { QuestionView } from "./question-view"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSSE } from "../use-sse"
-import { toast } from "@/app/hooks/use-toast"
 import { submitFormResponse } from "./actions"
+import { toast } from "sonner"
 
 type FormViewerProps = {
   form: any
@@ -18,16 +18,12 @@ export function FormViewer({ form }: FormViewerProps) {
   const [answers, setAnswers] = useState<Record<number, any>>({})
   const [files, setFiles] = useState<Record<number, File>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formUpdated, setFormUpdated] = useState(false)
 
   // Only listen for form deletion events
   useSSE(`form-${form.id}`, {
     onMessage: (data) => {
       if (data.type === "form-deleted") {
-        toast({
-          title: "Form has been deleted",
-          description: "This form is no longer available.",
-        })
+        toast.success("This form is no longer available.")
         router.push("/")
       }
     },
@@ -80,9 +76,7 @@ export function FormViewer({ form }: FormViewerProps) {
     })
 
     if (unansweredQuestions.length > 0) {
-      toast({
-        title: "Please answer all required questions",
-      })
+      toast.error("Please answer all required questions")
       return
     }
 
@@ -111,18 +105,13 @@ export function FormViewer({ form }: FormViewerProps) {
 
       await submitFormResponse(formData)
 
-      toast({
-        title: "Form submitted successfully",
-      })
+      toast.error( "Form submitted successfully")
 
       // Redirect to a thank you page or back to the forms list
       router.push("/")
     } catch (error) {
       console.error("Error submitting form:", error)
-      toast({
-        title: "Error submitting form",
-        description: "Please try again later",
-      })
+      toast.error( "Please try again later")
     } finally {
       setIsSubmitting(false)
     }

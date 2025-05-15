@@ -13,14 +13,24 @@ import FeedbackForm from "./feedback-form"
 import { toast } from "sonner"
 import { getReceivedFeedback, getSentFeedback, markFeedbackAsRead } from "./feedback-actions"
 import { checkUserPermission } from "../permissions/permission-actions"
+import { Feedback, User } from "@/prisma/generated/main"
+interface Feedbacks extends Feedback {
+  recipients: Recipient[]; // Change this line to use the correct type
+  sender: User;
+}
+
+interface Recipient {
+  user: User; // `user` should be a single object, not an array
+}
+
 
 export default function FeedbackPage() {
   const [activeTab, setActiveTab] = useState("overview")
-  const [user, setUser] = useState<any>(null)
+const [user, setUser] = useState<User | null>(null)
   const [isManager, setIsManager] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [sentFeedback, setSentFeedback] = useState<any[]>([])
-  const [receivedFeedback, setReceivedFeedback] = useState<any[]>([])
+  const [sentFeedback, setSentFeedback] = useState<Feedbacks[]>([])
+  const [receivedFeedback, setReceivedFeedback] = useState<Feedbacks[]>([])
   const [loadingSent, setLoadingSent] = useState(false)
   const [loadingReceived, setLoadingReceived] = useState(false)
   const router = useRouter()
@@ -34,8 +44,9 @@ export default function FeedbackPage() {
           return
         }
         const perm = await checkUserPermission(currentUser.id, "/feedback")
-        if (perm.hasPermission === false){
-        return notFound() }
+        if (perm.hasPermission === false) {
+          return notFound()
+        }
         setUser(currentUser)
         setIsManager(currentUser.role.includes("manager") || currentUser.role.includes("admin"))
         setIsLoading(false)
@@ -54,7 +65,8 @@ export default function FeedbackPage() {
     } else if (activeTab === "received" && user && isManager) {
       loadReceivedFeedback()
     }
-  }, [activeTab, user, isManager])
+  }, [activeTab, user, isManager, loadSentFeedback, loadReceivedFeedback]) // Add the missing dependencies
+
 
   async function loadSentFeedback() {
     if (loadingSent) return
@@ -181,11 +193,11 @@ export default function FeedbackPage() {
                     <SendIcon className="h-5 w-5 text-primary" />
                     Sent Feedback
                   </CardTitle>
-                  <CardDescription>View feedback you've submitted</CardDescription>
+                  <CardDescription>View feedback you&apos;ve submitted</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0 pb-2">
                   <p className="text-sm text-muted-foreground">
-                    Review all feedback you've sent to managers. Track which managers have read your feedback and when
+                    Review all feedback you&apos;ve sent to managers. Track which managers have read your feedback and when
                     it was submitted.
                   </p>
                 </CardContent>
@@ -208,7 +220,7 @@ export default function FeedbackPage() {
                   </CardHeader>
                   <CardContent className="pt-0 pb-2">
                     <p className="text-sm text-muted-foreground">
-                      As a manager, you can view all feedback submitted to you. Mark items as read once you've reviewed
+                      As a manager, you can view all feedback submitted to you. Mark items as read once you&apos;ve reviewed
                       them.
                     </p>
                   </CardContent>
@@ -269,7 +281,7 @@ export default function FeedbackPage() {
           <TabsContent value="sent">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">Sent Feedback</h2>
-              <p className="text-muted-foreground">Review feedback you've previously submitted to managers.</p>
+              <p className="text-muted-foreground">Review feedback you&apos;ve previously submitted to managers.</p>
             </div>
 
             {loadingSent ? (
@@ -278,7 +290,7 @@ export default function FeedbackPage() {
               </div>
             ) : sentFeedback.length === 0 ? (
               <div className="bg-muted p-8 rounded-md text-center">
-                <p className="text-muted-foreground">You haven't sent any feedback yet.</p>
+                <p className="text-muted-foreground">You haven&apos;t sent any feedback yet.</p>
                 <Button onClick={() => setActiveTab("new")} className="mt-4">
                   <PlusCircleIcon className="mr-2 h-4 w-4" />
                   Create New Feedback
@@ -321,7 +333,7 @@ export default function FeedbackPage() {
                 </div>
               ) : receivedFeedback.length === 0 ? (
                 <div className="bg-muted p-8 rounded-md text-center">
-                  <p className="text-muted-foreground">You haven't received any feedback yet.</p>
+                  <p className="text-muted-foreground">You haven&apos;t received any feedback yet.</p>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -338,7 +350,7 @@ export default function FeedbackPage() {
                             )}
                           </CardTitle>
                           <div className="text-sm text-muted-foreground mt-1">
-                            From: {item.sender.name} ({item.sender.email})
+                            From: {item.sender.username} ({item.sender.email})
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Received {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}

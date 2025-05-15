@@ -139,8 +139,6 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
   const [isTextBasedCondition, setIsTextBasedCondition] = useState(
     initialData ? isTextBasedField(initialData.sourceTable, initialData.fieldName) : false,
   )
-  const [importFile, setImportFile] = useState<File | null>(null)
-
   // Initialize form with default values or initial data
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -253,8 +251,6 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
     try {
       const file = e.target.files?.[0]
       if (!file) return
-
-      setImportFile(file)
 
       const reader = new FileReader()
       reader.onload = (event) => {

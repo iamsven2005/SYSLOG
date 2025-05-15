@@ -71,13 +71,7 @@ export async function getCurrentUser() {
     }
 
     const user = await db.user.findUnique({
-      where: { id: Number.parseInt(userId) },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        role: true,
-      },
+      where: { id: Number.parseInt(userId) }
     })
 
     return user

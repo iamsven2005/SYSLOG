@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react"
 
+// Define types for SSE options
 interface SSEOptions {
-  onMessage?: (data: any) => void
-  onError?: (error: any) => void
+  onMessage?: (data: Record<string, unknown>) => void
+  onError?: (error: Error | Event) => void
   onOpen?: () => void
   enabled?: boolean
 }
@@ -12,7 +13,7 @@ interface SSEOptions {
 export function useSSE(channel: string, options: SSEOptions = {}) {
   const { onMessage, onError, onOpen, enabled = true } = options
   const [isConnected, setIsConnected] = useState(false)
-  const [lastEvent, setLastEvent] = useState<any>(null)
+  const [lastEvent, setLastEvent] = useState<Record<string, unknown> | null>(null) // Typing lastEvent
   const [error, setError] = useState<Error | null>(null)
   const [eventSource, setEventSource] = useState<EventSource | null>(null)
 
@@ -33,7 +34,7 @@ export function useSSE(channel: string, options: SSEOptions = {}) {
         onOpen?.()
       }
 
-      sse.onmessage = (event) => {
+      sse.onmessage = (event: MessageEvent) => {
         try {
           const data = JSON.parse(event.data)
           setLastEvent(data)
@@ -43,9 +44,9 @@ export function useSSE(channel: string, options: SSEOptions = {}) {
         }
       }
 
-      sse.onerror = (err) => {
+      sse.onerror = (err: Event) => {
         setIsConnected(false)
-        setError(err as any)
+        setError(err as unknown as Error)
         onError?.(err)
 
         // Close on error
@@ -53,7 +54,7 @@ export function useSSE(channel: string, options: SSEOptions = {}) {
       }
     } catch (err) {
       console.error("Error setting up SSE:", err)
-      setError(err as any)
+      setError(err as Error)
     }
 
     // Clean up
@@ -64,7 +65,7 @@ export function useSSE(channel: string, options: SSEOptions = {}) {
         setIsConnected(false)
       }
     }
-  }, [channel, enabled])
+  }, [channel, enabled, onError, onMessage, onOpen]) // Add missing dependencies
 
   return {
     isConnected,

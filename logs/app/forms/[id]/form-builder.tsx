@@ -11,8 +11,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { QuestionType } from "@/prisma/generated/main"
 import { useCollaborativeForm } from "../use-collaborative-form"
-import { toast } from "@/app/hooks/use-toast"
 import { createForm, updateForm } from "./actions"
+import { toast } from "sonner"
 
 type FormQuestion = {
   id: string | number
@@ -52,7 +52,7 @@ export function FormBuilder({ form }: FormBuilderProps) {
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
   // Get user ID and name for form submissions
-  const { userId, userName } = useCollaborativeForm(form?.id || "new-form")
+  const { userId, userName } = useCollaborativeForm()
 
   // Auto-save when form changes
   useEffect(() => {
@@ -113,18 +113,14 @@ export function FormBuilder({ form }: FormBuilderProps) {
   const handleSubmit = async (isAutoSave = false) => {
     if (!title.trim()) {
       if (!isAutoSave) {
-        toast({
-          title: "Form title is required",
-        })
+        toast.error("Form title is required")
       }
       return
     }
 
     if (questions.some((q) => !q.text.trim())) {
       if (!isAutoSave) {
-        toast({
-          title: "All questions must have text",
-        })
+        toast.error("All questions must have text")
       }
       return
     }
@@ -136,9 +132,7 @@ export function FormBuilder({ form }: FormBuilderProps) {
 
     if (invalidQuestion) {
       if (!isAutoSave) {
-        toast({
-          title: `Question "${invalidQuestion.text}" needs at least one option`,
-        })
+        toast.error(`Question "${invalidQuestion.text}" needs at least one option`)
       }
       return
     }
@@ -169,24 +163,17 @@ export function FormBuilder({ form }: FormBuilderProps) {
         setLastSaved(new Date())
 
         if (!isAutoSave) {
-          toast({
-            title: "Form updated successfully",
-          })
+          toast.success("Form updated successfully")
         }
       } else {
         const newFormId = await createForm(formData)
-        toast({
-          title: "Form created successfully",
-        })
+        toast.success("Form created successfully")
         router.push(`/forms/${newFormId}`)
       }
     } catch (error) {
       console.error("Error saving form:", error)
       if (!isAutoSave) {
-        toast({
-          title: "Error saving form",
-          description: "Please try again later",
-        })
+        toast.error("Please try again later")
       }
     } finally {
       if (!isAutoSave) {

@@ -6,13 +6,28 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 
-export default function AccountInfoForm({ user, onSubmit, isSubmitting }: any) {
+// Define the shape of the user prop
+interface User {
+  username: string | null
+  email: string | null
+  role: string[]
+  createdAt: string | Date
+}
+
+// Define props for the component
+interface AccountInfoFormProps {
+  user: User
+  onSubmit: (data: { username: string; email: string }) => void
+  isSubmitting: boolean
+}
+
+export default function AccountInfoForm({ user, onSubmit, isSubmitting }: AccountInfoFormProps) {
   const [formData, setFormData] = useState({
     username: user.username || "",
     email: user.email || "",
   })
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
@@ -20,7 +35,7 @@ export default function AccountInfoForm({ user, onSubmit, isSubmitting }: any) {
     }))
   }
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     onSubmit(formData)
   }
@@ -47,7 +62,7 @@ export default function AccountInfoForm({ user, onSubmit, isSubmitting }: any) {
               id="email"
               name="email"
               type="email"
-              value={formData.email || ""}
+              value={formData.email}
               onChange={handleChange}
               className="w-full"
             />
@@ -73,4 +88,3 @@ export default function AccountInfoForm({ user, onSubmit, isSubmitting }: any) {
     </form>
   )
 }
-

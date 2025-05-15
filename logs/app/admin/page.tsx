@@ -10,10 +10,9 @@ import MemoryUsageChart from "./memory-usage-chart"
 import SensorChart from "./sensor-chart"
 import DiskUsageChart from "./disk-usage-chart"
 
-export default function LogsPage({ userId }: any) {
+export default function LogsPage({ userId }: {userId: number}) {
   const [isBackingUp, setIsBackingUp] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
-  const [activeTab, setActiveTab] = useState("system-logs")
   async function sendEmail() {
     const response = await fetch("/api/send-email", {
       method: "POST",
@@ -94,7 +93,7 @@ export default function LogsPage({ userId }: any) {
           document.body.removeChild(link)
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Backup error:", error)
       toast.error(
         `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} backup failed.`,
@@ -137,7 +136,7 @@ export default function LogsPage({ userId }: any) {
           description: `Restored from: ${data.latestBackup}`,
         })
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Restore error:", error)
       toast.error(
         `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} restore failed.`,

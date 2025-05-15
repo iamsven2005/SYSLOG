@@ -11,9 +11,9 @@ import { AddStepForm } from "../add-step-form"
 import { ArrowLeft, GripVertical } from "lucide-react"
 import { createWorkflow, createStep, getUsers } from "../actions"
 import type { AuditStep, User } from "../types"
-import { toast } from "@/app/hooks/use-toast"
 import { EditStepItem } from "../[id]/edit/edit-step-item"
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd"
+import { toast } from "sonner"
 
 export default function NewWorkflowPage() {
   const router = useRouter()
@@ -39,7 +39,7 @@ export default function NewWorkflowPage() {
     fetchUsers()
   }, [])
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
     const items = Array.from(steps)
@@ -117,10 +117,7 @@ export default function NewWorkflowPage() {
         }
       }
 
-      toast({
-        title: "Workflow created",
-        description: "Your new workflow has been created successfully.",
-      })
+      toast.success("Your new workflow has been created successfully.")
 
       router.push(`/workflows/${workflowId}`)
     } catch (err) {

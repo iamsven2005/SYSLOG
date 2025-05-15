@@ -3,8 +3,7 @@
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { logActivity } from "@/lib/activity-logger"
-import { routeModule } from "next/dist/build/templates/pages"
-
+import { Prisma } from "@/prisma/generated/main"
 // Get all page permissions with their associated roles and users
 export async function getAllPagePermissions() {
   try {
@@ -115,7 +114,7 @@ export async function updatePagePermission(
     const { route, description, roles, userIds } = data
 
     // Update the page permission
-    const updateData: any = {}
+    const updateData: Prisma.PagePermissionUpdateInput = {}
     if (route !== undefined) updateData.route = route
     if (description !== undefined) updateData.description = description
 
@@ -241,12 +240,13 @@ export async function checkUserPermission(userId: number, route: string) {
       return { hasPermission: false }
     }
     await db.userActivity.create({
-      data:{
+      data: {
         userId,
-        username: user.username,
-        page: route
-      }
+        username: user.username ?? "Unknown", // 👈 fallback value
+        page: route,
+      },
     })
+
     // Find matching page permissions
     const pagePermissions = await db.pagePermission.findMany({
       where: {

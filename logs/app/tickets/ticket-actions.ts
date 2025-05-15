@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
-import { getSession } from "@/lib/utils"
+import { Prisma } from "@/prisma/generated/main"
+import { getSession } from "@/lib/auth"
 
 // Types
 interface CreateTicketParams {
@@ -66,7 +67,7 @@ export async function getTickets({
     }
 
     // Build where conditions
-    const where: any = {}
+    const where: Prisma.SupportTicketWhereInput = {}
 
     // If not admin, only show tickets created by the current user
     const user = await db.user.findUnique({
@@ -513,7 +514,7 @@ export async function deleteAttachment(id: number) {
     })
 
     // Only the uploader or admins can delete attachments
-    if (!user?.role.includes("admin")  && attachment.uploader.id !== session.user.id) {
+    if (!user?.role.includes("admin") && attachment.uploader.id !== session.user.id) {
       throw new Error("You don't have permission to delete this attachment")
     }
 

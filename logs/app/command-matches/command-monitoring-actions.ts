@@ -3,7 +3,7 @@
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { sendEmailWithTemplate } from "../email-templates/email-template-actions"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 // Import the toast at the top of the file
 import { toast } from "sonner"
 
@@ -103,20 +103,7 @@ export async function checkCommandMatches(logEntry: string, logId: number, logTy
         // If match already exists, skip creating a new one
         if (existingMatch) continue
 
-        // Create a new match record in the database
-        const matchRecord = await db.commandMatch.create({
-          data: {
-            logId,
-            logType,
-            commandId: command.id,
-            ruleId: command.ruleId,
-            // Fix the command field by using commandText instead
-            commandText: command.command, // Store the command text as a string
-            logEntry,
-            addressed: false,
-            emailSent: false,
-          },
-        })
+
 
         // Get email template ID from the appropriate source
         const emailTemplateId =

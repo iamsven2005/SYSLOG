@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -27,19 +26,27 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { getAlertEvents, resolveAlertEvent } from "./alert-actions"
 import { Checkbox } from "@/components/ui/checkbox"
-
+import { AlertCondition } from "@/prisma/generated/main"
+type AlertEvent = {
+  id: number;
+  conditionId: number;
+  triggeredAt: Date;
+  resolved: boolean;
+  resolvedAt: Date | null;
+  notes: string | null;
+  alertCondition: AlertCondition;  // Adding alertCondition to each event
+}
 export function AlertEventsTable({
   initialAlertEvents,
   showResolved = false,
 }: {
-  initialAlertEvents?: any[]
+  initialAlertEvents?: AlertEvent[]
   showResolved?: boolean
 }) {
-  const router = useRouter()
-  const [alertEvents, setAlertEvents] = useState<any[]>(initialAlertEvents || [])
+  const [alertEvents, setAlertEvents] = useState<AlertEvent[]>(initialAlertEvents || [])
   const [isLoading, setIsLoading] = useState(!initialAlertEvents)
   const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
-  const [eventToResolve, setEventToResolve] = useState<any>(null)
+  const [eventToResolve, setEventToResolve] = useState<AlertEvent | null>(null)
   const [resolutionNotes, setResolutionNotes] = useState("")
   const [isResolving, setIsResolving] = useState(false)
   const [selectedEvents, setSelectedEvents] = useState<number[]>([])
@@ -88,6 +95,8 @@ export function AlertEventsTable({
         setResolutionNotes("")
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to resolve alert event")
     } finally {
       setIsResolving(false)
@@ -130,6 +139,8 @@ export function AlertEventsTable({
         setSelectedEvents([])
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to resolve alert events")
     } finally {
       setIsResolving(false)
@@ -201,7 +212,7 @@ export function AlertEventsTable({
                     </Link>
                   </div>
                 </TableCell>
-                <TableCell>{formatDate(event.triggeredAt)}</TableCell>
+                <TableCell>{formatDate(event.triggeredAt.toString())}</TableCell>
                 <TableCell>
                   {event.resolved ? (
                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
@@ -216,7 +227,7 @@ export function AlertEventsTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  {event.resolvedAt ? formatDate(event.resolvedAt) : <span className="text-muted-foreground">—</span>}
+                  {event.resolvedAt ? formatDate(event.resolvedAt.toString()) : <span className="text-muted-foreground">—</span>}
                 </TableCell>
                 <TableCell>
                   {event.notes ? (

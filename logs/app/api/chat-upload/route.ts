@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"

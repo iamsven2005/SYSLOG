@@ -39,9 +39,7 @@ export async function getUsers({
     include: {
       devices: {
         include: {
-          device: {
-            select: { name: true },
-          },
+          device: true
         },
       },
     },
@@ -105,7 +103,7 @@ export async function addUser({
       Pay
     },
   })
-  const folder = await db.driveFolder.create({
+  await db.driveFolder.create({
     data:{
       id: user.id,
       name: "My Drive",

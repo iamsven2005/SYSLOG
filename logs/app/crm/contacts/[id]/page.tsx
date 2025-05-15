@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { HardHat, ArrowLeft, Mail, Phone, Building2, Edit } from "lucide-react"
+import {  ArrowLeft, Mail, Phone, Building2, Edit } from "lucide-react"
 import { getContact } from "@/app/crm/actions/contacts"
 import { notFound } from "next/navigation"
 import InteractionList from "@/app/crm/components/interaction-list"

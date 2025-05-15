@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface UserType {
   id: number
-  username: string
+  username: string | null
   email?: string | null
   role?: string[]
 }
@@ -30,6 +30,7 @@ interface GroupMemberType {
   userId: number
   user: UserType
 }
+
 
 export function ManageMembersDialog({
   open,
@@ -63,11 +64,19 @@ export function ManageMembersDialog({
       setLoading(true)
       const group = await getGroupWithMembers(groupId)
       if (group) {
-        setMembers(group.members)
+        const sanitizedMembers = group.members.map((m) => ({
+          ...m,
+          user: {
+            ...m.user,
+            username: m.user.username ?? "Unknown", // fallback value
+          },
+        }))
+        setMembers(sanitizedMembers)
         setGroupName(group.name)
         setCreatedBy(group.createdBy)
       }
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch group members")
     } finally {
       setLoading(false)
@@ -90,6 +99,7 @@ export function ManageMembersDialog({
       toast.success("User removed from group")
       fetchGroupMembers()
     } catch (error) {
+      console.log(error)
       toast.error(error instanceof Error ? error.message : "Failed to remove user")
     }
   }
@@ -120,6 +130,8 @@ export function ManageMembersDialog({
       const filteredResults = results.filter((user) => !memberUserIds.includes(user.id))
       setSearchResults(filteredResults)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to search users")
     } finally {
       setSearching(false)
@@ -133,6 +145,8 @@ export function ManageMembersDialog({
       fetchGroupMembers()
       setActiveTab("current")
     } catch (error) {
+      console.log(error)
+
       toast.error(error instanceof Error ? error.message : "Failed to add user")
     }
   }
@@ -188,7 +202,7 @@ export function ManageMembersDialog({
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback className="dark:bg-gray-700 dark:text-gray-200">
-                              {getInitials(member.user.username)}
+                              {getInitials(member.user.username ?? "Unknown")}
                             </AvatarFallback>
                           </Avatar>
                           <div>
@@ -289,7 +303,7 @@ export function ManageMembersDialog({
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback className="dark:bg-gray-700 dark:text-gray-200">
-                              {getInitials(user.username)}
+                              {getInitials(user.username ?? "Unknown")}
                             </AvatarFallback>
                           </Avatar>
                           <div>

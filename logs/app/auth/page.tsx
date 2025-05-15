@@ -145,52 +145,52 @@ export default function AuthLogsTable() {
     const fetchDeviceNames = async () => {
       try {
         const deviceNames = await getAllDeviceNames()
-    
+
         // Ensure deviceNames is not null
         if (!deviceNames || !Array.isArray(deviceNames)) {
           setHostOptions([{ label: "All Devices", value: "all" }]) // Fallback to default
           toast.error("No device names available.")
           return
         }
-    
+
         const options = [
           { label: "All Devices", value: "all" },
           ...deviceNames.map((name) => ({ label: name, value: name })),
         ]
-    
+
         setHostOptions(options)
       } catch (error) {
         console.error("Failed to fetch device names:", error)
         toast.error("Failed to load device list")
       }
     }
-    
+
 
     fetchDeviceNames()
   }, [])
 
-useEffect(() => {
-  const fetchRuleGroupsAndRules = async () => {
-    try {
-      const ruleGroupsData = await getAllRuleGroupsAndRules();
+  useEffect(() => {
+    const fetchRuleGroupsAndRules = async () => {
+      try {
+        const ruleGroupsData = await getAllRuleGroupsAndRules();
 
-      // Ensure ruleGroupsData is an array before setting it
-      if (!ruleGroupsData || !Array.isArray(ruleGroupsData)) {
-        setRuleGroups([]); // Set an empty array as a fallback
-        toast.error("No rule groups available.");
-        return;
+        // Ensure ruleGroupsData is an array before setting it
+        if (!ruleGroupsData || !Array.isArray(ruleGroupsData)) {
+          setRuleGroups([]); // Set an empty array as a fallback
+          toast.error("No rule groups available.");
+          return;
+        }
+
+        setRuleGroups(ruleGroupsData);
+      } catch (error) {
+        console.error("Failed to fetch rule groups and rules:", error);
+        toast.error("Failed to load rule groups and rules");
+        setRuleGroups([]); // Ensure ruleGroups is always an array
       }
+    };
 
-      setRuleGroups(ruleGroupsData);
-    } catch (error) {
-      console.error("Failed to fetch rule groups and rules:", error);
-      toast.error("Failed to load rule groups and rules");
-      setRuleGroups([]); // Ensure ruleGroups is always an array
-    }
-  };
-
-  fetchRuleGroupsAndRules();
-}, []);
+    fetchRuleGroupsAndRules();
+  }, []);
 
 
   // Apply debounced search
@@ -211,7 +211,7 @@ useEffect(() => {
     setIsLoading(true);
     try {
       const hosts = selectedHosts.includes("all") ? [] : selectedHosts;
-  
+
       const result = await getAuthLogs({
         search: debouncedSearchQuery,
         hosts,
@@ -220,7 +220,7 @@ useEffect(() => {
         page: currentPage,
         pageSize: pageSize,
       });
-  
+
       // Ensure result is not null before accessing its properties
       if (!result) {
         setLogs([]); // Set empty array to prevent errors
@@ -230,16 +230,16 @@ useEffect(() => {
         toast.error("No authentication logs available.");
         return;
       }
-  
+
       setLogs(result.logs);
       setTotalPages(result.pageCount);
       setTotalItems(result.totalCount);
       setMatchedCommands(result.matchedCommands || []);
-  
+
       // Check for command matches
       const matches = await processBatchForCommandMatches(result.logs, "auth");
       setCommandMatches(matches);
-  
+
       // Show toast notifications for matches
       if (matches.length > 0) {
         matches.forEach((match: any) => {
@@ -263,12 +263,14 @@ useEffect(() => {
         });
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch authentication logs.");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   // Load logs when filters or pagination changes
   useEffect(() => {
     fetchLogs()
@@ -346,6 +348,8 @@ useEffect(() => {
       fetchLogs()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete auth logs")
     }
   }
@@ -403,6 +407,8 @@ useEffect(() => {
       const ruleGroupsData = await getAllRuleGroupsAndRules()
       setRuleGroups(ruleGroupsData || [])
     } catch (error) {
+      console.log(error)
+
       toast.error(`Failed to add command: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsAddingCommand(false)
@@ -543,6 +549,8 @@ useEffect(() => {
       fetchLogs()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete auth logs by time period")
     } finally {
       setIsTimeDeleteLoading(false)

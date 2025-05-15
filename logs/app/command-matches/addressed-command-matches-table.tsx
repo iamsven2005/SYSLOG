@@ -43,7 +43,8 @@ interface AddressedCommandMatchesTableProps {
 
 export function AddressedCommandMatchesTable({ matches }: AddressedCommandMatchesTableProps) {
   const router = useRouter()
-  const [selectedMatch, setSelectedMatch] = useState<any>(null)
+  const [selectedMatch, setSelectedMatch] = useState<typeof matches[0] | null>(null) // Define the correct type here
+
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isUnmarkDialogOpen, setIsUnmarkDialogOpen] = useState(false)
@@ -51,7 +52,7 @@ export function AddressedCommandMatchesTable({ matches }: AddressedCommandMatche
   const [selectedMatches, setSelectedMatches] = useState<number[]>([])
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false)
 
-  const handleView = (match: any) => {
+  const handleView = (match: typeof matches[0]) => { // Use the correct type here
     setSelectedMatch(match)
     setIsViewDialogOpen(true)
   }

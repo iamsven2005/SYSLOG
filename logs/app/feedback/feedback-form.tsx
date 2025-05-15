@@ -10,6 +10,7 @@ import { getManagers, submitFeedback } from "@/app/feedback/feedback-actions"
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { User } from "@/prisma/generated/main"
 
 interface FeedbackFormProps {
   onSuccess?: () => void
@@ -17,7 +18,7 @@ interface FeedbackFormProps {
 
 export default function FeedbackForm({ onSuccess }: FeedbackFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [managers, setManagers] = useState<any[]>([])
+  const [managers, setManagers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function FeedbackForm({ onSuccess }: FeedbackFormProps) {
               <div key={manager.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md">
                 <Checkbox id={`manager-${manager.id}`} name="recipients" value={manager.id} />
                 <Label htmlFor={`manager-${manager.id}`} className="cursor-pointer">
-                  {manager.name || "Unnamed Manager"}
+                  {manager.username || "Unnamed Manager"}
                 </Label>
               </div>
             ))}

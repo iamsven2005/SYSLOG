@@ -19,9 +19,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Trash2, Edit } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { ModelEntry, User } from "@prisma/client"
+import { ModelEntry, User } from "@/prisma/generated/main"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { db } from "@/lib/db"
 import { getAllUsers } from "../chat/chat-actions"
 
 interface ModelEntryModalProps {
@@ -41,9 +40,9 @@ type FormValues = z.infer<typeof formSchema>
 
 export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: ModelEntryModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<User[]>([])
   const [loadingUsers, setLoadingUsers] = useState(true)
-  const [modelEntries, setModelEntries] = useState([])
+  const [modelEntries, setModelEntries] = useState<ModelEntry[]>([])
   const [loadingEntries, setLoadingEntries] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [editingEntryId, setEditingEntryId] = useState<number | null>(null)
@@ -84,13 +83,14 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       const entries = await getModelEntries(projectId)
       setModelEntries(entries)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to load model entries")
     } finally {
       setLoadingEntries(false)
     }
   }
 
-  const handleEdit = (entry: any) => {
+  const handleEdit = (entry: ModelEntry) => {
     setEditingEntryId(entry.id)
     form.setValue("code", entry.code)
     form.setValue("description", entry.description || "")
@@ -109,12 +109,14 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       setIsSubmitting(true)
       await updateModelEntry(editingEntryId, {
         code: data.code,
-        description: data.description,
+        description: data.description ?? "",  // Fallback to empty string
       })
+
       toast.success("Model entry updated successfully")
       fetchModelEntries()
       setEditingEntryId(null)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update model entry")
     } finally {
       setIsSubmitting(false)
@@ -127,6 +129,7 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       toast.success("Model entry deleted successfully")
       fetchModelEntries()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete model entry")
     }
   }
@@ -158,7 +161,7 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-  
+
     const reader = new FileReader()
     reader.onload = () => {
       const htmlString = reader.result as string
@@ -172,32 +175,32 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
     }
     reader.readAsText(file)
   }
-  
+
   const handleImportFromHTML = async () => {
     if (!parsedHtml) return
-  
+
     try {
       const entries: { code: string; description: string; createBy: string }[] = []
-  
+
       const codes = Array.from(parsedHtml.querySelectorAll('input[name="modelCode"]'))
       const descs = Array.from(parsedHtml.querySelectorAll('input[name="modelDesc"]'))
       const users = Array.from(parsedHtml.querySelectorAll('input[name="modelCreUsr"]'))
-  
+
       for (let i = 0; i < codes.length; i++) {
         const code = codes[i]?.getAttribute("value") || ""
         const description = descs[i]?.getAttribute("value") || ""
         const createBy = users[i]?.nextSibling?.textContent?.trim() || "unknown"
-  
+
         if (code && createBy) {
           entries.push({ code, description, createBy })
         }
       }
-  
+
       if (entries.length === 0) {
         toast.error("No valid entries found.")
         return
       }
-  
+
       setIsSubmitting(true)
       for (const entry of entries) {
         await createModelEntry({
@@ -207,7 +210,7 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
           createBy: entry.createBy,
         })
       }
-  
+
       toast.success(`${entries.length} entries imported successfully`)
       fetchModelEntries()
       onSuccess()
@@ -219,9 +222,9 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       setIsSubmitting(false)
     }
   }
-  
-  
-  
+
+
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px]">
@@ -229,186 +232,188 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
           <DialogTitle>Model Entry</DialogTitle>
         </DialogHeader>
         <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1">
-        <AccordionTrigger>Add Entry</AccordionTrigger>
-        <AccordionContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4">
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Bug fixing" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Add Entry</AccordionTrigger>
+            <AccordionContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4">
+                  <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Bug fixing" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Enter description" className="min-h-[80px]" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Enter description" className="min-h-[80px]" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <FormField
-              control={form.control}
-              name="createBy"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Created By</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select user" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {loadingUsers ? (
-                        <SelectItem value="loading">
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Loading users...
-                        </SelectItem>
-                      ) : (
-                        users.map((user: User) => (
-                          <SelectItem key={user.id} value={user.username}>
-                            {user.username}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <FormField
+                    control={form.control}
+                    name="createBy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Created By</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select user" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {loadingUsers ? (
+                              <SelectItem value="loading">
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Loading users...
+                              </SelectItem>
+                            ) : (
+                              users.map((user: User) => (
+                                <SelectItem key={user.id} value={user.username ?? ""}>
+                                  {user.username ?? "(unknown user)"}
+                                </SelectItem>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <DialogFooter>
+                    <Button type="button" variant="outline" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "Creating..." : "Create Entry"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Upload HTML File</AccordionTrigger>
+            <AccordionContent>
+              <Input type="file" accept=".html,text/html" onChange={handleFileUpload} />
+              <label>Or paste HTML content</label>
+              <Textarea
+                placeholder="Paste raw HTML source here..."
+                className="min-h-[120px]"
+                onChange={(e) => {
+                  const parser = new DOMParser()
+                  const doc = parser.parseFromString(e.target.value, "text/html")
+                  setParsedHtml(doc)
+                }}
+              />
+              <Button variant="secondary" onClick={handleImportFromHTML} disabled={!parsedHtml}>
+                Import Entries from HTML
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Entry"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-        
-        </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-        <AccordionTrigger>Upload HTML File</AccordionTrigger>
-        <AccordionContent>
-    <Input type="file" accept=".html,text/html" onChange={handleFileUpload} />
-    <label>Or paste HTML content</label>
-    <Textarea
-      placeholder="Paste raw HTML source here..."
-      className="min-h-[120px]"
-      onChange={(e) => {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(e.target.value, "text/html")
-        setParsedHtml(doc)
-      }}
-    />
-    <Button variant="secondary" onClick={handleImportFromHTML} disabled={!parsedHtml}>
-      Import Entries from HTML
-    </Button>
-    </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3">
-        <AccordionTrigger>Existing Model Entries</AccordionTrigger>
-        <AccordionContent>
-        <div className="mt-6">
-          <Input
-            type="search"
-            placeholder="Search entries..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="mt-2"
-          />
-          {loadingEntries ? (
-            <div className="flex justify-center p-4">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : filteredModelEntries.length === 0 ? (
-            <div className="text-center p-4 text-muted-foreground">No model entries found.</div>
-          ) : (
-            <ScrollArea className="h-72 w-190 rounded-md border">
-                      <ScrollBar orientation="horizontal" />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger>Existing Model Entries</AccordionTrigger>
+            <AccordionContent>
+              <div className="mt-6">
+                <Input
+                  type="search"
+                  placeholder="Search entries..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="mt-2"
+                />
+                {loadingEntries ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : filteredModelEntries.length === 0 ? (
+                  <div className="text-center p-4 text-muted-foreground">No model entries found.</div>
+                ) : (
+                  <ScrollArea className="h-72 w-190 rounded-md border">
+                    <ScrollBar orientation="horizontal" />
 
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Created By</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredModelEntries.map((entry: ModelEntry
-                  ) => (
-                    <TableRow key={entry.id}>
-                      <TableCell className="max-w-[200px] whitespace-normal break-words">{entry.code}</TableCell>
-                      <TableCell className="max-w-[200px] whitespace-normal break-words">{entry.description}</TableCell>
-                      <TableCell>{entry.createBy}</TableCell>
-                      <TableCell className="text-right">
-                        {editingEntryId === entry.id ? (
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                form.handleSubmit(handleUpdate)(form.getValues())
-                                handleCancelEdit()
-                              }}
-                              disabled={isSubmitting}
-                            >
-                              {isSubmitting ? "Updating..." : "Update"}
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
-                              Cancel
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => handleEdit(entry)}>
-                              <Edit className="h-4 w-4" />
-                              <span className="sr-only">Edit</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(entry.id)}
-                              className="text-red-500 hover:text-red-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Delete</span>
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
-          )}
-        </div>
-        </AccordionContent>
-        </AccordionItem>
-    </Accordion>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Code</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Created By</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredModelEntries.map((entry: ModelEntry
+                        ) => (
+                          <TableRow key={entry.id}>
+                            <TableCell className="max-w-[200px] whitespace-normal break-words">{entry.code}</TableCell>
+                            <TableCell className="max-w-[200px] whitespace-normal break-words">{entry.description}</TableCell>
+                            <TableCell>{entry.createBy}</TableCell>
+                            <TableCell className="text-right">
+                              {editingEntryId === entry.id ? (
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      handleUpdate(form.getValues())
+                                      handleCancelEdit()
+                                    }}
+
+                                    disabled={isSubmitting}
+                                  >
+                                    {isSubmitting ? "Updating..." : "Update"}
+                                  </Button>
+                                  <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                                    Cancel
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex gap-2">
+                                  <Button variant="ghost" size="icon" onClick={() => handleEdit(entry)}>
+                                    <Edit className="h-4 w-4" />
+                                    <span className="sr-only">Edit</span>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDelete(entry.id)}
+                                    className="text-red-500 hover:text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Delete</span>
+                                  </Button>
+                                </div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
 
       </DialogContent>

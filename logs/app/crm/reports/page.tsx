@@ -19,8 +19,6 @@ import { CalendarIcon, Download } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { HardHat, ArrowLeft } from "lucide-react"
 
 import {
   BarChart,
@@ -44,7 +42,7 @@ import {
   Radar,
   Cell,
 } from "recharts"
-import { toast } from "@/app/hooks/use-toast"
+import { toast } from "sonner"
 
 const customReportSchema = z.object({
   name: z.string().min(2, { message: "Report name must be at least 2 characters." }),
@@ -191,17 +189,11 @@ export default function CustomReportForm() {
       setReportGenerated(true)
 
       // Show success toast
-      toast({
-        title: "Report Generated",
-        description: "Your custom report has been successfully generated.",
-      })
+      toast.success("Your custom report has been successfully generated.")
     } catch (error) {
       console.error("Error submitting form:", error)
       form.setError("root", { message: "An unexpected error occurred" })
-      toast({
-        title: "Error",
-        description: "Failed to generate report. Please try again.",
-      })
+      toast.error( "Failed to generate report. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -368,10 +360,7 @@ export default function CustomReportForm() {
 
   function handleExportReport() {
     // In a real app, this would generate a file download
-    toast({
-      title: "Report Exported",
-      description: "Your report has been downloaded as a PDF file.",
-    })
+    toast.success("Your report has been downloaded as a PDF file.")
   }
 
   function renderChart() {
@@ -487,7 +476,7 @@ export default function CustomReportForm() {
   function renderSummary() {
     if (!previewData || !previewData.summary) return null
 
-    const { summary, dataSource } = previewData
+    const { summary } = previewData
     const summaryItems = Object.entries(summary).map(([key, value]) => {
       const formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, " $1")
 

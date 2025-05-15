@@ -1,9 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HardHat, Search, Plus, Filter, Building2, Truck, Handshake, FileText, HardDrive } from "lucide-react"
+import { Plus, Filter, Building2, Truck, Handshake, FileText, HardDrive } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,

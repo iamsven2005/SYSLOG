@@ -10,7 +10,7 @@ import { StepDetail } from "./step-detail"
 import { getStepsByWorkflowId, reorderSteps, updateStep, getUsers } from "./actions"
 import type { AuditStep, User } from "./types"
 import { WorkflowStepsSkeleton } from "./workflow-steps-skeleton"
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd"
 
 export function WorkflowSteps({ workflowId }: { workflowId: string }) {
   const [steps, setSteps] = useState<AuditStep[]>([])
@@ -27,21 +27,20 @@ export function WorkflowSteps({ workflowId }: { workflowId: string }) {
       try {
         // Fetch steps
         const stepsResult = await getStepsByWorkflowId(workflowId)
-        if (stepsResult.success) {
+        if (stepsResult.success && stepsResult.data) {
           setSteps(stepsResult.data)
           setFilteredSteps(stepsResult.data)
-          if (stepsResult.data.length > 0 && !selectedStep) {
-            setSelectedStep(stepsResult.data[0])
-          }
+          setSelectedStep(stepsResult.data[0])
         } else {
           setError(stepsResult.error || "Failed to load steps")
         }
 
         // Fetch users
         const usersResult = await getUsers()
-if (usersResult.success) {
-  setUsers(usersResult.data) // ✅ safe now
-}
+        if (usersResult.success && usersResult.data) {
+          setUsers(usersResult.data)
+        }
+
 
 
       } catch (err) {
@@ -83,7 +82,7 @@ if (usersResult.success) {
     }
   }, [steps, selectedStep])
 
-  const handleDragEnd = async (result: any) => {
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return
 
     const items = Array.from(steps)
@@ -120,10 +119,10 @@ if (usersResult.success) {
         // If server update fails, revert to original order
         setError("Failed to reorder steps: " + result.error)
         const originalSteps = await getStepsByWorkflowId(workflowId)
-if (originalSteps.success && originalSteps.data) {
-  setSteps(originalSteps.data)
-  setFilteredSteps(originalSteps.data)
-}
+        if (originalSteps.success && originalSteps.data) {
+          setSteps(originalSteps.data)
+          setFilteredSteps(originalSteps.data)
+        }
 
       }
     } catch (err) {
@@ -150,14 +149,14 @@ if (originalSteps.success && originalSteps.data) {
         setError("Failed to update step: " + result.error)
         // Revert to original data if server update fails
         const stepsResult = await getStepsByWorkflowId(workflowId)
-if (stepsResult.success) {
-  setSteps(stepsResult.data ?? [])            // ✅ Fallback to empty array
-  setFilteredSteps(stepsResult.data ?? [])
-  const currentStep = (stepsResult.data ?? []).find((s) => s.id === updatedStep.id)
-  if (currentStep) {
-    setSelectedStep(currentStep)
-  }
-}
+        if (stepsResult.success) {
+          setSteps(stepsResult.data ?? [])            // ✅ Fallback to empty array
+          setFilteredSteps(stepsResult.data ?? [])
+          const currentStep = (stepsResult.data ?? []).find((s) => s.id === updatedStep.id)
+          if (currentStep) {
+            setSelectedStep(currentStep)
+          }
+        }
 
       }
     } catch (err) {
@@ -219,9 +218,8 @@ if (stepsResult.success) {
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`border rounded-md p-4 bg-card hover:bg-accent/50 cursor-pointer ${
-                              selectedStep?.id === step.id ? "ring-2 ring-primary" : ""
-                            }`}
+                            className={`border rounded-md p-4 bg-card hover:bg-accent/50 cursor-pointer ${selectedStep?.id === step.id ? "ring-2 ring-primary" : ""
+                              }`}
                             onClick={() => handleStepSelect(step)}
                           >
                             <div className="flex items-center justify-between">

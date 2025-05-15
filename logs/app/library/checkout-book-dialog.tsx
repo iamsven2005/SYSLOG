@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { checkoutBook, returnBook } from "@/app/library/library-actions"
-import type { LibraryEntry } from "@prisma/client"
+import type { LibraryEntry } from "@/prisma/generated/main"
 import { format } from "date-fns"
 
 interface CheckoutBookDialogProps {

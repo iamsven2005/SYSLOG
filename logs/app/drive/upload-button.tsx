@@ -180,49 +180,6 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       }, 500);
     }
   };
-  
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-
-    setIsUploading(true)
-    setProgress(0)
-
-    try {
-      // Simulate progress
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          const newProgress = prev + 5
-          return newProgress >= 90 ? 90 : newProgress
-        })
-      }, 100)
-
-      const formData = new FormData()
-      formData.append("file", files[0])
-      formData.append("folderId", folderId?.toString() || "")
-
-      await uploadFile(formData)
-
-      clearInterval(progressInterval)
-      setProgress(100)
-
-      toast.success("File uploaded successfully")
-      await onUploadComplete()
-
-      // Reset the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    } catch (error) {
-      toast.error("Failed to upload file")
-      console.error(error)
-    } finally {
-      setTimeout(() => {
-        setIsUploading(false)
-        setProgress(0)
-      }, 500)
-    }
-  }
 
   return (
     <div>

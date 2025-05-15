@@ -1,6 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db"
+import { Prisma } from "@/prisma/generated/main"
 import { revalidatePath } from "next/cache"
 
 
@@ -22,7 +23,7 @@ interface GetRuleGroupsParams {
 export async function getRuleGroups({ search = "", page = 1, pageSize = 10 }: GetRuleGroupsParams) {
   try {
     // Build where conditions
-    const where: any = {}
+const where: Prisma.RuleGroupWhereInput = {}
 
     // Add search condition if provided
     if (search) {
@@ -239,8 +240,13 @@ export async function deleteRule(id: number) {
   }
 }
 
-// Function to import rule groups from Excel data
-export async function importRuleGroups(data: any[]) {
+type RuleGroupImportRow = {
+  Type: string
+  Name: string
+  Description?: string
+  Commands?: string
+}
+export async function importRuleGroups(data: RuleGroupImportRow[]) {
   try {
     for (const row of data) {
       if (row.Type === "Group") {

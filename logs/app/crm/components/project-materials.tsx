@@ -27,25 +27,29 @@ import {
 } from "@/components/ui/alert-dialog"
 import { MoreHorizontal, Plus, Pencil, Trash2, ShoppingCart } from "lucide-react"
 import { deleteMaterial } from "@/app/crm/actions/materials"
-import { formatCurrency } from "@/lib/utils"
+import { BridgeMaterial, BridgeProject, MaterialOrder } from "@/prisma/generated/main"
+interface ProjectMaterialsProps {
+  projectId: string | number
+  materials: Material[]
+}
 
-export default function ProjectMaterials({ projectId, materials = [] }) {
+// Material interface extending BridgeMaterial and adding the 'orders' field
+export interface Material extends BridgeMaterial {
+  orders: MaterialOrder[]
+}
+
+export default function ProjectMaterials({ projectId, materials }: ProjectMaterialsProps) {
   const router = useRouter()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [materialToDelete, setMaterialToDelete] = useState(null)
-  const [assignDialogOpen, setAssignDialogOpen] = useState(false)
-  const [materialToAssign, setMaterialToAssign] = useState(null)
+  const [materialToDelete, setMaterialToDelete] = useState<Material | null>(null) // Explicitly typing as Material | null
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState("")
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false)
+  const [materialToAssign, setMaterialToAssign] = useState<Material | null>(null)
 
-  const handleDeleteClick = (material) => {
+  const handleDeleteClick = (material: Material) => {
     setMaterialToDelete(material)
     setDeleteDialogOpen(true)
-  }
-
-  const handleAssignClick = (material) => {
-    setMaterialToAssign(material)
-    setAssignDialogOpen(true)
   }
 
   const handleDelete = async () => {
@@ -72,7 +76,7 @@ export default function ProjectMaterials({ projectId, materials = [] }) {
     }
   }
 
-  const handleCreateOrder = (materialId) => {
+  const handleCreateOrder = (materialId: number) => {
     router.push(`/crm/projects/${projectId}/materials/${materialId}/order/new`)
   }
 
@@ -122,7 +126,7 @@ export default function ProjectMaterials({ projectId, materials = [] }) {
                     <TableCell>{material.specification || "-"}</TableCell>
                     <TableCell>{material.quantity}</TableCell>
                     <TableCell>{material.unit}</TableCell>
-                    <TableCell>{material.estimatedCost ? formatCurrency(material.estimatedCost) : "-"}</TableCell>
+                    <TableCell>{material.estimatedCost ? `${material.estimatedCost.toString()}` : "-"}</TableCell>
                     <TableCell>{material.orders?.length || 0}</TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -167,12 +171,13 @@ export default function ProjectMaterials({ projectId, materials = [] }) {
             <AlertDialogTitle>Delete Material</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete {materialToDelete?.name}? This action cannot be undone.
-              {materialToDelete?.orders?.length > 0 && (
+              {materialToDelete?.orders && materialToDelete.orders.length > 0 && (
                 <p className="mt-2 text-destructive">
                   Warning: This material has {materialToDelete.orders.length} orders associated with it. Deleting it
                   will also delete all related orders.
                 </p>
               )}
+
               {error && <p className="mt-2 text-destructive">{error}</p>}
             </AlertDialogDescription>
           </AlertDialogHeader>

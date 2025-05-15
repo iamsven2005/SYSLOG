@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { addReminder, updateReminder } from "@/app/leave/reminder-actions"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 const reminderFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -81,19 +81,13 @@ export function ReminderForm({ onSuccess, defaultDate, reminderId, defaultValues
       if (mode === "edit" && reminderId) {
         const result = await updateReminder(reminderId, data)
         if (result.success) {
-          toast({
-            title: "Reminder updated",
-            description: "Your personal reminder has been updated successfully.",
-          })
+          toast.success("Your personal reminder has been updated successfully.")
         } else {
           throw new Error(result.error)
         }
       } else {
         await addReminder(data)
-        toast({
-          title: "Reminder added",
-          description: "Your personal reminder has been added to the calendar.",
-        })
+        toast.success("Your personal reminder has been added to the calendar.")
         form.reset()
       }
 
@@ -102,13 +96,8 @@ export function ReminderForm({ onSuccess, defaultDate, reminderId, defaultValues
         onSuccess()
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : `Failed to ${mode === "edit" ? "update" : "add"} reminder. Please try again.`,
-      })
+      console.log(error)
+      toast.error(`Failed to ${mode === "edit" ? "update" : "add"} reminder. Please try again.`)
     } finally {
       setIsSubmitting(false)
     }

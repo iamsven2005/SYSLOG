@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { LibraryEntry } from "@prisma/client"
+import type { LibraryEntry } from "@/prisma/generated/main"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

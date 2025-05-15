@@ -1,13 +1,12 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { HardHat, Search, Plus } from "lucide-react"
+
 import { getInteractions } from "../actions/interactions"
 import InteractionList from "@/app/crm/components/interaction-list"
 import InteractionListSkeleton from "@/app/crm/components/skeletons/interaction-list-skeleton"
 import InteractionControls from "./interaction-controls"
+import { Plus } from "lucide-react"
 
 export default async function InteractionsPage({
   searchParams,
@@ -15,17 +14,16 @@ export default async function InteractionsPage({
   searchParams: { type?: string; search?: string }
 }) {
   const { interactions, error } = await getInteractions()
-
-  const filteredInteractions = interactions?.filter((i) => {
-    const matchesType = searchParams.type && searchParams.type !== "all"
-      ? i.interactionType === searchParams.type
-      : true
-    const matchesSearch = searchParams.search
-      ? i.title.toLowerCase().includes(searchParams.search.toLowerCase()) ||
-        i.notes?.toLowerCase().includes(searchParams.search.toLowerCase())
-      : true
-    return matchesType && matchesSearch
-  })
+  const mappedInteractions = interactions?.map((i) => ({
+    ...i,
+    contact: i.contact
+      ? {
+        id: i.contact.id,
+        firstName: i.contact.name?.split(" ")[0] || "",
+        lastName: i.contact.name?.split(" ").slice(1).join(" ") || "",
+      }
+      : null,
+  }))
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -50,7 +48,7 @@ export default async function InteractionsPage({
           <CardDescription>Track communications with contractors, vendors, and other stakeholders</CardDescription>
         </CardHeader>
         <CardContent>
-          {error ? <InteractionListSkeleton /> : <InteractionList interactions={filteredInteractions || []} />}
+          {error ? <InteractionListSkeleton /> : <InteractionList interactions={mappedInteractions || []} />}
         </CardContent>
       </Card>
     </main>

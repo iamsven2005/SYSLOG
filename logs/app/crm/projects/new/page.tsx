@@ -18,7 +18,7 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { HardHat, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { createProject } from "../../actions/projects"
 
 const projectSchema = z.object({

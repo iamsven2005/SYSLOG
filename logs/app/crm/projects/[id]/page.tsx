@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { HardHat, Building2, FileText, Calendar, Clock, ArrowLeft, Download, Edit } from "lucide-react"
+import {  Building2, FileText, Calendar, Clock, ArrowLeft, Download, Edit } from "lucide-react"
 import { getProject } from "@/app/crm/actions/projects"
 import { notFound } from "next/navigation"
 import { formatDate, formatCurrency } from "@/lib/utils"
@@ -47,7 +47,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
 
   // Calculate completion percentage based on phases
   let completionPercentage = 0
-  if (project.bridgeProject?.phases?.length > 0) {
+if (Array.isArray(project.bridgeProject?.phases) && project.bridgeProject.phases.length > 0) {
     const totalPhases = project.bridgeProject.phases.length
     const completedPhases = project.bridgeProject.phases.filter((phase) => phase.status === "COMPLETED").length
     const inProgressPhases = project.bridgeProject.phases.filter((phase) => phase.status === "IN_PROGRESS")
@@ -114,8 +114,12 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                   ? `${Math.ceil((new Date(project.estimatedEndDate).getTime() - new Date(project.startDate).getTime()) / (1000 * 60 * 60 * 24 * 30))} months`
                   : "N/A"}
               </div>
-              <p className="text-xs text-muted-foreground">Start: {formatDate(project.startDate)}</p>
-              <p className="text-xs text-muted-foreground">End: {formatDate(project.estimatedEndDate)}</p>
+<p className="text-xs text-muted-foreground">
+  Start: {project.startDate ? formatDate(project.startDate) : "N/A"}
+</p>
+<p className="text-xs text-muted-foreground">
+  Start: {project.estimatedEndDate ? formatDate(project.estimatedEndDate) : "N/A"}
+</p>
             </CardContent>
           </Card>
           <Card>
@@ -124,7 +128,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(project.budget)}</div>
+              <div className="text-2xl font-bold">{project.budget?.toString()}</div>
               <p className="text-xs text-muted-foreground">
                 {/* In a real app, you would calculate spent amount from contracts and orders */}
                 Tracking in progress
@@ -201,7 +205,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
               <CardDescription>Current progress of construction phases</CardDescription>
             </CardHeader>
             <CardContent>
-              {project.bridgeProject?.phases?.length > 0 ? (
+{project.bridgeProject && Array.isArray(project.bridgeProject.phases) && project.bridgeProject.phases.length > 0 ? (
                 <div className="space-y-4">
                   {project.bridgeProject.phases.map((phase) => (
                     <div key={phase.id}>

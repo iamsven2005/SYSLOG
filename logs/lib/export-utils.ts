@@ -1,22 +1,16 @@
+import { devices, ldapuser, logs, User } from "@/prisma/generated/main"
 import * as XLSX from "xlsx"
 
 // Function to export data to Excel
-export function exportToExcel(data: any[], filename: string) {
-  // Create a new workbook
+export function exportToExcel<T extends object>(data: T[], filename: string) {
   const workbook = XLSX.utils.book_new()
-
-  // Convert data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(data)
-
-  // Add the worksheet to the workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, "Data")
-
-  // Generate Excel file and trigger download
   XLSX.writeFile(workbook, `${filename}.xlsx`)
 }
 
 // Function to prepare logs data for export
-export function prepareLogsForExport(logs: any[]) {
+export function prepareLogsForExport(logs: logs[]) {
   return logs.map((log) => {
     // Create a flattened version of the log for Excel
     return {
@@ -35,19 +29,19 @@ export function prepareLogsForExport(logs: any[]) {
 }
 
 // Function to prepare auth logs data for export
-export function prepareAuthLogsForExport(logs: any[]) {
+export function prepareAuthLogsForExport(logs: logs[]) {
   return logs.map((log) => {
     return {
       ID: log.id,
       Timestamp: new Date(log.timestamp).toLocaleString(),
-      Username: log.username || "",
-      "Log Entry": log.log_entry || "",
+      Username: log.host || "",
+      "Log Entry": log.command || "",
     }
   })
 }
 
 // Function to prepare devices data for export
-export function prepareDevicesForExport(devices: any[]) {
+export function prepareDevicesForExport(devices: devices[]) {
   return devices.map((device) => {
     return {
       ID: device.id,
@@ -61,7 +55,10 @@ export function prepareDevicesForExport(devices: any[]) {
 }
 
 // Function to prepare users data for export
-export function prepareUsersForExport(users: any[]) {
+type ExportableUser = User & {
+  devices?: devices[]
+}
+export function prepareUsersForExport(users: ExportableUser[]) {
   return users.map((user) => {
     return {
       ID: user.id,
@@ -74,50 +71,54 @@ export function prepareUsersForExport(users: any[]) {
   })
 }
 
-// Add support for disk metrics in the prepareChartDataForExport function
-export function prepareChartDataForExport(data: any[], type: "usage" | "memory" | "sensor" | "disk") {
+export function prepareChartDataForExport(
+  data: Record<string, unknown>[],
+  type: "usage" | "memory" | "sensor" | "disk"
+): Record<string, unknown>[] {
   if (!data || data.length === 0) return []
 
-  const exportData: any[] = []
+  const exportData: Record<string, unknown>[] = []
 
-  data.forEach((entry) => {
-    const timestamp = new Date(entry.timestamp).toLocaleString()
-    const row: any = { timestamp }
+  data.forEach((entryRaw) => {
+    const entry = entryRaw as Record<string, unknown>
+    const timestamp = new Date(entry.timestamp as string).toLocaleString()
+    const row: Record<string, unknown> = { timestamp }
 
     Object.keys(entry).forEach((key) => {
       if (key !== "timestamp") {
+        const value = entry[key]
+
         if (type === "usage") {
-          // Handle CPU and memory usage data
           const [host, metric] = key.split(".")
-          row[`${host}_${metric}`] = entry[key]
-        } else if (type === "memory") {
-          // Handle detailed memory usage data
-          if (typeof entry[key] === "object") {
-            Object.keys(entry[key]).forEach((memKey) => {
-              row[`${key}_${memKey}`] = entry[key][memKey]
-            })
+          row[`${host}_${metric}`] = value
+        } else if (type === "memory" && typeof value === "object" && value !== null) {
+          Object.entries(value as Record<string, unknown>).forEach(([memKey, memVal]) => {
+            row[`${key}_${memKey}`] = memVal
+          })
+        } else if (type === "sensor" && typeof value === "object" && value !== null) {
+          const sensor = value as {
+            value?: unknown
+            type?: unknown
+            host?: unknown
           }
-        } else if (type === "sensor") {
-          // Handle sensor data
-          if (typeof entry[key] === "object") {
-            row[`${key}_value`] = entry[key].value
-            row[`${key}_type`] = entry[key].type
-            row[`${key}_host`] = entry[key].host
-          }
-        } else if (type === "disk") {
-          // Handle disk metrics data
-          if (key.includes("|")) {
-            const [host, diskName] = key.split("|")
-            if (typeof entry[key] === "number") {
-              // For processed data (single value)
-              row[`${host}_${diskName}`] = entry[key]
-            } else if (typeof entry[key] === "object") {
-              // For raw data (object with multiple properties)
-              row[`${host}_${diskName}_total`] = entry[key].totalgb
-              row[`${host}_${diskName}_used`] = entry[key].usedgb
-              row[`${host}_${diskName}_free`] = entry[key].freegb
-              row[`${host}_${diskName}_percent`] = entry[key].usedPercent
+          row[`${key}_value`] = sensor.value
+          row[`${key}_type`] = sensor.type
+          row[`${key}_host`] = sensor.host
+        } else if (type === "disk" && key.includes("|")) {
+          const [host, diskName] = key.split("|")
+          if (typeof value === "number") {
+            row[`${host}_${diskName}`] = value
+          } else if (typeof value === "object" && value !== null) {
+            const disk = value as {
+              totalgb?: unknown
+              usedgb?: unknown
+              freegb?: unknown
+              usedPercent?: unknown
             }
+            row[`${host}_${diskName}_total`] = disk.totalgb
+            row[`${host}_${diskName}_used`] = disk.usedgb
+            row[`${host}_${diskName}_free`] = disk.freegb
+            row[`${host}_${diskName}_percent`] = disk.usedPercent
           }
         }
       }
@@ -129,8 +130,9 @@ export function prepareChartDataForExport(data: any[], type: "usage" | "memory" 
   return exportData
 }
 
+
 // Add a function to prepare devices for import
-export function validateImportedDevices(data: any[]) {
+export function validateImportedDevices(data: devices[]) {
   const validDevices = []
   const errors = []
 
@@ -140,11 +142,11 @@ export function validateImportedDevices(data: any[]) {
 
     // Extract device data from row
     const device = {
-      name: row.Name || row.name || "",
-      ip_address: row.IP_Address || row["IP Address"] || row.ip_address || null,
-      mac_address: row.MAC_Address || row["MAC Address"] || row.mac_address || null,
-      password: row.Password || row.password || null,
-      notes: row.Notes || row.notes || "",
+      name: row.name || "",
+      ip_address: row.ip_address || null,
+      mac_address: row.mac_address || null,
+      password: row.password || null,
+      notes: row.notes || "",
     }
 
     // Validate required fields
@@ -242,7 +244,7 @@ export function generateUserImportTemplate() {
   XLSX.writeFile(workbook, "user-import-template.xlsx")
 }
 
-export function prepareLdapUsersForExport(users: any[]) {
+export function prepareLdapUsersForExport(users: ldapuser[]) {
   return users.map((user) => {
     // Convert Windows FileTime to JavaScript Date if needed
     const lastLogon = user.lastLogon

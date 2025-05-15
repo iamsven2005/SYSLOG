@@ -13,7 +13,7 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { StepLogs } from "./step-logs"
-import type { AuditStep, User } from "./types"
+import type { AuditStep, StepStatus, User } from "./types"
 
 interface StepDetailProps {
   step: AuditStep
@@ -23,7 +23,7 @@ interface StepDetailProps {
   users: User[]
 }
 
-export function StepDetail({ step, workflowId, onClose, onUpdate, users }: StepDetailProps) {
+export function StepDetail({ step, onClose, onUpdate, users }: StepDetailProps) {
   const [editedStep, setEditedStep] = useState<AuditStep>({ ...step })
   const [date, setDate] = useState<Date | undefined>(step.dueDate ? new Date(step.dueDate) : undefined)
   const [isSaving, setIsSaving] = useState(false)
@@ -67,7 +67,7 @@ export function StepDetail({ step, workflowId, onClose, onUpdate, users }: StepD
           <Label htmlFor="status">Status</Label>
           <Select
             value={editedStep.status}
-            onValueChange={(value) => setEditedStep({ ...editedStep, status: value as any })}
+onValueChange={(value) => setEditedStep({ ...editedStep, status: value as StepStatus })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select status" />
@@ -122,7 +122,7 @@ export function StepDetail({ step, workflowId, onClose, onUpdate, users }: StepD
 
         <div className="pt-4">
           <h3 className="font-medium mb-2">Activity Logs</h3>
-          <StepLogs stepId={step.id.toString()} workflowId={workflowId} />
+          <StepLogs stepId={step.id.toString()} />
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">

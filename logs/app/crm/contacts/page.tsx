@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { HardHat, Search, Plus, Filter, Mail, Phone } from "lucide-react"
+import { Search, Plus, Mail, Phone } from "lucide-react"
 import { getContacts } from "../actions/contacts"
 import ContactListSkeleton from "../components/skeletons/contact-list-skeleton"
 

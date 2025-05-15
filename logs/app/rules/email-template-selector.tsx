@@ -13,7 +13,7 @@ interface EmailTemplate {
 }
 
 interface EmailTemplateSelectorProps {
-  selectedTemplateId: number | null
+  selectedTemplateId: number | null | undefined
   onChange: (templateId: number | null) => void
   className?: string
   placeholder?: string

@@ -50,7 +50,15 @@ export default function UserActivityChart({ dailyActivity, pageDistribution, day
     router.push(`${pathname}?${params.toString()}`)
   }
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean
+    payload?: { value: number }[]
+    label?: string
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border rounded shadow-sm">
@@ -64,7 +72,14 @@ export default function UserActivityChart({ dailyActivity, pageDistribution, day
     return null
   }
 
-  const PieCustomTooltip = ({ active, payload }: any) => {
+
+  const PieCustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean
+    payload?: { name: string; value: number }[]
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border rounded shadow-sm">
@@ -77,6 +92,7 @@ export default function UserActivityChart({ dailyActivity, pageDistribution, day
     }
     return null
   }
+
 
   return (
     <Card>

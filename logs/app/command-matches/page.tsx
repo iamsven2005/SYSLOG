@@ -36,20 +36,27 @@ export default async function CommandMatchesPage({
   })
 
   const matches = response?.matches ?? [] // Ensure `matches` is always an array
-  const totalCount = response?.totalCount ?? 0
   const pageCount = response?.pageCount ?? 1
 
 
   // Transform the matches to include the required properties
-  const transformedMatches = matches.map((match) => ({
-    ...match,
-    command: match.commandText || "Unknown command", // Use commandText or fallback
-    logEntry: match.logEntry || "No log entry available", // Use logEntry or fallback
-    rule: {
-      ...match.rule,
-      name: match.rule.name || "Unknown rule",
-    },
-  }))
+const transformedMatches = matches.map((match) => ({
+  ...match,
+  command: match.commandText || "Unknown command",
+  logEntry: match.logEntry || "No log entry available",
+  rule: {
+    ...match.rule,
+    name: match.rule?.name || "Unknown rule",
+    group: match.rule?.group || null,
+  },
+  addressedByUser: match.addressedByUser
+    ? {
+        ...match.addressedByUser,
+        username: match.addressedByUser.username ?? "Unknown user",
+      }
+    : null,
+}))
+
 
   return (
     <div className="container mx-auto py-6">

@@ -65,12 +65,14 @@ export function PollCreator({ groupId, senderId, onClose, onSuccess }: PollCreat
 
       if (result.success) {
         toast.success("Poll created successfully")
-        onSuccess(result.pollId)
+        onSuccess(result.pollId!)
         onClose()
       } else {
         toast.error(result.error || "Failed to create poll")
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("An error occurred while creating the poll")
     } finally {
       setIsSubmitting(false)

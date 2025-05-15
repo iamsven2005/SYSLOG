@@ -39,8 +39,8 @@ interface Message {
   fileType?: string | null
   sender: {
     id: number
-    username: string
-    email?: string | null
+    username: string | null // <-- changed
+    email: string | null    // <-- changed
   }
 }
 
@@ -68,6 +68,8 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
         setMemberCount(group.members.length)
       }
     } catch (error) {
+      console.log(error)
+
       console.error("Failed to fetch messages:", error)
     }
   }
@@ -101,6 +103,8 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
       // Optimistically update UI
       setMessages((prev) => prev.filter((msg) => msg.id !== messageId))
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete message")
     }
   }
@@ -125,6 +129,8 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
       setEditingMessageId(null)
       setEditedContent("")
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to update message")
     }
   }
@@ -268,7 +274,13 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
                     >
                       {!isCurrentUser && (
                         <Avatar className="h-8 w-8 mr-2 mt-1">
-                          <AvatarFallback>{getInitials(message.sender.username)}</AvatarFallback>
+<AvatarFallback>{getInitials(message.sender.username || "U")}</AvatarFallback>
+...
+{!isCurrentUser && (
+  <div className="text-xs text-muted-foreground mb-1">
+    {message.sender.username ?? "Unknown"}
+  </div>
+)}
                         </Avatar>
                       )}
 
@@ -304,9 +316,8 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
                           ) : (
                             <>
                               <div
-                                className={`rounded-lg p-3 transition-colors ${
-                                  isCurrentUser ? "bg-primary text-primary-foreground ml-auto" : "bg-gray-100"
-                                }`}
+                                className={`rounded-lg p-3 transition-colors ${isCurrentUser ? "bg-primary text-primary-foreground ml-auto" : "bg-gray-100"
+                                  }`}
                               >
                                 {isPoll ? (
                                   <PollMessage messageId={message.id} userId={id} />

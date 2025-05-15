@@ -19,7 +19,7 @@ type QuestionViewProps = {
   onFileChange: (file: File | null) => void
 }
 
-export function QuestionView({ question, value, file, onChange, onFileChange }: QuestionViewProps) {
+export function QuestionView({ question, value, onChange, onFileChange }: QuestionViewProps) {
   const [fileName, setFileName] = useState<string>("")
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

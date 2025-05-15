@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createContact, updateContact } from "@/app/crm/actions/contacts"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { HardHat, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { getCompanies } from "../../actions/companies"
 import { Company } from "@/prisma/generated/main"
 const contactSchema = z.object({

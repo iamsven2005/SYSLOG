@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
-import { Pencil, Trash2, Plus, Mail } from 'lucide-react'
+import { Pencil, Trash2, Plus} from 'lucide-react'
 import { EmailTemplateForm } from "./email-template-form"
 import { deleteEmailTemplate, getAllEmailTemplates } from "@/app/email-templates/email-template-actions"
 
@@ -91,14 +91,6 @@ export default function EmailTemplateTable() {
   }, []);
   
   
-  const handleEditTemplate = (template: EmailTemplate) => {
-    setSelectedTemplate({
-      ...template,
-      assignedUsers: template.assignedUsers || [], // Ensure it has an array
-    });
-    setIsEditDialogOpen(true);
-  };
-  
   // Handle template deletion
   const handleDeleteTemplate = async () => {
     if (!selectedTemplate) return
@@ -111,9 +103,9 @@ export default function EmailTemplateTable() {
       } else {
         toast.error("Failed to delete email template")
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting email template:", error)
-      toast.error(error.message || "An error occurred while deleting the template")
+      toast.error( "An error occurred while deleting the template")
     } finally {
       setIsDeleteDialogOpen(false)
       setSelectedTemplate(null)
@@ -251,7 +243,7 @@ export default function EmailTemplateTable() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will permanently delete the email template "{selectedTemplate?.name}". 
+                This will permanently delete the email template &quot;{selectedTemplate?.name}&quot;. 
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>

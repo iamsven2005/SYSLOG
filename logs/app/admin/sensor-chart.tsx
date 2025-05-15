@@ -16,21 +16,6 @@ import { Badge } from "@/components/ui/badge"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 import { getSensorData } from "../logs/actions"
 
-// Color palette for different sensors
-const TEMP_COLORS = {
-  "Package id 0": "#2563eb", // blue-600
-  "Core 0": "#16a34a", // green-600
-  "Core 1": "#15803d", // green-700
-  "Core 2": "#166534", // green-800
-  "Core 3": "#14532d", // green-900
-  temp1: "#dc2626", // red-600
-  temp2: "#9f1239", // rose-800
-}
-
-const VOLTAGE_COLORS = {
-  "GPU core": "#9333ea", // purple-600
-}
-
 // Host color palette
 const HOST_COLORS = [
   "#2563eb", // blue-600

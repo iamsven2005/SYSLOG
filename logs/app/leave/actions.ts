@@ -27,7 +27,7 @@ export async function submitLeaveApplication(data: LeaveFormValues) {
   if (perm.hasPermission === false) {
     return notFound()
   }
-  const result = await db.leave.create({
+  await db.leave.create({
     data: {
       startDate: validatedData.startDate,
       endDate: validatedData.endDate,
@@ -46,7 +46,7 @@ export async function submitLeaveApplication(data: LeaveFormValues) {
 }
 
 export async function approveLeave(leaveId: number, comment: string) {
-  const result = await db.leave.update({
+  await db.leave.update({
     where: { id: leaveId },
     data: {
       status: "APPROVED",
@@ -62,7 +62,7 @@ export async function approveLeave(leaveId: number, comment: string) {
 }
 
 export async function rejectLeave(leaveId: number, comment: string) {
-  const result = await db.leave.update({
+  await db.leave.update({
     where: { id: leaveId },
     data: {
       status: "REJECTED",

@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  TooltipProps,
 } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -55,10 +56,25 @@ const timeRangeOptions = [
   { label: "Last 24 Hours", value: "24h" },
   { label: "Last 7 Days", value: "7d" },
 ]
+interface MemoryStats {
+  percent_usage: number
+  total_memory?: number
+  used_memory?: number
+  free_memory?: number
+  available_memory?: number
+}
 
+interface MemoryUsageEntry {
+  timestamp: string
+  [host: string]: MemoryStats | string // string is for 'timestamp'
+}
+interface VMEntry {
+  timestamp: string
+  [host: string]: string | { [vmName: string]: MemoryStats }
+}
 export default function MemoryUsageChart() {
-  const [chartData, setChartData] = useState<any[]>([])
-  const [vmChartData, setVMChartData] = useState<any[]>([])
+const [chartData, setChartData] = useState<MemoryUsageEntry[]>([])
+const [vmChartData, setVMChartData] = useState<VMEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [timeRange, setTimeRange] = useState("24h")
   const [hosts, setHosts] = useState<string[]>([])
@@ -184,7 +200,7 @@ const fetchMemoryData = async () => {
   }
 
   // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background border rounded-md shadow-md p-3">
@@ -220,45 +236,48 @@ const fetchMemoryData = async () => {
   }
 
   // Get VM data for selected host
-  const getVMDataForHost = (host: string) => {
-    if (!vmChartData.length || !vms[host] || !vms[host].length) return []
+const getVMDataForHost = (host: string) => {
+  if (!vmChartData.length || !vms[host] || !vms[host].length) return []
 
-    // Transform the data for chart display
-    return vmChartData.map((entry) => {
-      const newEntry: any = { timestamp: entry.timestamp }
+  return vmChartData.map((entry) => {
+    const newEntry: Record<string, any> = { timestamp: entry.timestamp }
 
-      if (entry[host]) {
-        vms[host].forEach((vm) => {
-          if (entry[host][vm]) {
-            newEntry[vm] = { percent_usage: entry[host][vm].percent_usage }
-          }
-        })
+    const vmStatsMap = entry[host] as Record<string, MemoryStats> | undefined
+    if (!vmStatsMap) return newEntry
+
+    vms[host].forEach((vm) => {
+      const vmStat = vmStatsMap[vm]
+      if (vmStat) {
+        newEntry[vm] = { percent_usage: vmStat.percent_usage }
       }
-
-      return newEntry
     })
-  }
+
+    return newEntry
+  })
+}
+
+
 
   // Get latest VM stats for a host
-  const getLatestVMStats = (host: string) => {
-    if (!vmChartData.length || !vms[host] || !vms[host].length) return []
+const getLatestVMStats = (host: string): Array<{ name: string } & MemoryStats> => {
+  if (!vmChartData.length || !vms[host]?.length) return []
 
-    const latestEntry = [...vmChartData].reverse().find((entry) => entry[host])
-    if (!latestEntry || !latestEntry[host]) return []
+  const latestEntry = [...vmChartData].reverse().find((entry) => {
+    const hostEntry = entry[host]
+    return typeof hostEntry === "object" && hostEntry !== null
+  })
 
-    return vms[host]
-      .map((vm) => {
-        if (latestEntry[host][vm]) {
-          return {
-            name: vm,
-            ...latestEntry[host][vm],
-          }
-        }
-        return null
-      })
-      .filter(Boolean)
-  }
+  if (!latestEntry || typeof latestEntry[host] !== "object" || latestEntry[host] === null) return []
 
+  const vmStatsMap = latestEntry[host] as Record<string, MemoryStats>
+
+  return vms[host]
+    .map((vm) => {
+      const stat = vmStatsMap[vm]
+      return stat ? { name: vm, ...stat } : null
+    })
+    .filter((item): item is { name: string } & MemoryStats => item !== null)
+}
   // Handle export to Excel
   const handleExport = () => {
     if (chartData.length === 0) {
@@ -529,11 +548,13 @@ const fetchMemoryData = async () => {
               .filter((host) => selectedHosts.includes(host))
               .map((host, index) => {
                 // Get the latest data point for this host
-                const latestData = [...chartData].reverse().find((entry) => entry[host]?.percent_usage !== undefined)
+const latestData = [...chartData].reverse().find(
+  (entry) => typeof entry[host] === "object" && "percent_usage" in entry[host]!
+) as MemoryUsageEntry | undefined
                 if (!latestData || !latestData[host]) return null
 
-                const memData = latestData[host]
-                const percentUsage = memData.percent_usage
+const memData = latestData?.[host] as MemoryStats | undefined
+const percentUsage = memData?.percent_usage ?? 0
                 const hasVMs = vms[host] && vms[host].length > 0
 
                 return (
@@ -729,19 +750,19 @@ const fetchMemoryData = async () => {
                 <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                   <div>
                     <span>Total: </span>
-                    <span className="font-medium">{formatMemory(vm.total_memory)}</span>
+                    <span className="font-medium">{formatMemory(vm.total_memory ?? 0)}</span>
                   </div>
                   <div>
                     <span>Used: </span>
-                    <span className="font-medium">{formatMemory(vm.used_memory)}</span>
+                    <span className="font-medium">{formatMemory(vm.used_memory ?? 0)}</span>
                   </div>
                   <div>
                     <span>Free: </span>
-                    <span className="font-medium">{formatMemory(vm.free_memory)}</span>
+                    <span className="font-medium">{formatMemory(vm.free_memory ?? 0)}</span>
                   </div>
                   <div>
                     <span>Available: </span>
-                    <span className="font-medium">{formatMemory(vm.available_memory)}</span>
+                    <span className="font-medium">{formatMemory(vm.available_memory ?? 0)}</span>
                   </div>
                 </div>
               </div>

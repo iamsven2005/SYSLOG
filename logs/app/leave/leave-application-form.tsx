@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { submitLeaveApplication } from "@/app/leave/actions"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 const leaveFormSchema = z
   .object({
@@ -72,17 +72,12 @@ export function LeaveApplicationForm() {
     setIsSubmitting(true)
     try {
       await submitLeaveApplication(data)
-      toast({
-        title: "Leave application submitted",
-        description: "Your leave application has been submitted for approval.",
-      })
+      toast.success("Your leave application has been submitted for approval.",)
       form.reset()
       router.refresh()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to submit leave application. Please try again.",
-      })
+      console.log(error)
+      toast.error("Failed to submit leave application. Please try again.")
     } finally {
       setIsSubmitting(false)
     }

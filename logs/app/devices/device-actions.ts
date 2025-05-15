@@ -2,6 +2,7 @@
 
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
+import { Prisma } from "@/prisma/generated/main"
 
 interface GetDevicesParams {
   search?: string
@@ -25,8 +26,8 @@ export async function getAllDeviceIps() {
 // Update the getDevices function to include user information
 export async function getDevices({ search = "", page = 1, pageSize = 10 }: GetDevicesParams) {
   try {
-    // Build where conditions
-    const where: any = {}
+    const where: Prisma.devicesWhereInput = {}
+
 
     // Add search condition if provided
     if (search) {

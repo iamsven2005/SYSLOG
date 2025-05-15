@@ -1,7 +1,7 @@
 import { getUserGroups } from "./chat-actions"
 import { GroupSidebar } from "./group-sidebar"
 import { ChatContainer } from "./chat-container"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
 import { checkUserPermission } from "../permissions/permission-actions"

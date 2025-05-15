@@ -6,18 +6,39 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Trash2, Edit, Plus, Users, MapPin } from 'lucide-react'
+import { Trash2, Edit, Plus, MapPin } from 'lucide-react'
 import { toast } from "sonner"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { getTeams, deleteTeam } from "@/app/teams/actions"
+import { User } from "@/prisma/generated/main"
+interface Team {
+  id: number
+  name: string
+  description: string | null
+  remarks?: string
+  sequence: number
+  leaders: { user: User }[]
+  members: { user: User }[]
+  locations: { location: Location }[]
+}
+type Location = {
+  id: number
+  name: string
+  Remarks: string | null
+  code: string
+  modifyBy: string | null
+  createBy: string
+  modifyDate: Date
+  CCY: string | null
+  Region: string | null
+  WCI_URL: string | null
+  createDate: Date
+  fullname: string | null
+}
 
 export default function TeamsTable() {
   const router = useRouter()
-  const [teams, setTeams] = useState<any[]>([])
-  const [users, setUsers] = useState<any[]>([])
-  const [locations, setLocations] = useState<any[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [teamToDelete, setTeamToDelete] = useState<number | null>(null)
@@ -30,9 +51,9 @@ export default function TeamsTable() {
     try {
       const result = await getTeams()
       setTeams(result.teams)
-      setUsers(result.users)
-      setLocations(result.locations)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch teams")
     }
   }
@@ -69,27 +90,31 @@ export default function TeamsTable() {
       setDeleteDialogOpen(false)
       setTeamToDelete(null)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete team")
     }
   }
 
   // Get users for a team
-  const getTeamLeaders = (teamId: number) => {
+  const getTeamLeaders = (teamId: number): User[] => {
     return teams
       .find((team) => team.id === teamId)
-      ?.leaders.map((leader: any) => leader.user) || []
+      ?.leaders.map((leader: { user: User }) => leader.user) || []
   }
 
-  const getTeamMembers = (teamId: number) => {
+
+  const getTeamMembers = (teamId: number): User[] => {
     return teams
       .find((team) => team.id === teamId)
-      ?.members.map((member: any) => member.user) || []
+      ?.members.map((member: { user: User }) => member.user) || []
   }
 
-  const getTeamLocations = (teamId: number) => {
+
+  const getTeamLocations = (teamId: number): Location[] => {
     return teams
       .find((team) => team.id === teamId)
-      ?.locations.map((location: any) => location.location) || []
+      ?.locations.map((location: { location: Location }) => location.location) || []
   }
 
   return (
@@ -146,7 +171,7 @@ export default function TeamsTable() {
                     <TableCell className="font-medium">{team.name}</TableCell>
                     <TableCell>{team.sequence}</TableCell>
                     <TableCell>{team.description || team.remarks || "—"}</TableCell>
-                    
+
                     {/* Team Leaders */}
                     <TableCell>
                       <Input
@@ -163,24 +188,26 @@ export default function TeamsTable() {
                       {teamLeaders.length > 0 ? (
                         <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto">
                           {teamLeaders
-                            .filter((leader: any) => {
+                            .filter((leader: User) => {
                               const query = (teamLeaderSearch[team.id] || "").toLowerCase()
                               return (
-                                leader.username.toLowerCase().includes(query) ||
-                                leader.email?.toLowerCase().includes(query)
+                                (leader.username ?? "").toLowerCase().includes(query) ||
+                                (leader.email ?? "").toLowerCase().includes(query)
                               )
                             })
-                            .map((leader: any) => (
+
+                            .map((leader: User) => (
                               <Badge key={leader.id} variant="outline" className="flex items-center gap-1">
                                 {leader.username}
                               </Badge>
-                            ))}
+                            ))
+                          }
                         </div>
                       ) : (
                         <span className="text-muted-foreground">No leaders</span>
                       )}
                     </TableCell>
-                    
+
                     {/* Team Members */}
                     <TableCell>
                       <Input
@@ -197,24 +224,25 @@ export default function TeamsTable() {
                       {teamMembers.length > 0 ? (
                         <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto">
                           {teamMembers
-                            .filter((member: any) => {
+                            .filter((member: User) => {
                               const query = (teamMemberSearch[team.id] || "").toLowerCase()
                               return (
-                                member.username.toLowerCase().includes(query) ||
-                                member.email?.toLowerCase().includes(query)
+                                (member.username ?? "").toLowerCase().includes(query) ||
+                                (member.email ?? "").toLowerCase().includes(query)
                               )
                             })
-                            .map((member: any) => (
+                            .map((member: User) => (
                               <Badge key={member.id} variant="secondary" className="flex items-center gap-1">
                                 {member.username}
                               </Badge>
-                            ))}
+                            ))
+                          }
                         </div>
                       ) : (
                         <span className="text-muted-foreground">No members</span>
                       )}
                     </TableCell>
-                    
+
                     {/* Team Locations */}
                     <TableCell>
                       <Input
@@ -231,7 +259,7 @@ export default function TeamsTable() {
                       {teamLocations.length > 0 ? (
                         <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto">
                           {teamLocations
-                            .filter((location: any) => {
+                            .filter((location: Location) => {
                               const query = (teamLocationSearch[team.id] || "").toLowerCase()
                               return (
                                 location.name.toLowerCase().includes(query) ||
@@ -239,18 +267,19 @@ export default function TeamsTable() {
                                 location.fullname?.toLowerCase().includes(query)
                               )
                             })
-                            .map((location: any) => (
+                            .map((location: Location) => (
                               <Badge key={location.id} className="flex items-center gap-1">
                                 <MapPin className="h-3 w-3 mr-1" />
                                 {location.name}
                               </Badge>
-                            ))}
+                            ))
+                          }
                         </div>
                       ) : (
                         <span className="text-muted-foreground">No locations</span>
                       )}
                     </TableCell>
-                    
+
                     {/* Actions */}
                     <TableCell>
                       <div className="flex gap-2">

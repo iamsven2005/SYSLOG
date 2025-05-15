@@ -1,5 +1,6 @@
 "use server"
 import { db } from "@/lib/db"
+import { Prisma } from "@/prisma/generated/main"
 import { cookies } from "next/headers"
 
 type ActivityLogParams = {
@@ -55,8 +56,7 @@ export async function getActivityLogs({
 }) {
   try {
     // Build where conditions
-    const where: any = {}
-
+    const where: Prisma.ActivityLogWhereInput = {}
     if (userId) {
       where.userId = userId
     }

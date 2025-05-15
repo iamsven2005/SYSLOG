@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useRef, SetStateAction, ChangeEvent } from "react"
+import { useState, useRef, ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { User } from "@/prisma/generated/main"
 
-export default function NdaUploadForm({ user}: any) {
+export default function NdaUploadForm({ user}: {user: User}) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -100,7 +101,7 @@ export default function NdaUploadForm({ user}: any) {
 
       <div className="border p-4 rounded-md">
         <p className="text-blue-600 mb-4">
-          By clicking the "Upload" button below, I hereby agree to and accept the terms and conditions as defined in the
+          By clicking the &quot;Upload&quot; button below, I hereby agree to and accept the terms and conditions as defined in the
           Non-Disclosure Agreement document.
         </p>
 

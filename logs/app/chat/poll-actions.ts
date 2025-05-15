@@ -1,7 +1,6 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { group } from "console"
 import { revalidatePath } from "next/cache"
 
 // Create a new poll

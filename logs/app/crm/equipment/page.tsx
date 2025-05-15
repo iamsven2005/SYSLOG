@@ -2,11 +2,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { HardHat, Plus, Search, Filter } from "lucide-react"
+import { Plus, Search, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { getEquipment, getEquipmentStats, getEquipmentCategories } from "@/app/crm/actions/equipment"
 import EquipmentStats from "../components/equipment-stats"
 import EquipmentList from "../components/equipment-list"
+import { EquipmentCondition, EquipmentStatus } from "@/prisma/generated/main"
 
 export default async function EquipmentPage({
   searchParams,
@@ -16,8 +17,8 @@ export default async function EquipmentPage({
   // Parse filters
   const filters = {
     categoryId: searchParams.category ? Number.parseInt(searchParams.category) : undefined,
-    status: searchParams.status as any,
-    condition: searchParams.condition as any,
+    status: searchParams.status as EquipmentStatus,
+    condition: searchParams.condition as EquipmentCondition,
     search: searchParams.search,
   }
 

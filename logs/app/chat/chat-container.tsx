@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState} from "react"
 import { useSearchParams } from "next/navigation"
 import { ChatMessages } from "./chat-messages"
 import { ChatInput } from "./chat-input"
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { UsersListDialog } from "./users-list-dialog"
 import { ImportExportDialog } from "./import-export-dialog"
 import { Camera,Users, FileUp } from "lucide-react"
-import { useTheme } from "next-themes"
 import { takeScreenshot } from "../utils/screenshot"
 import { toast } from "sonner"
 
@@ -17,7 +16,6 @@ export function ChatContainer({ id }: { id: number }) {
   const groupId = searchParams.get("groupId")
   const [isUsersListOpen, setIsUsersListOpen] = useState(false)
   const [isImportExportOpen, setIsImportExportOpen] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
 
   const handleScreenshot = async () => {

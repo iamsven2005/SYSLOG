@@ -9,12 +9,177 @@ interface GetRuleGroupsParams {
   page?: number
   pageSize?: number
 }
+// Define the type for the rows of the rule groups
+interface RuleGroupRow {
+  Type: "Group" | "Rule" | "Command";
+  ID: number;
+  Name: string;
+  Description?: string | null;
+  Command?: string;
+  GroupID?: number;
+  GroupName?: string;
+  RuleID?: number;
+  RuleName?: string;
+}
+
+// Define types for the entities
+interface RuleGroup {
+  id: number;
+  name: string;
+  rules: Rule[];
+}
+
+interface Rule {
+  id: number;
+  name: string;
+  description: string | null;
+  commands: Command[];
+}
+
+interface Command {
+  id: number;
+  command: string;
+}
+
+// Function to import rule groups from Excel data
+export async function importRuleGroups(data: RuleGroupRow[]) {
+  try {
+    const groups = new Map<string, number>()
+    const rules = new Map<string, number>()
+
+    // First pass: Create groups and rules
+    for (const row of data) {
+      if (row.Type === "Group") {
+        if (!groups.has(row.Name)) {
+          const group = await db.ruleGroup.create({
+            data: {
+              name: row.Name,
+            },
+          })
+          groups.set(row.Name, group.id)
+
+          // Log the activity
+          await logActivity({
+            actionType: "Imported Rule Group",
+            targetType: "RuleGroup",
+            targetId: group.id,
+            details: `Imported rule group: ${row.Name}`,
+          })
+        }
+      } else if (row.Type === "Rule") {
+        let groupId = groups.get(row.GroupName || "")
+        if (!groupId && row.GroupName) {
+          const group = await db.ruleGroup.create({
+            data: {
+              name: row.GroupName,
+            },
+          })
+          groupId = group.id
+          groups.set(row.GroupName, groupId)
+
+          // Log the activity
+          await logActivity({
+            actionType: "Imported Rule Group",
+            targetType: "RuleGroup",
+            targetId: group.id,
+            details: `Imported rule group: ${row.GroupName}`,
+          })
+        }
+
+        if (groupId && !rules.has(row.Name)) {
+          const rule = await db.rule.create({
+            data: {
+              name: row.Name,
+              description: row.Description || null,
+              groupId: groupId,
+            },
+          })
+          rules.set(row.Name, rule.id)
+
+          // Log the activity
+          await logActivity({
+            actionType: "Imported Rule",
+            targetType: "Rule",
+            targetId: rule.id,
+            details: `Imported rule: ${row.Name} in group: ${row.GroupName}`,
+          })
+        }
+      }
+    }
+
+    // Second pass: Create commands
+    for (const row of data) {
+      if (row.Type === "Command" && row.Command) {
+        const ruleId = rules.get(row.RuleName || "")
+        if (ruleId) {
+          await db.command.create({
+            data: {
+              ruleId: ruleId,
+              command: row.Command,
+            },
+          })
+        }
+      }
+    }
+
+    revalidatePath("/logs")
+    return { success: true }
+  } catch (error) {
+    console.error("Error importing rule groups:", error)
+    throw new Error("Failed to import rule groups")
+  }
+}
+
+// Function to prepare rule groups for export
+export async function prepareRuleGroupsForExport(ruleGroups: RuleGroup[]) {
+  const exportData: RuleGroupRow[] = []
+
+  ruleGroups.forEach((group) => {
+    // Add the group as a row
+    exportData.push({
+      Type: "Group",
+      ID: group.id,
+      Name: group.name,
+      Description: "",
+      Command: "",
+      GroupName: "",
+    })
+
+    group.rules.forEach((rule) => {
+      exportData.push({
+        Type: "Rule",
+        ID: rule.id,
+        Name: rule.name,
+        Description: rule.description || "",
+        Command: "",
+        GroupID: group.id,
+        GroupName: group.name,
+      })
+
+      rule.commands.forEach((cmd) => {
+        exportData.push({
+          Type: "Command",
+          ID: cmd.id,
+          Name: "",
+          Description: "",
+          Command: cmd.command,
+          GroupID: group.id,
+          GroupName: group.name,
+          RuleID: rule.id,
+          RuleName: rule.name,
+        })
+      })
+    })
+  })
+
+  return exportData
+}
 
 // Update the getRuleGroups function to include email templates
 export async function getRuleGroups({ search = "", page = 1, pageSize = 10 }: GetRuleGroupsParams) {
   try {
     // Build where conditions
-    const where: any = {}
+    const where: Record<string, unknown> = {}
 
     // Add search condition if provided
     if (search) {
@@ -349,145 +514,7 @@ export async function deleteRule(id: number) {
   }
 }
 
-// Function to prepare rule groups for export
-export async function prepareRuleGroupsForExport(ruleGroups: any[]) {
-  const exportData: any[] = []
 
-  ruleGroups.forEach((group) => {
-    // Add the group as a row
-    exportData.push({
-      Type: "Group",
-      ID: group.id,
-      Name: group.name,
-      Description: "",
-      Command: "",
-      GroupID: "",
-      GroupName: "",
-    })
-
-    // Add each rule as a row
-    group.rules.forEach((rule: any) => {
-      exportData.push({
-        Type: "Rule",
-        ID: rule.id,
-        Name: rule.name,
-        Description: rule.description || "",
-        Command: "",
-        GroupID: group.id,
-        GroupName: group.name,
-      })
-
-      // Add each command as a row
-      rule.commands.forEach((cmd: any) => {
-        exportData.push({
-          Type: "Command",
-          ID: cmd.id,
-          Name: "",
-          Description: "",
-          Command: cmd.command,
-          GroupID: group.id,
-          GroupName: group.name,
-          RuleID: rule.id,
-          RuleName: rule.name,
-        })
-      })
-    })
-  })
-
-  return exportData
-}
-
-// Function to import rule groups from Excel data
-export async function importRuleGroups(data: any[]) {
-  try {
-    const groups = new Map()
-    const rules = new Map()
-
-    // First pass: Create groups and rules
-    for (const row of data) {
-      if (row.Type === "Group") {
-        // Create group if it doesn't exist
-        if (!groups.has(row.Name)) {
-          const group = await db.ruleGroup.create({
-            data: {
-              name: row.Name,
-            },
-          })
-          groups.set(row.Name, group.id)
-
-          // Log the activity
-          await logActivity({
-            actionType: "Imported Rule Group",
-            targetType: "RuleGroup",
-            targetId: group.id,
-            details: `Imported rule group: ${row.Name}`,
-          })
-        }
-      } else if (row.Type === "Rule") {
-        // Get or create the group
-        let groupId = groups.get(row.GroupName)
-        if (!groupId && row.GroupName) {
-          const group = await db.ruleGroup.create({
-            data: {
-              name: row.GroupName,
-            },
-          })
-          groupId = group.id
-          groups.set(row.GroupName, groupId)
-
-          // Log the activity
-          await logActivity({
-            actionType: "Imported Rule Group",
-            targetType: "RuleGroup",
-            targetId: group.id,
-            details: `Imported rule group: ${row.GroupName}`,
-          })
-        }
-
-        // Create the rule
-        if (groupId && !rules.has(row.Name)) {
-          const rule = await db.rule.create({
-            data: {
-              name: row.Name,
-              description: row.Description || null,
-              groupId: groupId,
-            },
-          })
-          rules.set(row.Name, rule.id)
-
-          // Log the activity
-          await logActivity({
-            actionType: "Imported Rule",
-            targetType: "Rule",
-            targetId: rule.id,
-            details: `Imported rule: ${row.Name} in group: ${row.GroupName}`,
-          })
-        }
-      }
-    }
-
-    // Second pass: Create commands
-    for (const row of data) {
-      if (row.Type === "Command" && row.Command) {
-        const ruleId = rules.get(row.RuleName)
-        if (ruleId) {
-          await db.command.create({
-            data: {
-              ruleId: ruleId,
-              command: row.Command,
-            },
-          })
-        }
-      }
-    }
-
-    revalidatePath("/logs")
-    return { success: true }
-  } catch (error) {
-    console.error("Error importing rule groups:", error)
-    throw new Error("Failed to import rule groups")
-  }
-}
 
 // Add a function to get all rule groups and rules for filtering
 export async function getAllRuleGroupsAndRules() {

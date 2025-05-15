@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { getAllProjects, getProjectTypes, assignProjectType } from "./actions" // Import actions
-import type { User } from "@prisma/client"
 import { toast } from "sonner"
 import { Plus, HardDrive, Upload } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -44,8 +43,12 @@ interface ProjectAssignment {
   userId: number
   projectId: number
   role: string
-  user: User
+  user: {
+    id: number
+    username: string | null
+  }
 }
+
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
@@ -55,9 +58,7 @@ export default function ProjectsPage() {
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [isModelEntryModalOpen, setIsModelEntryModalOpen] = useState(false)
-  const [projectAssignments, setProjectAssignments] = useState<ProjectAssignment[]>([])
-  const [availableUsers, setAvailableUsers] = useState<User[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
 
@@ -194,9 +195,7 @@ export default function ProjectsPage() {
                   <TableCell>
                     <Select
                       value={project.projectType?.id?.toString() || ""}
-                      onValueChange={(projectTypeId) => handleProjectTypeChange(project.id, projectTypeId)}
-                      disabled={isSubmitting}
-                    >
+                      onValueChange={(projectTypeId) => handleProjectTypeChange(project.id, projectTypeId)}>
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select project type" />
                       </SelectTrigger>

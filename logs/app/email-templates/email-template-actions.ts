@@ -36,9 +36,8 @@ export async function createEmailTemplate(data: EmailTemplateData & { assignedUs
     })
 
     return { success: true, emailTemplate }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating email template:", error)
-    throw new Error(`Failed to create email template: ${error.message || "Unknown error"}`)
   }
 }
 
@@ -68,9 +67,8 @@ export async function updateEmailTemplate(data: {
 
     revalidatePath("/logs")
     return { success: true, emailTemplate }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating email template:", error)
-    throw new Error(`Failed to update email template: ${error.message || "Unknown error"}`)
   }
 }
 
@@ -96,9 +94,8 @@ export async function deleteEmailTemplate(id: number) {
 
     revalidatePath("/logs")
     return { success: true }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting email template:", error)
-    throw new Error(`Failed to delete email template: ${error.message || "Unknown error"}`)
   }
 }
 
@@ -199,7 +196,7 @@ export async function sendEmailWithTemplate(templateId: number, recipientIds: nu
     })
 
     return { success: true, results: emailResults }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to send emails:", error)
     return { success: false, error: "Failed to send emails" }
   }
@@ -230,7 +227,7 @@ export async function sendEmailToAllAdmins(templateId: number, data: Record<stri
     } else {
       return result
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to send email to admins:", error)
     return { success: false, error: "Failed to send email to admin users" }
   }

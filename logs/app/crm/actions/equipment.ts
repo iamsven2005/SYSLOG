@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { EquipmentStatus, EquipmentCondition, MaintenanceType } from "@/prisma/generated/main"
+import { EquipmentStatus, EquipmentCondition, MaintenanceType, Prisma } from "@/prisma/generated/main"
 import { db } from "@/lib/db"
 
 // Equipment Categories
@@ -38,7 +38,7 @@ export async function getEquipment(filters?: {
   search?: string
 }) {
   try {
-    const where: any = {}
+    const where: Prisma.EquipmentWhereInput = {}
 
     if (filters?.categoryId) {
       where.categoryId = filters.categoryId
@@ -511,10 +511,11 @@ export async function getEquipmentStats() {
       },
     })
 
-    const categoryMap = categories.reduce((acc: any, category: any) => {
-      acc[category.id] = category.name
-      return acc
-    }, {})
+const categoryMap = categories.reduce((acc: { [key: number]: string }, category: { id: number; name: string }) => {
+  acc[category.id] = category.name
+  return acc
+}, {})
+
 
     const formattedCategoryData = equipmentByCategory.map((item) => ({
       category: categoryMap[item.categoryId] || "Unknown",

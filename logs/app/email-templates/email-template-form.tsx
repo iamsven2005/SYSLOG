@@ -26,11 +26,11 @@ const formSchema = z.object({
   body: z.string().min(10, "Body must be at least 10 characters."),
   assignedUsers: z.array(z.string()).optional(),
 })
-
 interface User {
   id: number
-  username: string
+  username: string | null  // <-- allow null here
 }
+
 
 interface EmailTemplateFormProps {
   template?: {
@@ -53,9 +53,10 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
     async function fetchUsers() {
       try {
         const { users } = await getUsers({ page: 1, pageSize: 50 }) // Provide default values
-        
+
         setUsers(users)
       } catch (error) {
+        console.log(error)
         toast.error("Failed to load users.")
       }
     }
@@ -119,8 +120,9 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
       }
 
       if (onSuccess) onSuccess()
-    } catch (error: any) {
-      toast.error(error.message || "Failed to save email template.")
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to save email template.")
     } finally {
       setIsSubmitting(false)
     }
@@ -187,10 +189,10 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <p>Available placeholders:</p>
                     <p>
-                      <code>{"{{username}}"}</code> - User's name
+                      <code>{"{{username}}"}</code> - User&apos;s name
                     </p>
                     <p>
-                      <code>{"{{email}}"}</code> - User's email
+                      <code>{"{{email}}"}</code> - User&apos;s email
                     </p>
                     <p>
                       <code>{"{{command}}"}</code> - Matched command
@@ -220,7 +222,10 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
                   <FormLabel>Assign Users</FormLabel>
                   <FormControl>
                     <MultiSelect
-                      options={users.map((user) => ({ label: user.username, value: String(user.id) }))}
+                      options={users.map((user) => ({
+                        label: user.username || `User ${user.id}`,
+                        value: String(user.id),
+                      }))}
                       value={field.value || []}
                       onChange={field.onChange}
                       placeholder="Select users..."

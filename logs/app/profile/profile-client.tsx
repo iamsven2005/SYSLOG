@@ -4,58 +4,42 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { updateUserProfile, uploadNdaDocument } from "@/app/email-templates/user-actions"
+import { updateUserProfile } from "@/app/email-templates/user-actions"
 import EmergencyContactForm from "./emergency-contact-form"
 import NdaUploadForm from "./nda-upload-form"
 import AccountInfoForm from "./account-info-form"
 import { toast } from "sonner"
+import { User } from "@/prisma/generated/main"
 
-export default function ProfileClient({ user }: any) {
+export default function ProfileClient({ user }: { user: User }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleProfileUpdate = async (formData: any) => {
-    setIsSubmitting(true)
-    try {
-      const result = await updateUserProfile({
-        userId: user.id,
-        ...formData,
-      })
+const handleProfileUpdate = async (formData: { username: string; email: string }) => {
+  setIsSubmitting(true)
 
-      if (result.success) {
-        toast.success("Your profile has been updated successfully.")
-        router.refresh()
-      } else {
-        toast.error("Failed to update profile")
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred")
-    } finally {
-      setIsSubmitting(false)
+  try {
+    const result = await updateUserProfile({
+      userId: user.id,
+      username: formData.username,
+      email: formData.email,
+    })
+
+    if (result.success) {
+      toast.success("Your profile has been updated successfully.")
+      router.refresh()
+    } else {
+      toast.error("Failed to update profile")
     }
+  } catch (error) {
+    console.error(error)
+    toast.error("An unexpected error occurred")
+  } finally {
+    setIsSubmitting(false)
   }
+}
 
-  const handleNdaUpload = async (file: any) => {
-    setIsSubmitting(true)
-    try {
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("userId", user.id.toString())
 
-      const result = await uploadNdaDocument(formData)
-
-      if (result.success) {
-        toast.success( "Your NDA document has been uploaded successfully.")
-        router.refresh()
-      } else {
-        toast.error("Failed to upload document",)
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   return (
     <Tabs defaultValue="emergency-contacts" className="w-full">
@@ -82,7 +66,7 @@ export default function ProfileClient({ user }: any) {
             <CardTitle>NDA Documents</CardTitle>
           </CardHeader>
           <CardContent>
-            <NdaUploadForm user={user} isSubmitting={isSubmitting} />
+            <NdaUploadForm user={user} />
           </CardContent>
         </Card>
       </TabsContent>

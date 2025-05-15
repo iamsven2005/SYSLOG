@@ -79,6 +79,7 @@ export async function getSentFeedback() {
             user: true
           },
         },
+        sender: true
       },
       orderBy: {
         createdAt: "desc",
@@ -113,7 +114,12 @@ export async function getReceivedFeedback() {
         },
       },
       include: {
-        sender: true
+        sender: true,
+        recipients: {
+          include: {
+            user: true
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",

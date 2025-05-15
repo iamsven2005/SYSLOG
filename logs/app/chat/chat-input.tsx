@@ -177,6 +177,8 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
         setMessage("")
       }
     } catch (error) {
+            console.log(error)
+
       toast.error("Failed to send message")
     } finally {
       setSending(false)
@@ -451,7 +453,7 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
     setFilteredCommands(slashCommands)
   }, [])
 
-  const handlePollCreated = (pollId: number) => {
+  const handlePollCreated = () => {
     toast.success("Poll created successfully")
     setShowPollCreator(false)
   }

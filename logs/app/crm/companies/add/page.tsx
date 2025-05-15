@@ -2,7 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { HardHat, ArrowLeft } from "lucide-react"
+import {  ArrowLeft } from "lucide-react"
 import { getProject } from "@/app/crm/actions/projects"
 import { getCompanies } from "@/app/crm/actions/companies"
 import ProjectCompanyForm from "@/app/crm/components/project-company-form"
@@ -10,7 +10,7 @@ import ProjectCompanyForm from "@/app/crm/components/project-company-form"
 export default async function AddCompanyToProjectPage({ params }: { params: { id: string } }) {
   const projectId = Number.parseInt(params.id)
   const { project, error: projectError } = await getProject(projectId)
-  const { companies, error: companiesError } = await getCompanies()
+  const { companies } = await getCompanies()
 
   if (projectError || !project) {
     return notFound()

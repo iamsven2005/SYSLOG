@@ -30,7 +30,7 @@ import { AlertCondition } from "@/prisma/generated/main"
 
 export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: AlertCondition[] }) {
   const router = useRouter()
-  const [alertConditions, setAlertConditions] = useState<any[]>(initialAlertConditions || [])
+  const [alertConditions, setAlertConditions] = useState<AlertCondition[]>([])
   const [isLoading, setIsLoading] = useState(!initialAlertConditions)
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteId, setDeleteId] = useState<number | null>(null)
@@ -42,14 +42,14 @@ export function AlertConditionsTable({ initialAlertConditions }: { initialAlertC
     if (!initialAlertConditions) {
       const fetchAlertConditions = async () => {
         try {
-            const currentUser = await getCurrentUser()
-            if (!currentUser) {
-              redirect("/login")
-            }
-            const perm = await checkUserPermission(currentUser.id, "/alerts")
-            if (perm.hasPermission === false) {
-              return notFound()
-            }
+          const currentUser = await getCurrentUser()
+          if (!currentUser) {
+            redirect("/login")
+          }
+          const perm = await checkUserPermission(currentUser.id, "/alerts")
+          if (perm.hasPermission === false) {
+            return notFound()
+          }
           setIsLoading(true)
           const conditions = await getAlertConditions()
           setAlertConditions(conditions)
@@ -181,7 +181,7 @@ export function AlertConditionsTable({ initialAlertConditions }: { initialAlertC
           if (!lines[i].trim()) continue
 
           const values = lines[i].split(",")
-          const condition: Record<string, any> = {}
+          const condition: Record<string, unknown> = {}
 
           headers.forEach((header, index) => {
             if (header === "active") {

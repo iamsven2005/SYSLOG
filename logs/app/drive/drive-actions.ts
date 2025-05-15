@@ -2,7 +2,7 @@
 
 import { db, db2 } from "@/lib/db"
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
@@ -197,8 +197,8 @@ export async function uploadFile(formData: FormData) {
 const fileType = fileExtension.toLowerCase()
 
 // Handle duplicate filenames
-let baseName = file.name.replace(/\.[^/.]+$/, "")
-let extension = fileExtension ? `.${fileExtension}` : ""
+const baseName = file.name.replace(/\.[^/.]+$/, "")
+const extension = fileExtension ? `.${fileExtension}` : ""
 let finalName = file.name
 let counter = 1
 
@@ -274,9 +274,6 @@ export async function deleteFile(fileId: number) {
     await db.driveFile.delete({
       where: { id: fileId },
     })
-
-    // Note: In a production app, you would also delete the physical file
-    // from storage, but we'll skip that for this example
 
     await logActivity({
       actionType: "Deleted File",

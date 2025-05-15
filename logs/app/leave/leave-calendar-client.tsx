@@ -59,7 +59,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 type Leave = {
   id: number
@@ -96,7 +96,7 @@ interface LeaveCalendarClientProps {
 
 type SearchType = "date" | "person" | "holiday" | "activity"
 
-export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId }: LeaveCalendarClientProps) {
+export function LeaveCalendarClient({ leaves, holidays, reminders}: LeaveCalendarClientProps) {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [holidayDialogOpen, setHolidayDialogOpen] = useState(false)
@@ -116,8 +116,6 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
     reminders: number[]
   }>({ dates: [], leaves: [], holidays: [], reminders: [] })
   const [isSearching, setIsSearching] = useState(false)
-  const [isLoadingHoliday, setIsLoadingHoliday] = useState(false)
-  const [isLoadingReminder, setIsLoadingReminder] = useState(false)
 
   const handlePreviousMonth = () => {
     setCurrentMonth((prev) => subMonths(prev, 1))
@@ -138,22 +136,14 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
     try {
       const result = await deleteReminder(id)
       if (result.success) {
-        toast({
-          title: "Reminder deleted",
-          description: "Your reminder has been deleted successfully.",
-        })
+        toast.success("Your reminder has been deleted successfully.")
         setDeleteReminderDialogOpen(false)
       } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to delete reminder.",
-        })
+        toast.error("Failed to delete reminder.")
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete reminder. Please try again.",
-      })
+      console.log(error)
+      toast.error("Failed to delete reminder. Please try again.")
     }
   }
 
@@ -161,16 +151,11 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
   const handleDeleteHoliday = async (id: number) => {
     try {
       await deleteHoliday(id)
-      toast({
-        title: "Holiday deleted",
-        description: "The holiday has been deleted successfully.",
-      })
+      toast.success("The holiday has been deleted successfully.")
       setDeleteHolidayDialogOpen(false)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete holiday. Please try again.",
-      })
+      console.log(error)
+      toast.error("Failed to delete holiday. Please try again.")
     }
   }
 
@@ -209,27 +194,19 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
 
       let parsedDate: Date | null = null
 
-      // Try ISO format first
-      try {
-        const isoDate = parseISO(searchQuery)
-        if (isValid(isoDate)) {
-          parsedDate = isoDate
-        }
-      } catch (e) {
-        // Not an ISO date, continue with other formats
+      const isoDate = parseISO(searchQuery)
+      if (isValid(isoDate)) {
+        parsedDate = isoDate
       }
 
       // Try other formats
       if (!parsedDate) {
         for (const dateFormat of possibleFormats) {
-          try {
-            const date = parse(searchQuery, dateFormat, new Date())
-            if (isValid(date)) {
-              parsedDate = date
-              break
-            }
-          } catch (e) {
-            // Continue to next format
+
+          const date = parse(searchQuery, dateFormat, new Date())
+          if (isValid(date)) {
+            parsedDate = date
+            break
           }
         }
       }
@@ -678,13 +655,12 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
                       <PopoverTrigger asChild>
                         <Button
                           variant="ghost"
-                          className={`h-9 w-9 p-0 font-normal ${
-                            getLeavesForDate(date).length > 0 ||
-                            getHolidaysForDate(date).length > 0 ||
-                            getRemindersForDate(date).length > 0
+                          className={`h-9 w-9 p-0 font-normal ${getLeavesForDate(date).length > 0 ||
+                              getHolidaysForDate(date).length > 0 ||
+                              getRemindersForDate(date).length > 0
                               ? "relative"
                               : ""
-                          }`}
+                            }`}
                           data-date={format(date, "yyyy-MM-dd")}
                           {...props}
                         >
@@ -694,87 +670,41 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
                       {(getLeavesForDate(date).length > 0 ||
                         getHolidaysForDate(date).length > 0 ||
                         getRemindersForDate(date).length > 0) && (
-                        <PopoverContent className="w-80 p-0" align="center">
-                          <div className="p-4 border-b flex justify-between items-center">
-                            <h3 className="font-medium">Events on {format(date, "MMMM d, yyyy")}</h3>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setReminderDialogOpen(true)
-                                setSelectedDate(date)
-                              }}
-                            >
-                              <Plus className="h-3.5 w-3.5 mr-1" />
-                              Add
-                            </Button>
-                          </div>
-                          <ScrollArea className="max-h-[300px]">
-                            <div className="p-4 space-y-4">
-                              {getRemindersForDate(date).length > 0 && (
-                                <div>
-                                  <h4 className="font-medium text-sm mb-2">Your Reminders</h4>
-                                  <div className="space-y-2">
-                                    {getRemindersForDate(date).map((reminder) => (
-                                      <div key={reminder.id} className="flex justify-between items-center">
-                                        <div className="flex items-start gap-2">
-                                          <div
-                                            className="w-3 h-3 rounded-full mt-1.5"
-                                            style={{ backgroundColor: reminder.color }}
-                                          />
-                                          <div>
-                                            <p className="font-medium">{reminder.title}</p>
-                                            {reminder.description && (
-                                              <p className="text-sm text-muted-foreground">{reminder.description}</p>
-                                            )}
+                          <PopoverContent className="w-80 p-0" align="center">
+                            <div className="p-4 border-b flex justify-between items-center">
+                              <h3 className="font-medium">Events on {format(date, "MMMM d, yyyy")}</h3>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setReminderDialogOpen(true)
+                                  setSelectedDate(date)
+                                }}
+                              >
+                                <Plus className="h-3.5 w-3.5 mr-1" />
+                                Add
+                              </Button>
+                            </div>
+                            <ScrollArea className="max-h-[300px]">
+                              <div className="p-4 space-y-4">
+                                {getRemindersForDate(date).length > 0 && (
+                                  <div>
+                                    <h4 className="font-medium text-sm mb-2">Your Reminders</h4>
+                                    <div className="space-y-2">
+                                      {getRemindersForDate(date).map((reminder) => (
+                                        <div key={reminder.id} className="flex justify-between items-center">
+                                          <div className="flex items-start gap-2">
+                                            <div
+                                              className="w-3 h-3 rounded-full mt-1.5"
+                                              style={{ backgroundColor: reminder.color }}
+                                            />
+                                            <div>
+                                              <p className="font-medium">{reminder.title}</p>
+                                              {reminder.description && (
+                                                <p className="text-sm text-muted-foreground">{reminder.description}</p>
+                                              )}
+                                            </div>
                                           </div>
-                                        </div>
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                              <span className="sr-only">Open menu</span>
-                                              <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleEditReminder(reminder)}>
-                                              <Pencil className="h-4 w-4 mr-2" />
-                                              Edit reminder
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                              onClick={() => {
-                                                setSelectedReminder(reminder)
-                                                setDeleteReminderDialogOpen(true)
-                                              }}
-                                              className="text-red-500 focus:text-red-500"
-                                            >
-                                              <Trash2 className="h-4 w-4 mr-2" />
-                                              Delete reminder
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {getHolidaysForDate(date).length > 0 && (
-                                <div>
-                                  <h4 className="font-medium text-sm mb-2">Holidays</h4>
-                                  <div className="space-y-2">
-                                    {getHolidaysForDate(date).map((holiday) => (
-                                      <div key={holiday.id} className="flex justify-between items-center">
-                                        <div>
-                                          <p className="font-medium">{holiday.name}</p>
-                                          {holiday.description && (
-                                            <p className="text-sm text-muted-foreground">{holiday.description}</p>
-                                          )}
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                          <Badge className="bg-red-500">
-                                            {holiday.isRecurring ? "Annual" : "Holiday"}
-                                          </Badge>
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -783,68 +713,113 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
                                               </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                              <DropdownMenuItem onClick={() => handleEditHoliday(holiday)}>
+                                              <DropdownMenuItem onClick={() => handleEditReminder(reminder)}>
                                                 <Pencil className="h-4 w-4 mr-2" />
-                                                Edit holiday
+                                                Edit reminder
                                               </DropdownMenuItem>
                                               <DropdownMenuItem
                                                 onClick={() => {
-                                                  setSelectedHoliday(holiday)
-                                                  setDeleteHolidayDialogOpen(true)
+                                                  setSelectedReminder(reminder)
+                                                  setDeleteReminderDialogOpen(true)
                                                 }}
                                                 className="text-red-500 focus:text-red-500"
                                               >
                                                 <Trash2 className="h-4 w-4 mr-2" />
-                                                Delete holiday
+                                                Delete reminder
                                               </DropdownMenuItem>
                                             </DropdownMenuContent>
                                           </DropdownMenu>
                                         </div>
-                                      </div>
-                                    ))}
+                                      ))}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
 
-                              {getLeavesForDate(date).length > 0 && (
-                                <div>
-                                  <h4 className="font-medium text-sm mb-2">Leaves</h4>
-                                  <div className="space-y-2">
-                                    {getLeavesForDate(date).map((leave) => (
-                                      <div key={leave.id} className="flex justify-between items-center">
-                                        <div>
-                                          <p className="font-medium">{leave.userName}</p>
-                                          <p className="text-sm text-muted-foreground">
-                                            {format(new Date(leave.startDate), "MMM d")} -{" "}
-                                            {format(new Date(leave.endDate), "MMM d")}
-                                          </p>
+                                {getHolidaysForDate(date).length > 0 && (
+                                  <div>
+                                    <h4 className="font-medium text-sm mb-2">Holidays</h4>
+                                    <div className="space-y-2">
+                                      {getHolidaysForDate(date).map((holiday) => (
+                                        <div key={holiday.id} className="flex justify-between items-center">
+                                          <div>
+                                            <p className="font-medium">{holiday.name}</p>
+                                            {holiday.description && (
+                                              <p className="text-sm text-muted-foreground">{holiday.description}</p>
+                                            )}
+                                          </div>
+                                          <div className="flex items-center gap-1">
+                                            <Badge className="bg-red-500">
+                                              {holiday.isRecurring ? "Annual" : "Holiday"}
+                                            </Badge>
+                                            <DropdownMenu>
+                                              <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                                  <span className="sr-only">Open menu</span>
+                                                  <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                              </DropdownMenuTrigger>
+                                              <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => handleEditHoliday(holiday)}>
+                                                  <Pencil className="h-4 w-4 mr-2" />
+                                                  Edit holiday
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                  onClick={() => {
+                                                    setSelectedHoliday(holiday)
+                                                    setDeleteHolidayDialogOpen(true)
+                                                  }}
+                                                  className="text-red-500 focus:text-red-500"
+                                                >
+                                                  <Trash2 className="h-4 w-4 mr-2" />
+                                                  Delete holiday
+                                                </DropdownMenuItem>
+                                              </DropdownMenuContent>
+                                            </DropdownMenu>
+                                          </div>
                                         </div>
-                                        <Badge
-                                          className={`
-                                          ${
-                                            leave.leaveType === "FULL_DAY"
-                                              ? "bg-blue-500"
-                                              : leave.leaveType === "AM"
-                                                ? "bg-amber-500"
-                                                : "bg-purple-500"
-                                          }
-                                        `}
-                                        >
-                                          {leave.leaveType === "FULL_DAY"
-                                            ? "Full Day"
-                                            : leave.leaveType === "AM"
-                                              ? "Morning"
-                                              : "Afternoon"}
-                                        </Badge>
-                                      </div>
-                                    ))}
+                                      ))}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
-                            </div>
-                          </ScrollArea>
-                        </PopoverContent>
-                      )}
+                                )}
+
+                                {getLeavesForDate(date).length > 0 && (
+                                  <div>
+                                    <h4 className="font-medium text-sm mb-2">Leaves</h4>
+                                    <div className="space-y-2">
+                                      {getLeavesForDate(date).map((leave) => (
+                                        <div key={leave.id} className="flex justify-between items-center">
+                                          <div>
+                                            <p className="font-medium">{leave.userName}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                              {format(new Date(leave.startDate), "MMM d")} -{" "}
+                                              {format(new Date(leave.endDate), "MMM d")}
+                                            </p>
+                                          </div>
+                                          <Badge
+                                            className={`
+                                          ${leave.leaveType === "FULL_DAY"
+                                                ? "bg-blue-500"
+                                                : leave.leaveType === "AM"
+                                                  ? "bg-amber-500"
+                                                  : "bg-purple-500"
+                                              }
+                                        `}
+                                          >
+                                            {leave.leaveType === "FULL_DAY"
+                                              ? "Full Day"
+                                              : leave.leaveType === "AM"
+                                                ? "Morning"
+                                                : "Afternoon"}
+                                          </Badge>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </ScrollArea>
+                          </PopoverContent>
+                        )}
                     </Popover>
                   ),
                 }}
@@ -1017,13 +992,12 @@ export function LeaveCalendarClient({ leaves, holidays, reminders, currentUserId
                           <p className="font-medium">{leave.userName}</p>
                           <Badge
                             className={`
-                            ${
-                              leave.leaveType === "FULL_DAY"
+                            ${leave.leaveType === "FULL_DAY"
                                 ? "bg-blue-500"
                                 : leave.leaveType === "AM"
                                   ? "bg-amber-500"
                                   : "bg-purple-500"
-                            }
+                              }
                           `}
                           >
                             {leave.leaveType === "FULL_DAY"

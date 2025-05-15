@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -57,7 +57,6 @@ import { getDevices } from "../devices/device-actions"
 import { exportToExcel, prepareUsersForExport, generateUserImportTemplate } from "../../lib/export-utils"
 import * as XLSX from "xlsx"
 import { MultiCombobox } from "@/components/multi-combobox"
-import { Textarea } from "@/components/ui/textarea"
 import ScrollableRoles from "./Scroll"
 import { generatePassword } from "@/lib/utils"
 
@@ -103,6 +102,23 @@ interface UserForm {
 
 }
 
+
+interface Command {
+  id: number
+  command: string
+  emailTemplate?: { name: string }
+}
+
+interface Rule {
+  id: number
+  name: string
+  description?: string
+  groupId: number
+  emailTemplateId?: number
+  commands: Command[]
+}
+
+
 export default function UsersTable() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
@@ -121,7 +137,7 @@ export default function UsersTable() {
   const [currentUser, setCurrentUser] = useState<any | null>(null)
   const [importModalOpen, setImportModalOpen] = useState(false)
   const [importFile, setImportFile] = useState<File | null>(null)
-  const [importPreview, setImportPreview] = useState<any[]>([])
+  const [importPreview, setImportPreview] = useState<Record<string, string | number | undefined>[]>([])
   const [isImporting, setIsImporting] = useState(false)
 
   // Form state
@@ -152,6 +168,7 @@ export default function UsersTable() {
       const data = await response.json()
       setRoles(data.roles)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch roles")
     }
   }
@@ -162,6 +179,8 @@ export default function UsersTable() {
       const data = await response.json()
       setLocations(data.roles)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch locations")
     }
   }
@@ -194,6 +213,8 @@ export default function UsersTable() {
       setTotalPages(result.pageCount)
       setTotalItems(result.totalCount)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch users")
     } finally {
       setIsLoading(false)
@@ -204,10 +225,12 @@ export default function UsersTable() {
   const fetchDevices = async () => {
     try {
       const result = await getDevices({ pageSize: 1000 }) // Get all devices
-      if(result){
+      if (result) {
         setDevices(result.devices)
       }
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to fetch devices")
     }
   }
@@ -288,6 +311,8 @@ export default function UsersTable() {
 
       setEditModalOpen(true)
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to load user details")
     }
   }
@@ -357,12 +382,10 @@ export default function UsersTable() {
       setAddModalOpen(false)
       fetchUsers()
       router.refresh()
-    } catch (error: any) {
-      if (error.message?.includes("Unique constraint")) {
-        toast.error("Username or email already exists")
-      } else {
-        toast.error("Failed to add user")
-      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to add user")
+
     }
   }
 
@@ -386,7 +409,7 @@ export default function UsersTable() {
         Pay: userForm.pay ? parseInt(userForm.pay) : null,
 
       })
-      
+
 
       // Get current user devices
       const currentDevices = await getUserDevices(currentUser.id)
@@ -406,12 +429,9 @@ export default function UsersTable() {
       setEditModalOpen(false)
       fetchUsers()
       router.refresh()
-    } catch (error: any) {
-      if (error.message?.includes("Unique constraint")) {
-        toast.error("Username or email already exists")
-      } else {
-        toast.error("Failed to update user")
-      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to update user")
     }
   }
 
@@ -426,6 +446,8 @@ export default function UsersTable() {
       fetchUsers()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete user")
     }
   }
@@ -442,6 +464,8 @@ export default function UsersTable() {
       fetchUsers()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete users")
     }
   }
@@ -544,9 +568,8 @@ export default function UsersTable() {
         const workbook = XLSX.read(binaryStr, { type: "binary" })
         const sheetName = workbook.SheetNames[0]
         const worksheet = workbook.Sheets[sheetName]
-        const data = XLSX.utils.sheet_to_json(worksheet)
 
-        // Preview the first 5 rows
+        const data = XLSX.utils.sheet_to_json<Record<string, string | number | undefined>>(worksheet)
         setImportPreview(data.slice(0, 5))
       } catch (error) {
         console.error("Error reading Excel file:", error)
@@ -632,13 +655,6 @@ export default function UsersTable() {
     value: device.id.toString(),
   }))
 
-  // Handle role selection change
-  const handleRoleChange = (selectedRoles: string[]) => {
-    setUserForm((prev) => ({
-      ...prev,
-      role: selectedRoles,
-    }))
-  }
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -704,17 +720,17 @@ export default function UsersTable() {
             <Plus className="h-4 w-4" />
             Add User
           </Button>
-    <form onSubmit={handleUpload} className="space-y-4">
-      <input
-        type="file"
-        accept=".html"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-        Upload HTML
-      </button>
-      {status && <div className="text-sm text-gray-700">{status}</div>}
-    </form>
+          <form onSubmit={handleUpload} className="space-y-4">
+            <input
+              type="file"
+              accept=".html"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+              Upload HTML
+            </button>
+            {status && <div className="text-sm text-gray-700">{status}</div>}
+          </form>
 
           <Button variant="outline" onClick={handleExport} className="gap-2">
             <Download className="h-4 w-4" />
@@ -754,7 +770,7 @@ export default function UsersTable() {
               <TableHead className="w-[150px]">Remarks</TableHead>
               <TableHead className="w-[150px]">Location</TableHead>
               <TableHead>Devices</TableHead>
-              
+
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -792,12 +808,12 @@ export default function UsersTable() {
                   </TableCell>
                   <TableCell>${user.Pay ?? "—"}</TableCell>
                   <TableCell>
-  {Array.isArray(user.role) && user.role.length > 0 ? (
-    <ScrollableRoles roles={user.role} />
-  ) : (
-    <span className="text-muted-foreground">No roles</span>
-  )}
-</TableCell>
+                    {Array.isArray(user.role) && user.role.length > 0 ? (
+                      <ScrollableRoles roles={user.role} />
+                    ) : (
+                      <span className="text-muted-foreground">No roles</span>
+                    )}
+                  </TableCell>
 
                   <TableCell>{formatDate(user.createdAt)}</TableCell>
                   <TableCell>{formatDate(user.updatedAt)}</TableCell>
@@ -924,23 +940,23 @@ export default function UsersTable() {
               </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-  <Label htmlFor="pay" className="text-right">Pay ($)</Label>
-  <div className="col-span-3">
-    <Input
-      id="pay"
-      name="pay"
-      type="number"
-      step="0.01"
-      value={userForm.pay || ""}
-      onChange={(e) =>
-        setUserForm((prev) => ({
-          ...prev,
-          pay: e.target.value,
-        }))
-      }
-    />
-  </div>
-</div>
+              <Label htmlFor="pay" className="text-right">Pay ($)</Label>
+              <div className="col-span-3">
+                <Input
+                  id="pay"
+                  name="pay"
+                  type="number"
+                  step="0.01"
+                  value={userForm.pay || ""}
+                  onChange={(e) =>
+                    setUserForm((prev) => ({
+                      ...prev,
+                      pay: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
 
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="role" className="text-right pt-2">
@@ -949,7 +965,7 @@ export default function UsersTable() {
               <div className="col-span-3">
                 <MultiCombobox
                   options={
-                       roles.map((role) => ({ label: role.name, value: role.name }))
+                    roles.map((role) => ({ label: role.name, value: role.name }))
                   }
                   selected={userForm.role}
                   onChange={(selectedRoles) => {
@@ -969,7 +985,7 @@ export default function UsersTable() {
               <div className="col-span-3">
                 <MultiCombobox
                   options={
-                       locations.map((role) => ({ label: role.name, value: role.name }))
+                    locations.map((role) => ({ label: role.name, value: role.name }))
                   }
                   selected={userForm.location}
                   onChange={(selectedRoles) => {
@@ -999,28 +1015,28 @@ export default function UsersTable() {
                     required
                   />
                   <div className="absolute right-0 top-0 h-full flex">
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-full"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                      >
-                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
-                                      </Button>
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-full"
-                                        onClick={handleGeneratePassword}
-                                        title="Generate Password"
-                                      >
-                                        <Wand2 className="h-4 w-4" />
-                                        <span className="sr-only">Generate Password</span>
-                                      </Button>
-                                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-full"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-full"
+                      onClick={handleGeneratePassword}
+                      title="Generate Password"
+                    >
+                      <Wand2 className="h-4 w-4" />
+                      <span className="sr-only">Generate Password</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1100,32 +1116,32 @@ export default function UsersTable() {
                   className="flex-1"
                 />
               </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="pay" className="text-right">Pay ($)</Label>
+              <div className="col-span-3">
+                <Input
+                  id="pay"
+                  name="pay"
+                  type="number"
+                  step="0.01"
+                  value={userForm.pay || ""}
+                  onChange={(e) =>
+                    setUserForm((prev) => ({
+                      ...prev,
+                      pay: e.target.value,
+                    }))
+                  }
+                />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-  <Label htmlFor="pay" className="text-right">Pay ($)</Label>
-  <div className="col-span-3">
-    <Input
-      id="pay"
-      name="pay"
-      type="number"
-      step="0.01"
-      value={userForm.pay || ""}
-      onChange={(e) =>
-        setUserForm((prev) => ({
-          ...prev,
-          pay: e.target.value,
-        }))
-      }
-    />
-  </div>
-</div>
+            </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="edit-role" className="text-right pt-2">
                 Roles
               </Label>
               <div className="col-span-3">
                 <MultiCombobox
-                  options={ roles.map((role) => ({ label: role.name, value: role.name }))}
+                  options={roles.map((role) => ({ label: role.name, value: role.name }))}
                   selected={userForm.role}
                   onChange={(selectedRoles) => {
                     setUserForm((prev) => ({
@@ -1137,95 +1153,95 @@ export default function UsersTable() {
                 />
               </div>
             </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="edit-role" className="text-right pt-2">
+              Location
+            </Label>
+            <div className="col-span-3">
+              <MultiCombobox
+                options={locations.map((role) => ({ label: role.name, value: role.name }))}
+                selected={userForm.location}
+                onChange={(selectedLocations) => {
+                  setUserForm((prev) => ({
+                    ...prev,
+                    location: selectedLocations,
+                  }))
+                }}
+                placeholder="Select locations..."
+              />
             </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="edit-role" className="text-right pt-2">
-                Location
-              </Label>
-              <div className="col-span-3">
-                <MultiCombobox
-                  options={ locations.map((role) => ({ label: role.name, value: role.name }))}
-                  selected={userForm.location}
-                  onChange={(selectedLocations) => {
-                    setUserForm((prev) => ({
-                      ...prev,
-                      location: selectedLocations,
-                    }))
-                  }}
-                  placeholder="Select locations..."
-                />
-              </div>
-            </div>
+          </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-password" className="text-right">
-                Password
-              </Label>
-              <div className="col-span-3 flex items-center gap-2">
-                <Key className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1 relative">
-                  <Input
-                    id="edit-password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={userForm.password}
-                    onChange={handleFormChange}
-                    className="pr-10"
-                    placeholder="Leave blank to keep current password"
-                  />
-                  <div className="absolute right-0 top-0 h-full flex">
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-full"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                      >
-                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
-                                      </Button>
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-full"
-                                        onClick={handleGeneratePassword}
-                                        title="Generate Password"
-                                      >
-                                        <Wand2 className="h-4 w-4" />
-                                        <span className="sr-only">Generate Password</span>
-                                      </Button>
-                                    </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="edit-password" className="text-right">
+              Password
+            </Label>
+            <div className="col-span-3 flex items-center gap-2">
+              <Key className="h-4 w-4 text-muted-foreground" />
+              <div className="flex-1 relative">
+                <Input
+                  id="edit-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={userForm.password}
+                  onChange={handleFormChange}
+                  className="pr-10"
+                  placeholder="Leave blank to keep current password"
+                />
+                <div className="absolute right-0 top-0 h-full flex">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-full"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-full"
+                    onClick={handleGeneratePassword}
+                    title="Generate Password"
+                  >
+                    <Wand2 className="h-4 w-4" />
+                    <span className="sr-only">Generate Password</span>
+                  </Button>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="edit-devices" className="text-right pt-2">
-                Devices
-              </Label>
-              <div className="col-span-3">
-                <MultiCombobox
-                  options={deviceOptions}
-                  selected={userForm.devices.map((id) => id.toString())}
-                  onChange={handleDeviceChange}
-                  placeholder="Select devices..."
-                />
-              </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="edit-devices" className="text-right pt-2">
+              Devices
+            </Label>
+            <div className="col-span-3">
+              <MultiCombobox
+                options={deviceOptions}
+                selected={userForm.devices.map((id) => id.toString())}
+                onChange={handleDeviceChange}
+                placeholder="Select devices..."
+              />
             </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="Remarks" className="text-right pt-2">
-                Remarks
-              </Label>
-              <div className="col-span-3">
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="Remarks" className="text-right pt-2">
+              Remarks
+            </Label>
+            <div className="col-span-3">
               <Input
-                  id="Remarks"
-                  name="Remarks"
-                  value={userForm.Remarks}
-                  onChange={handleFormChange}
-                  className="flex-1"
-                />
-              </div>
+                id="Remarks"
+                name="Remarks"
+                value={userForm.Remarks}
+                onChange={handleFormChange}
+                className="flex-1"
+              />
             </div>
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditModalOpen(false)}>
               Cancel
@@ -1241,7 +1257,7 @@ export default function UsersTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the user "{currentUser?.username}"? This action cannot be undone.
+              Are you sure you want to delete the user &quot;{currentUser?.username}&quot; This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -13,9 +13,22 @@ import { CalendarIcon, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCategories } from "@/app/library/library-actions"
 
-interface LibrarySearchFiltersProps {
-  onSearch: (filters: any) => void
+interface LibraryFilters {
+  search?: string
+  category?: string
+  pubYearFrom?: number
+  pubYearTo?: number
+  creationDateFrom?: Date
+  creationDateTo?: Date
+  sortBy?: string
+  sortOrder?: string
+  hasAttachment?: boolean
 }
+
+interface LibrarySearchFiltersProps {
+  onSearch: (filters: LibraryFilters) => void
+}
+
 
 export function LibrarySearchFilters({ onSearch }: LibrarySearchFiltersProps) {
   const searchParams = useSearchParams()

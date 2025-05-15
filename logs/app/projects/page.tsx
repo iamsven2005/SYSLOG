@@ -1,4 +1,3 @@
-import ProjectTypesPage from "../project-types/page";
 import { notFound, redirect } from "next/navigation"
 import { getCurrentUser } from "../login/actions"
 import { checkUserPermission } from "../permissions/permission-actions"

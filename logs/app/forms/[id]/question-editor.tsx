@@ -23,11 +23,23 @@ type QuestionEditorProps = {
       value: string
     }>
   }
-  onChange: (question: any) => void
+  onChange: (question: QuestionData) => void
   onRemove: () => void
   isOnly: boolean
 }
-
+type QuestionData = {
+  id: string | number
+  text: string
+  type: QuestionType
+  required: boolean
+  order: number
+  options: QuestionOption[]
+}
+type QuestionOption = {
+  id: string | number
+  text: string
+  value: string
+}
 export function QuestionEditor({ question, onChange, onRemove, isOnly }: QuestionEditorProps) {
   const [showOptionInput, setShowOptionInput] = useState(false)
   const [newOptionText, setNewOptionText] = useState("")

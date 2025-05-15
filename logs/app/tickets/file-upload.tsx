@@ -6,11 +6,12 @@ import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Paperclip } from "lucide-react"
+import { TicketAttachment } from "@/prisma/generated/main"
 
 interface FileUploadProps {
   ticketId?: number
   commentId?: number
-  onUploadComplete?: (attachment: any) => void
+  onUploadComplete?: (attachment: TicketAttachment) => void
   multiple?: boolean
   onFileSelect?: (files: File[]) => void
 }

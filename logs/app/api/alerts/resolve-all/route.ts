@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
 import { resolveAllAlertEvents } from "@/app/alerts/alert-actions"
 
 export async function POST(request: Request) {

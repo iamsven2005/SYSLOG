@@ -17,10 +17,10 @@ import {
   getUsers,
 } from "../../actions"
 import type { AuditWorkflow, AuditStep, User } from "../../types"
-import { toast } from "@/app/hooks/use-toast"
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd"
 import { EditStepItem } from "./edit-step-item"
 import { AddStepForm } from "../../add-step-form"
+import { toast } from "sonner"
 
 export default function EditWorkflowPage() {
   const { id } = useParams()
@@ -52,7 +52,7 @@ export default function EditWorkflowPage() {
 
         // Fetch users
         const usersResult = await getUsers()
-        setUsers(usersResult.data)
+        setUsers(usersResult.data || [])
       } catch (err) {
         setError("An unexpected error occurred")
         console.error(err)
@@ -83,7 +83,7 @@ export default function EditWorkflowPage() {
     )
   }
 
-  const handleDragEnd = async (result: any) => {
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return
 
     const items = Array.from(steps)
@@ -156,10 +156,7 @@ export default function EditWorkflowPage() {
       })
 
       if (result.success) {
-        toast({
-          title: "Workflow updated",
-          description: "Your changes have been saved successfully.",
-        })
+        toast.success("Your changes have been saved successfully.")
         router.push(`/workflows/${workflow.id}`)
       } else {
         setError(result.error || "Failed to update workflow")

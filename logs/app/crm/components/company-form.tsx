@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createCompany, updateCompany } from "@/app/crm/actions/companies"
-
+import { $Enums, Company } from "@/prisma/generated/main"
 const companySchema = z.object({
   name: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   type: z.enum(["CONTRACTOR", "VENDOR", "PARTNER", "CONSULTANT", "REGULATORY", "SUBCONTRACTOR"]),
@@ -21,60 +21,68 @@ const companySchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal("")),
   website: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal("")),
   remarks: z.string().optional(),
-  specialties: z.string().optional(),
-  certifications: z.string().optional(),
+  specialties: z.string().optional(), // for input field (raw), you keep this
+  certifications: z.string().optional(), // same here
   rating: z.coerce.number().min(0).max(5).optional(),
 })
 
-export default function CompanyForm({ company = null, defaultType }) {
+interface CompanyFormProps {
+  company?: Omit<Company, "specialties" | "certifications"> & {
+    specialties?: string[]
+    certifications?: string[]
+  } | null
+}
+export default function CompanyForm({ company = null }: CompanyFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm({
-    resolver: zodResolver(companySchema),
-    defaultValues: company
-      ? {
-          ...company,
-          specialties: company.specialties?.join(", "),
-          certifications: company.certifications?.join(", "),
-        }
-      : {
-          name: "",
-          type: "CONTRACTOR",
-          industry: "",
-          address: "",
-          phone: "",
-          email: "",
-          website: "",
-          remarks: "",
-          specialties: "",
-          certifications: "",
-          rating: undefined,
-        },
-  })
+const form = useForm<z.infer<typeof companySchema>>({
+  resolver: zodResolver(companySchema),
+  defaultValues: company ? normalizeCompanyDefaults(company) : {
+    name: "",
+    type: "CONTRACTOR",
+    industry: undefined,
+    address: undefined,
+    phone: undefined,
+    email: "",
+    website: "",
+    remarks: undefined,
+    specialties: "",
+    certifications: "",
+    rating: undefined,
+  },
+})
+function normalizeCompanyDefaults(company: any) {
+  return {
+    ...company,
+    industry: company.industry ?? undefined,
+    address: company.address ?? undefined,
+    phone: company.phone ?? undefined,
+    email: company.email ?? undefined,
+    website: company.website ?? undefined,
+    remarks: company.remarks ?? undefined,
+    specialties: company.specialties?.join(", ") ?? "",
+    certifications: company.certifications?.join(", ") ?? "",
+    rating: company.rating ?? undefined,
+  }
+}
 
-  async function onSubmit(data) {
+async function onSubmit(data: z.infer<typeof companySchema>) {
     setIsSubmitting(true)
-
-    // Convert comma-separated strings to arrays
-    if (data.specialties) {
-      data.specialties = data.specialties
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    }
-
-    if (data.certifications) {
-      data.certifications = data.certifications
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    }
+  const transformedData = {
+    ...data,
+    specialties: data.specialties
+      ? data.specialties.split(",").map((s) => s.trim()).filter(Boolean)
+      : [],
+    certifications: data.certifications
+      ? data.certifications.split(",").map((s) => s.trim()).filter(Boolean)
+      : [],
+  }
 
     try {
       if (company) {
         // Update existing company
-        const result = await updateCompany(company.id, data)
+        const result = await updateCompany(company.id, transformedData)
 
         if (result.error) {
           form.setError("root", { message: result.error })
@@ -84,14 +92,13 @@ export default function CompanyForm({ company = null, defaultType }) {
         router.push(`/crm/companies/${company.id}`)
       } else {
         // Create new company
-        const result = await createCompany(data)
+        const result = await createCompany(transformedData)
 
-        if (result.error) {
-          form.setError("root", { message: result.error })
-          return
-        }
-
-        router.push(`/crm/companies/${result.company.id}`)
+if (!result.error && result.company) {
+  router.push(`/crm/companies/${result.company.id}`)
+} else {
+  form.setError("root", { message: result.error || "An unexpected error occurred" })
+}
       }
     } catch (error) {
       console.error("Error submitting form:", error)

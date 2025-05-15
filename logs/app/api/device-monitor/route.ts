@@ -13,6 +13,8 @@ export async function pingDevice(ipAddress: string): Promise<boolean> {
     await execPromise(pingCommand)
     return true // Device is reachable
   } catch (error) {
+    console.log(error)
+
     return false // Device is unreachable
   }
 }
@@ -70,6 +72,8 @@ async function startMonitoringLoop() {
               client.controller.enqueue(`data: ${JSON.stringify(update)}\n\n`)
             } catch (error) {
               // Client might be disconnected, remove it
+              console.log(error)
+
               clients.delete(client)
             }
           }

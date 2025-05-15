@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { HardHat, Search, Plus, Filter } from "lucide-react"
+import { Search, Plus} from "lucide-react"
 import { getProjects } from "../actions/projects"
 import ProjectListSkeleton from "@/app/crm/components/skeletons/project-list-skeleton"
 
@@ -23,20 +23,6 @@ export default async function ProjectsPage({
     return matchesStatus && matchesSearch
   })
   
-  // Define project statuses for filter links
-  const projectStatuses = [
-    { value: "all", label: "All Statuses" },
-    { value: "PLANNING", label: "Planning" },
-    { value: "BIDDING", label: "Bidding" },
-    { value: "DESIGN", label: "Design" },
-    { value: "PERMITTING", label: "Permitting" },
-    { value: "CONSTRUCTION", label: "Construction" },
-    { value: "INSPECTION", label: "Inspection" },
-    { value: "COMPLETED", label: "Completed" },
-    { value: "ON_HOLD", label: "On Hold" },
-    { value: "CANCELLED", label: "Cancelled" },
-  ]
-
   return (
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

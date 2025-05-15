@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress"
 import { BarChart3, Users } from "lucide-react"
 import { votePoll, getPollResults } from "./poll-actions"
 
+
 interface PollOption {
   id: number
   text: string
@@ -23,7 +24,7 @@ interface PollVote {
   pollId: number
   user: {
     id: number
-    username: string
+    username: string | null
   }
 }
 
@@ -31,9 +32,10 @@ interface Poll {
   id: number
   question: string
   multiSelect: boolean
-  messageId: number
   options: PollOption[]
   votes: PollVote[]
+  createdAt: Date
+  messageId: number
 }
 
 export function PollComponent({
@@ -199,7 +201,7 @@ export function PollComponent({
                           className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs"
                         >
                           <Avatar className="h-4 w-4">
-                            <AvatarFallback className="text-[8px]">{getInitials(voter.username)}</AvatarFallback>
+                            <AvatarFallback className="text-[8px]">{getInitials(voter.username ?? "U")}</AvatarFallback>
                           </Avatar>
                           <span className="truncate max-w-[100px]">{voter.username}</span>
                         </div>

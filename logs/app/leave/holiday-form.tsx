@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { addHoliday, updateHoliday } from "@/app/leave/holiday-actions"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 const holidayFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -68,16 +68,10 @@ export function HolidayForm({ onSuccess, holidayId, defaultValues, mode = "add" 
     try {
       if (mode === "edit" && holidayId) {
         await updateHoliday(holidayId, data)
-        toast({
-          title: "Holiday updated",
-          description: "The holiday has been updated successfully.",
-        })
+        toast.success("The holiday has been updated successfully.")
       } else {
         await addHoliday(data)
-        toast({
-          title: "Holiday added",
-          description: "The holiday has been added to the calendar.",
-        })
+        toast.success("The holiday has been added to the calendar.")
         form.reset()
       }
 
@@ -86,10 +80,8 @@ export function HolidayForm({ onSuccess, holidayId, defaultValues, mode = "add" 
         onSuccess()
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${mode === "edit" ? "update" : "add"} holiday. Please try again.`,
-      })
+      console.log(error)
+      toast.error(`Failed to ${mode === "edit" ? "update" : "add"} holiday. Please try again.`)
     } finally {
       setIsSubmitting(false)
     }

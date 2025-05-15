@@ -27,6 +27,9 @@ export async function saveBooksToDB(books: Book[]) {
             creationDate = new Date() // Fallback to current date if invalid
           }
         } catch (error) {
+          console.log(error)
+
+
           creationDate = new Date() // Fallback to current date if parsing fails
         }
 
@@ -40,6 +43,8 @@ export async function saveBooksToDB(books: Book[]) {
               loanDate = null
             }
           } catch (error) {
+            console.log(error)
+
             loanDate = null
           }
         }

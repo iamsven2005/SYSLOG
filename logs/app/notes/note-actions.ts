@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
+import { Prisma } from "@/prisma/generated/main"
 
 interface GetNotesParams {
   search?: string
@@ -12,7 +13,7 @@ interface GetNotesParams {
 export async function getNotes({ search = "", page = 1, pageSize = 10 }: GetNotesParams) {
   try {
     // Build where conditions
-    const where: any = {}
+    const where: Prisma.notesWhereInput = {}
 
     // Add search condition if provided
     if (search) {

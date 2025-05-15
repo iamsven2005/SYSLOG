@@ -3,9 +3,15 @@
 import { useEffect, useState, useRef } from "react"
 import { AlertNotification } from "./alert-notification"
 import { checkAlertConditionsRealtime } from "@/app/alerts/alert-actions"
-
+interface AlertEventProps {
+  id: number
+  conditionId: number
+  conditionName: string
+  triggeredAt: Date
+  notes?: string | null
+}
 export function AlertMonitor() {
-  const [alerts, setAlerts] = useState<any[]>([])
+  const [alerts, setAlerts] = useState<AlertEventProps[]>([])
   const [isChecking, setIsChecking] = useState(false)
   const lastCheckedRef = useRef<Date>(new Date())
   const intervalRef = useRef<NodeJS.Timeout | null>(null)

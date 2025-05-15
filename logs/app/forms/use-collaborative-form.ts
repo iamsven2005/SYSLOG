@@ -43,7 +43,7 @@ const generateUserName = () => {
   return randomName
 }
 
-export function useCollaborativeForm(formId: number | string) {
+export function useCollaborativeForm() {
   const [userId] = useState(() => generateUserId())
   const [userName] = useState(() => generateUserName())
 

@@ -23,7 +23,6 @@ export function CalculatorDialog({ open, onOpenChange, onInsert }: CalculatorDia
   const [currentValue, setCurrentValue] = React.useState<string | null>(null)
   const [operator, setOperator] = React.useState<string | null>(null)
   const [waitingForOperand, setWaitingForOperand] = React.useState(false)
-  const [memory, setMemory] = React.useState(0)
   const [history, setHistory] = React.useState<string[]>([])
 
   const clearAll = () => {

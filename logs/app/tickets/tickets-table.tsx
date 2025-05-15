@@ -53,10 +53,37 @@ const priorityColors: Record<string, string> = {
   high: "bg-yellow-500 hover:bg-yellow-600",
   critical: "bg-red-500 hover:bg-red-600",
 }
-interface Props{
-  isAdmin: Boolean
+interface Props {
+  isAdmin: boolean
   id: number
 }
+
+interface Ticket {
+  id: number
+  title: string
+  description: string
+  status: string
+  priority: string
+  createdAt: Date // 👈 Match what the backend returns
+  createdBy: {
+    id: number
+    username: string | null
+  }
+  assignedTo?: {
+    id: number
+    username: string | null
+  } | null
+  relatedDevice?: {
+    id: number
+    name: string
+  } | null
+  _count: {
+    attachments: number
+    comments: number
+  }
+}
+
+
 export function TicketsTable({ isAdmin, id }: Props) {
   const router = useRouter()
   const pathname = usePathname()
@@ -68,8 +95,7 @@ export function TicketsTable({ isAdmin, id }: Props) {
   const priority = searchParams.get("priority") || ""
   const search = searchParams.get("search") || ""
 
-  const [tickets, setTickets] = useState<any[]>([])
-  const [totalCount, setTotalCount] = useState(0)
+  const [tickets, setTickets] = useState<Ticket[]>([])
   const [pageCount, setPageCount] = useState(1)
   const [loading, setLoading] = useState(true)
   const [searchInput, setSearchInput] = useState(search)
@@ -79,7 +105,7 @@ export function TicketsTable({ isAdmin, id }: Props) {
     async function fetchTickets() {
       setLoading(true)
       try {
-        const createdById = !isAdmin ?id : undefined
+        const createdById = !isAdmin ? id : undefined
 
         const result = await getTickets({
           status: status || undefined,
@@ -90,7 +116,6 @@ export function TicketsTable({ isAdmin, id }: Props) {
           createdById,
         })
         setTickets(result.tickets)
-        setTotalCount(result.totalCount)
         setPageCount(result.pageCount)
       } catch (error) {
         console.error("Error fetching tickets:", error)
@@ -100,7 +125,7 @@ export function TicketsTable({ isAdmin, id }: Props) {
     }
 
     fetchTickets()
-  }, [page, status, priority, search])
+  }, [page, status, priority, search, isAdmin, id]) // ✅
 
   // Create URL with updated search params
   const createQueryString = (params: Record<string, string | number | null>) => {

@@ -6,7 +6,7 @@ import path from "path"
 
 export async function GET(req: NextRequest) {
   // Get client IP
-  let rawIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "127.0.0.1"
+  const rawIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "127.0.0.1"
   const ip = rawIp.replace(/^::ffff:/, "")
 
   // Path to the bash script stored in /public/scripts/

@@ -8,9 +8,34 @@ interface PollMessageProps {
   messageId: number
   userId: number
 }
+interface PollOption {
+  id: number
+  text: string
+  pollId: number
+}
 
+interface PollVote {
+  id: number
+  userId: number
+  optionId: number
+  pollId: number
+  user: {
+    id: number
+    username: string | null
+  }
+}
+
+interface Poll {
+  id: number
+  question: string
+  multiSelect: boolean
+  options: PollOption[]
+  votes: PollVote[]
+  createdAt: Date
+  messageId: number
+}
 export function PollMessage({ messageId, userId }: PollMessageProps) {
-  const [poll, setPoll] = useState<any>(null)
+  const [poll, setPoll] = useState<Poll | null>(null) // Poll or null instead of just Poll
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -25,7 +50,22 @@ export function PollMessage({ messageId, userId }: PollMessageProps) {
         if (data.success && data.pollId) {
           // Then get the poll details
           const pollData = await getPollResults(data.pollId)
-          setPoll(pollData)
+
+          // Ensure pollData includes the necessary fields
+          if (pollData) {
+            const pollWithOptionsAndVotes: Poll = {
+              id: pollData.id,
+              question: pollData.question,
+              multiSelect: pollData.multiSelect,
+              createdAt: pollData.createdAt,
+              options: pollData.options || [],
+              votes: pollData.votes || [],
+              messageId: messageId
+            }
+            setPoll(pollWithOptionsAndVotes)
+          } else {
+            setError("Poll not found")
+          }
         } else {
           setError("Poll not found")
         }

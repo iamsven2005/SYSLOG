@@ -12,7 +12,7 @@ import { format } from "date-fns"
 import { CalendarIcon, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
-import type { AuditStep, User } from "../../types"
+import type { AuditStep, StepStatus, User } from "../../types"
 
 interface EditStepItemProps {
   step: AuditStep
@@ -26,7 +26,7 @@ export function EditStepItem({ step, users, onUpdate, onDelete }: EditStepItemPr
   const [date, setDate] = useState<Date | undefined>(step.dueDate ? new Date(step.dueDate) : undefined)
 
   const handleStatusChange = (value: string) => {
-    onUpdate({ ...step, status: value as any })
+    onUpdate({ ...step, status: value as StepStatus })
   }
 
   const handleAssigneeChange = (value: string) => {

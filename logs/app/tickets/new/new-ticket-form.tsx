@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { createTicket } from "@/app/tickets/ticket-actions"
 import { FileUpload } from "../file-upload"
 import NotesTable from "@/app/notes/page"
+type Priority = "low" | "medium" | "high" | "critical"
 
 export function NewTicketForm({
   deviceNames,
@@ -64,7 +65,6 @@ export function NewTicketForm({
         assignedToId: assignedToId ? Number(assignedToId) : undefined,
       })
 
-      // Now that we have a ticket ID, upload any selected files
       if (selectedFiles.length > 0) {
         await uploadFiles(selectedFiles, ticket.id)
       }
@@ -119,120 +119,120 @@ export function NewTicketForm({
 
   return (
     <div className="flex m-5 p-5 flex-wrap gap-5">
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>New Support Ticket</CardTitle>
-        <CardDescription>Fill out the form below to create a new support ticket</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              placeholder="Brief summary of the issue"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              placeholder="Detailed description of the issue"
-              rows={5}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </div>
-          {isAdmin && (
-          <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
-            <Select value={priority} onValueChange={(value: any) => setPriority(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">Select the appropriate priority level for your issue</p>
-
-            <Label htmlFor="assignee">Assign To (Optional)</Label>
-            <Select value={assignedToId} onValueChange={setAssignedToId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select an assignee (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unassigned">Unassigned</SelectItem>
-                {assignableUsers.map((user) => (
-                  <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.username}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Label htmlFor="device">Related Device (Optional)</Label>
-            <Select value={relatedDevice} onValueChange={setRelatedDevice}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a device (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                {deviceNames.map((device) => (
-                  <SelectItem key={device} value={device}>
-                    {device}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-                      )}
-          <div className="space-y-2">
-            <Label>Attachments (Optional)</Label>
-            <div className="mt-2">
-              <FileUpload onFileSelect={handleFileSelect} multiple />
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>New Support Ticket</CardTitle>
+          <CardDescription>Fill out the form below to create a new support ticket</CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                placeholder="Brief summary of the issue"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
             </div>
-            {selectedFiles.length > 0 && (
-              <div className="mt-2 space-y-2">
-                <p className="text-sm font-medium">Selected files:</p>
-                <ul className="space-y-1">
-                  {selectedFiles.map((file, index) => (
-                    <li key={index} className="flex items-center justify-between p-2 text-sm border rounded-md">
-                      <span className="truncate max-w-[250px]">{file.name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeSelectedFile(index)}
-                        className="h-6 w-6 p-0"
-                      >
-                        ✕
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Detailed description of the issue"
+                rows={5}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            {isAdmin && (
+              <div className="space-y-2">
+                <Label htmlFor="priority">Priority</Label>
+                <Select value={priority} onValueChange={(value: Priority) => setPriority(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Select the appropriate priority level for your issue</p>
+
+                <Label htmlFor="assignee">Assign To (Optional)</Label>
+                <Select value={assignedToId} onValueChange={setAssignedToId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an assignee (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
+                    {assignableUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id.toString()}>
+                        {user.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label htmlFor="device">Related Device (Optional)</Label>
+                <Select value={relatedDevice} onValueChange={setRelatedDevice}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a device (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {deviceNames.map((device) => (
+                      <SelectItem key={device} value={device}>
+                        {device}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" type="button" onClick={() => router.push("/tickets")}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create Ticket"}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
-    <NotesTable isAdmin={isAdmin}/>
+            <div className="space-y-2">
+              <Label>Attachments (Optional)</Label>
+              <div className="mt-2">
+                <FileUpload onFileSelect={handleFileSelect} multiple />
+              </div>
+              {selectedFiles.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  <p className="text-sm font-medium">Selected files:</p>
+                  <ul className="space-y-1">
+                    {selectedFiles.map((file, index) => (
+                      <li key={index} className="flex items-center justify-between p-2 text-sm border rounded-md">
+                        <span className="truncate max-w-[250px]">{file.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeSelectedFile(index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          ✕
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" type="button" onClick={() => router.push("/tickets")}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Create Ticket"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+      <NotesTable isAdmin={isAdmin} />
     </div>
   )
 }

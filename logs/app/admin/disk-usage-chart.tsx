@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 import { getDiskUsageData } from "../logs/actions"
+import { diskmetric } from "@/prisma/generated/main"
 
 // Host color palette
 const HOST_COLORS = [
@@ -35,9 +36,15 @@ const timeRangeOptions = [
   { label: "Last 24 Hours", value: "24h" },
   { label: "Last 7 Days", value: "7d" },
 ]
+type DiskMetricPoint = {
+  timestamp: string
+  [key: string]: number | string
+}
+
+
 
 export default function DiskUsageChart() {
-  const [chartData, setChartData] = useState<any[]>([])
+  const [chartData, setChartData] = useState<diskmetric[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [timeRange, setTimeRange] = useState("24h")
   const [viewMode, setViewMode] = useState<"used" | "free" | "percent">("percent")
@@ -78,7 +85,7 @@ export default function DiskUsageChart() {
       const uniqueDisks = new Set<string>()
       const uniqueHosts = new Set<string>()
 
-      data.timeSeriesData.forEach((entry: any) => {
+      data.timeSeriesData.forEach((entry: diskmetric) => {
         Object.keys(entry).forEach((key) => {
           if (key !== "timestamp" && key.includes("|")) {
             uniqueDisks.add(key)
@@ -132,7 +139,8 @@ export default function DiskUsageChart() {
   // Load data on initial render and when time range changes
   useEffect(() => {
     fetchDiskUsageData()
-  }, [timeRange, viewMode])
+  }, [timeRange, viewMode, fetchDiskUsageData])
+
 
   // Format timestamp for display
   const formatXAxis = (timestamp: string) => {
@@ -155,7 +163,8 @@ export default function DiskUsageChart() {
   }
 
   // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
+
     if (active && payload && payload.length) {
       // Group by host
       const hostGroups = payload.reduce((groups: any, entry: any) => {
@@ -208,15 +217,15 @@ export default function DiskUsageChart() {
 
     // Create a new array with the same timestamps
     return chartData.map((dataPoint) => {
-      const newPoint: any = { timestamp: dataPoint.timestamp }
+      const newPoint: DiskMetricPoint = { timestamp: dataPoint.timestamp.toISOString() }
 
       // For each disk, add data points if the host is selected
       Object.keys(dataPoint).forEach((key) => {
         if (key !== "timestamp" && key.includes("|")) {
-          const [host, diskName] = key.split("|")
+          const [host] = key.split("|")
 
           if (selectedHosts.includes(host) && selectedDisks.includes(key)) {
-            const diskData = dataPoint[key]
+            const diskData = (dataPoint as Record<string, any>)[key]
 
             // Add the appropriate metric based on view mode
             if (viewMode === "used") {
@@ -252,7 +261,7 @@ export default function DiskUsageChart() {
             readings[host] = []
           }
 
-          const diskData = latestData[key]
+          const diskData = (latestData as Record<string, any>)[key]
           readings[host].push({
             key,
             name: diskName,
@@ -517,26 +526,23 @@ export default function DiskUsageChart() {
                       return (
                         <div key={idx} className="flex items-center gap-2 p-2 border rounded-md bg-muted/20">
                           <HardDrive
-                            className={`h-4 w-4 ${
-                              isCritical ? "text-red-500" : isWarning ? "text-amber-500" : "text-green-500"
-                            }`}
+                            className={`h-4 w-4 ${isCritical ? "text-red-500" : isWarning ? "text-amber-500" : "text-green-500"
+                              }`}
                           />
                           <div className="flex-1">
                             <div className="flex justify-between">
                               <p className="text-xs font-medium">{disk.label || disk.name}</p>
                               <p
-                                className={`text-xs font-medium ${
-                                  isCritical ? "text-red-500" : isWarning ? "text-amber-500" : "text-green-500"
-                                }`}
+                                className={`text-xs font-medium ${isCritical ? "text-red-500" : isWarning ? "text-amber-500" : "text-green-500"
+                                  }`}
                               >
                                 {disk.usedPercent.toFixed(1)}%
                               </p>
                             </div>
                             <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full overflow-hidden">
                               <div
-                                className={`h-full rounded-full ${
-                                  isCritical ? "bg-red-500" : isWarning ? "bg-amber-500" : "bg-green-500"
-                                }`}
+                                className={`h-full rounded-full ${isCritical ? "bg-red-500" : isWarning ? "bg-amber-500" : "bg-green-500"
+                                  }`}
                                 style={{ width: `${Math.min(disk.usedPercent, 100)}%` }}
                               ></div>
                             </div>

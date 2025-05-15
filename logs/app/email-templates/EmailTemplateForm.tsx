@@ -52,8 +52,17 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const { users } = await getUsers({ page: 1, pageSize: 50 }) // Provide default values
-        setUsers(users)
+        const { users: rawUsers } = await getUsers({ page: 1, pageSize: 50 })
+
+        const sanitizedUsers: User[] = rawUsers
+          .filter((u) => u.username !== null) // Filter out null usernames
+          .map((u) => ({
+            id: u.id,
+            username: u.username as string, // safe cast after filtering
+          }))
+
+        setUsers(sanitizedUsers)
+
       } catch (error) {
         toast.error("Failed to load users.")
       }
@@ -118,8 +127,9 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
       }
 
       if (onSuccess) onSuccess()
-    } catch (error: any) {
-      toast.error(error.message || "Failed to save email template.")
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to save email template.")
     } finally {
       setIsSubmitting(false)
     }
@@ -179,10 +189,10 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
                   <div className="space-y-1 text-xs text-muted-foreground mt-2">
                     <p>Available placeholders:</p>
                     <p>
-                      <code>{"{{username}}"}</code> - User's name
+                      <code>{"{{username}}"}</code> - User&apos;s name
                     </p>
                     <p>
-                      <code>{"{{email}}"}</code> - User's email
+                      <code>{"{{email}}"}</code> - User&apos;s email
                     </p>
                     <p>
                       <code>{"{{command}}"}</code> - Matched command

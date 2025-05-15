@@ -4,7 +4,8 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "../login/actions"
 import { parseXMLDate, type XMLMessage } from "../utils/xml-utils"
-import { getSession } from "@/lib/utils"
+import { getSession } from "@/lib/auth"
+import { Prisma } from "@/prisma/generated/main"
 
 // Get all groups for the current user
 export async function getUserGroups() {
@@ -280,7 +281,7 @@ export async function createGroup(name: string, memberIds: number[]) {
   const group = await db.group.create({
     data: {
       name,
-      createdBy: user.username,
+      createdBy: user.username ?? "system",
       members: {
         create: [
           // Add current user as a member
@@ -384,7 +385,7 @@ export async function searchUsers(query: string, role?: string) {
     return []
   }
 
-  const whereClause: any = {
+  const whereClause: Prisma.UserWhereInput = {
     OR: [{ username: { contains: query, mode: "insensitive" } }, { email: { contains: query, mode: "insensitive" } }],
     id: { not: currentUser.id }, // Exclude current user
   }

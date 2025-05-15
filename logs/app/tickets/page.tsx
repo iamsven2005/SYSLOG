@@ -1,6 +1,4 @@
 import { Suspense } from "react"
-import type { Metadata } from "next"
-
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
@@ -12,16 +10,12 @@ import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
 import { checkUserPermission } from "../permissions/permission-actions"
 
-export const metadata: Metadata = {
-  title: "Support Tickets",
-  description: "View and manage support tickets",
-}
-
 export default async function TicketsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
+
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       redirect("/login")

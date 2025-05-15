@@ -9,12 +9,33 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { CheckCircle2, AlertCircle, Bug, RefreshCw } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
+interface DebugResult {
+  id: string
+  name: string
+  triggered: boolean
+  reason?: string
+  alertEventId?: number
+  matchCount?: number
+  condition?: {
+    fieldName?: string
+    comparator?: string
+    thresholdValue?: number
+    sourceTable?: string
+    timeWindowMin?: number
+    countThreshold?: number
+  }
+  sampleMatches?: {
+    command: string
+    timestamp: string
+  }[]
+  error?: string
+}
 
 export function AlertDebugPanel() {
   const [useExtendedWindow, setUseExtendedWindow] = useState(true)
   const [createEvents, setCreateEvents] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [results, setResults] = useState<any[]>([])
+  const [results, setResults] = useState<DebugResult[]>([])
 
   const runDebugCheck = async () => {
     setIsLoading(true)
@@ -34,7 +55,7 @@ export function AlertDebugPanel() {
       setResults(data.results || [])
 
       // Show toast with summary
-      const triggeredCount = data.results.filter((r: any) => r.triggered).length
+      const triggeredCount = data.results.filter((r: DebugResult) => r.triggered).length
       if (triggeredCount > 0) {
         toast.error("No alert events were created. Enable 'Create Alert Events' to create actual alerts.")
       } else {
@@ -152,12 +173,13 @@ export function AlertDebugPanel() {
                         <div>
                           <div className="font-medium">Sample Matches:</div>
                           <div className="mt-1 space-y-1">
-                            {result.sampleMatches.map((match: any, index: number) => (
+                            {result.sampleMatches?.map((match, index) => (
                               <div key={index} className="rounded bg-muted p-2 text-xs">
                                 <div>Command: {match.command}</div>
                                 <div>Timestamp: {new Date(match.timestamp).toLocaleString()}</div>
                               </div>
                             ))}
+
                           </div>
                         </div>
                       )}

@@ -1,5 +1,5 @@
 // /app/api/embed-text/route.ts
-import { db, db2 } from "@/lib/db";
+import { db2 } from "@/lib/db";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {

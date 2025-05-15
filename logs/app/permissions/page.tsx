@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,7 +30,6 @@ import {
 import Link from "next/link"
 
 export default function PermissionsTable() {
-  const router = useRouter()
   const [permissions, setPermissions] = useState<any[]>([])
   const [roles, setRoles] = useState<any[]>([])
   const [users, setUsers] = useState<any[]>([])
@@ -68,6 +66,7 @@ export default function PermissionsTable() {
       setRoles(rolesResult.roles)
       setUsers(usersResult.users)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch data")
     } finally {
       setIsLoading(false)
@@ -190,6 +189,7 @@ export default function PermissionsTable() {
       setEditModalOpen(false)
       fetchData()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update permission")
     }
   }
@@ -204,6 +204,7 @@ export default function PermissionsTable() {
       setDeleteModalOpen(false)
       fetchData()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete permission")
     }
   }
@@ -483,7 +484,7 @@ export default function PermissionsTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the permission for route "{currentPermission?.route}"? This action cannot
+              Are you sure you want to delete the permission for route &quot;{currentPermission?.route}&quot;? This action cannot
               be undone.
             </DialogDescription>
           </DialogHeader>

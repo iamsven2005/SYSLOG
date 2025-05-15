@@ -25,16 +25,19 @@ import Link from "next/link"
 import { deleteMultipleNotes, getNotes } from "./note-actions"
 import { exportToExcel } from "@/lib/export-utils"
 import { NoteEditor } from "./note-editor"
+import { notes } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+function debounce<Args extends unknown[]>(func: (...args: Args) => void, wait: number): (...args: Args) => void {
   let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Parameters<T>) => {
+  return (...args: Args) => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)
   }
 }
+
+
 
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
@@ -46,12 +49,12 @@ export default function NotesTable({isAdmin}: Props) {
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedNotes, setSelectedNotes] = useState<number[]>([])
-  const [notes, setNotes] = useState<any[]>([])
+  const [notes, setNotes] = useState<notes[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   // Modal states
   const [editorModalOpen, setEditorModalOpen] = useState(false)
-  const [currentNote, setCurrentNote] = useState<any | null>(null)
+  const [currentNote, setCurrentNote] = useState<notes | null>(null)
   const [isCreating, setIsCreating] = useState(false)
 
   // Pagination state
@@ -94,6 +97,7 @@ export default function NotesTable({isAdmin}: Props) {
         setTotalItems(0);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch notes");
       setNotes([]);
       setTotalPages(1);
@@ -138,6 +142,7 @@ export default function NotesTable({isAdmin}: Props) {
       fetchNotes()
       router.refresh()
     } catch (error) {
+      console.log(error)
       toast.error("Failed to delete notes")
     }
   }
@@ -161,7 +166,7 @@ export default function NotesTable({isAdmin}: Props) {
   }
 
   // Open edit note modal
-  const openEditModal = (note: any) => {
+  const openEditModal = (note: notes) => {
     setCurrentNote(note)
     setIsCreating(false)
     setEditorModalOpen(true)
@@ -360,7 +365,7 @@ export default function NotesTable({isAdmin}: Props) {
                       <TableCell><Link href={`/help/${note.id}`}>{note.title}</Link></TableCell>
                       </div>
                   </TableCell>
-                  <TableCell>{formatDate(note.time)}</TableCell>
+                  <TableCell>{formatDate(note.time.toString())}</TableCell>
                   <TableCell>
                     <div className="max-w-[400px] truncate">{truncateText(note.description, 100)}</div>
                   </TableCell>

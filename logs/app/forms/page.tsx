@@ -52,7 +52,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
           {searchQuery ? (
             <div>
               <h2 className="text-xl font-medium text-muted-foreground mb-4">
-                No forms found matching "{searchQuery}"
+                No forms found matching &quot;{searchQuery}&quot;
               </h2>
               <Link href="/forms">
                 <Button variant="outline">Clear Search</Button>

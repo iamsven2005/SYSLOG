@@ -3,8 +3,8 @@ import { PrismaClient as AnalyticsPrismaClient } from '@/prisma/generated/analyt
 
 declare global {
   // Extend global type for both clients
-  var mainPrisma: MainPrismaClient | undefined
-  var analyticsPrisma: AnalyticsPrismaClient | undefined
+  var mainPrisma: MainPrismaClient
+  var analyticsPrisma: AnalyticsPrismaClient
 }
 
 // Create instances or reuse from global

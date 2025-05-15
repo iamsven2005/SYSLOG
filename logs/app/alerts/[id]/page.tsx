@@ -43,32 +43,6 @@ export default async function AlertConditionDetailPage({ params }: { params: { i
     return date.toLocaleString()
   }
 
-  // Format the comparator for display
-  const formatComparator = (comparator: string) => {
-    switch (comparator) {
-      case ">":
-        return "greater than"
-      case ">=":
-        return "greater than or equal to"
-      case "<":
-        return "less than"
-      case "<=":
-        return "less than or equal to"
-      case "==":
-        return "equal to"
-      case "!=":
-        return "not equal to"
-      case "contains":
-        return "contains"
-      case "not_contains":
-        return "does not contain"
-      case "equals":
-        return "equals"
-      default:
-        return comparator
-    }
-  }
-
   // Format the source table for display
   const formatSourceTable = (sourceTable: string) => {
     switch (sourceTable) {

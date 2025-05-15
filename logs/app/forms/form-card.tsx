@@ -24,8 +24,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { toast } from "../hooks/use-toast"
 import { copyForm, deleteForm } from "./[id]/actions"
+import { toast } from "sonner"
 
 interface FormCardProps {
   form: {
@@ -47,17 +47,11 @@ export function FormCard({ form }: FormCardProps) {
     try {
       setIsCopying(true)
       const newFormId = await copyForm(form.id)
-      toast({
-        title: "Form copied successfully",
-        description: "You can now edit the new form",
-      })
+      toast.success("You can now edit the new form")
       router.push(`/forms/${newFormId}/edit`)
     } catch (error) {
       console.error("Error copying form:", error)
-      toast({
-        title: "Error copying form",
-        description: "Please try again later",
-      })
+      toast.error("Please try again later")
     } finally {
       setIsCopying(false)
     }
@@ -67,16 +61,11 @@ export function FormCard({ form }: FormCardProps) {
     try {
       setIsDeleting(true)
       await deleteForm(form.id)
-      toast({
-        title: "Form deleted successfully",
-      })
+      toast.success("Form deleted successfully")
       router.refresh()
     } catch (error) {
       console.error("Error deleting form:", error)
-      toast({
-        title: "Error deleting form",
-        description: "Please try again later",
-      })
+      toast.error("Please try again later")
     } finally {
       setIsDeleting(false)
     }
@@ -158,7 +147,7 @@ export function FormCard({ form }: FormCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete the form "{form.title}" and all its responses. This action cannot be
+                    This will permanently delete the form &quot;{form.title}&quot; and all its responses. This action cannot be
                     undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

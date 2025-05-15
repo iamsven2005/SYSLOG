@@ -1,5 +1,24 @@
 import { db } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
+interface ProcessInfo {
+  pid: number
+  name: string
+  cpuTime: number
+  memoryMB: number
+}
+interface SensorInfo {
+  name: string
+  value: string | number
+  min?: number
+  max?: number
+}
+interface DiskInfo {
+  name: string
+  label: string
+  totalgb: number
+  usedgb: number
+  freegb: number
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +30,7 @@ export async function POST(req: NextRequest) {
     // Insert Processes (Logs)
     if (processes?.length) {
       await db.logs.createMany({
-        data: processes.map((proc: any) => ({
+        data: (processes as ProcessInfo[]).map((proc) => ({
           host: hostname,
           pid: proc.pid,
           name: proc.name,
@@ -26,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (sensors?.length) {
       await db.system_metrics.createMany({
         data: sensors
-          .map((sensor: any) => {
+          .map((sensor: SensorInfo) => {
             // Extract value type from sensor name
             const valueType = determineValueType(sensor.name)
 
@@ -61,7 +80,7 @@ export async function POST(req: NextRequest) {
     // Insert Disk Info
     if (disks?.length) {
       await db.diskmetric.createMany({
-        data: disks.map((disk: any) => ({
+        data: (disks as DiskInfo[]).map((disk) => ({
           host: hostname,
           name: disk.name,
           label: disk.label,

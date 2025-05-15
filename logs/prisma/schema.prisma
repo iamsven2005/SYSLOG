@@ -843,7 +843,6 @@ enum ProjectStatus {
   CANCELLED
 }
 
-// New models for bridge building company
 
 model BridgeProject {
   id                          Int              @id @default(autoincrement())

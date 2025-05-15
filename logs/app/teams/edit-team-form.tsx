@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { updateTeam } from "@/app/teams/actions"
 import { toast } from "sonner"
 import { MultiCombobox, OptionType } from "@/components/multi-combobox"
+import { User } from "@/prisma/generated/main"
 
 // Define the form schema
 const formSchema = z.object({
@@ -28,10 +29,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-interface User {
-  id: number
-  username: string
-}
+
 
 interface Location {
   id: number
@@ -60,9 +58,10 @@ export function EditTeamForm({ team, users, locations }: EditTeamFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const userOptions: OptionType[] = users.map((user) => ({
-    label: user.username,
+    label: user.username ?? user.email ?? `User ${user.id}`,
     value: user.id.toString(),
   }))
+
 
   const locationOptions: OptionType[] = locations.map((location) => ({
     label: location.name,
@@ -91,13 +90,14 @@ export function EditTeamForm({ team, users, locations }: EditTeamFormProps) {
       const result = await updateTeam(team.id, data)
 
       if (result.success) {
-        toast.success( "The team has been updated successfully.")
+        toast.success("The team has been updated successfully.")
         router.push("/teams")
         router.refresh()
       } else {
         toast.error("Failed to update team")
       }
     } catch (error) {
+      console.log(error)
       toast.error("An unexpected error occurred")
     } finally {
       setIsSubmitting(false)

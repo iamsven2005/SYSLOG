@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { TicketAttachment } from "@prisma/client"
+import { TicketAttachment } from "@/prisma/generated/main"
 
 
 interface AttachmentListProps {

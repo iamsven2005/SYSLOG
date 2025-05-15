@@ -9,16 +9,20 @@ import type { StepLog } from "./types"
 
 interface StepLogsProps {
   stepId: string
-  workflowId: string
+}
+interface CurrentUser {
+  id: number
+  username?: string | null
+  email?: string | null
 }
 
-export function StepLogs({ stepId, workflowId }: StepLogsProps) {
+export function StepLogs({ stepId }: StepLogsProps) {
   const [logs, setLogs] = useState<StepLog[]>([])
   const [newLogMessage, setNewLogMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [currentUser, setCurrentUser] = useState<any>(null)
+const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
 
   useEffect(() => {
     async function fetchData() {

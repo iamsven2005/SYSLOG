@@ -49,11 +49,12 @@ interface LocationForm {
   code: string
   name: string
   fullname: string
-  Region  : string
-  WCI_URL : string
+  Region: string
+  WCI_URL: string
   CCY: string
-  Remarks : string
+  Remarks: string
 }
+
 
 export default function LocationsTable() {
   const router = useRouter()
@@ -114,6 +115,7 @@ export default function LocationsTable() {
       setTotalPages(result.pageCount)
       setTotalItems(result.totalCount)
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch locations")
     } finally {
       setIsLoading(false)
@@ -159,7 +161,7 @@ export default function LocationsTable() {
     setLocationForm({
       code: "",
       name: "",
-      fullname:"",
+      fullname: "",
       Region: "",
       WCI_URL: "",
       CCY: "",
@@ -169,19 +171,20 @@ export default function LocationsTable() {
   }
 
   // Open edit location modal
-  const openEditModal = (location: LocationForm) => {
-    setCurrentLocation(location)
-    setLocationForm({
-      code: location.code,
-      name: location.name,
-      fullname: location.fullname,
-      Region: location.Region,
-      WCI_URL: location.WCI_URL,
-      CCY: location.CCY,
-      Remarks: location.Remarks,
-    })
-    setEditModalOpen(true)
-  }
+const openEditModal = (location: LocationForm) => {
+  setCurrentLocation(location)
+  setLocationForm({
+    code: location.code,
+    name: location.name,
+    fullname: location.fullname || "", // Default to empty string if null
+    Region: location.Region || "",     // Default to empty string if null
+    WCI_URL: location.WCI_URL || "",   // Default to empty string if null
+    CCY: location.CCY || "",           // Default to empty string if null
+    Remarks: location.Remarks || "",   // Default to empty string if null
+  })
+  setEditModalOpen(true)
+}
+
 
   // Open delete location modal
   const openDeleteModal = (location: any) => {
@@ -220,12 +223,9 @@ export default function LocationsTable() {
       setAddModalOpen(false)
       fetchLocations()
       router.refresh()
-    } catch (error: any) {
-      if (error.message?.includes("Unique constraint")) {
-        toast.error("Location code already exists")
-      } else {
+    } catch (error) {
+      console.log(error)
         toast.error("Failed to add location")
-      }
     }
   }
 
@@ -253,12 +253,10 @@ export default function LocationsTable() {
       setEditModalOpen(false)
       fetchLocations()
       router.refresh()
-    } catch (error: any) {
-      if (error.message?.includes("Unique constraint")) {
-        toast.error("Location code already exists")
-      } else {
+    } catch (error) {
+        console.log(error)
         toast.error("Failed to update location")
-      }
+      
     }
   }
 
@@ -273,6 +271,8 @@ export default function LocationsTable() {
       fetchLocations()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete location")
     }
   }
@@ -289,6 +289,8 @@ export default function LocationsTable() {
       fetchLocations()
       router.refresh()
     } catch (error) {
+      console.log(error)
+
       toast.error("Failed to delete locations")
     }
   }
@@ -572,7 +574,7 @@ export default function LocationsTable() {
                 className="col-span-3"
                 required
               />
-            </div>            
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="WCI_URL" className="text-right">
                 WCI_URL <span className="text-red-500">*</span>
@@ -669,7 +671,7 @@ export default function LocationsTable() {
                 className="col-span-3"
                 required
               />
-            </div>            
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-Region" className="text-right">
                 Region <span className="text-red-500">*</span>
@@ -721,7 +723,7 @@ export default function LocationsTable() {
                 className="col-span-3"
                 required
               />
-            </div>       
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditModalOpen(false)}>
@@ -738,7 +740,7 @@ export default function LocationsTable() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the location "{currentLocation?.name}" ({currentLocation?.code})? This
+              Are you sure you want to delete the location &quot;{currentLocation?.name}&quot; ({currentLocation?.code})? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>

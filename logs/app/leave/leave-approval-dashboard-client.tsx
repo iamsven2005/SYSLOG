@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { approveLeave, rejectLeave } from "@/app/leave/actions"
-import { toast } from "../hooks/use-toast"
+import { toast } from "sonner"
 
 type Leave = {
   id: number
@@ -61,16 +61,10 @@ export function LeaveApprovalDashboardClient({
     try {
       if (action === "approve") {
         await approveLeave(selectedLeave.id, comment)
-        toast({
-          title: "Leave approved",
-          description: "The leave application has been approved successfully.",
-        })
+        toast.success( "The leave application has been approved successfully.")
       } else {
         await rejectLeave(selectedLeave.id, comment)
-        toast({
-          title: "Leave rejected",
-          description: "The leave application has been rejected.",
-        })
+        toast.error("The leave application has been rejected.",)
       }
 
       // Update local state to remove the processed leave
@@ -78,10 +72,8 @@ export function LeaveApprovalDashboardClient({
       setDialogOpen(false)
       router.refresh()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${action} leave application. Please try again.`,
-      })
+      console.log(error)
+      toast.error(`Failed to ${action} leave application. Please try again.`)
     } finally {
       setIsSubmitting(false)
     }
