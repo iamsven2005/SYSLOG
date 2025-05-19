@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server"
 
-let clients: any[] = []
+type SSEPush = (data: string) => void
 
+let clients: SSEPush[] = []
 export async function GET(req: NextRequest) {
   const { readable, push } = createSSEStream()
 
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
 }
 
 // Notify all connected clients
-export function broadcastChange(data: any) {
+export function broadcastChange(data: unknown) {
   clients.forEach((push) => push(JSON.stringify(data)))
 }
 export async function POST(req: NextRequest) {

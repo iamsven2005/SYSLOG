@@ -1,18 +1,33 @@
+import { db } from '@/lib/db';
+import { Prisma } from '@/prisma/generated/main';
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
 
-function parseBool(val: any): boolean | null {
+function parseBool(val: unknown): boolean | null {
   if (typeof val === 'string') {
     return val.toLowerCase() === 'true';
   }
+  if (typeof val === 'boolean') {
+    return val;
+  }
   return null;
 }
-function safeBigInt(value: any): bigint | null {
-    if (value === undefined || value === null || value === '') return null;
-    return BigInt(value.replace?.('.0Z', '') ?? value);
+
+function safeBigInt(value: unknown): bigint {
+  try {
+    if (typeof value === "string" && value !== "") {
+      return BigInt(value.replace?.(".0Z", ""))
+    } else if (typeof value === "number") {
+      return BigInt(value)
+    } else if (typeof value === "bigint") {
+      return value
+    }
+  } catch {
+    // fall through to default
   }
+  return BigInt(0) // fallback value
+}
+
   
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +37,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Expected an array of user objects in `users` key' }, { status: 400 });
     }
 
-    const formattedUsers = users.map((entry: any) => ({
+const formattedUsers: Prisma.ldapuserCreateManyInput[] = users.map((entry): Prisma.ldapuserCreateManyInput => ({
         dn: entry.dn,
         objectClass: Array.isArray(entry.objectClass) ? entry.objectClass : [entry.objectClass],
         cn: entry.cn,
@@ -62,7 +77,7 @@ export async function POST(req: NextRequest) {
       }));
       
 
-    const result = await prisma.ldapuser.createMany({
+    const result = await db.ldapuser.createMany({
       data: formattedUsers,
       skipDuplicates: true,
     });

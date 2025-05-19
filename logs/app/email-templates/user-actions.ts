@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import { logActivity } from "@/lib/activity-logger"
 import { writeFile } from "fs/promises"
 import path from "path"
+import { Prisma } from "@/prisma/generated/main"
 export async function getUsers({
   search = "",
   page = 1,
@@ -395,10 +396,9 @@ export async function updateUserProfile({
   username?: string
 }) {
   try {
-    const updateData: any = {
-      updatedAt: new Date(),
-    }
-
+const updateData: Prisma.UserUpdateInput = {
+  updatedAt: new Date(),
+}
     // Only include fields that are provided
     if (Mobile !== undefined) updateData.Mobile = Mobile
     if (PrimaryContact !== undefined) updateData.PrimaryContact = PrimaryContact

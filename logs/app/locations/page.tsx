@@ -31,28 +31,21 @@ import { toast } from "sonner"
 import { getLocations, addLocation, updateLocation, deleteLocation } from "./location-actions"
 import { location } from "@/prisma/generated/main"
 
-// Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
-  }
-}
 
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
 
 // Location form type
 interface LocationForm {
+  id: number
   code: string
   name: string
-  fullname: string
-  Region: string
-  WCI_URL: string
-  CCY: string
-  Remarks: string
+  fullname: string | null
+  Region: string | null
+  WCI_URL: string | null
+  CCY: string | null
+  Remarks: string | null
 }
 
 
@@ -68,10 +61,11 @@ export default function LocationsTable() {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [currentLocation, setCurrentLocation] = useState<any | null>(null)
+  const [currentLocation, setCurrentLocation] = useState<LocationForm | null>(null)
 
   // Form state
   const [locationForm, setLocationForm] = useState<LocationForm>({
+    id: 0,
     code: "",
     name: "",
     fullname: "",
@@ -86,6 +80,14 @@ export default function LocationsTable() {
   const [pageSize, setPageSize] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
+function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
+  let timeout: NodeJS.Timeout | null = null
+
+  return (arg: string) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(arg), wait)
+  }
+}
 
   // Apply debounced search
   const debouncedSearch = debounce((value: string) => {
@@ -159,6 +161,7 @@ export default function LocationsTable() {
   // Open add location modal
   const openAddModal = () => {
     setLocationForm({
+      id: 0,
       code: "",
       name: "",
       fullname: "",
@@ -174,6 +177,7 @@ export default function LocationsTable() {
 const openEditModal = (location: LocationForm) => {
   setCurrentLocation(location)
   setLocationForm({
+    id: location.id,
     code: location.code,
     name: location.name,
     fullname: location.fullname || "", // Default to empty string if null
@@ -187,7 +191,7 @@ const openEditModal = (location: LocationForm) => {
 
 
   // Open delete location modal
-  const openDeleteModal = (location: any) => {
+  const openDeleteModal = (location: LocationForm) => {
     setCurrentLocation(location)
     setDeleteModalOpen(true)
   }
@@ -212,11 +216,12 @@ const openEditModal = (location: LocationForm) => {
       await addLocation({
         code: locationForm.code,
         name: locationForm.name,
-        fullname: locationForm.fullname,
-        Region: locationForm.Region,
-        WCI_URL: locationForm.WCI_URL,
-        CCY: locationForm.CCY,
-        Remarks: locationForm.Remarks
+fullname: locationForm.fullname ?? "",
+Region: locationForm.Region ?? "",
+WCI_URL: locationForm.WCI_URL ?? "",
+CCY: locationForm.CCY ?? "",
+Remarks: locationForm.Remarks ?? "",
+
       })
 
       toast.success("Location added successfully")
@@ -241,11 +246,12 @@ const openEditModal = (location: LocationForm) => {
         id: currentLocation.id,
         code: locationForm.code,
         name: locationForm.name,
-        fullname: locationForm.fullname,
-        Region: locationForm.Region,
-        WCI_URL: locationForm.WCI_URL,
-        CCY: locationForm.CCY,
-        Remarks: locationForm.Remarks
+fullname: locationForm.fullname ?? "",
+Region: locationForm.Region ?? "",
+WCI_URL: locationForm.WCI_URL ?? "",
+CCY: locationForm.CCY ?? "",
+Remarks: locationForm.Remarks ?? "",
+
 
       })
 
@@ -543,7 +549,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="name"
                 name="name"
-                value={locationForm.name}
+                value={locationForm.name ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -556,7 +562,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="fullname"
                 name="fullname"
-                value={locationForm.fullname}
+                value={locationForm.fullname ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -569,7 +575,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="Region"
                 name="Region"
-                value={locationForm.Region}
+                value={locationForm.Region ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -582,7 +588,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="WCI_URL"
                 name="WCI_URL"
-                value={locationForm.WCI_URL}
+                value={locationForm.WCI_URL ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -595,7 +601,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="CCY"
                 name="CCY"
-                value={locationForm.CCY}
+                value={locationForm.CCY ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -608,7 +614,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="Remarks"
                 name="Remarks"
-                value={locationForm.Remarks}
+                value={locationForm.Remarks ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -666,7 +672,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="edit-fullname"
                 name="fullname"
-                value={locationForm.fullname}
+                value={locationForm.fullname ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -679,7 +685,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="edit-Region"
                 name="Region"
-                value={locationForm.Region}
+                value={locationForm.Region ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -692,7 +698,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="edit-WCI_URL"
                 name="WCI_URL"
-                value={locationForm.WCI_URL}
+                value={locationForm.WCI_URL ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -705,7 +711,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="edit-CCY"
                 name="CCY"
-                value={locationForm.CCY}
+                value={locationForm.CCY ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required
@@ -718,7 +724,7 @@ const openEditModal = (location: LocationForm) => {
               <Input
                 id="edit-Remarks"
                 name="Remarks"
-                value={locationForm.Remarks}
+                value={locationForm.Remarks ?? ""}
                 onChange={handleFormChange}
                 className="col-span-3"
                 required

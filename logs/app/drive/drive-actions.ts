@@ -1,12 +1,14 @@
 "use server"
 
-import { db, db2 } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import fs from "fs/promises"
+import { db } from "@/lib/db"
+import { db2 } from "@/lib/db2"
+
 // Get folders and files for a specific folder
 export async function getFolderContents(folderId: number | null = null) {
   try {

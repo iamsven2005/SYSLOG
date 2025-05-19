@@ -20,6 +20,25 @@ interface AlertConditionData {
   active?: boolean
   emailTemplateId?: number | null
 }
+interface EvaluationData {
+  reason?: string
+  latestViolation?: unknown
+  violatedIds?: number[]
+  sourceTable?: string
+}
+
+interface EvaluationResult {
+  shouldTrigger: boolean
+  data?: EvaluationData
+}
+
+type AlertEvaluationResult = {
+  conditionId: number
+  conditionName: string
+  triggered: boolean
+  alertEventId?: number
+  reason: string
+}
 
 // Create a new alert condition
 export async function createAlertCondition(data: AlertConditionData) {
@@ -442,7 +461,7 @@ export async function getAlertEvents(
   }
 
   // Helper function to evaluate system metrics conditions
-  async function evaluateSystemMetricsCondition(condition: any) {
+async function evaluateSystemMetricsCondition(condition: AlertConditionData & { id: number }) {
     try {
       const timeWindow = condition.timeWindowMin || 5 // Default to 5 minutes
       const startTime = new Date(Date.now() - timeWindow * 60 * 1000)
@@ -517,7 +536,7 @@ export async function getAlertEvents(
   }
 
 
-  async function evaluateAuthLogsCondition(condition: any) {
+async function evaluateAuthLogsCondition(condition: AlertConditionData & { id: number }) {
     try {
       const timeWindow = condition.timeWindowMin || 5
       const startTime = new Date(Date.now() - timeWindow * 60 * 1000 * 100) // extended for testing
@@ -598,7 +617,7 @@ export async function getAlertEvents(
     }
   }
 
-  async function evaluateActivityLogsCondition(condition: any) {
+async function evaluateActivityLogsCondition(condition: AlertConditionData & { id: number }) {
     try {
       const timeWindow = condition.timeWindowMin || 5
       const startTime = new Date(Date.now() - timeWindow * 60 * 1000 * 100) // extended window for testing
@@ -1036,14 +1055,14 @@ export async function bulkImportAlertConditions(conditions: AlertConditionData[]
       // If there are triggered alerts, return them
       if (triggeredAlerts.length > 0) {
         // Get the full alert event details for each triggered alert
-        const alertEvents = await Promise.all(
-          triggeredAlerts.map(async (alert: any) => {
-            if (alert.alertEventId) {
-              return await getAlertEvent(alert.alertEventId)
-            }
-            return null
-          }),
-        )
+const alertEvents = await Promise.all(
+  triggeredAlerts.map(async (alert: AlertEvaluationResult) => {
+    if (alert.alertEventId) {
+      return await getAlertEvent(alert.alertEventId)
+    }
+    return null
+  }),
+)
 
         // Filter out any null values and return the alert events
         return alertEvents.filter(Boolean)

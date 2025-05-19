@@ -3,6 +3,7 @@
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { logActivity } from "@/lib/activity-logger"
+import { Prisma } from "@/prisma/generated/main"
 
 // Log middleware for performance monitoring
 db.$use(async (params, next) => {
@@ -33,7 +34,7 @@ export async function getAuthLogs({
 }: GetAuthLogsParams) {
   try {
     // Build where conditions
-    const where: any = {}
+const where: Prisma.authWhereInput = {}
 
     // Add search condition if provided
     if (search) {

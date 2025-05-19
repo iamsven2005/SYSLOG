@@ -40,8 +40,8 @@ import {
   Server,
   Eye,
   EyeOff,
-  User,
   Wand2,
+  UserPen,
 } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -59,16 +59,17 @@ import * as XLSX from "xlsx"
 import { MultiCombobox } from "@/components/multi-combobox"
 import ScrollableRoles from "./Scroll"
 import { generatePassword } from "@/lib/utils"
+import { devices, location, Roles, User } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+function debounceString(fn: (value: string) => void, wait: number) {
   let timeout: NodeJS.Timeout | null = null
-
-  return (...args: Parameters<T>) => {
+  return (value: string) => {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    timeout = setTimeout(() => fn(value), wait)
   }
 }
+
 
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
@@ -102,30 +103,20 @@ interface UserForm {
 
 }
 
-
-interface Command {
-  id: number
-  command: string
-  emailTemplate?: { name: string }
+interface Users extends User {
+  devices: devices[]
 }
-
-interface Rule {
-  id: number
-  name: string
-  description?: string
-  groupId: number
-  emailTemplateId?: number
-  commands: Command[]
+interface UserDevice {
+  deviceId: number
 }
-
 
 export default function UsersTable() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
-  const [users, setUsers] = useState<any[]>([])
-  const [devices, setDevices] = useState<any[]>([])
+  const [users, setUsers] = useState<Users[]>([])
+  const [devices, setDevices] = useState<devices[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -134,7 +125,7 @@ export default function UsersTable() {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [currentUser, setCurrentUser] = useState<any | null>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [importModalOpen, setImportModalOpen] = useState(false)
   const [importFile, setImportFile] = useState<File | null>(null)
   const [importPreview, setImportPreview] = useState<Record<string, string | number | undefined>[]>([])
@@ -158,8 +149,8 @@ export default function UsersTable() {
   const [totalItems, setTotalItems] = useState(0)
 
   // Add a new state for roles
-  const [roles, setRoles] = useState<any[]>([])
-  const [locations, setLocations] = useState<any[]>([])
+  const [roles, setRoles] = useState<Roles[]>([])
+  const [locations, setLocations] = useState<location[]>([])
 
   // Add a function to fetch roles
   const fetchRoles = async () => {
@@ -186,11 +177,11 @@ export default function UsersTable() {
   }
 
   // Apply debounced search
-  const debouncedSearch = debounce((value: string) => {
+  const debouncedSearch = debounceString((value) => {
     setDebouncedSearchQuery(value)
-    // Reset to first page when search changes
     setCurrentPage(1)
   }, 300)
+
 
   // Update search query and trigger debounced search
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,7 +200,10 @@ export default function UsersTable() {
         pageSize: pageSize,
       })
       console.log(result.users)
-      setUsers(result.users)
+      setUsers(result.users.map((user) => ({
+        ...user,
+        devices: user.devices.map((d) => d.device),
+      })))
       setTotalPages(result.pageCount)
       setTotalItems(result.totalCount)
     } catch (error) {
@@ -292,7 +286,7 @@ export default function UsersTable() {
   }
 
   // Open edit user modal
-  const openEditModal = async (user: any) => {
+  const openEditModal = async (user: User) => {
     setCurrentUser(user)
 
     try {
@@ -300,12 +294,12 @@ export default function UsersTable() {
       const userDevices = await getUserDevices(user.id)
 
       setUserForm({
-        username: user.username,
+        username: user.username || "",
         email: user.email || "",
         password: user.password || "",
         role: Array.isArray(user.role) ? user.role : [user.role], // Handle both array and string
         location: Array.isArray(user.location) ? user.location : [user.location], // Handle both array and string
-        devices: userDevices.map((d: any) => d.deviceId),
+        devices: userDevices.map((d) => d.deviceId),
         Remarks: user.Remarks || ""
       })
 
@@ -318,7 +312,7 @@ export default function UsersTable() {
   }
 
   // Open delete user modal
-  const openDeleteModal = (user: any) => {
+  const openDeleteModal = (user: User) => {
     setCurrentUser(user)
     setDeleteModalOpen(true)
   }
@@ -373,7 +367,7 @@ export default function UsersTable() {
 
       })
 
-      // Assign devices if any are selected
+      // Assign devices if selected
       if (userForm.devices.length > 0) {
         await Promise.all(userForm.devices.map((deviceId) => assignDeviceToUser({ userId: newUser.id, deviceId })))
       }
@@ -412,8 +406,8 @@ export default function UsersTable() {
 
 
       // Get current user devices
-      const currentDevices = await getUserDevices(currentUser.id)
-      const currentDeviceIds = currentDevices.map((d: any) => d.deviceId)
+      const currentDevices: UserDevice[] = await getUserDevices(currentUser.id)
+      const currentDeviceIds = currentDevices.map((d) => d.deviceId)
 
       // Determine which devices to add and which to remove
       const devicesToAdd = userForm.devices.filter((id) => !currentDeviceIds.includes(id))
@@ -792,7 +786,7 @@ export default function UsersTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-blue-500" />
+                      <UserPen className="h-4 w-4 text-blue-500" />
                       <span className="font-medium">{user.username}</span>
                     </div>
                   </TableCell>
@@ -823,10 +817,10 @@ export default function UsersTable() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {user.devices && user.devices.length > 0 ? (
-                        user.devices.map((device: any) => (
-                          <Badge key={device.deviceId} variant="outline" className="flex items-center gap-1">
+                        user.devices.map((device: devices) => (
+                          <Badge key={device.id} variant="outline" className="flex items-center gap-1">
                             <Server className="h-3 w-3" />
-                            {device.device?.name || `Device ${device.deviceId}`}
+                            {device.name || `Device ${device.id}`}
                           </Badge>
                         ))
                       ) : (
@@ -912,7 +906,7 @@ export default function UsersTable() {
                 Username <span className="text-red-500">*</span>
               </Label>
               <div className="col-span-3 flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <UserPen className="h-4 w-4 text-muted-foreground" />
                 <Input
                   id="username"
                   name="username"
@@ -1090,7 +1084,7 @@ export default function UsersTable() {
                 Username <span className="text-red-500">*</span>
               </Label>
               <div className="col-span-3 flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
+                <UserPen className="h-4 w-4 text-muted-foreground" />
                 <Input
                   id="edit-username"
                   name="username"

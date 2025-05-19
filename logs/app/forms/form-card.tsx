@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { copyForm, deleteForm } from "./[id]/actions"
 import { toast } from "sonner"
+import { FormResponse, Question } from "@/prisma/generated/main"
 
 interface FormCardProps {
   form: {
@@ -33,8 +34,8 @@ interface FormCardProps {
     title: string
     description?: string
     createdAt: Date
-    questions: any[]
-    responses: any[]
+    questions: Question[]
+    responses: FormResponse[]
   }
 }
 

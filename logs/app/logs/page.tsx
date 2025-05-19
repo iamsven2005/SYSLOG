@@ -70,15 +70,15 @@ import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addCommandToRule } from "../rules/rule-actions"
-import { Rule } from "@/prisma/generated/main"
+import { CommandMatch, logs, Rule, RuleGroup } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
   let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Parameters<T>) => {
+  return (arg: string) => {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    timeout = setTimeout(() => func(arg), wait)
   }
 }
 const pageSizeOptions = [10, 25, 50, 100, 1000, 5000]
@@ -89,6 +89,37 @@ const actionOptions = [
   { label: "Login", value: "login" },
   { label: "Logout", value: "logout" },
 ]
+type LogEntry = {
+  id: number
+  name: string
+  host: string | null
+  timestamp: Date
+  piuser: string | null
+  pid: number | null
+  command: string | null
+  action: string | null
+  cpu: number | null
+  mem: number | null
+  port: number | null
+  ipAddress: string | null
+  loginTime?: Date
+  logoutTime?: Date
+}
+
+type RuleWithCommands = Rule & {
+  commands: { id: number; command: string }[]
+}
+
+type RuleGroupWithRules = RuleGroup & {
+  rules: RuleWithCommands[]
+}
+type CommandMatchResult = {
+  command: string
+  ruleName: string
+  emailTemplateId?: number
+  emailTemplateName?: string
+}
+
 
 export default function LogsTable() {
   const router = useRouter()
@@ -97,7 +128,7 @@ export default function LogsTable() {
   const [selectedHosts, setSelectedHosts] = useState<string[]>(["all"])
   const [selectedActions, setSelectedActions] = useState<string[]>(["all"])
   const [selectedLogs, setSelectedLogs] = useState<number[]>([])
-  const [logs, setLogs] = useState<any[]>([])
+  const [logs, setLogs] = useState<LogEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [hostDropdownOpen, setHostDropdownOpen] = useState(false)
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false)
@@ -139,15 +170,14 @@ export default function LogsTable() {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<string>("")
   const [isTimeDeleteLoading, setIsTimeDeleteLoading] = useState(false)
 
-  // Add state for rule groups and rules inside the LogsTable component
-  const [ruleGroups, setRuleGroups] = useState<any[]>([])
+  const [ruleGroups, setRuleGroups] = useState<RuleGroupWithRules[]>([])
   const [selectedRuleGroups, setSelectedRuleGroups] = useState<string[]>([])
   const [selectedRules, setSelectedRules] = useState<string[]>([])
   const [ruleGroupDropdownOpen, setRuleGroupDropdownOpen] = useState(false)
   const [ruleDropdownOpen, setRuleDropdownOpen] = useState(false)
   const [matchedCommands, setMatchedCommands] = useState<string[]>([])
   // Add this state inside the LogsTable component
-  const [commandMatches, setCommandMatches] = useState<any[]>([])
+const [commandMatches, setCommandMatches] = useState<CommandMatchResult[]>([])
 
   // Add this state inside the LogsTable component, near the other state declarations
   const [addToRuleDialogOpen, setAddToRuleDialogOpen] = useState(false)
@@ -197,25 +227,26 @@ export default function LogsTable() {
         const matches = await processBatchForCommandMatches(result.logs, "system")
         setCommandMatches(matches)
         if (matches.length > 0) {
-          matches.forEach((match: any) => {
-            toast.info(
-              <div>
-                <p className="font-medium">Command Match Detected</p>
-                <p className="text-sm">Rule: {match.ruleName}</p>
-                <p className="text-sm">
-                  Command: <code className="bg-muted px-1 rounded">{match.command}</code>
-                </p>
-                {match.emailTemplateId && (
-                  <p className="text-xs mt-1 text-muted-foreground">
-                    Email notification sent via template: {match.emailTemplateName}
-                  </p>
-                )}
-              </div>,
-              {
-                duration: 5000,
-              },
-            )
-          })
+matches.forEach((match) => {
+  toast.info(
+    <div>
+      <p className="font-medium">Command Match Detected</p>
+      <p className="text-sm">Rule: {match.ruleName}</p>
+      <p className="text-sm">
+        Command: <code className="bg-muted px-1 rounded">{match.command}</code>
+      </p>
+      {match.emailTemplateId && (
+        <p className="text-xs mt-1 text-muted-foreground">
+          Email notification sent via template: {match.emailTemplateName}
+        </p>
+      )}
+    </div>,
+    {
+      duration: 5000,
+    },
+  )
+})
+
         }
       }
 
@@ -245,13 +276,6 @@ export default function LogsTable() {
     pageSize,
     isResourceFiltersEnabled,
   ])
-
-  // Load logs when resource filters change
-  // useEffect(() => {
-  //   if (cpuFilter !== null || memFilter !== null) {
-  //     fetchLogs()
-  //   }
-  // }, [cpuFilter, memFilter])
 
   // Handle host selection
   const handleHostSelect = (value: string) => {
@@ -366,19 +390,19 @@ export default function LogsTable() {
   }
 
   // Open command modal
-  const openCommandModal = (log: any) => {
+  const openCommandModal = (log: LogEntry) => {
     if (!log.command) return
 
-    setSelectedCommand({
-      id: log.id,
-      command: log.command,
-      timestamp: log.timestamp,
-      host: log.host || "Unknown",
-      piuser: log.piuser || "Unknown",
-      pid: log.pid,
-      cpu: log.cpu,
-      mem: log.mem,
-    })
+setSelectedCommand({
+    id: log.id,
+    command: log.command,
+    timestamp: log.timestamp.toISOString(), // Convert Date to string
+    host: log.host ?? "Unknown",
+    piuser: log.piuser ?? "Unknown",
+    pid: log.pid ?? undefined,
+    cpu: log.cpu ?? undefined,
+    mem: log.mem ?? undefined,
+  })
     setCommandModalOpen(true)
   }
 
@@ -541,23 +565,24 @@ export default function LogsTable() {
   }
 
   // Add this function inside the LogsTable component
-  const openAddToRuleDialog = (log: any) => {
-    if (!log.command) return
+const openAddToRuleDialog = (log: LogEntry) => {
+  if (!log.command) return
 
-    setSelectedCommand({
-      id: log.id,
-      command: log.command,
-      timestamp: log.timestamp,
-      host: log.host || "Unknown",
-      piuser: log.piuser || "Unknown",
-      pid: log.pid,
-      cpu: log.cpu,
-      mem: log.mem,
-    })
-    setCommandText(log.command)
-    setSelectedRuleId("")
-    setAddToRuleDialogOpen(true)
-  }
+  setSelectedCommand({
+    id: log.id,
+    command: log.command,
+    timestamp: log.timestamp.toISOString(), // Convert Date to string
+    host: log.host ?? "Unknown",
+    piuser: log.piuser ?? "Unknown",
+    pid: log.pid ?? undefined,
+    cpu: log.cpu ?? undefined,
+    mem: log.mem ?? undefined,
+  })
+  setCommandText(log.command)
+  setSelectedRuleId("")
+  setAddToRuleDialogOpen(true)
+}
+
 
   // Add this function inside the LogsTable component
   const handleAddCommandToRule = async () => {
@@ -1001,7 +1026,7 @@ export default function LogsTable() {
                       <span className="text-muted-foreground">—</span>
                     )}
                   </TableCell>
-                  <TableCell>{formatDate(log.timestamp)}</TableCell>
+                  <TableCell>{formatDate(log.timestamp.toString())}</TableCell>
                   <TableCell>
                     {log.piuser ? (
                       <div className="flex items-center gap-1">
@@ -1064,11 +1089,11 @@ export default function LogsTable() {
                       <div className="flex flex-col text-sm">
                         <span className="flex items-center gap-1">
                           <LogIn className="h-3 w-3 text-green-500" />
-                          {formatDate(log.timestamp)}
+                          {formatDate(log.timestamp.toString())}
                         </span>
                         <span className="flex items-center gap-1">
                           <LogOut className="h-3 w-3 text-red-500" />
-                          {formatDate(log.logoutTime)}
+                          {formatDate(log.logoutTime.toString())}
                         </span>
                       </div>
                     )}
@@ -1076,11 +1101,11 @@ export default function LogsTable() {
                       <div className="flex flex-col text-sm">
                         <span className="flex items-center gap-1">
                           <LogIn className="h-3 w-3 text-green-500" />
-                          {formatDate(log.loginTime)}
+                          {formatDate(log.loginTime.toString())}
                         </span>
                         <span className="flex items-center gap-1">
                           <LogOut className="h-3 w-3 text-red-500" />
-                          {formatDate(log.timestamp)}
+                          {formatDate(log.timestamp.toString())}
                         </span>
                       </div>
                     )}

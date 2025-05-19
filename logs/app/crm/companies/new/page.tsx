@@ -6,9 +6,6 @@ import { ArrowLeft } from "lucide-react"
 import { CompanyType } from "@/prisma/generated/main"
 
 export default function NewCompanyPage({ searchParams }: { searchParams?: { type?: string } }) {
-  // Convert the type query parameter to a CompanyType if it exists
-  const defaultType = searchParams?.type as CompanyType | undefined
-
   return (
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

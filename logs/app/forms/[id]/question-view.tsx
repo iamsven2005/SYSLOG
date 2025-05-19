@@ -10,12 +10,36 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+type QuestionType = "TEXT" | "TEXTAREA" | "RADIO" | "CHECKBOX" | "DROPDOWN" | "FILE"
+
+interface QuestionOption {
+  id: number | string
+  text: string
+}
+
+interface Question {
+  id: number | string
+  text: string
+  type: QuestionType
+  required?: boolean
+  options?: QuestionOption[]
+}
+interface QuestionOption {
+  id: string | number;
+  text: string;
+}
+
+
+type QuestionValue =
+  | string              // for TEXT, TEXTAREA, RADIO, DROPDOWN
+  | number[]            // for CHECKBOX
+  | undefined           // initial
 
 type QuestionViewProps = {
-  question: any
-  value: any
+  question: Question
+  value: QuestionValue
   file: File | undefined
-  onChange: (value: any) => void
+  onChange: (value: QuestionValue) => void
   onFileChange: (file: File | null) => void
 }
 
@@ -40,75 +64,85 @@ export function QuestionView({ question, value, onChange, onFileChange }: Questi
         {question.required && <span className="text-destructive">*</span>}
       </div>
 
-      {question.type === "TEXT" && (
-        <Input
-          value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Your answer"
-          className="max-w-md"
+{question.type === "TEXT" && (
+  <Input
+    value={typeof value === "string" ? value : ""}
+    onChange={(e) => onChange(e.target.value)}
+    placeholder="Your answer"
+    className="max-w-md"
+  />
+)}
+
+{question.type === "TEXTAREA" && (
+  <Textarea
+    value={typeof value === "string" ? value : ""}
+    onChange={(e) => onChange(e.target.value)}
+    placeholder="Your answer"
+    className="min-h-[100px]"
+  />
+)}
+
+{question.type === "RADIO" && (
+  <RadioGroup
+    value={typeof value === "string" ? value : ""}
+    onValueChange={onChange}
+    className="space-y-2"
+  >
+    {question.options?.map((option) => (
+      <div key={option.id} className="flex items-center space-x-2">
+        <RadioGroupItem value={option.id.toString()} id={`option-${option.id}`} />
+        <Label htmlFor={`option-${option.id}`} className="font-normal">
+          {option.text}
+        </Label>
+      </div>
+    ))}
+  </RadioGroup>
+)}
+
+
+{question.type === "CHECKBOX" && (
+  <div className="space-y-2">
+    {question.options?.map((option) => (
+      <div key={option.id} className="flex items-center space-x-2">
+        <Checkbox
+          id={`option-${option.id}`}
+checked={Array.isArray(value) && value.includes(Number(option.id))}
+          onCheckedChange={(checked) => {
+            const currentValue: number[] = Array.isArray(value) ? value : []
+            if (checked) {
+onChange(currentValue.filter((id) => id !== Number(option.id)))
+            } else {
+              onChange(currentValue.filter((id) => id !== option.id))
+            }
+          }}
         />
-      )}
+        <Label htmlFor={`option-${option.id}`} className="font-normal">
+          {option.text}
+        </Label>
+      </div>
+    ))}
+  </div>
+)}
 
-      {question.type === "TEXTAREA" && (
-        <Textarea
-          value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Your answer"
-          className="min-h-[100px]"
-        />
-      )}
 
-      {question.type === "RADIO" && (
-        <RadioGroup value={value} onValueChange={onChange} className="space-y-2">
-          {question.options.map((option: any) => (
-            <div key={option.id} className="flex items-center space-x-2">
-              <RadioGroupItem value={option.id.toString()} id={`option-${option.id}`} />
-              <Label htmlFor={`option-${option.id}`} className="font-normal">
-                {option.text}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      )}
+{question.type === "DROPDOWN" && (
+  <Select
+    value={typeof value === "string" ? value : ""}
+    onValueChange={onChange}
+  >
+    <SelectTrigger className="max-w-md">
+      <SelectValue placeholder="Select an option" />
+    </SelectTrigger>
+    <SelectContent>
+      {question.options?.map((option) => (
+        <SelectItem key={option.id} value={option.id.toString()}>
+          {option.text}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+)}
 
-      {question.type === "CHECKBOX" && (
-        <div className="space-y-2">
-          {question.options.map((option: any) => (
-            <div key={option.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={`option-${option.id}`}
-                checked={(value || []).includes(option.id)}
-                onCheckedChange={(checked) => {
-                  const currentValue = value || []
-                  if (checked) {
-                    onChange([...currentValue, option.id])
-                  } else {
-                    onChange(currentValue.filter((id: number) => id !== option.id))
-                  }
-                }}
-              />
-              <Label htmlFor={`option-${option.id}`} className="font-normal">
-                {option.text}
-              </Label>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {question.type === "DROPDOWN" && (
-        <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="max-w-md">
-            <SelectValue placeholder="Select an option" />
-          </SelectTrigger>
-          <SelectContent>
-            {question.options.map((option: any) => (
-              <SelectItem key={option.id} value={option.id.toString()}>
-                {option.text}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      )}
 
       {question.type === "FILE" && (
         <div className="space-y-2">

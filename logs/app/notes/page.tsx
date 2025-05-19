@@ -28,23 +28,22 @@ import { NoteEditor } from "./note-editor"
 import { notes } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
-function debounce<Args extends unknown[]>(func: (...args: Args) => void, wait: number): (...args: Args) => void {
+function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
   let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Args) => {
+  return (arg: string) => {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    timeout = setTimeout(() => func(arg), wait)
   }
 }
 
 
-
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
-interface Props{
-  isAdmin? : boolean
+interface Props {
+  isAdmin?: boolean
 }
-export default function NotesTable({isAdmin}: Props) {
+export default function NotesTable({ isAdmin }: Props) {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
@@ -85,7 +84,7 @@ export default function NotesTable({isAdmin}: Props) {
         page: currentPage,
         pageSize: pageSize,
       });
-  
+
       if (result) {
         setNotes(result.notes || []); // If notes are null, set to an empty array
         setTotalPages(result.pageCount || 1); // Default to 1 if null
@@ -106,7 +105,7 @@ export default function NotesTable({isAdmin}: Props) {
       setIsLoading(false);
     }
   };
-  
+
 
   // Load notes when filters or pagination changes
   useEffect(() => {
@@ -296,24 +295,24 @@ export default function NotesTable({isAdmin}: Props) {
           </Button>
         </div>
         {isAdmin && (
-        <div className="flex gap-2">
-        <Button onClick={openCreateModal} className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Note
-        </Button>
+          <div className="flex gap-2">
+            <Button onClick={openCreateModal} className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Note
+            </Button>
 
-        <Button variant="outline" onClick={handleExport} className="gap-2">
-          <Download className="h-4 w-4" />
-          Export
-        </Button>
+            <Button variant="outline" onClick={handleExport} className="gap-2">
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
 
-        {selectedNotes.length > 0 && (
-          <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2">
-            <Trash2 className="h-4 w-4" />
-            Delete ({selectedNotes.length})
-          </Button>
-        )}
-      </div>
+            {selectedNotes.length > 0 && (
+              <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2">
+                <Trash2 className="h-4 w-4" />
+                Delete ({selectedNotes.length})
+              </Button>
+            )}
+          </div>
         )}
 
       </div>
@@ -323,11 +322,11 @@ export default function NotesTable({isAdmin}: Props) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">
-                {isAdmin &&(
-                <Checkbox
-                checked={notes.length > 0 && selectedNotes.length === notes.length}
-                onCheckedChange={handleSelectAll}
-              />
+                {isAdmin && (
+                  <Checkbox
+                    checked={notes.length > 0 && selectedNotes.length === notes.length}
+                    onCheckedChange={handleSelectAll}
+                  />
                 )}
 
               </TableHead>
@@ -350,10 +349,10 @@ export default function NotesTable({isAdmin}: Props) {
                 <TableRow key={note.id}>
                   <TableCell>
                     {isAdmin && (
-                    <Checkbox
-                    checked={selectedNotes.includes(note.id)}
-                    onCheckedChange={() => handleSelectNote(note.id)}
-                  />
+                      <Checkbox
+                        checked={selectedNotes.includes(note.id)}
+                        onCheckedChange={() => handleSelectNote(note.id)}
+                      />
                     )}
 
                   </TableCell>
@@ -363,34 +362,34 @@ export default function NotesTable({isAdmin}: Props) {
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-500" />
                       <TableCell><Link href={`/help/${note.id}`}>{note.title}</Link></TableCell>
-                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>{formatDate(note.time.toString())}</TableCell>
                   <TableCell>
                     <div className="max-w-[400px] truncate">{truncateText(note.description, 100)}</div>
                   </TableCell>
                   {isAdmin && (
-                  <TableCell>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => openEditModal(note)} title="Edit Note">
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setSelectedNotes([note.id])
-                        handleDeleteSelected()
-                      }}
-                      title="Delete Note"
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => openEditModal(note)} title="Edit Note">
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setSelectedNotes([note.id])
+                            handleDeleteSelected()
+                          }}
+                          title="Delete Note"
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Delete</span>
+                        </Button>
+                      </div>
+                    </TableCell>
                   )}
 
                 </TableRow>

@@ -1,6 +1,3 @@
-import { HardHat } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import ProjectDetailSkeleton from "../../components/skeletons/project-detail-skeleton"
 
 export default function Loading() {

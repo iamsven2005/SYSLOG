@@ -7,30 +7,36 @@ import { Prisma } from "@/prisma/generated/main"
 // Get all page permissions with their associated roles and users
 export async function getAllPagePermissions() {
   try {
-    const permissions = await db.pagePermission.findMany({
-      include: {
-        allowedRoles: {
+// getAllPagePermissions
+const permissions = await db.pagePermission.findMany({
+  include: {
+    allowedRoles: {
+      select: {
+        id: true,
+        roleName: true,
+        pagePermissionId: true, // ✅ Add this line
+      },
+    },
+    allowedUsers: {
+      select: {
+        id: true,
+        pagePermissionId: true,
+        userId: true,
+        user: {
           select: {
             id: true,
-            roleName: true,
-          },
-        },
-        allowedUsers: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
+            username: true,
+            email: true,
           },
         },
       },
-      orderBy: {
-        route: "asc",
-      },
-    })
+    },
+  },
+  orderBy: {
+    route: "asc",
+  },
+})
+
 
     return { permissions }
   } catch (error) {

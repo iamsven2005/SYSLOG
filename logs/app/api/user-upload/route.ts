@@ -4,6 +4,14 @@ import { JSDOM } from "jsdom"
 import { addUser } from "@/app/email-templates/user-actions"
 
 export const dynamic = "force-dynamic"
+interface UserUploadInput {
+  username: string
+  email: string | null
+  password: string
+  Remarks: string
+  role: string[]
+  location: string[]
+}
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -19,7 +27,7 @@ export async function POST(req: NextRequest) {
   const dom = new JSDOM(html)
   const document = dom.window.document
   const rows = Array.from(document.querySelectorAll("table.table_layout tbody tr"))
-  const users: any[] = []
+  const users: UserUploadInput[] = []
 
   for (const row of rows) {
     const cols = row.querySelectorAll("td")
@@ -34,7 +42,7 @@ export async function POST(req: NextRequest) {
     const enabled = cols[5].textContent?.trim()
     const groups = cols[8].innerHTML.replace(/<br\s*\/?>/gi, "\n").trim()
     const remarks = cols[9].innerHTML.replace(/<br\s*\/?>/gi, "\n").trim()
-    
+
     if (enabled !== "Y") continue
 
     users.push({
@@ -43,9 +51,9 @@ export async function POST(req: NextRequest) {
       password: "Temp#Pass123",
       Remarks: remarks,
       role: groups
-      .split("\n")
-      .map(r => r.trim().replace(/^[0-9]+\.?\s*/, ""))
-      .filter(Boolean),
+        .split("\n")
+        .map(r => r.trim().replace(/^[0-9]+\.?\s*/, ""))
+        .filter(Boolean),
       location: location // ✅ flat array
     })
   }

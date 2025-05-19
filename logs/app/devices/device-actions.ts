@@ -50,11 +50,14 @@ export async function getDevices({ search = "", page = 1, pageSize = 10 }: GetDe
           include: {
             user: {
               select: {
+                id: true,
                 username: true,
+                email: true,
               },
             },
           },
         },
+
       },
       orderBy: {
         time: "desc",

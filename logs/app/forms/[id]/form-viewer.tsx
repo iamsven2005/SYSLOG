@@ -10,12 +10,33 @@ import { submitFormResponse } from "./actions"
 import { toast } from "sonner"
 
 type FormViewerProps = {
-  form: any
+  form: Form
 }
+
+type QuestionType = "TEXT" | "TEXTAREA" | "RADIO" | "CHECKBOX" | "DROPDOWN" | "FILE"
+
+interface QuestionOption {
+  id: number | string
+  text: string
+}
+
+interface Question {
+  id: number
+  text: string
+  type: QuestionType
+  required?: boolean
+  options?: QuestionOption[]
+}
+
+interface Form {
+  id: number
+  questions: Question[]
+}
+type AnswerValue = string | number[] | undefined
 
 export function FormViewer({ form }: FormViewerProps) {
   const router = useRouter()
-  const [answers, setAnswers] = useState<Record<number, any>>({})
+  const [answers, setAnswers] = useState<Record<number, string | number[] | undefined>>({})
   const [files, setFiles] = useState<Record<number, File>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -29,12 +50,13 @@ export function FormViewer({ form }: FormViewerProps) {
     },
   })
 
-  const handleAnswerChange = (questionId: number, value: any) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: value,
-    }))
-  }
+const handleAnswerChange = (questionId: number, value: AnswerValue) => {
+  setAnswers((prev) => ({
+    ...prev,
+    [questionId]: value,
+  }))
+}
+
 
   const handleFileChange = (questionId: number, file: File | null) => {
     if (file) {
@@ -51,30 +73,18 @@ export function FormViewer({ form }: FormViewerProps) {
 
   const handleSubmit = async () => {
     // Validate required questions
-    const requiredQuestions = form.questions.filter((q: any) => q.required)
-    const unansweredQuestions = requiredQuestions.filter((q: any) => {
-      if (q.type === "FILE") {
-        return !files[q.id]
-      }
+    const requiredQuestions = form.questions.filter((q) => q.required)
+    const unansweredQuestions = requiredQuestions.filter((q) => {
+      if (q.type === "FILE") return !files[q.id]
 
       const answer = answers[q.id]
-      if (!answer) return true
 
-      if (q.type === "TEXT" || q.type === "TEXTAREA") {
-        return !answer.trim()
-      }
-
-      if (q.type === "RADIO" || q.type === "DROPDOWN") {
-        return answer === undefined
-      }
-
-      if (q.type === "CHECKBOX") {
-        return !answer.length
-      }
+      if (q.type === "TEXT" || q.type === "TEXTAREA") return !answer?.toString().trim()
+      if (q.type === "RADIO" || q.type === "DROPDOWN") return answer === undefined
+      if (q.type === "CHECKBOX") return !Array.isArray(answer) || answer.length === 0
 
       return true
     })
-
     if (unansweredQuestions.length > 0) {
       toast.error("Please answer all required questions")
       return
@@ -105,13 +115,13 @@ export function FormViewer({ form }: FormViewerProps) {
 
       await submitFormResponse(formData)
 
-      toast.error( "Form submitted successfully")
+      toast.error("Form submitted successfully")
 
       // Redirect to a thank you page or back to the forms list
       router.push("/")
     } catch (error) {
       console.error("Error submitting form:", error)
-      toast.error( "Please try again later")
+      toast.error("Please try again later")
     } finally {
       setIsSubmitting(false)
     }
@@ -123,7 +133,7 @@ export function FormViewer({ form }: FormViewerProps) {
         <CardTitle>Submit Your Response</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {form.questions.map((question: any) => (
+        {form.questions.map((question) => (
           <QuestionView
             key={question.id}
             question={question}

@@ -76,18 +76,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { processBatchForCommandMatches } from "../command-matches/command-monitoring-actions"
 // Add this import at the top with the other imports
 import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
-import { Rule } from "@/prisma/generated/main"
-
-// Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null
-
-  return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
-  }
+import { auth, logs, Rule } from "@/prisma/generated/main"
+type MatchedCommand = {
+  ruleId: number
+  ruleName: string
+  command: string
+  emailTemplateId?: number | null
+  emailTemplateName?: string | null
 }
 
+
+// Debounce function to limit how often a function can run
+function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
+  let timeout: NodeJS.Timeout | null = null
+
+  return (arg: string) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(arg), wait)
+  }
+}
 // Page size options
 const pageSizeOptions = [10, 25, 50, 100]
 
@@ -97,7 +104,14 @@ export default function AuthLogsTable() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedHosts, setSelectedHosts] = useState<string[]>(["all"])
   const [selectedLogs, setSelectedLogs] = useState<number[]>([])
-  const [logs, setLogs] = useState<any[]>([])
+  const [logs, setLogs] = useState<
+    {
+      id: number
+      timestamp: Date
+      username: string
+      log_entry: string
+    }[]
+  >([])
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -110,6 +124,14 @@ export default function AuthLogsTable() {
     log_entry: string
     parsedData?: Record<string, string>
   } | null>(null)
+  type RuleGroupWithRules = {
+    id: number
+    name: string
+    createdAt: Date
+    updatedAt: Date
+    emailTemplateId: number | null
+    rules: Rule[]
+  }
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -126,14 +148,14 @@ export default function AuthLogsTable() {
   const [isTimeDeleteLoading, setIsTimeDeleteLoading] = useState(false)
 
   // Add state for rule groups and rules
-  const [ruleGroups, setRuleGroups] = useState<any[]>([])
+  const [ruleGroups, setRuleGroups] = useState<RuleGroupWithRules[]>([])
   const [selectedRuleGroups, setSelectedRuleGroups] = useState<string[]>([])
   const [selectedRules, setSelectedRules] = useState<string[]>([])
   const [ruleGroupDropdownOpen, setRuleGroupDropdownOpen] = useState(false)
   const [ruleDropdownOpen, setRuleDropdownOpen] = useState(false)
   const [matchedCommands, setMatchedCommands] = useState<string[]>([])
   // Add this state inside the AuthLogsTable component
-  const [commandMatches, setCommandMatches] = useState<any[]>([])
+  const [commandMatches, setCommandMatches] = useState<MatchedCommand[]>([])
 
   // Add state for the "Add to Rule" dialog
   const [addToRuleDialogOpen, setAddToRuleDialogOpen] = useState(false)
@@ -242,7 +264,8 @@ export default function AuthLogsTable() {
 
       // Show toast notifications for matches
       if (matches.length > 0) {
-        matches.forEach((match: any) => {
+        matches.forEach((match: MatchedCommand) => {
+
           toast.info(
             <div>
               <p className="font-medium">Command Match Detected</p>
@@ -367,27 +390,38 @@ export default function AuthLogsTable() {
 
   // Open log entry modal
   const openLogEntryModal = (log: any) => {
-    // Parse the log entry to extract structured data
     const parsedData = parseLogEntry(log.log_entry)
 
     setSelectedLogEntry({
-      ...log,
+      id: log.id,
+      timestamp: log.timestamp instanceof Date ? log.timestamp.toISOString() : log.timestamp,
+      username: log.username ?? "(unknown)",
+      log_entry: log.log_entry ?? "",
       parsedData,
     })
+
     setModalOpen(true)
   }
 
+
   // Open add to rule dialog
-  const openAddToRuleDialog = (log: any) => {
-    // Extract command from log entry if possible
+  const openAddToRuleDialog = (log: { id: number; timestamp: Date; username: string; log_entry: string }) => {
     const parsedData = parseLogEntry(log.log_entry)
     const extractedCommand = parsedData.command || ""
 
-    setSelectedLogEntry(log)
+    setSelectedLogEntry({
+      id: log.id,
+      timestamp: log.timestamp.toISOString(), // ✅ convert Date to string
+      username: log.username,
+      log_entry: log.log_entry,
+      parsedData,
+    })
+
     setCommandText(extractedCommand)
     setSelectedRuleId("")
     setAddToRuleDialogOpen(true)
   }
+
 
   // Handle adding command to rule
   const handleAddCommandToRule = async () => {
@@ -801,7 +835,17 @@ export default function AuthLogsTable() {
       </div>
       {commandMatches.length > 0 && (
         <div className="mb-4">
-          <CommandMatchAlert matches={commandMatches} />
+          <CommandMatchAlert
+            matches={commandMatches.map((match) => ({
+              command: match.command,
+              rule: {
+                id: match.ruleId,
+                name: match.ruleName,
+              },
+              emailTemplateId: match.emailTemplateId,
+              emailTemplateName: match.emailTemplateName,
+            }))}
+          />
         </div>
       )}
 
@@ -836,7 +880,7 @@ export default function AuthLogsTable() {
                     <Checkbox checked={selectedLogs.includes(log.id)} onCheckedChange={() => handleSelectLog(log.id)} />
                   </TableCell>
                   <TableCell>{log.id}</TableCell>
-                  <TableCell>{formatDate(log.timestamp)}</TableCell>
+                  <TableCell>{formatDate(log.timestamp.toString())}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Terminal className="h-4 w-4 text-blue-500" />
@@ -1017,7 +1061,6 @@ export default function AuthLogsTable() {
                 </div>
               )}
 
-              {/* Add matched rules section if any */}
               {matchedCommands.length > 0 && (
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
                   <div className="flex items-center gap-2 mb-2">
@@ -1170,7 +1213,6 @@ export default function AuthLogsTable() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Display matched commands if any */}
       {matchedCommands.length > 0 && (
         <div className="mt-4 p-4 border rounded-md bg-muted/20">
           <h3 className="text-sm font-medium mb-2">Matching Commands</h3>

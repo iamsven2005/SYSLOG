@@ -61,9 +61,12 @@ const priorityColors: Record<string, string> = {
 }
 interface ExtendedTicket extends SupportTicket {
   relatedDevice?: devices | null
-  comments: TicketComment[]
   attachments: TicketAttachment[]
   createdBy: User
+  comments: (TicketComment & {
+    attachments: TicketAttachment[]
+    user: User
+  })[]
 }
 
 interface TicketDetailProps {
@@ -84,7 +87,7 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [ticketAttachments, setTicketAttachments] = useState(ticket.attachments || [])
-  const [commentAttachments, setCommentAttachments] = useState<Record<number, any[]>>({})
+  const [commentAttachments, setCommentAttachments] = useState<Record<number, TicketAttachment[]>>({})
   const [selectedCommentFiles, setSelectedCommentFiles] = useState<File[]>([])
   const commentIdRef = useRef<number | null>(null)
 
@@ -94,9 +97,9 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
 
   useEffect(() => {
     // Initialize comment attachments
-    const initialCommentAttachments: Record<number, any[]> = {}
-    ticket.comments.forEach((comment: any) => {
-      initialCommentAttachments[comment.id] = comment.TicketAttachment || []
+    const initialCommentAttachments: Record<number, TicketAttachment[]> = {}
+    ticket.comments.forEach((comment) => {
+      initialCommentAttachments[comment.id] = comment.attachments || []
     })
     setCommentAttachments(initialCommentAttachments)
   }, [ticket.comments])
@@ -182,7 +185,6 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
       // Store the comment ID for file uploads
       commentIdRef.current = newComment.id
 
-      // Upload any selected files
       if (selectedCommentFiles.length > 0) {
         await uploadCommentFiles(selectedCommentFiles, newComment.id)
       }
@@ -263,12 +265,12 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
   }
 
   // Handle ticket attachment upload
-  const handleTicketAttachmentUpload = (attachment: any) => {
-    setTicketAttachments((prev: any) => [...prev, attachment])
+  const handleTicketAttachmentUpload = (attachment: TicketAttachment) => {
+    setTicketAttachments((prev: TicketAttachment[]) => [...prev, attachment])
   }
 
   // Handle comment attachment upload
-  const handleCommentAttachmentUpload = (commentId: number, attachment: any) => {
+  const handleCommentAttachmentUpload = (commentId: number, attachment: TicketAttachment) => {
     setCommentAttachments((prev) => ({
       ...prev,
       [commentId]: [...(prev[commentId] || []), attachment],
@@ -324,7 +326,7 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-                        )}
+          )}
 
         </div>
       </div>
@@ -360,10 +362,10 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
               {ticket.comments.length === 0 ? (
                 <p className="text-muted-foreground">No comments yet.</p>
               ) : (
-                ticket.comments.map((comment: any) => (
+                ticket.comments.map((comment) => (
                   <div key={comment.id} className="flex gap-4 pb-4 border-b last:border-0">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback>{comment.user.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback>{(comment.user.username ?? "??").substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
@@ -483,51 +485,51 @@ export function TicketDetail({ ticket, currentUser, assignableUsers }: TicketDet
                 <p>{formatDate(ticket.updatedAt, { hour: "numeric", minute: "numeric" })}</p>
               </div>
               <Button>
-              <Link href={'/tickets/new'}>New Ticket</Link>
+                <Link href={'/tickets/new'}>New Ticket</Link>
               </Button>
               {isAdmin && (
-              <div>
-                <p className="text-sm font-medium mb-1">Status</p>
-                <Select value={status} onValueChange={handleStatusChange} disabled={!canEdit || isUpdating}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm font-medium mb-1">Priority</p>
-                <Select value={priority} onValueChange={handlePriorityChange} disabled={!canEdit || isUpdating}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priorityOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm font-medium mb-1">Assigned To</p>
-                <Select value={assignedTo} onValueChange={handleAssigneeChange} disabled={!isAdmin || isUpdating}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                    {assignableUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.id.toString()}>
-                        {user.username}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <p className="text-sm font-medium mb-1">Status</p>
+                  <Select value={status} onValueChange={handleStatusChange} disabled={!canEdit || isUpdating}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm font-medium mb-1">Priority</p>
+                  <Select value={priority} onValueChange={handlePriorityChange} disabled={!canEdit || isUpdating}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priorityOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm font-medium mb-1">Assigned To</p>
+                  <Select value={assignedTo} onValueChange={handleAssigneeChange} disabled={!isAdmin || isUpdating}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                      {assignableUsers.map((user) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.username}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
             </CardContent>
           </Card>

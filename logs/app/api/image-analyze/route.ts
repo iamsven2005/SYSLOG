@@ -1,4 +1,4 @@
-import { db2 } from "@/lib/db";
+import { db2 } from "@/lib/db2";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {

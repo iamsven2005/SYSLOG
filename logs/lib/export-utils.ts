@@ -28,18 +28,23 @@ export function prepareLogsForExport(logs: logs[]) {
   })
 }
 
-// Function to prepare auth logs data for export
-export function prepareAuthLogsForExport(logs: logs[]) {
+type AuthLog = {
+  id: number
+  timestamp: Date
+  username: string
+  log_entry: string
+}
+
+export function prepareAuthLogsForExport(logs: AuthLog[]) {
   return logs.map((log) => {
     return {
       ID: log.id,
       Timestamp: new Date(log.timestamp).toLocaleString(),
-      Username: log.host || "",
-      "Log Entry": log.command || "",
+      Username: log.username,
+      "Log Entry": log.log_entry,
     }
   })
 }
-
 // Function to prepare devices data for export
 export function prepareDevicesForExport(devices: devices[]) {
   return devices.map((device) => {

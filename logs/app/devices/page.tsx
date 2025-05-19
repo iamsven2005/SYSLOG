@@ -54,17 +54,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import Link from "next/link"
 import { useDeviceStatus } from "./use-device-status"
 import { exportToExcel, generateDeviceImportTemplate, prepareDevicesForExport } from "@/lib/export-utils"
+import Image from "next/image"
 
 // Debounce function to limit how often a function can run
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
   let timeout: NodeJS.Timeout | null = null
 
-  return (...args: Parameters<T>) => {
+  return (arg: string) => {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    timeout = setTimeout(() => func(arg), wait)
   }
 }
-
 // Add this function after the debounce function
 // Function to check if an IP is already assigned to another device
 const isIpAlreadyAssigned = (ip: string, devices: any[], currentDeviceId?: number) => {
@@ -109,13 +109,23 @@ interface DeviceForm {
   password: string
   notes: string
 }
+interface DeviceRowPreview {
+  Name?: string
+  "IP Address"?: string
+  "MAC Address"?: string
+  Password?: string
+  Notes?: string
+}
+interface DeviceWithUsers extends devices {
+  users: { user: { id: number; username: string | null; email: string | null } }[]
+}
 
 export default function DevicesTable() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [selectedDevices, setSelectedDevices] = useState<number[]>([])
-  const [devices, setDevices] = useState<any[]>([])
+  const [devices, setDevices] = useState<DeviceWithUsers[]>([])
   const [showPassword, setShowPassword] = useState(false)
 
   // Modal states
@@ -126,7 +136,7 @@ export default function DevicesTable() {
   // Add these state variables inside the DevicesTable component
   const [importModalOpen, setImportModalOpen] = useState(false)
   const [importFile, setImportFile] = useState<File | null>(null)
-  const [importPreview, setImportPreview] = useState<any[]>([])
+  const [importPreview, setImportPreview] = useState<DeviceRowPreview[]>([])
   const [isImporting, setIsImporting] = useState(false)
   // Add these state variables inside the DevicesTable component
   const [ipError, setIpError] = useState<string | null>(null)
@@ -485,9 +495,9 @@ export default function DevicesTable() {
         const workbook = XLSX.read(binaryStr, { type: "binary" })
         const sheetName = workbook.SheetNames[0]
         const worksheet = workbook.Sheets[sheetName]
-        const data = XLSX.utils.sheet_to_json(worksheet)
 
         // Preview the first 5 rows
+        const data = XLSX.utils.sheet_to_json<DeviceRowPreview>(worksheet)
         setImportPreview(data.slice(0, 5))
       } catch (error) {
         console.error("Error reading Excel file:", error)
@@ -686,13 +696,13 @@ export default function DevicesTable() {
                         </TooltipTrigger>
                         <TooltipContent side="right" className="p-2 border bg-white shadow-lg w-auto h-auto">
                           <Link href={`/uploads/${device.ip_address}.png`}>
-                            <img
+
+                            <Image
                               src={`/uploads/${device.ip_address}.png`}
                               alt={`Screenshot of ${device.name}`}
-                              className="w-[300px] h-auto rounded cursor-zoom-in"
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none"
-                              }}
+                              width={300}
+                              height={200}
+                              onError={(e) => (e.currentTarget.style.display = "none")}
                             />
                           </Link>
 
@@ -724,13 +734,16 @@ export default function DevicesTable() {
                   <TableCell>
                     {device.users && device.users.length > 0 ? (
                       <ul className="list-disc list-inside space-y-1">
-                        {device.users.map(({ user }: any) => (
-                          <li key={user.id}>
-                            {user.username}{" "}
-                            {user.email && <span className="text-muted-foreground">({user.email})</span>}
-                          </li>
-                        ))}
+                        {device.users.map(
+                          ({ user }: { user: { id: number; username: string | null; email: string | null } }) => (
+                            <li key={user.id}>
+                              {user.username ?? <em className="text-muted-foreground">Unnamed</em>}{" "}
+                              {user.email && <span className="text-muted-foreground">({user.email})</span>}
+                            </li>
+                          )
+                        )}
                       </ul>
+
                     ) : (
                       <span className="text-muted-foreground">No users</span>
                     )}

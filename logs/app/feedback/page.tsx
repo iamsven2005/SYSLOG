@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { notFound, useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,7 +26,7 @@ interface Recipient {
 
 export default function FeedbackPage() {
   const [activeTab, setActiveTab] = useState("overview")
-const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isManager, setIsManager] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [sentFeedback, setSentFeedback] = useState<Feedbacks[]>([])
@@ -59,16 +59,9 @@ const [user, setUser] = useState<User | null>(null)
     checkUserRole()
   }, [router])
 
-  useEffect(() => {
-    if (activeTab === "sent" && user) {
-      loadSentFeedback()
-    } else if (activeTab === "received" && user && isManager) {
-      loadReceivedFeedback()
-    }
-  }, [activeTab, user, isManager, loadSentFeedback, loadReceivedFeedback]) // Add the missing dependencies
 
 
-  async function loadSentFeedback() {
+  const loadSentFeedback = useCallback(async () => {
     if (loadingSent) return
     setLoadingSent(true)
     try {
@@ -84,9 +77,9 @@ const [user, setUser] = useState<User | null>(null)
     } finally {
       setLoadingSent(false)
     }
-  }
+  }, [loadingSent])
 
-  async function loadReceivedFeedback() {
+  const loadReceivedFeedback = useCallback(async () => {
     if (loadingReceived) return
     setLoadingReceived(true)
     try {
@@ -102,7 +95,7 @@ const [user, setUser] = useState<User | null>(null)
     } finally {
       setLoadingReceived(false)
     }
-  }
+  }, [loadingReceived])
 
   async function handleMarkAsRead(feedbackId: string) {
     try {
@@ -132,6 +125,13 @@ const [user, setUser] = useState<User | null>(null)
       </div>
     )
   }
+  useEffect(() => {
+    if (activeTab === "sent" && user) {
+      loadSentFeedback()
+    } else if (activeTab === "received" && user && isManager) {
+      loadReceivedFeedback()
+    }
+  }, [activeTab, user, isManager, loadSentFeedback, loadReceivedFeedback]) // Add the missing dependencies
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -309,7 +309,7 @@ const [user, setUser] = useState<User | null>(null)
                     <CardContent>
                       <div className="mb-4 whitespace-pre-wrap">{item.message}</div>
                       <div className="text-sm text-muted-foreground">
-                        Recipients: {item.recipients.map((r: any) => r.user.name).join(", ")}
+                        Recipients: {item.recipients.map((r: Recipient) => r.user.username ?? "Unknown").join(", ")}
                       </div>
                     </CardContent>
                   </Card>

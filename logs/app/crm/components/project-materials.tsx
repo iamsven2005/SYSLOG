@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { MoreHorizontal, Plus, Pencil, Trash2, ShoppingCart } from "lucide-react"
 import { deleteMaterial } from "@/app/crm/actions/materials"
-import { BridgeMaterial, BridgeProject, MaterialOrder } from "@/prisma/generated/main"
+import { BridgeMaterial, MaterialOrder } from "@/prisma/generated/main"
 interface ProjectMaterialsProps {
   projectId: string | number
   materials: Material[]

@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -193,37 +193,35 @@ export default function RulesTable() {
   }
 
   // Fetch rule groups with filters
-  const fetchRuleGroups = async () => {
-    setIsLoading(true)
-    try {
-      const result = await getRuleGroups({
-        search: debouncedSearchQuery,
-        page: currentPage,
-        pageSize: pageSize,
-      })
-
-      setRuleGroups(
-        result.ruleGroups.map((group) => ({
-          ...group,
-          rules: group.rules
-            .filter((rule) => rule.groupId !== null) // Optional: filter invalid
-            .map((rule) => ({
-              ...rule,
-              groupId: rule.groupId ?? 0, // Replace null with 0 or a safe default
-              description: rule.description ?? undefined,
-            })),
-        }))
-      )
-
-      setTotalPages(result.pageCount)
-      setTotalItems(result.totalCount)
-    } catch (error) {
-      console.log(error)
-      toast.error("Failed to fetch rule groups")
-    } finally {
-      setIsLoading(false)
-    }
+const fetchRuleGroups = useCallback(async () => {
+  setIsLoading(true)
+  try {
+    const result = await getRuleGroups({
+      search: debouncedSearchQuery,
+      page: currentPage,
+      pageSize: pageSize,
+    })
+    setRuleGroups(
+      result.ruleGroups.map((group) => ({
+        ...group,
+        rules: group.rules
+          .filter((rule) => rule.groupId !== null)
+          .map((rule) => ({
+            ...rule,
+            groupId: rule.groupId ?? 0,
+            description: rule.description ?? undefined,
+          })),
+      }))
+    )
+    setTotalPages(result.pageCount)
+    setTotalItems(result.totalCount)
+  } catch (error) {
+    console.log(error)
+    toast.error("Failed to fetch rule groups")
+  } finally {
+    setIsLoading(false)
   }
+}, [debouncedSearchQuery, currentPage, pageSize])
 
   // Load rule groups when filters or pagination changes
   useEffect(() => {

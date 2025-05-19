@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createCompany, updateCompany } from "@/app/crm/actions/companies"
-import { $Enums, Company } from "@/prisma/generated/main"
+import { Company } from "@/prisma/generated/main"
 const companySchema = z.object({
   name: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   type: z.enum(["CONTRACTOR", "VENDOR", "PARTNER", "CONSULTANT", "REGULATORY", "SUBCONTRACTOR"]),
@@ -32,6 +32,11 @@ interface CompanyFormProps {
     certifications?: string[]
   } | null
 }
+type CompanyWithOptionalArrays = Omit<Company, "specialties" | "certifications"> & {
+  specialties?: string[]
+  certifications?: string[]
+}
+
 export default function CompanyForm({ company = null }: CompanyFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -52,7 +57,7 @@ const form = useForm<z.infer<typeof companySchema>>({
     rating: undefined,
   },
 })
-function normalizeCompanyDefaults(company: any) {
+function normalizeCompanyDefaults(company: CompanyWithOptionalArrays) {
   return {
     ...company,
     industry: company.industry ?? undefined,

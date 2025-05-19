@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { diskmetric, Prisma, system_metrics } from "@/prisma/generated/main"
+import { diskmetric, logs, Prisma, system_metrics } from "@/prisma/generated/main"
 
 // Log middleware for performance monitoring
 db.$use(async (params, next) => {
@@ -149,7 +149,7 @@ const where: Prisma.logsWhereInput = {}
 }
 
 // Function to process logs and pair login/logout events
-function processLoginLogoutPairs(logs: any[]) {
+function processLoginLogoutPairs(logs: logs[]) {
   // Create a map to store login events by host and user
   const loginMap = new Map()
 
@@ -178,7 +178,7 @@ function processLoginLogoutPairs(logs: any[]) {
         const logins = loginMap.get(key)
 
         // Find the most recent login before this logout
-        const matchingLogin = logins.find((login: any) => new Date(login.timestamp) < new Date(log.timestamp))
+const matchingLogin = logins.find((login: logs) => new Date(login.timestamp) < new Date(log.timestamp))
 
         if (matchingLogin) {
           // Add the login time to the log entry

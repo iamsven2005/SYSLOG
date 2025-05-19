@@ -30,7 +30,7 @@ interface LogEntry {
 }
 
 export default function ActivityLogsTable() {
-const [logs, setLogs] = useState<LogEntry[]>([])
+  const [logs, setLogs] = useState<LogEntry[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [pageCount, setPageCount] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
@@ -81,13 +81,40 @@ const [logs, setLogs] = useState<LogEntry[]>([])
       setIsLoading(false)
     }
   }
-useEffect(() => {
+  useEffect(() => {
+    const fetchLogs = async () => {
+      setIsLoading(true)
+      try {
+        const result = await getCurrentUserActivityLogs({
+          actionType: actionType !== "all" ? actionType : undefined,
+          targetType: targetType !== "all" ? targetType : undefined,
+          page,
+          pageSize,
+        })
+        if (result) {
+          setLogs(result.logs)
+          setTotalCount(result.totalCount)
+          setPageCount(result.pageCount)
+        } else {
+          setLogs([])
+          setTotalCount(0)
+          setPageCount(1)
+        }
+      } catch (error) {
+        console.error("Error fetching activity logs:", error)
+        setLogs([])
+        setTotalCount(0)
+        setPageCount(1)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchLogs()
+  }, [actionType, targetType, page, dateRange])
 
 
-  fetchLogs()
-}, [actionType, targetType, page, dateRange])
 
-  
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
   }
@@ -272,11 +299,11 @@ useEffect(() => {
 
               <Pagination>
                 <PaginationContent>
-                {page > 1 && (
+                  {page > 1 && (
                     <PaginationItem>
-                        <PaginationPrevious onClick={() => handlePageChange(page - 1)} />
+                      <PaginationPrevious onClick={() => handlePageChange(page - 1)} />
                     </PaginationItem>
-                    )}
+                  )}
 
 
                   {Array.from({ length: Math.min(5, pageCount) }, (_, i) => {
@@ -293,11 +320,11 @@ useEffect(() => {
                     )
                   })}
 
-                    {page < pageCount && (
+                  {page < pageCount && (
                     <PaginationItem>
-                        <PaginationNext onClick={() => handlePageChange(page + 1)} />
+                      <PaginationNext onClick={() => handlePageChange(page + 1)} />
                     </PaginationItem>
-                    )}
+                  )}
 
                 </PaginationContent>
               </Pagination>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FileText, Image, File, X, Download } from "lucide-react"
+import { FileText, File, X, Download, ImageDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatBytes } from "@/lib/utils"
 import { toast } from "sonner"
@@ -35,7 +35,7 @@ export function AttachmentList({ attachments, currentUserId, isAdmin }: Attachme
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType.startsWith("image/")) {
-      return <Image className="h-4 w-4" />
+      return <ImageDown className="h-4 w-4" />
     } else if (mimeType.includes("pdf")) {
       return <FileText className="h-4 w-4" />
     } else if (mimeType.includes("word") || mimeType.includes("document")) {

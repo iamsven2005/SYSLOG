@@ -14,13 +14,14 @@ import {
 import { getCompanies } from "../actions/companies"
 import CompanyList from "../components/company-list"
 import CompanyListSkeleton from "../components/skeletons/company-list-skeleton"
+import { CompanyType } from "@/prisma/generated/main"
 
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: { type?: string }
+  searchParams: { type?: CompanyType }
 }) {
-  const type = searchParams.type as any
+  const type = searchParams.type
   const { companies, error } = await getCompanies(type ? { type } : undefined)
 
   return (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { db2 } from "@/lib/db"
+import { db2 } from "@/lib/db2"
 type JSONValue =
   | string
   | number

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { Plus, Trash2, Edit, Search, RefreshCw, Shield, User } from "lucide-react"
+import { Plus, Trash2, Edit, Search, RefreshCw, Shield, UserPen } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { MultiCombobox } from "@/components/multi-combobox"
 import {
@@ -28,20 +28,31 @@ import {
   getAllUsersForPermissions,
 } from "@/app/permissions/permission-actions"
 import Link from "next/link"
+import { PagePermission, RolePermission, UserPermission } from "@/prisma/generated/main"
+interface PermissionWithDetails extends PagePermission {
+  allowedRoles: RolePermission[]
+  allowedUsers: (UserPermission & { user: SlimUser })[]
+}
+interface SlimUser {
+  id: number
+  username: string | null
+  email: string | null
+}
+
 
 export default function PermissionsTable() {
-  const [permissions, setPermissions] = useState<any[]>([])
-  const [roles, setRoles] = useState<any[]>([])
-  const [users, setUsers] = useState<any[]>([])
+const [permissions, setPermissions] = useState<PermissionWithDetails[]>([])
+const [roles, setRoles] = useState<{ id: number; name: string }[]>([])
+const [users, setUsers] = useState<SlimUser[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [filteredPermissions, setFilteredPermissions] = useState<any[]>([])
+  const [filteredPermissions, setFilteredPermissions] = useState<PermissionWithDetails[]>([])
 
   // Modal states
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [currentPermission, setCurrentPermission] = useState<any | null>(null)
+const [currentPermission, setCurrentPermission] = useState<PermissionWithDetails | null>(null)
 
   // Form state
   const [permissionForm, setPermissionForm] = useState({
@@ -104,19 +115,20 @@ export default function PermissionsTable() {
   }
 
   // Open edit permission modal
-  const openEditModal = (permission: any) => {
+  const openEditModal = (permission: PermissionWithDetails) => {
     setCurrentPermission(permission)
     setPermissionForm({
       route: permission.route,
       description: permission.description || "",
-      roles: permission.allowedRoles.map((r: any) => r.roleName),
-      userIds: permission.allowedUsers.map((u: any) => u.user.id.toString()),
+      roles: permission.allowedRoles.map((r: RolePermission) => r.roleName),
+userIds: permission.allowedUsers.map((u: UserPermission & { user: SlimUser }) => u.user.id.toString()),
+
     })
     setEditModalOpen(true)
   }
 
   // Open delete permission modal
-  const openDeleteModal = (permission: any) => {
+  const openDeleteModal = (permission: PermissionWithDetails) => {
     setCurrentPermission(permission)
     setDeleteModalOpen(true)
   }
@@ -267,7 +279,7 @@ export default function PermissionsTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredPermissions.map((permission) => (
+filteredPermissions.map((permission: PermissionWithDetails) => (
                 <TableRow key={permission.id}>
                   <TableCell>{permission.id}</TableCell>
                   <TableCell>
@@ -277,7 +289,7 @@ export default function PermissionsTable() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {permission.allowedRoles.length > 0 ? (
-                        permission.allowedRoles.map((role: any) => (
+                        permission.allowedRoles.map((role: RolePermission) => (
                           <Badge key={role.id} variant="secondary" className="flex items-center gap-1">
                             <Shield className="h-3 w-3" />
                             {role.roleName}
@@ -291,9 +303,9 @@ export default function PermissionsTable() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {permission.allowedUsers.length > 0 ? (
-                        permission.allowedUsers.map((userPerm: any) => (
+                        permission.allowedUsers.map((userPerm: UserPermission & { user: SlimUser }) => (
                           <Badge key={userPerm.id} variant="outline" className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
+                            <UserPen className="h-3 w-3" />
                             {userPerm.user.username}
                           </Badge>
                         ))

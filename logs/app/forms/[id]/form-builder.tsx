@@ -27,9 +27,17 @@ type FormQuestion = {
   }>
 }
 
-type FormBuilderProps = {
-  form?: any
+interface Form {
+  id: number
+  title: string
+  description?: string
+  questions: FormQuestion[]
 }
+
+type FormBuilderProps = {
+  form?: Form
+}
+
 
 export function FormBuilder({ form }: FormBuilderProps) {
   const router = useRouter()
@@ -159,7 +167,7 @@ export function FormBuilder({ form }: FormBuilderProps) {
       }
 
       if (form) {
-        await updateForm(formData, userId, userName)
+        await updateForm(formData)
         setLastSaved(new Date())
 
         if (!isAutoSave) {

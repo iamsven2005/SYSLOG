@@ -5,7 +5,7 @@ import { DialogFooter } from "@/components/ui/dialog"
 import { DialogTitle } from "@/components/ui/dialog"
 import { DialogHeader } from "@/components/ui/dialog"
 import { DialogContent } from "@/components/ui/dialog"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -62,9 +62,9 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       fetchUsers()
       fetchModelEntries()
     }
-  }, [isOpen, projectId])
+  }, [isOpen, fetchUsers, fetchModelEntries])
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoadingUsers(true)
       const users = await getAllUsers()
@@ -75,9 +75,9 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
     } finally {
       setLoadingUsers(false)
     }
-  }
+  }, [])
 
-  const fetchModelEntries = async () => {
+  const fetchModelEntries = useCallback(async () => {
     try {
       setLoadingEntries(true)
       const entries = await getModelEntries(projectId)
@@ -88,7 +88,7 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
     } finally {
       setLoadingEntries(false)
     }
-  }
+  }, [projectId])
 
   const handleEdit = (entry: ModelEntry) => {
     setEditingEntryId(entry.id)

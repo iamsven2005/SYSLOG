@@ -6,7 +6,27 @@ import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { QuestionType } from "@/prisma/generated/main"
 import { publish } from "../broadcast"
+interface FormInput {
+  id?: number
+  title: string
+  description: string
+  questions: QuestionInput[]
+}
 
+interface QuestionInput {
+  id?: number | string
+  text: string
+  type: QuestionType
+  required: boolean
+  order: number
+  options?: OptionInput[]
+}
+
+interface OptionInput {
+  id?: number | string
+  text: string
+  value: string
+}
 // Initialize uploads directory
 const uploadsDir = path.join(process.cwd(), "uploads")
 if (!fs.existsSync(uploadsDir)) {
@@ -114,7 +134,7 @@ export async function getFormWithResponses(id: number) {
 }
 
 // Create a new form
-export async function createForm(formData: any) {
+export async function createForm(formData: FormInput) {
   try {
     // Create the form with nested questions and options
     const form = await db.form.create({
@@ -123,21 +143,22 @@ export async function createForm(formData: any) {
         description: formData.description,
         creatorId: 1, // Default user ID, should be replaced with actual user ID
         questions: {
-          create: formData.questions.map((q: any, index: number) => ({
-            text: q.text,
-            type: q.type as QuestionType,
-            required: q.required,
-            order: index,
-            options:
-              q.type === "RADIO" || q.type === "CHECKBOX" || q.type === "DROPDOWN"
-                ? {
-                    create: q.options.map((o: any) => ({
-                      text: o.text,
-                      value: o.value,
-                    })),
-                  }
-                : undefined,
+create: formData.questions.map((q: QuestionInput, index: number) => ({
+  text: q.text,
+  type: q.type,
+  required: q.required,
+  order: index,
+  options:
+    q.type === "RADIO" || q.type === "CHECKBOX" || q.type === "DROPDOWN"
+      ? {
+          create: q.options?.map((o: OptionInput) => ({
+            text: o.text,
+            value: o.value,
           })),
+        }
+      : undefined,
+}))
+
         },
       },
     })
@@ -151,9 +172,12 @@ export async function createForm(formData: any) {
 }
 
 // Update an existing form
-export async function updateForm(formData: any, userId = "anonymous", userName = "Anonymous User") {
+export async function updateForm(formData: FormInput) {
   try {
     const formId = formData.id
+if (typeof formId !== "number") {
+  throw new Error("Invalid formId")
+}
 
     // First, update the form itself
     await db.form.update({
@@ -176,6 +200,9 @@ export async function updateForm(formData: any, userId = "anonymous", userName =
       if (q.id && !q.id.toString().startsWith("temp-")) {
         // Update existing question
         const existingQuestion = existingQuestions.find((eq) => eq.id === q.id)
+if (typeof q.id !== "number") {
+  throw new Error("Invalid question ID")
+}
 
         if (existingQuestion) {
           // Update the question
@@ -195,7 +222,10 @@ export async function updateForm(formData: any, userId = "anonymous", userName =
             const existingOptionIds = existingQuestion.options.map((o) => o.id)
 
             // Find options to delete (options in DB but not in the update)
-            const optionsToDeleteIds = existingOptionIds.filter((id) => !q.options.some((o: any) => o.id === id))
+const optionsToDeleteIds = existingOptionIds.filter((id) =>
+  !(q.options?.some((o) => typeof o.id === "number" && o.id === id))
+)
+
 
             // Delete options that are no longer needed
             if (optionsToDeleteIds.length > 0) {
@@ -207,29 +237,40 @@ export async function updateForm(formData: any, userId = "anonymous", userName =
             }
 
             // Update or create options
-            for (const o of q.options) {
-              if (o.id && !o.id.toString().startsWith("temp-")) {
-                // Update existing option
-                await db.questionOption.update({
-                  where: { id: o.id },
-                  data: {
-                    text: o.text,
-                    value: o.value,
-                  },
-                })
-              } else {
+for (const o of q.options ?? []) {
+if (typeof o.id === "number") {
+  await db.questionOption.update({
+    where: { id: o.id },
+    data: {
+      text: o.text,
+      value: o.value,
+    },
+  })
+}
+
+
+else {
                 // Create new option
-                await db.questionOption.create({
-                  data: {
-                    questionId: q.id,
-                    text: o.text,
-                    value: o.value,
-                  },
-                })
+if (typeof q.id !== "number") {
+  throw new Error("Invalid question ID")
+}
+
+await db.questionOption.create({
+  data: {
+    questionId: q.id,
+    text: o.text,
+    value: o.value,
+  },
+})
+
               }
             }
           } else {
             // If question type changed and no longer needs options, delete all options
+            if (typeof q.id !== "number") {
+  throw new Error("Invalid question ID")
+}
+
             if (existingQuestion.options.length > 0) {
               await db.questionOption.deleteMany({
                 where: {
@@ -252,22 +293,25 @@ export async function updateForm(formData: any, userId = "anonymous", userName =
         })
 
         // Create options for this new question if needed
-        if ((q.type === "RADIO" || q.type === "CHECKBOX" || q.type === "DROPDOWN") && q.options.length > 0) {
-          await db.questionOption.createMany({
-            data: q.options.map((o: any) => ({
-              questionId: newQuestion.id,
-              text: o.text,
-              value: o.value,
-            })),
-          })
-        }
+        
+if ((q.type === "RADIO" || q.type === "CHECKBOX" || q.type === "DROPDOWN") && (q.options?.length ?? 0) > 0) {
+  // safe to access q.options
+  await db.questionOption.createMany({
+    data: q.options!.map((o) => ({
+      questionId: newQuestion.id,
+      text: o.text,
+      value: o.value,
+    })),
+  })
+}
       }
     }
 
     // Delete questions that are no longer in the form
-    const updatedQuestionIds = formData.questions
-      .filter((q: any) => q.id && !q.id.toString().startsWith("temp-"))
-      .map((q: any) => q.id)
+const updatedQuestionIds = formData.questions
+  .filter((q) => q.id && !q.id.toString().startsWith("temp-"))
+  .map((q) => q.id as number)
+
 
     const questionsToDelete = existingQuestions.filter((q) => !updatedQuestionIds.includes(q.id))
 

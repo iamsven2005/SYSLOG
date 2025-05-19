@@ -1,9 +1,9 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { getNotifications, getAllNotificationsAdmin } from "@/app/notifications/notification-actions"
 import { getCurrentUser } from "@/app/login/actions"
 import { db } from "@/lib/db"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUser()
 

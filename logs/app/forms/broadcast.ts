@@ -1,13 +1,13 @@
 // Simple in-memory event broadcasting system
 // In production, you would use Redis or a similar solution for multi-server setups
 
-type Listener = (data: any) => void
+type Listener<T = unknown> = (data: T) => void
 
 interface EventBus {
-  [key: string]: {
-    listeners: Listener[]
-    lastEvent?: any
-  }
+  [channel: string]: {
+    listeners: Listener[];
+    lastEvent?: unknown;
+  };
 }
 
 // Store event listeners by channel
@@ -33,15 +33,13 @@ export function subscribe(channel: string, listener: Listener) {
 }
 
 // Publish an event to a channel
-export function publish(channel: string, data: any) {
+export function publish<T = unknown>(channel: string, data: T) {
   if (!eventBus[channel]) {
     eventBus[channel] = { listeners: [] }
   }
 
-  // Store the last event for late joiners
   eventBus[channel].lastEvent = data
 
-  // Notify all listeners
   eventBus[channel].listeners.forEach((listener) => {
     try {
       listener(data)
