@@ -1,0 +1,2 @@
+name,sourceTable,fieldName,comparator,thresholdValue,timeWindowMin,countThreshold,repeatIntervalMin,active,emailTemplateId
+Music,auth,,,sudo rm -rf,1,1,,Yes,1

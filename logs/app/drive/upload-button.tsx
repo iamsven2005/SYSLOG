@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 import * as mammoth from "mammoth";
 import * as XLSX from "xlsx";
+import { TextItem } from "pdfjs-dist/types/src/display/api"
 interface UploadButtonProps {
   folderId: number | null
   onUploadComplete: () => Promise<void>
@@ -32,7 +33,7 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, userId, name: filename }),
     });
-  
+
     const result = await res.json();
     if (result.embedding) {
       setExtractedText(
@@ -42,12 +43,12 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       setExtractedText(`Filename: ${filename}\n\nText:\n${text}\n\nEmbedding: Failed to generate.`);
     }
   };
-  
-  
+
+
   const handleFileChange = async (file: File) => {
     const fileName = file.name.toLowerCase();
     const fileType = file.type;
-  
+
     if (fileType.startsWith("image/")) {
       const formData = new FormData();
       formData.append("image", file);
@@ -57,7 +58,7 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
         method: "POST",
         body: formData,
       });
-      
+
       const result = await res.json();
       if (result.caption && result.embedding) {
         setExtractedText(`Caption: ${result.caption}\n\nEmbedding: [${result.embedding.slice(0, 5).join(", ")} ...]`);
@@ -66,21 +67,21 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       }
       return;
     }
-  
+
     if (fileType === "application/pdf" || fileName.endsWith(".pdf")) {
       const reader = new FileReader();
       reader.onload = async function () {
         const typedArray = new Uint8Array(this.result as ArrayBuffer);
         const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
-  
+
         let text = "";
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const strings = content.items.map((item: any) => item.str);
+          const strings = content.items.map((item: TextItem) => item.str);
           text += strings.join(" ") + "\n";
         }
-  
+
         setExtractedText(text);
         sendTextForEmbedding(text, file.name);
       };
@@ -98,7 +99,7 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       reader.readAsText(file);
     } else if (
       fileType ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
       fileName.endsWith(".docx")
     ) {
       const reader = new FileReader();
@@ -110,7 +111,7 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       reader.readAsArrayBuffer(file);
     } else if (
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx")
     ) {
       const reader = new FileReader();
@@ -118,13 +119,13 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
         const data = new Uint8Array(this.result as ArrayBuffer);
         const workbook = XLSX.read(data, { type: "array" });
         let text = "";
-  
+
         workbook.SheetNames.forEach((sheetName) => {
           const sheet = workbook.Sheets[sheetName];
           const csv = XLSX.utils.sheet_to_csv(sheet);
           text += `Sheet: ${sheetName}\n${csv}\n\n`;
         });
-  
+
         setExtractedText(text);
         sendTextForEmbedding(text, file.name);
       };
@@ -133,15 +134,15 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
       alert("Unsupported file type. Please upload PDF, TXT, CSV, DOCX, or XLSX.");
     }
   };
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const handleUploadAndExtract = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
     setIsUploading(true);
     setProgress(0);
-  
+
     try {
       // Simulate progress
       const progressInterval = setInterval(() => {
@@ -150,23 +151,23 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
           return newProgress >= 90 ? 90 : newProgress;
         });
       }, 100);
-  
+
       // Upload file
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folderId", folderId?.toString() || "");
-  
+
       await uploadFile(formData);
-  
+
       clearInterval(progressInterval);
       setProgress(100);
       toast.success("File uploaded successfully");
-  
+
       // Proceed to extract and embed
       await handleFileChange(file);
-  
+
       await onUploadComplete();
-  
+
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -183,11 +184,11 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
 
   return (
     <div>
-<input type="file" ref={fileInputRef} onChange={handleUploadAndExtract} className="hidden" disabled={isUploading} />
-<Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-  <Upload className="h-4 w-4 mr-2" />
-  Upload
-</Button>
+      <input type="file" ref={fileInputRef} onChange={handleUploadAndExtract} className="hidden" disabled={isUploading} />
+      <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+        <Upload className="h-4 w-4 mr-2" />
+        Upload
+      </Button>
 
       <textarea
         className="w-full h-80 hidden border rounded p-2 font-mono text-sm"

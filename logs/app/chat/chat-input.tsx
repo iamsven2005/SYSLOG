@@ -436,22 +436,24 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
   }, [])
 
   // Update filtered commands when command input changes
-  useEffect(() => {
-    if (commandInput !== "") {
-      const filtered = slashCommands.filter((cmd) =>
-        cmd.command.slice(1).toLowerCase().includes(commandInput.toLowerCase()),
-      )
-      setFilteredCommands(filtered)
-      setShowCommands(filtered.length > 0)
-    } else {
-      setFilteredCommands(slashCommands)
-    }
-  }, [commandInput])
-
-  // Initialize filtered commands
-  useEffect(() => {
+// Update filtered commands when command input changes
+useEffect(() => {
+  if (commandInput !== "") {
+    const filtered = slashCommands.filter((cmd) =>
+      cmd.command.slice(1).toLowerCase().includes(commandInput.toLowerCase()),
+    )
+    setFilteredCommands(filtered)
+    setShowCommands(filtered.length > 0)
+  } else {
     setFilteredCommands(slashCommands)
-  }, [])
+  }
+}, [commandInput])
+
+// Initialize filtered commands
+useEffect(() => {
+  setFilteredCommands(slashCommands)
+}, [])
+
 
   const handlePollCreated = () => {
     toast.success("Poll created successfully")

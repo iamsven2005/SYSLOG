@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,21 +17,21 @@ import { ModelEntryModal } from "./model-entry-modal"
 import UploadProjects from "./upload-projects"
 
 interface Project {
+  id: number
+  businessCode: string
+  projectCode: string
+  name: string
+  createDate: Date
+  projectType?: {
     id: number
-    businessCode: string
-    projectCode: string
     name: string
-    createDate: Date
-    projectType?: {
-      id: number
-      name: string
-    } | null
-    assignments: ProjectAssignment[]
-    _count?: {
-      models: number
-    }
+  } | null
+  assignments: ProjectAssignment[]
+  _count?: {
+    models: number
   }
-  
+}
+
 
 interface ProjectType {
   id: number
@@ -62,22 +62,15 @@ export default function ProjectsPage() {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      fetchData()
-    }, 300) // debounce to avoid spamming queries
 
-    return () => clearTimeout(delayDebounce)
-  }, [searchQuery])
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-
       setLoading(true)
-      const [projectsData, projectTypesData] = await Promise.all([getAllProjects(searchQuery), getProjectTypes()])
+      const [projectsData, projectTypesData] = await Promise.all([
+        getAllProjects(searchQuery),
+        getProjectTypes()
+      ])
       setProjects(projectsData)
       setProjectTypes(projectTypesData)
     } catch (error) {
@@ -86,7 +79,17 @@ export default function ProjectsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchQuery])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchData()
+    }, 300)
+    return () => clearTimeout(delayDebounce)
+  }, [fetchData])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -143,9 +146,9 @@ export default function ProjectsPage() {
           Add Project
         </Button>
         <Button variant="outline" onClick={() => setIsUploadModalOpen(true)}>
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Projects
-          </Button>      </div>
+          <Upload className="h-4 w-4 mr-2" />
+          Upload Projects
+        </Button>      </div>
 
       <Card className="mb-6">
         <CardHeader>
@@ -249,7 +252,7 @@ export default function ProjectsPage() {
         onClose={closeModelEntryModal}
         onSuccess={fetchData}
       />
-    <UploadProjects isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} onSuccess={fetchData} />
+      <UploadProjects isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} onSuccess={fetchData} />
     </div>
   )
 }

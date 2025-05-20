@@ -1,23 +1,38 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Download, Share2, Clock, User, FileText, Calendar } from "lucide-react"
+import { X, Download, Share2, Clock, UserPen, FileText, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getFileDetails, getUsersForSharing, shareFile, removeFilePermission } from "./drive-actions"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import Image from "next/image"
+import { DriveFilePermission, User } from "@/prisma/generated/main"
+interface FileData {
+  id: number
+  name: string
+  type: string
+  url: string
+  createdAt: Date
+  updatedAt: Date
+  owner: User
+  permissions: DriveFilePermissionWithUser[]
+}
 
 interface FileDetailsProps {
-  file: any
+  file: FileData
   onClose: () => void
   onUpdate: () => Promise<void>
 }
+interface DriveFilePermissionWithUser extends DriveFilePermission {
+  user: User
+}
 
 export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetailsProps) {
-  const [file, setFile] = useState<any>(initialFile)
-  const [users, setUsers] = useState<any[]>([])
+  const [file, setFile] = useState<FileData>(initialFile)
+  const [users, setUsers] = useState<User[]>([])
   const [selectedUser, setSelectedUser] = useState<string>("")
   const [selectedPermission, setSelectedPermission] = useState<string>("read")
   const [isSharing, setIsSharing] = useState(false)
@@ -98,7 +113,7 @@ export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetail
     if (["jpg", "jpeg", "png", "gif", "svg"].includes(fileType)) {
       return (
         <div className="flex justify-center mb-4">
-          <img
+          <Image
             src={file.url || "/placeholder.svg"}
             alt={file.name}
             className="max-w-full max-h-48 object-contain rounded-md"
@@ -169,16 +184,16 @@ export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetail
 
       <div className="space-y-4 text-sm">
         <div className="flex items-center">
-          <User className="h-4 w-4 mr-2 text-muted-foreground" />
+          <UserPen className="h-4 w-4 mr-2 text-muted-foreground" />
           <span>Owner: {file.owner.username}</span>
         </div>
         <div className="flex items-center">
           <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-          <span>Created: {formatDate(file.createdAt)}</span>
+          <span>Created: {formatDate(file.createdAt.toString())}</span>
         </div>
         <div className="flex items-center">
           <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-          <span>Modified: {formatDate(file.updatedAt)}</span>
+          <span>Modified: {formatDate(file.updatedAt.toString())}</span>
         </div>
       </div>
 
@@ -223,7 +238,9 @@ export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetail
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center">
               <Avatar className="h-8 w-8 mr-2">
-                <AvatarFallback>{file.owner.username.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>
+                  {(file.owner.username ?? "U").charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-medium">{file.owner.username}</p>
@@ -232,14 +249,16 @@ export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetail
             </div>
           </div>
 
-          {file.permissions.map((permission: any) => (
+          {file.permissions.map((permission) => (
             <div key={permission.id} className="flex items-center justify-between py-2">
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarFallback>{permission.user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>
+                    {permission.user?.username?.charAt(0).toUpperCase() ?? "U"}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">{permission.user.username}</p>
+                  <p className="text-sm font-medium">{permission.user?.username ?? "Unknown"}</p>
                   <p className="text-xs text-muted-foreground capitalize">{permission.access}</p>
                 </div>
               </div>
@@ -248,7 +267,6 @@ export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetail
               </Button>
             </div>
           ))}
-
           {file.permissions.length === 0 && <p className="text-sm text-muted-foreground py-2">No shared access</p>}
         </div>
       </div>

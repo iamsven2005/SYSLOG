@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
-import { Pencil, Trash2, Plus} from 'lucide-react'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import { EmailTemplateForm } from "./email-template-form"
 import { deleteEmailTemplate, getAllEmailTemplates } from "@/app/email-templates/email-template-actions"
 
@@ -57,26 +57,30 @@ export default function EmailTemplateTable() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  
+
   const fetchTemplates = async () => {
     setIsLoading(true);
     try {
       const fetchedTemplates = await getAllEmailTemplates();
-  
+
       if (!Array.isArray(fetchedTemplates)) {
         throw new Error("Invalid response format");
       }
-  
+
       setTemplates(
         fetchedTemplates.map(template => ({
           ...template,
-          assignedUsers: (template.assignedUsers || []).map((user: any) => ({
-            id: user.userId, // ✅ rename userId to id
-            username: user.username || "Unknown", // ✅ ensure username exists
-          }))
+          assignedUsers: (template.assignedUsers || []).map((user) => {
+            const u = user as { userId: number; username?: string }
+            return {
+              id: u.userId,
+              username: u.username || "Unknown",
+            }
+          })
+
         }))
       )
-      ;
+        ;
     } catch (error) {
       console.error("Error fetching email templates:", error);
       toast.error("Failed to load email templates");
@@ -84,28 +88,30 @@ export default function EmailTemplateTable() {
       setIsLoading(false);
     }
   };
-  
+
   // ✅ Run `fetchTemplates` when component mounts
   useEffect(() => {
     fetchTemplates();
   }, []);
-  
-  
+
+
   // Handle template deletion
   const handleDeleteTemplate = async () => {
     if (!selectedTemplate) return
-    
+
     try {
       const result = await deleteEmailTemplate(selectedTemplate.id)
-      if (result.success) {
-        toast.success("Email template deleted successfully")
-        fetchTemplates()
+
+      if (result && result.success) {
+        toast.success("Email template deleted successfully");
+        fetchTemplates();
       } else {
-        toast.error("Failed to delete email template")
+        toast.error("Failed to delete email template");
       }
+
     } catch (error) {
       console.error("Error deleting email template:", error)
-      toast.error( "An error occurred while deleting the template")
+      toast.error("An error occurred while deleting the template")
     } finally {
       setIsDeleteDialogOpen(false)
       setSelectedTemplate(null)
@@ -116,7 +122,7 @@ export default function EmailTemplateTable() {
     const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
-  
+
 
   return (
     <Card>
@@ -139,7 +145,7 @@ export default function EmailTemplateTable() {
                 Create a new email template that can be assigned to rules, groups, or commands.
               </DialogDescription>
             </DialogHeader>
-            <EmailTemplateForm 
+            <EmailTemplateForm
               onSuccess={() => {
                 setIsCreateDialogOpen(false)
                 fetchTemplates()
@@ -224,15 +230,15 @@ export default function EmailTemplateTable() {
               </DialogDescription>
             </DialogHeader>
             {selectedTemplate && (
-  <EmailTemplateForm 
-    template={selectedTemplate} // This now includes assignedUsers
-    onSuccess={() => {
-      setIsEditDialogOpen(false);
-      fetchTemplates();
-    }}
-    onCancel={() => setIsEditDialogOpen(false)}
-  />
-)}
+              <EmailTemplateForm
+                template={selectedTemplate} // This now includes assignedUsers
+                onSuccess={() => {
+                  setIsEditDialogOpen(false);
+                  fetchTemplates();
+                }}
+                onCancel={() => setIsEditDialogOpen(false)}
+              />
+            )}
 
           </DialogContent>
         </Dialog>
@@ -243,7 +249,7 @@ export default function EmailTemplateTable() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will permanently delete the email template &quot;{selectedTemplate?.name}&quot;. 
+                This will permanently delete the email template &quot;{selectedTemplate?.name}&quot;.
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>

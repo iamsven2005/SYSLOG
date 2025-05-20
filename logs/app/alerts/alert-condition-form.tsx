@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -51,6 +51,19 @@ export interface AlertConditionFormProps {
   isEditing?: boolean
 }
 
+type ImportedAlertConditionCSV = {
+  name: string
+  sourceTable: string
+  fieldName: string
+  comparator: string
+  thresholdValue: string
+  timeWindowMin?: string
+  countThreshold?: string
+  repeatIntervalMin?: string
+  active?: string
+  emailTemplateId?: string
+}
+
 // Define the form schema
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -91,11 +104,11 @@ const getAvailableFields = (table: string) => {
         { value: "mem", label: "Memory Usage" },
         { value: "pid", label: "Process ID" },
       ]
-      case "UserActivity":
-        return [
-          { value: "action", label: "Action" },
-          { value: "command", label: "Details" },
-        ]
+    case "UserActivity":
+      return [
+        { value: "action", label: "Action" },
+        { value: "command", label: "Details" },
+      ]
     default:
       return []
   }
@@ -155,9 +168,15 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
       emailTemplateId: initialData?.emailTemplateId || null,
     },
   })
-  const fieldName = form.watch("fieldName");
-  const sourceTable = form.watch("sourceTable");
+const sourceTable = useWatch({ control: form.control, name: "sourceTable" })
+const fieldNameWatch = useWatch({ control: form.control, name: "fieldName" })
 
+useEffect(() => {
+  if (fieldNameWatch) {
+    form.setValue("comparator", "")
+    setIsTextBasedCondition(isTextBasedField(sourceTable, fieldNameWatch))
+  }
+}, [fieldNameWatch, sourceTable, form])
 
   // Update available comparators when field name changes
   useEffect(() => {
@@ -261,10 +280,14 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
           const values = lines[1].split(",")
 
           // Create an object from the CSV data
-          const data: Record<string, any> = {}
+          const data: Partial<ImportedAlertConditionCSV> = {}
           headers.forEach((header, index) => {
-            data[header] = values[index]
+            if (header in data) {
+              const key = header as keyof ImportedAlertConditionCSV
+              data[key] = values[index]
+            }
           })
+
 
           // Update form values
           form.setValue("name", data.name || "")
@@ -279,7 +302,9 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
           form.setValue("emailTemplateId", data.emailTemplateId ? Number.parseInt(data.emailTemplateId) : null)
 
           // Update state based on imported data
-          setIsTextBasedCondition(isTextBasedField(data.sourceTable, data.fieldName))
+          setIsTextBasedCondition(
+            isTextBasedField(data.sourceTable ?? "", data.fieldName ?? "")
+          )
 
           toast.success("Alert condition imported successfully")
         } catch (error) {
@@ -437,9 +462,9 @@ export function AlertConditionForm({ emailTemplates, initialData, isEditing = fa
               <FormItem>
                 <FormLabel>Comparator</FormLabel>
                 <Select
-  onValueChange={field.onChange}
-  defaultValue={field.value}
-  disabled={!fieldName}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+  disabled={!form.watch("fieldName")}
                 >
                   <FormControl>
                     <SelectTrigger>

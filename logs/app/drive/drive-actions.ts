@@ -503,21 +503,10 @@ export async function getFileDetails(fileId: number) {
     const file = await db.driveFile.findUnique({
       where: { id: fileId },
       include: {
-        owner: {
-          select: {
-            id: true,
-            username: true,
-          },
-        },
+        owner: true,
         permissions: {
           include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
+            user: true,
           },
         },
         folder: true,
@@ -555,11 +544,6 @@ export async function getUsersForSharing() {
     const users = await db.user.findMany({
       where: {
         id: { not: currentUserId }, // Exclude current user
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
       },
       orderBy: {
         username: "asc",

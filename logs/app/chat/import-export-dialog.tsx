@@ -93,20 +93,21 @@ export function ImportExportDialog({
     e.stopPropagation()
   }, [])
 
-  const handleDrop = useCallback(
-    async (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setIsDragging(false)
+const handleDrop = useCallback(
+  async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
 
-      const files = e.dataTransfer.files
-      if (files.length === 0) return
+    const files = e.dataTransfer.files
+    if (files.length === 0) return
 
-      const file = files[0]
-      await processFile(file)
-    },
-    [groupId],
-  )
+    const file = files[0]
+    await processFile(file)
+  },
+  [groupId, processFile] // ✅ Add processFile here
+)
+
 
   const handleExport = async () => {
     try {

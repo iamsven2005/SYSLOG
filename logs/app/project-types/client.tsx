@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -35,13 +35,10 @@ export default function ProjectTypesPage() {
   const [formName, setFormName] = useState("")
   const [formDescription, setFormDescription] = useState("")
 
-  useEffect(() => {
-    fetchProjectTypes()
-  }, [])
 
-  const fetchProjectTypes = async () => {
+
+  const fetchProjectTypes = useCallback(async () => {
     try {
-
       setLoading(true)
       const data = await getAllProjectTypes(searchQuery)
       setProjectTypes(data)
@@ -51,8 +48,10 @@ export default function ProjectTypesPage() {
     } finally {
       setLoading(false)
     }
-  }
-
+  }, [searchQuery])
+  useEffect(() => {
+    fetchProjectTypes()
+  }, [fetchProjectTypes])
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     fetchProjectTypes()

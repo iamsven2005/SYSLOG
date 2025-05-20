@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -52,14 +52,9 @@ export function ManageMembersDialog({
   const [selectedRole, setSelectedRole] = useState<string>("all")
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
 
-  useEffect(() => {
-    if (open && groupId) {
-      fetchGroupMembers()
-      fetchAvailableRoles()
-    }
-  }, [open, groupId])
 
-  const fetchGroupMembers = async () => {
+
+  const fetchGroupMembers = useCallback(async () => {
     try {
       setLoading(true)
       const group = await getGroupWithMembers(groupId)
@@ -81,8 +76,13 @@ export function ManageMembersDialog({
     } finally {
       setLoading(false)
     }
-  }
-
+  }, [groupId])
+  useEffect(() => {
+    if (open && groupId) {
+      fetchGroupMembers()
+      fetchAvailableRoles()
+    }
+  }, [open, groupId, fetchGroupMembers])
   const fetchAvailableRoles = async () => {
     try {
       // This would be a new server action to get all available roles

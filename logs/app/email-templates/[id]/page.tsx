@@ -11,11 +11,26 @@ import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { EmailTemplateForm } from "@/app/email-templates/email-template-form"
 import { getCurrentUser } from "@/app/login/actions"
 import { checkUserPermission } from "@/app/permissions/permission-actions"
+import { EmailTemplate, User } from "@/prisma/generated/main"
+interface AssignedUser {
+  userId: number
+  emailTemplateId: number
+  assignedAt: Date
+}
+
+interface FullEmailTemplate extends EmailTemplate {
+  assignedUsers: {
+    userId: number
+    emailTemplateId: number
+    assignedAt: Date
+  }[]
+}
+
 
 export default function EmailTemplateDetailPage({ params }: { params: { id: string } }) {
   const id = Number.parseInt(params.id, 10)
   const router = useRouter()
-  const [emailTemplate, setEmailTemplate] = useState<any>(null)
+  const [emailTemplate, setEmailTemplate] = useState<FullEmailTemplate | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [mode, setMode] = useState<"view" | "edit">("view")
@@ -29,20 +44,24 @@ export default function EmailTemplateDetailPage({ params }: { params: { id: stri
   useEffect(() => {
     async function loadEmailTemplate() {
       try {
-                const currentUser = await getCurrentUser()
-                if (!currentUser) {
-                  router.push("/login")
-                  return
-                }
-                const perm = await checkUserPermission(currentUser.id, "/email-templates")
-                if (perm.hasPermission === false){
-                return notFound() }
+        const currentUser = await getCurrentUser()
+        if (!currentUser) {
+          router.push("/login")
+          return
+        }
+        const perm = await checkUserPermission(currentUser.id, "/email-templates")
+        if (perm.hasPermission === false) {
+          return notFound()
+        }
         setLoading(true)
+
+        // Transform assignedUsers into fake User[]
         const template = await getEmailTemplate(id)
         if (!template) {
           setError("Email template not found")
           return
         }
+
         setEmailTemplate(template)
       } catch (err) {
         setError("Failed to load email template")
@@ -53,7 +72,7 @@ export default function EmailTemplateDetailPage({ params }: { params: { id: stri
     }
 
     loadEmailTemplate()
-  }, [id])
+  }, [id, router])
 
   if (loading) {
     return (
@@ -153,9 +172,11 @@ export default function EmailTemplateDetailPage({ params }: { params: { id: stri
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Assigned Users</dt>
                   <dd className="mt-1 text-sm">
-                    {emailTemplate.assignedUsers && emailTemplate.assignedUsers.length > 0
-                      ? emailTemplate.assignedUsers.map((user: any) => user.userId).join(", ")
+                    {emailTemplate.assignedUsers.length > 0
+                      ? emailTemplate.assignedUsers.map((user) => user.userId).join(", ")
                       : "None"}
+
+
                   </dd>
                 </div>
               </dl>
@@ -195,10 +216,12 @@ export default function EmailTemplateDetailPage({ params }: { params: { id: stri
                 subject: emailTemplate.subject,
                 body: emailTemplate.body,
                 assignedUsers:
-                  emailTemplate.assignedUsers?.map((user: any) => ({
+                  emailTemplate.assignedUsers.map(user => ({
                     id: user.userId,
-                    username: user.userId.toString(), // We don't have the username here, but the form will fetch users
-                  })) || [],
+                    username: user.userId.toString() // or fetch username later
+                  })
+
+                  ) || [],
               }}
               onSuccess={handleEditSuccess}
               onCancel={() => setMode("view")}

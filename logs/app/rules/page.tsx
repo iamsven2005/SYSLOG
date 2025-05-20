@@ -193,40 +193,41 @@ export default function RulesTable() {
   }
 
   // Fetch rule groups with filters
-const fetchRuleGroups = useCallback(async () => {
-  setIsLoading(true)
-  try {
-    const result = await getRuleGroups({
-      search: debouncedSearchQuery,
-      page: currentPage,
-      pageSize: pageSize,
-    })
-    setRuleGroups(
-      result.ruleGroups.map((group) => ({
-        ...group,
-        rules: group.rules
-          .filter((rule) => rule.groupId !== null)
-          .map((rule) => ({
-            ...rule,
-            groupId: rule.groupId ?? 0,
-            description: rule.description ?? undefined,
-          })),
-      }))
-    )
-    setTotalPages(result.pageCount)
-    setTotalItems(result.totalCount)
-  } catch (error) {
-    console.log(error)
-    toast.error("Failed to fetch rule groups")
-  } finally {
-    setIsLoading(false)
-  }
-}, [debouncedSearchQuery, currentPage, pageSize])
+  const fetchRuleGroups = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const result = await getRuleGroups({
+        search: debouncedSearchQuery,
+        page: currentPage,
+        pageSize: pageSize,
+      })
+      setRuleGroups(
+        result.ruleGroups.map((group) => ({
+          ...group,
+          rules: group.rules
+            .filter((rule) => rule.groupId !== null)
+            .map((rule) => ({
+              ...rule,
+              groupId: rule.groupId ?? 0,
+              description: rule.description ?? undefined,
+            })),
+        }))
+      )
+      setTotalPages(result.pageCount)
+      setTotalItems(result.totalCount)
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to fetch rule groups")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [debouncedSearchQuery, currentPage, pageSize])
 
   // Load rule groups when filters or pagination changes
   useEffect(() => {
     fetchRuleGroups()
-  }, [debouncedSearchQuery, currentPage, pageSize])
+  }, [fetchRuleGroups])
+
 
   // Handle group selection
   const handleSelectGroup = (id: number) => {

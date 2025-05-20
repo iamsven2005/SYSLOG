@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 
 import { DialogFooter } from "@/components/ui/dialog"
 
@@ -70,7 +70,7 @@ import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addCommandToRule } from "../rules/rule-actions"
-import { CommandMatch, logs, Rule, RuleGroup } from "@/prisma/generated/main"
+import { Rule, RuleGroup } from "@/prisma/generated/main"
 
 // Debounce function to limit how often a function can run
 function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
@@ -114,11 +114,16 @@ type RuleGroupWithRules = RuleGroup & {
   rules: RuleWithCommands[]
 }
 type CommandMatchResult = {
+  id?: number
   command: string
-  ruleName: string
+  rule: {
+    id: number
+    name: string
+  }
   emailTemplateId?: number
   emailTemplateName?: string
 }
+
 
 
 export default function LogsTable() {
@@ -177,7 +182,7 @@ export default function LogsTable() {
   const [ruleDropdownOpen, setRuleDropdownOpen] = useState(false)
   const [matchedCommands, setMatchedCommands] = useState<string[]>([])
   // Add this state inside the LogsTable component
-const [commandMatches, setCommandMatches] = useState<CommandMatchResult[]>([])
+  const [commandMatches, setCommandMatches] = useState<CommandMatchResult[]>([])
 
   // Add this state inside the LogsTable component, near the other state declarations
   const [addToRuleDialogOpen, setAddToRuleDialogOpen] = useState(false)
@@ -200,11 +205,10 @@ const [commandMatches, setCommandMatches] = useState<CommandMatchResult[]>([])
   }
 
   // Modify the fetchLogs function to check for command matches
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setIsLoading(true)
     try {
       const hosts = selectedHosts.includes("all") ? [] : selectedHosts
-
       const actions = selectedActions.includes("all") ? [] : selectedActions
 
       const result = await getLogs({
@@ -218,50 +222,55 @@ const [commandMatches, setCommandMatches] = useState<CommandMatchResult[]>([])
         page: currentPage,
         pageSize: pageSize,
       })
+
       if (result) {
         setLogs(result.logs)
         setTotalPages(result.pageCount)
         setTotalItems(result.totalCount)
         setMatchedCommands(result.matchedCommands || [])
-        // Check for command matches
+
         const matches = await processBatchForCommandMatches(result.logs, "system")
         setCommandMatches(matches)
-        if (matches.length > 0) {
-matches.forEach((match) => {
-  toast.info(
-    <div>
-      <p className="font-medium">Command Match Detected</p>
-      <p className="text-sm">Rule: {match.ruleName}</p>
-      <p className="text-sm">
-        Command: <code className="bg-muted px-1 rounded">{match.command}</code>
-      </p>
-      {match.emailTemplateId && (
-        <p className="text-xs mt-1 text-muted-foreground">
-          Email notification sent via template: {match.emailTemplateName}
-        </p>
-      )}
-    </div>,
-    {
-      duration: 5000,
-    },
-  )
-})
 
+        if (matches.length > 0) {
+          matches.forEach((match) => {
+            toast.info(
+              <div>
+                <p className="font-medium">Command Match Detected</p>
+                <p className="text-sm">Rule: {match.ruleName}</p>
+                <p className="text-sm">
+                  Command: <code className="bg-muted px-1 rounded">{match.command}</code>
+                </p>
+                {match.emailTemplateId && (
+                  <p className="text-xs mt-1 text-muted-foreground">
+                    Email notification sent via template: {match.emailTemplateName}
+                  </p>
+                )}
+              </div>,
+              { duration: 5000 }
+            )
+          })
         }
       }
-
-
-
-
-      // Show toast notifications for matches
-
     } catch (error) {
       console.log(error)
       toast.error("Failed to fetch logs")
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [
+    debouncedSearchQuery,
+    selectedHosts,
+    selectedActions,
+    selectedRuleGroups,
+    selectedRules,
+    currentPage,
+    pageSize,
+    isResourceFiltersEnabled,
+    cpuFilter,
+    memFilter,
+  ])
+
 
   // Load logs when filters or pagination changes
   useEffect(() => {
@@ -393,16 +402,16 @@ matches.forEach((match) => {
   const openCommandModal = (log: LogEntry) => {
     if (!log.command) return
 
-setSelectedCommand({
-    id: log.id,
-    command: log.command,
-    timestamp: log.timestamp.toISOString(), // Convert Date to string
-    host: log.host ?? "Unknown",
-    piuser: log.piuser ?? "Unknown",
-    pid: log.pid ?? undefined,
-    cpu: log.cpu ?? undefined,
-    mem: log.mem ?? undefined,
-  })
+    setSelectedCommand({
+      id: log.id,
+      command: log.command,
+      timestamp: log.timestamp.toISOString(), // Convert Date to string
+      host: log.host ?? "Unknown",
+      piuser: log.piuser ?? "Unknown",
+      pid: log.pid ?? undefined,
+      cpu: log.cpu ?? undefined,
+      mem: log.mem ?? undefined,
+    })
     setCommandModalOpen(true)
   }
 
@@ -565,23 +574,23 @@ setSelectedCommand({
   }
 
   // Add this function inside the LogsTable component
-const openAddToRuleDialog = (log: LogEntry) => {
-  if (!log.command) return
+  const openAddToRuleDialog = (log: LogEntry) => {
+    if (!log.command) return
 
-  setSelectedCommand({
-    id: log.id,
-    command: log.command,
-    timestamp: log.timestamp.toISOString(), // Convert Date to string
-    host: log.host ?? "Unknown",
-    piuser: log.piuser ?? "Unknown",
-    pid: log.pid ?? undefined,
-    cpu: log.cpu ?? undefined,
-    mem: log.mem ?? undefined,
-  })
-  setCommandText(log.command)
-  setSelectedRuleId("")
-  setAddToRuleDialogOpen(true)
-}
+    setSelectedCommand({
+      id: log.id,
+      command: log.command,
+      timestamp: log.timestamp.toISOString(), // Convert Date to string
+      host: log.host ?? "Unknown",
+      piuser: log.piuser ?? "Unknown",
+      pid: log.pid ?? undefined,
+      cpu: log.cpu ?? undefined,
+      mem: log.mem ?? undefined,
+    })
+    setCommandText(log.command)
+    setSelectedRuleId("")
+    setAddToRuleDialogOpen(true)
+  }
 
 
   // Add this function inside the LogsTable component

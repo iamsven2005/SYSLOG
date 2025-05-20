@@ -19,7 +19,7 @@ export async function getUsers({
 }) {
   const skip = (page - 1) * pageSize
 
-  const where: any = {}
+  const where: Prisma.UserWhereInput = {}
 
   if (search) {
     where.OR = [
@@ -28,9 +28,12 @@ export async function getUsers({
     ]
   }
 
-  if (role) {
-    where.role = role
+if (role) {
+  where.role = {
+    has: role,
   }
+}
+
 
   const totalCount = await db.user.count({ where })
   const pageCount = Math.ceil(totalCount / pageSize)

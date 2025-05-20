@@ -110,7 +110,13 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
         toast.success("Email template updated successfully.")
       } else {
         const userIds = values.assignedUsers?.map(Number) || []
-        const { emailTemplate } = await createEmailTemplate({ ...values, assignedUsers: userIds })
+        const result = await createEmailTemplate({ ...values, assignedUsers: userIds })
+
+        if (!result || !result.emailTemplate) {
+          throw new Error("Failed to create email template")
+        }
+
+        const { emailTemplate } = result
 
         if (values.assignedUsers && values.assignedUsers.length > 0) {
           await assignUsersToEmailTemplate(emailTemplate.id, values.assignedUsers.map(Number))

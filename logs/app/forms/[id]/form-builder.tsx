@@ -7,10 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { QuestionEditor } from "./question-editor"
 import { PlusCircle, Save } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { QuestionType } from "@/prisma/generated/main"
-import { useCollaborativeForm } from "../use-collaborative-form"
 import { createForm, updateForm } from "./actions"
 import { toast } from "sonner"
 
@@ -59,33 +58,8 @@ export function FormBuilder({ form }: FormBuilderProps) {
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
-  // Get user ID and name for form submissions
-  const { userId, userName } = useCollaborativeForm()
 
   // Auto-save when form changes
-  useEffect(() => {
-    if (!form?.id) return // Don't auto-save for new forms
-
-    // Clear existing timer
-    if (autoSaveTimer) {
-      clearTimeout(autoSaveTimer)
-    }
-
-    // Set new timer for auto-save
-    const timer = setTimeout(() => {
-      if (title && questions.length > 0 && questions.every((q) => q.text.trim())) {
-        handleSubmit(true)
-      }
-    }, 3000) // Auto-save after 3 seconds of inactivity
-
-    setAutoSaveTimer(timer)
-
-    return () => {
-      if (autoSaveTimer) {
-        clearTimeout(autoSaveTimer)
-      }
-    }
-  }, [title, description, questions, form?.id])
 
   const addQuestion = () => {
     setQuestions([
@@ -118,7 +92,7 @@ export function FormBuilder({ form }: FormBuilderProps) {
   }
 
   // Define handleSubmit outside the component render to prevent recreation
-  const handleSubmit = async (isAutoSave = false) => {
+const handleSubmit = useCallback(async (isAutoSave = false) => {
     if (!title.trim()) {
       if (!isAutoSave) {
         toast.error("Form title is required")
@@ -188,7 +162,25 @@ export function FormBuilder({ form }: FormBuilderProps) {
         setIsSubmitting(false)
       }
     }
+  }, [title, description, questions, form, router])
+useEffect(() => {
+  if (!form?.id) return
+
+  if (autoSaveTimer) clearTimeout(autoSaveTimer)
+
+  const timer = setTimeout(() => {
+    if (title && questions.length > 0 && questions.every((q) => q.text.trim())) {
+      handleSubmit(true)
+    }
+  }, 3000)
+
+  setAutoSaveTimer(timer)
+
+  return () => {
+    if (autoSaveTimer) clearTimeout(autoSaveTimer)
   }
+}, [title, description, questions, form?.id, autoSaveTimer, handleSubmit])
+
 
   return (
     <div className="space-y-8">

@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -76,7 +76,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { processBatchForCommandMatches } from "../command-matches/command-monitoring-actions"
 // Add this import at the top with the other imports
 import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
-import { auth, logs, Rule } from "@/prisma/generated/main"
+import { Rule } from "@/prisma/generated/main"
 type MatchedCommand = {
   ruleId: number
   ruleName: string
@@ -229,11 +229,10 @@ export default function AuthLogsTable() {
     debouncedSearch(value)
   }
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setIsLoading(true);
     try {
       const hosts = selectedHosts.includes("all") ? [] : selectedHosts;
-
       const result = await getAuthLogs({
         search: debouncedSearchQuery,
         hosts,
@@ -243,9 +242,8 @@ export default function AuthLogsTable() {
         pageSize: pageSize,
       });
 
-      // Ensure result is not null before accessing its properties
       if (!result) {
-        setLogs([]); // Set empty array to prevent errors
+        setLogs([]);
         setTotalPages(1);
         setTotalItems(0);
         setMatchedCommands([]);
@@ -258,14 +256,11 @@ export default function AuthLogsTable() {
       setTotalItems(result.totalCount);
       setMatchedCommands(result.matchedCommands || []);
 
-      // Check for command matches
       const matches = await processBatchForCommandMatches(result.logs, "auth");
       setCommandMatches(matches);
 
-      // Show toast notifications for matches
       if (matches.length > 0) {
         matches.forEach((match: MatchedCommand) => {
-
           toast.info(
             <div>
               <p className="font-medium">Command Match Detected</p>
@@ -279,25 +274,28 @@ export default function AuthLogsTable() {
                 </p>
               )}
             </div>,
-            {
-              duration: 5000,
-            }
+            { duration: 5000 },
           );
         });
       }
     } catch (error) {
       console.log(error)
-
-      toast.error("Failed to fetch authentication logs.");
+      toast.error("Failed to fetch authentication logs.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-
+  }, [
+    debouncedSearchQuery,
+    selectedHosts,
+    selectedRuleGroups,
+    selectedRules,
+    currentPage,
+    pageSize,
+  ])
   // Load logs when filters or pagination changes
   useEffect(() => {
     fetchLogs()
-  }, [debouncedSearchQuery, selectedHosts, selectedRuleGroups, selectedRules, currentPage, pageSize])
+  }, [fetchLogs])
 
   // Handle host selection
   const handleHostSelect = (value: string) => {
@@ -389,7 +387,12 @@ export default function AuthLogsTable() {
   }
 
   // Open log entry modal
-  const openLogEntryModal = (log: any) => {
+  const openLogEntryModal = (log: {
+    id: number
+    timestamp: Date
+    username: string
+    log_entry: string
+  }) => {
     const parsedData = parseLogEntry(log.log_entry)
 
     setSelectedLogEntry({

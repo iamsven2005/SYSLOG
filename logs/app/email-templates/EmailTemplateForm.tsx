@@ -64,6 +64,7 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
         setUsers(sanitizedUsers)
 
       } catch (error) {
+        console.log(error)
         toast.error("Failed to load users.")
       }
     }

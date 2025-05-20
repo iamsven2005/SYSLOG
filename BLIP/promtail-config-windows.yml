@@ -1,0 +1,23 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: C:/temp/positions.yaml
+
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: iis-logs
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: iis
+          __path__: C:/inetpub/logs/LogFiles/W3SVC1/*.log
+  - job_name: windows-logs
+    static_configs:
+      - targets: ['localhost']
+        labels:
+          job: windows
+          __path__: C:/Users/sven.tan.YWLSG217/AppData/Local/Temp/*.log

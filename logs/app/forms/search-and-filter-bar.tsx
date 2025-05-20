@@ -23,7 +23,8 @@ export function SearchAndFilterBar() {
 
     const url = params.toString() ? `/forms/?${params.toString()}` : "/forms"
     router.push(url)
-  }, [sortOption, router])
+  }, [searchQuery, sortOption, router])
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

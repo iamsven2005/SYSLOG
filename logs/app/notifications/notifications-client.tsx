@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -71,11 +71,9 @@ export default function NotificationsClient({ isAdmin }: NotificationsClientProp
   const [formImportant, setFormImportant] = useState(false)
 
 
-  useEffect(() => {
-    fetchNotifications()
-  }, [isAdmin])
 
-  const fetchNotifications = async () => {
+
+  const fetchNotifications = useCallback(async () => {
     setIsLoading(true)
     try {
       if (isAdmin) {
@@ -91,7 +89,11 @@ export default function NotificationsClient({ isAdmin }: NotificationsClientProp
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [isAdmin])
+
+  useEffect(() => {
+    fetchNotifications()
+  }, [fetchNotifications])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -133,7 +135,7 @@ export default function NotificationsClient({ isAdmin }: NotificationsClientProp
       toast.success("Notification created successfully")
     } catch (error) {
       console.error("Error creating notification:", error)
-      toast.error( "Failed to create notification")
+      toast.error("Failed to create notification")
     }
   }
 
@@ -155,7 +157,7 @@ export default function NotificationsClient({ isAdmin }: NotificationsClientProp
       // Refresh notifications
       fetchNotifications()
 
-      toast.success( "Notification updated successfully")
+      toast.success("Notification updated successfully")
     } catch (error) {
       console.error("Error updating notification:", error)
       toast.success("Failed to update notification")
@@ -320,12 +322,12 @@ export default function NotificationsClient({ isAdmin }: NotificationsClientProp
             {(isAdmin
               ? adminNotifications.filter((n) => n.important).length
               : userNotifications.filter((n) => n.important).length) > 0 && (
-              <Badge variant="destructive" className="ml-2">
-                {isAdmin
-                  ? adminNotifications.filter((n) => n.important).length
-                  : userNotifications.filter((n) => n.important).length}
-              </Badge>
-            )}
+                <Badge variant="destructive" className="ml-2">
+                  {isAdmin
+                    ? adminNotifications.filter((n) => n.important).length
+                    : userNotifications.filter((n) => n.important).length}
+                </Badge>
+              )}
           </TabsTrigger>
         </TabsList>
 

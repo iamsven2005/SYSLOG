@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -191,29 +191,31 @@ export default function UsersTable() {
   }
 
   // Fetch users with filters
-  const fetchUsers = async () => {
-    setIsLoading(true)
-    try {
-      const result = await getUsers({
-        search: debouncedSearchQuery,
-        page: currentPage,
-        pageSize: pageSize,
-      })
-      console.log(result.users)
-      setUsers(result.users.map((user) => ({
+const fetchUsers = useCallback(async () => {
+  setIsLoading(true)
+  try {
+    const result = await getUsers({
+      search: debouncedSearchQuery,
+      page: currentPage,
+      pageSize: pageSize,
+    })
+    console.log(result.users)
+    setUsers(
+      result.users.map((user) => ({
         ...user,
         devices: user.devices.map((d) => d.device),
-      })))
-      setTotalPages(result.pageCount)
-      setTotalItems(result.totalCount)
-    } catch (error) {
-      console.log(error)
-
-      toast.error("Failed to fetch users")
-    } finally {
-      setIsLoading(false)
-    }
+      })),
+    )
+    setTotalPages(result.pageCount)
+    setTotalItems(result.totalCount)
+  } catch (error) {
+    console.log(error)
+    toast.error("Failed to fetch users")
+  } finally {
+    setIsLoading(false)
   }
+}, [debouncedSearchQuery, currentPage, pageSize])
+
 
   // Fetch all devices for device selection
   const fetchDevices = async () => {
@@ -230,17 +232,17 @@ export default function UsersTable() {
   }
 
   // Load users when filters or pagination changes
-  useEffect(() => {
-    fetchUsers()
-  }, [debouncedSearchQuery, currentPage, pageSize])
+useEffect(() => {
+  fetchUsers()
+}, [fetchUsers])
 
-  // Update the useEffect to fetch roles on component mount
-  useEffect(() => {
-    fetchUsers()
-    fetchDevices()
-    fetchRoles() // Add this line
-    fetchLocations() // Add this line
-  }, [])
+useEffect(() => {
+  fetchUsers()
+  fetchDevices()
+  fetchRoles()
+  fetchLocations()
+}, [fetchUsers]) // now it's safe
+
 
   // Handle user selection
   const handleSelectUser = (id: number) => {

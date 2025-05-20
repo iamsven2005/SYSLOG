@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -194,7 +194,7 @@ export default function DevicesTable() {
   }
 
   // Fetch devices with filters
-  const fetchDevices = async () => {
+  const fetchDevices = useCallback(async () => {
     try {
       const result = await getDevices({
         search: debouncedSearchQuery,
@@ -207,14 +207,15 @@ export default function DevicesTable() {
         setTotalItems(result.totalCount)
       }
     } catch (error) {
+      console.log(error)
       toast.error("Failed to fetch devices")
     }
-  }
+  }, [debouncedSearchQuery, currentPage, pageSize])
 
-  // Load devices when filters or pagination changes
   useEffect(() => {
     fetchDevices()
-  }, [debouncedSearchQuery, currentPage, pageSize])
+  }, [fetchDevices])
+
 
   // Handle device selection
   const handleSelectDevice = (id: number) => {

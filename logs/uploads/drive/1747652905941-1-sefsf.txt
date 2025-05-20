@@ -1,0 +1,43 @@
+Find Jobs Fast, After logging in with google
+You would be able to start swiping and start applying for jobs.
+You can opt to search, filter and sort through job listings
+Or view the company info and other jobs that they post, as well
+as detailed job description and information
+You can go to your profile page to edit relevant information like intrests and skills
+and upload your resume to improve your portfolio
+Lastly show when you are next available for a new role in the timings page
+
+ 
+At the core of our platform are two key performance metrics:
+Time to First Gig — how quickly a job seeker lands their first opportunity,
+and Fill Rate — how effectively employers are able to match with the right talent.
+But beyond these operational numbers, we’re guided by the Triple Bottom Line — ensuring our impact is not just financial, but also social and environmental.
+We maintain sustainable revenue through a diversified model:
+Pay-per-hire fees,
+User subscriptions,
+And strategic partnerships.”
+Our platform is built to be:
+Remote-friendly,
+Paperless,
+And it promotes low-carbon hiring processes — because green is the new gold.”
+And most importantly, we empower fresh graduates by helping them:
+Build real-world experience and confidence,
+And start earning early — even while they’re still studying.”
+“In short, we’re not just filling jobs — we’re building a better, fairer, and more sustainable future of work.”
+
+
+Cost breakdown:
+Here’s a breakdown of how our 6-month grant will be allocated across three key areas:
+Development, Social Media, and Marketing. 
+We’re investing in infrastructure to keep the platform stable and secure:
+Hosting and database costs: $40 per month,
+Security and login systems: $25 per month,
+And automated email systems to handle outreach and onboarding: $20 per month.
+To maintain visibility and community engagement:
+We’re running LinkedIn ads at $123.84 per month,
+Using Canva for content design at $20 per month,
+And budgeting $200 for scraping and outreach tools to reach talent and partners efficiently.
+On the marketing front, we’re allocating funds for:
+Banners and name cards at events: $100,
+Search Engine Optimization — which is managed via Google Workspace tools — at $200,
+And internal tools, including CRM and domain costs, with a total budget of $200.

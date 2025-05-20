@@ -6,6 +6,7 @@ import { sendEmailWithTemplate } from "../email-templates/email-template-actions
 import { getSession } from "@/lib/auth"
 // Import the toast at the top of the file
 import { toast } from "sonner"
+import { auth, logs, Prisma } from "@/prisma/generated/main"
 
 interface CommandMatch {
   logId: number
@@ -250,11 +251,23 @@ async function sendCommandMatchNotification(match: CommandMatch) {
 /**
  * Process a batch of logs to check for command matches
  */
-export async function processBatchForCommandMatches(logs: any[], logType: "system" | "auth") {
+type LogType = logs | auth
+
+export async function processBatchForCommandMatches(logs: LogType[],
+  logType: "system" | "auth") {
   const allMatches: CommandMatch[] = []
 
   for (const log of logs) {
-    const logEntry = logType === "system" ? log.command : log.log_entry
+    let logEntry: string | null
+
+    if (logType === "system" && "command" in log) {
+      logEntry = log.command
+    } else if (logType === "auth" && "log_entry" in log) {
+      logEntry = log.log_entry
+    } else {
+      continue // skip malformed entries
+    }
+
     if (!logEntry) continue
 
     const matches = await checkCommandMatches(logEntry, log.id, logType)
@@ -282,7 +295,7 @@ export async function getCommandMatches({
 }) {
   try {
     // Build the where clause based on filters
-    const where: any = {}
+    const where: Prisma.CommandMatchWhereInput = {}
 
     if (addressed !== null) {
       where.addressed = addressed

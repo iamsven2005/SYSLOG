@@ -115,6 +115,14 @@ export default function FeedbackPage() {
     }
   }
 
+  useEffect(() => {
+    if (activeTab === "sent" && user) {
+      loadSentFeedback()
+    } else if (activeTab === "received" && user && isManager) {
+      loadReceivedFeedback()
+    }
+  }, [activeTab, user, isManager, loadSentFeedback, loadReceivedFeedback])
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -125,13 +133,6 @@ export default function FeedbackPage() {
       </div>
     )
   }
-  useEffect(() => {
-    if (activeTab === "sent" && user) {
-      loadSentFeedback()
-    } else if (activeTab === "received" && user && isManager) {
-      loadReceivedFeedback()
-    }
-  }, [activeTab, user, isManager, loadSentFeedback, loadReceivedFeedback]) // Add the missing dependencies
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">

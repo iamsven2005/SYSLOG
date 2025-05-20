@@ -28,12 +28,13 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { DriveFile, DriveFilePermission, DriveFolder, User } from "@/prisma/generated/main"
 
 interface FileGridProps {
-  folders: any[]
-  files: any[]
+  folders: DriveFolder[]
+  files: (DriveFile & { owner: User; permissions: DriveFilePermission[] })[]
   isLoading: boolean
-  onFileSelect: (file: any) => void
+  onFileSelect: (file: DriveFile & { owner: User; permissions: DriveFilePermission[] }) => void
   onRefresh: () => Promise<void>
   parentFolderId: number | null
 
@@ -59,6 +60,9 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [embedText, setEmbedText] = useState("")
   const [showPopover, setShowPopover] = useState(false)
+  const containerRect = containerRef.current?.getBoundingClientRect()
+  if (!containerRect) return null // or skip rendering the selection box
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingSelect || !selectBox) return
@@ -281,7 +285,7 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
       }
 
       try {
-        await updateFolder2(Number(folderIdToMove), { parentId: destinationFolderId ?? undefined})
+        await updateFolder2(Number(folderIdToMove), { parentId: destinationFolderId ?? undefined })
         toast.success("Folder moved successfully")
         await fetch("/api/drive-events", {
           method: "POST",
@@ -331,7 +335,7 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
       setSelectedFileIds([])
       onRefresh()
     } catch (e) {
-            console.log(e)
+      console.log(e)
 
       toast.error("Failed to delete some files")
     }
@@ -620,18 +624,20 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
           ))}
         </div>
       </div>
-      {selectBox && (
-        <div
-          className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
-          style={{
-            left: Math.min(selectBox.startX, selectBox.currentX) - containerRef.current?.getBoundingClientRect().left!,
-            top: Math.min(selectBox.startY, selectBox.currentY) - containerRef.current?.getBoundingClientRect().top!,
-            width: Math.abs(selectBox.currentX - selectBox.startX),
-            height: Math.abs(selectBox.currentY - selectBox.startY),
-          }}
-        />
-      )}
+      {selectBox && containerRef.current && (() => {
+        const rect = containerRef.current.getBoundingClientRect()
+        const left = Math.min(selectBox.startX, selectBox.currentX) - rect.left
+        const top = Math.min(selectBox.startY, selectBox.currentY) - rect.top
+        const width = Math.abs(selectBox.currentX - selectBox.startX)
+        const height = Math.abs(selectBox.currentY - selectBox.startY)
 
+        return (
+          <div
+            className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
+            style={{ left, top, width, height }}
+          />
+        )
+      })()}
 
 
     </div>

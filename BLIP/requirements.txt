@@ -4,3 +4,6 @@ fairscale
 pycocoevalcap
 flask
 FlagEmbedding
+torch
+Pillow
+logging

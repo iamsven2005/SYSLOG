@@ -162,11 +162,12 @@ export async function sendEmailWithTemplate(templateId: number, recipientIds: nu
       let body = template.body
 
       // Replace placeholders in subject and body
-      Object.entries({ ...data, username: recipient.username }).forEach(([key, value]) => {
-        const placeholder = new RegExp(`{{${key}}}`, "g")
-        subject = subject.replace(placeholder, value)
-        body = body.replace(placeholder, value)
-      })
+Object.entries({ ...data, username: recipient.username ?? "" }).forEach(([key, value]) => {
+  const placeholder = new RegExp(`{{${key}}}`, "g")
+  subject = subject.replace(placeholder, String(value))
+  body = body.replace(placeholder, String(value))
+})
+
 
       try {
         const response = await fetch("http://192.168.1.102:3000/api/send-email", {

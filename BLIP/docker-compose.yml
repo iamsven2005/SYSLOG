@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  excalidraw:
+      image: excalidraw/excalidraw
+      container_name: excalidraw
+      ports:
+        - "5001:80"
+      restart: unless-stopped
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+  rabbitmq_exporter:
+    image: kbudde/rabbitmq-exporter
+    ports:
+      - "9419:9419"
+    environment:
+      RABBIT_URL: http://admin:admin@rabbitmq:15672
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - rabbitmq_exporter
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3005:3005"  # changed host port from 3000 to 3001
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+      - loki
+      - elasticsearch
+
+  loki:
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    volumes:
+      - /var/log:/var/log
+      - ./promtail-config.yml:/etc/promtail/promtail-config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/promtail-config.yml
+    depends_on:
+      - loki
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+
+  fluent-bit:
+    image: cr.fluentbit.io/fluent/fluent-bit:2.2
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - /var/log:/var/log
+    depends_on:
+      - elasticsearch
+
+  pgvector-db:
+    image: ankane/pgvector
+    container_name: pgvector-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: host-machine
+      POSTGRES_DB: logs_database
+    volumes:
+      - pgvector-data:/var/lib/postgresql/data
+  caption-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "5000:5000"
+    restart: always
+    volumes:
+      - ./flask_app.py:/app/flask_app.py
+      - ./requirements.txt:/app/requirements.txt
+
+volumes:
+  grafana-storage:
+  elastic-data:
+  pgvector-data:

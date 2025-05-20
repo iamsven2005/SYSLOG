@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -80,14 +80,14 @@ export default function LocationsTable() {
   const [pageSize, setPageSize] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
-function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
-  let timeout: NodeJS.Timeout | null = null
+  function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg: string) => void {
+    let timeout: NodeJS.Timeout | null = null
 
-  return (arg: string) => {
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(arg), wait)
+    return (arg: string) => {
+      if (timeout) clearTimeout(timeout)
+      timeout = setTimeout(() => func(arg), wait)
+    }
   }
-}
 
   // Apply debounced search
   const debouncedSearch = debounce((value: string) => {
@@ -103,8 +103,7 @@ function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg:
     debouncedSearch(value)
   }
 
-  // Fetch locations with filters
-  const fetchLocations = async () => {
+  const fetchLocations = useCallback(async () => {
     setIsLoading(true)
     try {
       const result = await getLocations({
@@ -122,12 +121,12 @@ function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg:
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [debouncedSearchQuery, currentPage, pageSize])
 
-  // Load locations when filters or pagination changes
+
   useEffect(() => {
     fetchLocations()
-  }, [debouncedSearchQuery, currentPage, pageSize])
+  }, [fetchLocations])
 
   // Handle location selection
   const handleSelectLocation = (id: number) => {
@@ -174,20 +173,20 @@ function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg:
   }
 
   // Open edit location modal
-const openEditModal = (location: LocationForm) => {
-  setCurrentLocation(location)
-  setLocationForm({
-    id: location.id,
-    code: location.code,
-    name: location.name,
-    fullname: location.fullname || "", // Default to empty string if null
-    Region: location.Region || "",     // Default to empty string if null
-    WCI_URL: location.WCI_URL || "",   // Default to empty string if null
-    CCY: location.CCY || "",           // Default to empty string if null
-    Remarks: location.Remarks || "",   // Default to empty string if null
-  })
-  setEditModalOpen(true)
-}
+  const openEditModal = (location: LocationForm) => {
+    setCurrentLocation(location)
+    setLocationForm({
+      id: location.id,
+      code: location.code,
+      name: location.name,
+      fullname: location.fullname || "", // Default to empty string if null
+      Region: location.Region || "",     // Default to empty string if null
+      WCI_URL: location.WCI_URL || "",   // Default to empty string if null
+      CCY: location.CCY || "",           // Default to empty string if null
+      Remarks: location.Remarks || "",   // Default to empty string if null
+    })
+    setEditModalOpen(true)
+  }
 
 
   // Open delete location modal
@@ -216,11 +215,11 @@ const openEditModal = (location: LocationForm) => {
       await addLocation({
         code: locationForm.code,
         name: locationForm.name,
-fullname: locationForm.fullname ?? "",
-Region: locationForm.Region ?? "",
-WCI_URL: locationForm.WCI_URL ?? "",
-CCY: locationForm.CCY ?? "",
-Remarks: locationForm.Remarks ?? "",
+        fullname: locationForm.fullname ?? "",
+        Region: locationForm.Region ?? "",
+        WCI_URL: locationForm.WCI_URL ?? "",
+        CCY: locationForm.CCY ?? "",
+        Remarks: locationForm.Remarks ?? "",
 
       })
 
@@ -230,7 +229,7 @@ Remarks: locationForm.Remarks ?? "",
       router.refresh()
     } catch (error) {
       console.log(error)
-        toast.error("Failed to add location")
+      toast.error("Failed to add location")
     }
   }
 
@@ -246,11 +245,11 @@ Remarks: locationForm.Remarks ?? "",
         id: currentLocation.id,
         code: locationForm.code,
         name: locationForm.name,
-fullname: locationForm.fullname ?? "",
-Region: locationForm.Region ?? "",
-WCI_URL: locationForm.WCI_URL ?? "",
-CCY: locationForm.CCY ?? "",
-Remarks: locationForm.Remarks ?? "",
+        fullname: locationForm.fullname ?? "",
+        Region: locationForm.Region ?? "",
+        WCI_URL: locationForm.WCI_URL ?? "",
+        CCY: locationForm.CCY ?? "",
+        Remarks: locationForm.Remarks ?? "",
 
 
       })
@@ -260,9 +259,9 @@ Remarks: locationForm.Remarks ?? "",
       fetchLocations()
       router.refresh()
     } catch (error) {
-        console.log(error)
-        toast.error("Failed to update location")
-      
+      console.log(error)
+      toast.error("Failed to update location")
+
     }
   }
 

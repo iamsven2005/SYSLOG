@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -76,41 +76,34 @@ export default function NotesTable({ isAdmin }: Props) {
     debouncedSearch(value)
   }
 
-  const fetchNotes = async () => {
-    setIsLoading(true)
-    try {
-      const result = await getNotes({
-        search: debouncedSearchQuery,
-        page: currentPage,
-        pageSize: pageSize,
-      });
+const fetchNotes = useCallback(async () => {
+  setIsLoading(true)
+  try {
+    const result = await getNotes({
+      search: debouncedSearchQuery,
+      page: currentPage,
+      pageSize: pageSize,
+    })
 
-      if (result) {
-        setNotes(result.notes || []); // If notes are null, set to an empty array
-        setTotalPages(result.pageCount || 1); // Default to 1 if null
-        setTotalItems(result.totalCount || 0); // Default to 0 if null
-      } else {
-        // Handle null response gracefully
-        setNotes([]);
-        setTotalPages(1);
-        setTotalItems(0);
-      }
-    } catch (error) {
-      console.log(error)
-      toast.error("Failed to fetch notes");
-      setNotes([]);
-      setTotalPages(1);
-      setTotalItems(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    setNotes(result?.notes || [])
+    setTotalPages(result?.pageCount || 1)
+    setTotalItems(result?.totalCount || 0)
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to fetch notes")
+    setNotes([])
+    setTotalPages(1)
+    setTotalItems(0)
+  } finally {
+    setIsLoading(false)
+  }
+}, [debouncedSearchQuery, currentPage, pageSize]) // ✅ stable deps
 
 
   // Load notes when filters or pagination changes
   useEffect(() => {
     fetchNotes()
-  }, [debouncedSearchQuery, currentPage, pageSize])
+  }, [fetchNotes])
 
   // Handle note selection
   const handleSelectNote = (id: number) => {

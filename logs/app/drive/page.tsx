@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { notFound, redirect, useSearchParams } from "next/navigation"
 import { getFolderContents, getFolderPath } from "./drive-actions"
 import { FolderBreadcrumb } from "./folder-breadcrumb"
@@ -10,43 +10,38 @@ import { CreateFolderButton } from "./create-folder-button"
 import { FileDetails } from "./file-details"
 import { getCurrentUser } from "../login/actions"
 import { checkUserPermission } from "../permissions/permission-actions"
-
+import { DriveFile, DriveFolder } from "@/prisma/generated/main"
+interface PathItem {
+  id: number | null;
+  name: string;
+}
 export default function DriveExplorer() {
   const searchParams = useSearchParams()
   const folderIdParam = searchParams.get("folder")
   const folderId = folderIdParam ? Number.parseInt(folderIdParam) : null
 
-  const [folders, setFolders] = useState<any[]>([])
-  const [files, setFiles] = useState<any[]>([])
-  const [path, setPath] = useState<any[]>([{ id: null, name: "My Drive" }])
-  const [selectedFile, setSelectedFile] = useState<any>(null)
+  const [folders, setFolders] = useState<DriveFolder[]>([])
+  const [files, setFiles] = useState<DriveFile[]>([])
+  const [path, setPath] = useState<PathItem[]>([{ id: null, name: "My Drive" }])
+  const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [parentId, setparent] = useState<any>(null)
-  const [userId, setuser] = useState<number>()
+  const [parentId, setparent] = useState<number | null>(null)
+  const [userId, setuser] = useState<number>(0) // default dummy value
+
+
+
 
   useEffect(() => {
-    const eventSource = new EventSource("/api/drive-events")
-  
-    eventSource.onmessage = (event) => {
-      const message = JSON.parse(event.data)
-      console.log("SSE update:", message)
-      handleRefresh()
-    }
-  
-    return () => eventSource.close()
-  }, [])
-  
-  useEffect(() => {
     async function loadFolderContents() {
-        const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          redirect("/login")
-        }
-        const perm = await checkUserPermission(currentUser.id, "/drive")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
-        setuser(currentUser.id)
+      const currentUser = await getCurrentUser()
+      if (!currentUser) {
+        redirect("/login")
+      }
+      const perm = await checkUserPermission(currentUser.id, "/drive")
+      if (perm.hasPermission === false) {
+        return notFound()
+      }
+      setuser(currentUser.id)
       setIsLoading(true)
       try {
         const { folders, files } = await getFolderContents(folderId)
@@ -64,29 +59,41 @@ export default function DriveExplorer() {
     }
 
     loadFolderContents()
-  }, [folderId])
+  }, [folderId, path])
 
-  const handleFileSelect = (file: any) => {
+  const handleFileSelect = (file: DriveFile) => {
     setSelectedFile(file)
   }
+
 
   const handleCloseDetails = () => {
     setSelectedFile(null)
   }
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     const { folders, files } = await getFolderContents(folderId)
     setFolders(folders)
     setFiles(files)
+  }, [folderId])
+useEffect(() => {
+  const eventSource = new EventSource("/api/drive-events")
+
+  eventSource.onmessage = (event) => {
+    const message = JSON.parse(event.data)
+    console.log("SSE update:", message)
+    handleRefresh()
   }
+
+  return () => eventSource.close()
+}, [handleRefresh])
 
   return (
     <div className="flex flex-col h-full m-5 p-5">
       <div className="flex flex-wrap items-center gap-2 ">
-      <h1 className="text-2xl font-bold">My Drive</h1>
+        <h1 className="text-2xl font-bold">My Drive</h1>
 
 
-        <UploadButton userId={userId}folderId={folderId} onUploadComplete={handleRefresh} />
+        <UploadButton userId={userId} folderId={folderId} onUploadComplete={handleRefresh} />
         <CreateFolderButton parentId={folderId} onFolderCreated={handleRefresh} />
         <FolderBreadcrumb path={path} />
 
