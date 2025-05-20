@@ -39,7 +39,9 @@ interface FileGridProps {
   parentFolderId: number | null
 
 }
+type CompareResult = { name: string; score: number }
 
+type Box = { startX: number; startY: number; currentX: number; currentY: number }
 export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, parentFolderId }: FileGridProps) {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -60,9 +62,7 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [embedText, setEmbedText] = useState("")
   const [showPopover, setShowPopover] = useState(false)
-  const containerRect = containerRef.current?.getBoundingClientRect()
-  if (!containerRect) return null // or skip rendering the selection box
-
+  
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingSelect || !selectBox) return
@@ -99,8 +99,8 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
       setSelectedFileIds(selected)
       setIsDraggingSelect(false)
       setSelectBox(null)
-    }
 
+    }
     document.addEventListener("mousemove", handleMouseMove)
     document.addEventListener("mouseup", handleMouseUp)
 
@@ -112,19 +112,18 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
 
 
   useEffect(() => {
-    const lowerQuery = searchQuery.toLowerCase();
+    const lowerQuery = searchQuery.toLowerCase()
 
     const filteredF = folders.filter((folder) =>
       folder.name.toLowerCase().includes(lowerQuery)
-    );
-
+    )
     const filteredFi = files.filter((file) =>
       file.name.toLowerCase().includes(lowerQuery)
-    );
+    )
 
-    setFilteredFolders(filteredF);
-    setFilteredFiles(filteredFi);
-  }, [searchQuery, folders, files]);
+    setFilteredFolders(filteredF)
+    setFilteredFiles(filteredFi)
+  }, [searchQuery, folders, files])
   useEffect(() => {
     if (!searchQuery.trim()) {
       setEmbedText("")
@@ -134,12 +133,11 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
 
     const timeout = setTimeout(async () => {
       try {
-        // 1. First, fetch embedding
         const embedRes = await fetch("/api/embed-text", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: searchQuery }),
-          cache: "no-store", // <-- important
+          cache: "no-store",
         })
 
         const embedData = await embedRes.json()
@@ -150,19 +148,17 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
           return
         }
 
-        // 2. Second, send embedding to compare API
-        console.log(embedData.embedding)
         const compareRes = await fetch("/api/compare", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ embedding: embedData.embedding }),
         })
+
         const compareData = await compareRes.json()
 
-        // Show results in popover
         if (compareData?.results?.length) {
           const textResult = compareData.results
-            .map((r: any, i: number) => `${i + 1}. ${r.name} (${r.score.toFixed(2)})`)
+            .map((r: CompareResult, i: number) => `${i + 1}. ${r.name} (${r.score.toFixed(2)})`)
             .join("\n")
           setEmbedText(textResult)
         } else {
@@ -175,11 +171,11 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
         setEmbedText("Failed to fetch comparison")
         setShowPopover(true)
       }
+
     }, 300)
 
     return () => clearTimeout(timeout)
   }, [searchQuery])
-
 
   const handleDeleteFile = async (id: number) => {
     try {
@@ -624,20 +620,23 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
           ))}
         </div>
       </div>
-      {selectBox && containerRef.current && (() => {
-        const rect = containerRef.current.getBoundingClientRect()
-        const left = Math.min(selectBox.startX, selectBox.currentX) - rect.left
-        const top = Math.min(selectBox.startY, selectBox.currentY) - rect.top
-        const width = Math.abs(selectBox.currentX - selectBox.startX)
-        const height = Math.abs(selectBox.currentY - selectBox.startY)
+{selectBox && (() => {
+  const rect = containerRef.current?.getBoundingClientRect()
+  if (!rect) return null
 
-        return (
-          <div
-            className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
-            style={{ left, top, width, height }}
-          />
-        )
-      })()}
+  const left = Math.min(selectBox.startX, selectBox.currentX) - rect.left
+  const top = Math.min(selectBox.startY, selectBox.currentY) - rect.top
+  const width = Math.abs(selectBox.currentX - selectBox.startX)
+  const height = Math.abs(selectBox.currentY - selectBox.startY)
+
+  return (
+    <div
+      className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
+      style={{ left, top, width, height }}
+    />
+  )
+})()}
+
 
 
     </div>

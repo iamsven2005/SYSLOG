@@ -33,7 +33,7 @@ export function ImportExportDialog({
     fileInputRef.current?.click()
   }
 
-  const processFile = async (file: File) => {
+const processFile = useCallback(async (file: File) => {
     try {
       setImporting(true)
       setImportError(null)
@@ -68,7 +68,7 @@ export function ImportExportDialog({
         fileInputRef.current.value = ""
       }
     }
-  }
+  }, [])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -105,8 +105,7 @@ const handleDrop = useCallback(
     const file = files[0]
     await processFile(file)
   },
-  [groupId, processFile] // ✅ Add processFile here
-)
+  [processFile] )
 
 
   const handleExport = async () => {

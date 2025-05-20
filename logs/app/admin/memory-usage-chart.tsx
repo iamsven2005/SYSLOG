@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   LineChart,
   Line,
@@ -15,6 +15,7 @@ import {
   Area,
   AreaChart,
   TooltipProps,
+  
 } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { getMemoryUsageData } from "../logs/actions"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
+type CustomTooltipPayload = {
+  name: string;
+  value: number;
+  color: string;
+};
 
 // Color palette for different hosts
 const COLORS = [
@@ -63,7 +69,10 @@ interface MemoryStats {
   free_memory?: number
   available_memory?: number
 }
-
+type VMDataPoint = {
+  timestamp: string
+  [vmName: string]: { percent_usage: number } | string
+}
 interface MemoryUsageEntry {
   timestamp: string
   [host: string]: MemoryStats | string // string is for 'timestamp'
@@ -74,7 +83,7 @@ interface VMEntry {
 }
 export default function MemoryUsageChart() {
 const [chartData, setChartData] = useState<MemoryUsageEntry[]>([])
-const [vmChartData, setVMChartData] = useState<VMEntry[]>([])
+const [vmChartData] = useState<VMEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [timeRange, setTimeRange] = useState("24h")
   const [hosts, setHosts] = useState<string[]>([])
@@ -87,7 +96,7 @@ const [vmChartData, setVMChartData] = useState<VMEntry[]>([])
   const [hostFilterOpen, setHostFilterOpen] = useState(false)
 
 // Fetch memory usage data
-const fetchMemoryData = async () => {
+const fetchMemoryData = useCallback(async () => {
   setIsLoading(true);
   try {
     // Fetch host data
@@ -144,7 +153,7 @@ const fetchMemoryData = async () => {
   } finally {
     setIsLoading(false);
   }
-};
+}, [timeRange, expandedHosts])
 
 
   // Handle host selection for filtering
@@ -167,9 +176,11 @@ const fetchMemoryData = async () => {
   }
 
   // Load data on initial render and when time range changes
-  useEffect(() => {
-    fetchMemoryData()
-  }, [timeRange])
+useEffect(() => {
+  fetchMemoryData()
+}, [fetchMemoryData])
+
+
 
   // Format timestamp for display
   const formatXAxis = (timestamp: string) => {
@@ -201,24 +212,25 @@ const fetchMemoryData = async () => {
 
   // Custom tooltip for the chart
 const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border rounded-md shadow-md p-3">
-          <p className="text-sm font-medium">{new Date(label).toLocaleString()}</p>
-          <div className="mt-2 space-y-1">
-            {payload.map((entry: any, index: number) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-sm">{entry.name}:</span>
-                <span className="text-sm font-medium">{entry.value.toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-background border rounded-md shadow-md p-3">
+        <p className="text-sm font-medium">{new Date(label).toLocaleString()}</p>
+        <div className="mt-2 space-y-1">
+          {(payload as CustomTooltipPayload[]).map((entry, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-sm">{entry.name}:</span>
+              <span className="text-sm font-medium">{Number(entry.value).toFixed(1)}%</span>
+            </div>
+          ))}
         </div>
-      )
-    }
-    return null
+      </div>
+    )
   }
+  return null
+}
+
 
   // Format memory values for display
   const formatMemory = (value: bigint | number) => {
@@ -240,7 +252,7 @@ const getVMDataForHost = (host: string) => {
   if (!vmChartData.length || !vms[host] || !vms[host].length) return []
 
   return vmChartData.map((entry) => {
-    const newEntry: Record<string, any> = { timestamp: entry.timestamp }
+const newEntry: Record<string, unknown> = { timestamp: entry.timestamp }
 
     const vmStatsMap = entry[host] as Record<string, MemoryStats> | undefined
     if (!vmStatsMap) return newEntry

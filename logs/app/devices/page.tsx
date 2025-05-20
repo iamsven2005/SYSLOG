@@ -67,12 +67,12 @@ function debounce<T extends (arg: string) => void>(func: T, wait: number): (arg:
 }
 // Add this function after the debounce function
 // Function to check if an IP is already assigned to another device
-const isIpAlreadyAssigned = (ip: string, devices: any[], currentDeviceId?: number) => {
+const isIpAlreadyAssigned = (ip: string, devices: devices[], currentDeviceId?: number) => {
   return devices.some((device) => device.ip_address === ip && (!currentDeviceId || device.id !== currentDeviceId))
 }
 
 // Function to generate available IPs in the same /24 subnet
-const generateAvailableIps = (baseIp: string, devices: any[]) => {
+const generateAvailableIps = (baseIp: string, devices: devices[]) => {
   // Extract the subnet part (first three octets)
   const ipParts = baseIp.split(".")
   if (ipParts.length !== 4) return []

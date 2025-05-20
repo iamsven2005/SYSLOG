@@ -172,11 +172,11 @@ const sourceTable = useWatch({ control: form.control, name: "sourceTable" })
 const fieldNameWatch = useWatch({ control: form.control, name: "fieldName" })
 
 useEffect(() => {
-  if (fieldNameWatch) {
-    form.setValue("comparator", "")
-    setIsTextBasedCondition(isTextBasedField(sourceTable, fieldNameWatch))
-  }
+  const shouldBeText = isTextBasedField(sourceTable, fieldNameWatch)
+  form.setValue("comparator", "")
+  setIsTextBasedCondition(shouldBeText)
 }, [fieldNameWatch, sourceTable, form])
+
 
   // Update available comparators when field name changes
   useEffect(() => {

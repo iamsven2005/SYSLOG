@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { getGroupMessages, getGroupWithMembers, deleteMessage, editMessage } from "./chat-actions"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -56,38 +56,36 @@ export function ChatMessages({ groupId, id }: { groupId: number; id: number }) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 
-  const fetchMessages = async () => {
-    try {
-      const fetchedMessages = await getGroupMessages(groupId)
-      setMessages(fetchedMessages)
+const fetchMessages = useCallback(async () => {
+  try {
+    const fetchedMessages = await getGroupMessages(groupId)
+    setMessages(fetchedMessages)
 
-      // Get group details including member count
-      const group = await getGroupWithMembers(groupId)
-      if (group) {
-        setGroupName(group.name)
-        setMemberCount(group.members.length)
-      }
-    } catch (error) {
-      console.log(error)
-
-      console.error("Failed to fetch messages:", error)
+    const group = await getGroupWithMembers(groupId)
+    if (group) {
+      setGroupName(group.name)
+      setMemberCount(group.members.length)
     }
+  } catch (error) {
+    console.error("Failed to fetch messages:", error)
+  }
+}, [groupId])
+
+
+useEffect(() => {
+  const loadData = async () => {
+    setLoading(true)
+    await fetchMessages()
+    setLoading(false)
   }
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true)
-      await fetchMessages()
-      setLoading(false)
-    }
+  loadData()
 
-    loadData()
+  const intervalId = setInterval(fetchMessages, 3000)
 
-    // Set up polling for new messages
-    const intervalId = setInterval(fetchMessages, 3000)
+  return () => clearInterval(intervalId)
+}, [fetchMessages])
 
-    return () => clearInterval(intervalId)
-  }, [groupId])
 
   useEffect(() => {
     // Scroll to bottom when messages change

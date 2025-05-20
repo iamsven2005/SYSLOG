@@ -92,7 +92,7 @@ async function startMonitoringLoop() {
   isMonitoringRunning = false
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const clientId = crypto.randomUUID()
 
   const stream = new ReadableStream({

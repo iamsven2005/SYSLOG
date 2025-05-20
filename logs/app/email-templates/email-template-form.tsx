@@ -74,10 +74,10 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
   })
 
   // Update preview when body changes
-  useEffect(() => {
-    const body = form.watch("body")
+useEffect(() => {
+  const subscription = form.watch((values) => {
+    const body = values.body
     if (body) {
-      // Replace placeholders with sample values for preview
       const previewBody = body
         .replace(/{{username}}/g, "John Doe")
         .replace(/{{email}}/g, "john.doe@example.com")
@@ -87,10 +87,13 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
         .replace(/{{groupName}}/g, "System Security")
         .replace(/{{timestamp}}/g, new Date().toLocaleString())
 
-      // Convert newlines to <br> tags for HTML display
       setPreviewHtml(previewBody.replace(/\n/g, "<br>"))
     }
-  }, [form.watch("body")])
+  })
+
+  return () => subscription.unsubscribe()
+}, [form])
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)

@@ -83,22 +83,25 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
 
   // Update preview when body changes
   useEffect(() => {
-    const body = form.watch("body")
-    if (body) {
-      // Replace placeholders with sample values for preview
-      const previewBody = body
-        .replace(/{{username}}/g, "John Doe")
-        .replace(/{{email}}/g, "john.doe@example.com")
-        .replace(/{{command}}/g, "sudo rm -rf /")
-        .replace(/{{logEntry}}/g, "2023-03-15 14:30:45 - User executed: sudo rm -rf /")
-        .replace(/{{ruleName}}/g, "Dangerous Command")
-        .replace(/{{groupName}}/g, "System Security")
-        .replace(/{{timestamp}}/g, new Date().toLocaleString())
+    const subscription = form.watch((values) => {
+      const body = values.body
+      if (body) {
+        const previewBody = body
+          .replace(/{{username}}/g, "John Doe")
+          .replace(/{{email}}/g, "john.doe@example.com")
+          .replace(/{{command}}/g, "sudo rm -rf /")
+          .replace(/{{logEntry}}/g, "2023-03-15 14:30:45 - User executed: sudo rm -rf /")
+          .replace(/{{ruleName}}/g, "Dangerous Command")
+          .replace(/{{groupName}}/g, "System Security")
+          .replace(/{{timestamp}}/g, new Date().toLocaleString())
 
-      // Convert newlines to <br> tags for HTML display
-      setPreviewHtml(previewBody.replace(/\n/g, "<br>"))
-    }
-  }, [form.watch("body")])
+        setPreviewHtml(previewBody.replace(/\n/g, "<br>"))
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form])
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
@@ -118,7 +121,14 @@ export function EmailTemplateForm({ template, onSuccess, onCancel }: EmailTempla
         toast.success("Email template updated successfully.")
       } else {
         const userIds = values.assignedUsers?.map(Number) || []
-        const { emailTemplate } = await createEmailTemplate({ ...values, assignedUsers: userIds })
+        const result = await createEmailTemplate({ ...values, assignedUsers: userIds })
+
+        if (!result || !result.success) {
+          toast.error("Failed to create email template.")
+          return
+        }
+
+        const emailTemplate = result.emailTemplate
 
         if (values.assignedUsers && values.assignedUsers.length > 0) {
           await assignUsersToEmailTemplate(emailTemplate.id, values.assignedUsers.map(Number))
