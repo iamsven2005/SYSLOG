@@ -7,12 +7,21 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Edit, PenToolIcon as Tool, ArrowUpDown } from "lucide-react"
-
-export default function EquipmentList({ equipment, categories }) {
+import { Equipment, EquipmentCategory } from "@/prisma/generated/main"
+type EquipmentWithCategory = Equipment & {
+  category: EquipmentCategory
+}
+export default function EquipmentList({
+  equipment,
+  categories,
+}: {
+  equipment: EquipmentWithCategory[]
+  categories: EquipmentCategory[]
+}) {
   const [sortField, setSortField] = useState("itemCode")
   const [sortDirection, setSortDirection] = useState("asc")
 
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc")
     } else {
@@ -22,8 +31,9 @@ export default function EquipmentList({ equipment, categories }) {
   }
 
   const sortedEquipment = [...equipment].sort((a, b) => {
-    let aValue = a[sortField]
-    let bValue = b[sortField]
+    const sortKey = sortField as keyof EquipmentWithCategory
+    let aValue = a[sortKey]
+    let bValue = b[sortKey]
 
     // Handle nested fields like category.name
     if (sortField === "category") {
@@ -37,17 +47,19 @@ export default function EquipmentList({ equipment, categories }) {
     }
 
     // Handle string values
-    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
-    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+    if (aValue == null && bValue != null) return sortDirection === "asc" ? -1 : 1
+    if (aValue != null && bValue == null) return sortDirection === "asc" ? 1 : -1
+    if (aValue == null && bValue == null) return 0
+
     return 0
   })
 
-  const getCategoryName = (categoryId) => {
+  const getCategoryName = (categoryId: number) => {
     const category = categories.find((c) => c.id === categoryId)
     return category?.name || "Unknown"
   }
 
-  const getStatusBadgeColor = (status) => {
+  const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case "AVAILABLE":
         return "bg-green-100 text-green-800"
@@ -64,7 +76,7 @@ export default function EquipmentList({ equipment, categories }) {
     }
   }
 
-  const getConditionBadgeColor = (condition) => {
+  const getConditionBadgeColor = (condition: string) => {
     switch (condition) {
       case "EXCELLENT":
         return "bg-green-100 text-green-800"

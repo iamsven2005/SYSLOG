@@ -16,7 +16,17 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { addCompanyToProject } from "@/app/crm/actions/projects"
 import { cn } from "@/lib/utils"
-
+import { Company, ContactPerson } from "@/prisma/generated/main"
+type ProjectCompanyFormProps = {
+  projectId: number
+  companies: (Company & {
+    contacts: ContactPerson[] // or `ContactPerson[]` if you have it typed
+    _count: {
+      projects: number
+      contacts: number
+    }
+  })[]
+}
 const formSchema = z.object({
   companyId: z.string().min(1, "Please select a company"),
   role: z.string().min(1, "Role is required"),
@@ -30,7 +40,7 @@ const formSchema = z.object({
   contractStatus: z.string().optional(),
 })
 
-export default function ProjectCompanyForm({ projectId, companies }) {
+export default function ProjectCompanyForm({ projectId, companies }: ProjectCompanyFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 

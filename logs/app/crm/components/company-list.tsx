@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Company, CompanyType } from "@/prisma/generated/main"
 
-export default function CompanyList({ companies }) {
+export default function CompanyList({ companies }: {companies: Company[]}) {
   if (!companies || companies.length === 0) {
     return (
       <div className="p-8 text-center">
@@ -21,7 +22,7 @@ export default function CompanyList({ companies }) {
         <div>Actions</div>
       </div>
       <div className="divide-y">
-        {companies.map((company) => (
+        {companies.map((company: Company) => (
           <div key={company.id} className="grid grid-cols-6 p-4 hover:bg-muted/50">
             <div className="font-medium">
               <Link href={`/crm/companies/${company.id}`} className="hover:underline">
@@ -65,7 +66,7 @@ export default function CompanyList({ companies }) {
   )
 }
 
-function CompanyTypeBadge({ type }) {
+function CompanyTypeBadge({ type }: {type: CompanyType}) {
   const typeStyles = {
     CONTRACTOR: "bg-green-100 text-green-800",
     VENDOR: "bg-blue-100 text-blue-800",

@@ -41,7 +41,6 @@ interface FileGridProps {
 }
 type CompareResult = { name: string; score: number }
 
-type Box = { startX: number; startY: number; currentX: number; currentY: number }
 export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, parentFolderId }: FileGridProps) {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -62,7 +61,7 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [embedText, setEmbedText] = useState("")
   const [showPopover, setShowPopover] = useState(false)
-  
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingSelect || !selectBox) return
@@ -620,22 +619,22 @@ export function FileGrid({ folders, files, isLoading, onFileSelect, onRefresh, p
           ))}
         </div>
       </div>
-{selectBox && (() => {
-  const rect = containerRef.current?.getBoundingClientRect()
-  if (!rect) return null
+      {selectBox && (() => {
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect) return null
 
-  const left = Math.min(selectBox.startX, selectBox.currentX) - rect.left
-  const top = Math.min(selectBox.startY, selectBox.currentY) - rect.top
-  const width = Math.abs(selectBox.currentX - selectBox.startX)
-  const height = Math.abs(selectBox.currentY - selectBox.startY)
+        const left = Math.min(selectBox.startX, selectBox.currentX) - rect.left
+        const top = Math.min(selectBox.startY, selectBox.currentY) - rect.top
+        const width = Math.abs(selectBox.currentX - selectBox.startX)
+        const height = Math.abs(selectBox.currentY - selectBox.startY)
 
-  return (
-    <div
-      className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
-      style={{ left, top, width, height }}
-    />
-  )
-})()}
+        return (
+          <div
+            className="absolute border border-blue-500 bg-blue-200/30 z-50 pointer-events-none"
+            style={{ left, top, width, height }}
+          />
+        )
+      })()}
 
 
 

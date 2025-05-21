@@ -12,7 +12,8 @@ import ProjectMaterials from "@/app/crm/components/project-materials"
 import ProjectInteractions from "@/app/crm/components/project-interactions"
 import ProjectInspections from "@/app/crm/components/project-inspections"
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params; 
   const projectId = Number.parseInt(params.id)
   const { project, error } = await getProject(projectId)
 

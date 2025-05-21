@@ -3,15 +3,15 @@ import { getSession } from "@/lib/auth"
 import fs from "fs/promises"
 import path from "path"
 import { db } from "@/lib/db"
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession()
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const entryId = Number.parseInt(params.id)
+    const entryId = Number.parseInt((await params).id)
     if (isNaN(entryId)) {
       return new NextResponse("Invalid entry ID", { status: 400 })
     }

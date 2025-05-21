@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createContact, updateContact } from "@/app/crm/actions/contacts"
+import { createContact} from "@/app/crm/actions/contacts"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
@@ -29,28 +29,24 @@ const contactSchema = z.object({
 })
 type ContactFormData = z.infer<typeof contactSchema>
 
-export default function ContactForm({ contact = null }) {
+export default function ContactForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
 
-  const form = useForm({
-    resolver: zodResolver(contactSchema),
-    defaultValues: contact
-      ? {
-          ...contact,
-        }
-      : {
-          name: "",
-          title: "",
-          email: "",
-          phone: "",
-          expertise: "",
-          remarks: "",
-          companyId: "",
-        },
-  })
+const form = useForm<ContactFormData>({
+  resolver: zodResolver(contactSchema),
+  defaultValues: {
+    name: "",
+    title: "",
+    email: "",
+    phone: "",
+    expertise: "",
+    remarks: "",
+    companyId: 0,
+  },
+})
 
   // Fetch companies on component mount
   useEffect(() => {
@@ -72,36 +68,21 @@ const [companies, setCompanies] = useState<Company[]>([])
   }, [])
 
 async function onSubmit(data: ContactFormData) {
-    setIsSubmitting(true)
-
-    try {
-      if (contact) {
-        const result = await updateContact(contact.id, data)
-
-        if (result.error) {
-          form.setError("root", { message: result.error })
-          return
-        }
-
-        router.push(`/crm/contacts/${contact.id}`)
-      } else {
-        // Create new contact
-        const result = await createContact(data)
-
-        if (result.error) {
-          form.setError("root", { message: result.error })
-          return
-        }
-
-        router.push(`/crm/contacts`)
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      form.setError("root", { message: "An unexpected error occurred" })
-    } finally {
-      setIsSubmitting(false)
+  setIsSubmitting(true)
+  try {
+    const result = await createContact(data)
+    if (result.error) {
+      form.setError("root", { message: result.error })
+      return
     }
+    router.push(`/crm/contacts`)
+  } catch (error) {
+    console.error("Error submitting form:", error)
+    form.setError("root", { message: "An unexpected error occurred" })
+  } finally {
+    setIsSubmitting(false)
   }
+}
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

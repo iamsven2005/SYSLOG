@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { readFile } from "fs/promises"
 import path from "path"
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { ip: string; filename: string } }
-) {
-  const { ip, filename } = params
-
+export async function GET(request: NextRequest, { params }: { params: Promise<{ ip: string, filename:string }> }) {
+  const filename = (await params).filename
+  const ip = (await params).ip
   // Validate IP
   if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) {
     return new NextResponse("Invalid IP address format", { status: 400 })

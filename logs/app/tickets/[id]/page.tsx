@@ -6,7 +6,8 @@ import { Suspense } from "react"
 import { getCurrentUser } from "@/app/login/actions"
 import { checkUserPermission } from "@/app/permissions/permission-actions"
 
-export default async function TicketPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const ticketId = Number.parseInt(params.id)
 
   if (isNaN(ticketId)) {
@@ -32,7 +33,7 @@ export default async function TicketPage({ params }: { params: { id: string } })
   return (
     <div className="container py-6">
       <Suspense fallback={<TicketDetailSkeleton />}>
-        <TicketDetail ticket={ticket} assignableUsers={assignableUsers} currentUser={currentUser}/>
+        <TicketDetail ticket={ticket} assignableUsers={assignableUsers} currentUser={currentUser} />
       </Suspense>
     </div>
   )

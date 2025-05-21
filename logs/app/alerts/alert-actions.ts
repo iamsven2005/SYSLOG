@@ -288,21 +288,17 @@ export async function createAlertEvent(conditionId: number, notes?: string) {
 // Resolve an alert event
 export async function resolveAlertEvent(id: number, notes?: string) {
   try {
-    // First, get the current alert event to access its notes
-
     const currentAlert = await db.alertEvent.findUnique({
       where: { id },
       select: { notes: true },
     })
 
-    // Prepare the updated notes
     const updatedNotes = notes
       ? currentAlert?.notes
         ? `${currentAlert.notes}\n\nResolution notes: ${notes}`
         : `Resolution notes: ${notes}`
       : currentAlert?.notes
 
-    // Now update the alert event with the combined notes
     const alertEvent = await db.alertEvent.update({
       where: { id },
       data: {
@@ -315,7 +311,6 @@ export async function resolveAlertEvent(id: number, notes?: string) {
       },
     })
 
-    // Log the activity
     await logActivity({
       actionType: "Resolved Alert",
       targetType: "AlertEvent",
@@ -324,11 +319,14 @@ export async function resolveAlertEvent(id: number, notes?: string) {
     })
 
     revalidatePath("/alerts")
+
     return { success: true, alertEvent }
   } catch (error) {
     console.error("Error resolving alert event:", error)
+    return { success: false, error: "Failed to resolve alert event" }
   }
 }
+
 
 // Get all alert events with pagination and filtering
 export async function getAlertEvents(
@@ -341,30 +339,17 @@ export async function getAlertEvents(
 ) {
   try {
     const { resolved, conditionId, page = 1, pageSize = 10 } = params
-    const where: {
-      resolved?: boolean
-      conditionId?: number
-    } = {}
-    if (resolved !== undefined) {
-      where.resolved = resolved
-    }
+    const where: { resolved?: boolean; conditionId?: number } = {}
 
-    if (conditionId) {
-      where.conditionId = conditionId
-    }
+    if (resolved !== undefined) where.resolved = resolved
+    if (conditionId) where.conditionId = conditionId
 
-    // Get total count for pagination
     const totalCount = await db.alertEvent.count({ where })
 
-    // Get alert events with pagination
     const alertEvents = await db.alertEvent.findMany({
       where,
-      include: {
-        alertCondition: true,
-      },
-      orderBy: {
-        triggeredAt: "desc",
-      },
+      include: { alertCondition: true },
+      orderBy: { triggeredAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
     })
@@ -376,8 +361,14 @@ export async function getAlertEvents(
     }
   } catch (error) {
     console.error("Error fetching alert events:", error)
+    return {
+      alertEvents: [],
+      totalCount: 0,
+      pageCount: 0,
+    }
   }
 }
+
 // Get a single alert event by ID
 export async function getAlertEvent(id: number) {
   try {

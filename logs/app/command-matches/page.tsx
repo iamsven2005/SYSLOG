@@ -10,12 +10,13 @@ import { checkUserPermission } from "../permissions/permission-actions"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
-
-export default async function CommandMatchesPage({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: { tab?: string; page?: string }
+  searchParams: Promise<{ tab?: string; page?: string }>
 }) {
+  const resolvedParams = await searchParams
+
   const currentUser = await getCurrentUser()
   if (!currentUser) {
     redirect("/login")
@@ -25,8 +26,8 @@ export default async function CommandMatchesPage({
   if (perm.hasPermission === false) {
     return notFound()
   }
-  const tab = searchParams.tab || "unaddressed"
-  const page = Number.parseInt(searchParams.page || "1", 10)
+  const tab = resolvedParams.tab || "unaddressed"
+  const page = Number.parseInt(resolvedParams.page || "1", 10)
   const pageSize = 10
 
   const response = await getCommandMatches({

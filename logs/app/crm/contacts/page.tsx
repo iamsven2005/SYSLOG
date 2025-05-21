@@ -9,11 +9,12 @@ import ContactListSkeleton from "../components/skeletons/contact-list-skeleton"
 export default async function ContactsPage({
   searchParams,
 }: {
-  searchParams: { search?: string }
+      searchParams: Promise< { search?: string }>
+  
 }) {
   const { contacts, error } = await getContacts()
 
-  const search = searchParams.search?.toLowerCase() || ""
+  const search = (await searchParams).search?.toLowerCase() || ""
 
   const filteredContacts = search
     ? contacts?.filter((c) =>
@@ -43,7 +44,7 @@ export default async function ContactsPage({
             name="search"
             placeholder="Search contacts..."
             className="w-full pl-8"
-            defaultValue={searchParams.search || ""}
+            defaultValue={(await searchParams).search || ""}
           />
         </form>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { useState, useEffect, useCallback } from "react"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -34,9 +34,17 @@ const timeRangeOptions = [
   { label: "Last 24 Hours", value: "24h" },
   { label: "Last 7 Days", value: "7d" },
 ]
+export interface UsageDataPoint {
+  timestamp: string
+  [device: string]: MetricValue | string
+}
 
+type MetricValue = {
+  cpu: number
+  mem: number
+}
 export default function UsageChart() {
-  const [chartData, setChartData] = useState<any[]>([])
+  const [chartData, setChartData] = useState<UsageDataPoint[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [timeRange, setTimeRange] = useState("24h")
   const [metricType, setMetricType] = useState("cpu") // "cpu" or "mem"
@@ -44,14 +52,14 @@ export default function UsageChart() {
   const [selectedDevices, setSelectedDevices] = useState<string[]>([])
   const [deviceFilterOpen, setDeviceFilterOpen] = useState(false)
 
-  const fetchUsageData = async () => {
+  const fetchUsageData = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getDeviceUsageData(timeRange);
-  
+
       if (data && data.timeSeriesData) {
         setChartData(data.timeSeriesData);
-  
+
         // Extract unique devices safely
         const uniqueDevices = Array.from(
           new Set(
@@ -60,7 +68,7 @@ export default function UsageChart() {
             )
           )
         );
-  
+
         // Set devices and ensure all are selected by default
         setDevices(uniqueDevices as string[]);
         setSelectedDevices(uniqueDevices as string[]);
@@ -78,8 +86,8 @@ export default function UsageChart() {
     } finally {
       setIsLoading(false);
     }
-  };
-  
+  }, [timeRange])
+
 
   // Handle device selection for filtering
   const handleDeviceSelect = (value: string) => {
@@ -103,7 +111,8 @@ export default function UsageChart() {
   // Load data on initial render and when time range changes
   useEffect(() => {
     fetchUsageData()
-  }, [timeRange])
+  }, [fetchUsageData])
+
 
   // Format timestamp for display
   const formatXAxis = (timestamp: string) => {
@@ -120,17 +129,17 @@ export default function UsageChart() {
   }
 
   // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background border rounded-md shadow-md p-3">
-          <p className="text-sm font-medium">{new Date(label).toLocaleString()}</p>
+          <p className="text-sm font-medium">{new Date(label as string).toLocaleString()}</p>
           <div className="mt-2 space-y-1">
-            {payload.map((entry: any, index: number) => (
+            {payload.map((entry, index) => (
               <div key={index} className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
                 <span className="text-sm">{entry.name}:</span>
-                <span className="text-sm font-medium">{entry.value.toFixed(1)}%</span>
+                <span className="text-sm font-medium">{Number(entry.value).toFixed(1)}%</span>
               </div>
             ))}
           </div>
@@ -148,7 +157,10 @@ export default function UsageChart() {
     }
 
     try {
-      const exportData = prepareChartDataForExport(chartData, metricType)
+      const exportData = prepareChartDataForExport(
+        chartData,
+        metricType === "cpu" ? "usage" : "memory"
+      )
       exportToExcel(exportData, `device-usage-${metricType}-${timeRange}`)
       toast.success("Data exported successfully")
     } catch (error) {

@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createContact, updateContact } from "@/app/crm/actions/contacts"
 import { getCompanies } from "../actions/companies"
+import { Company, ContactPerson } from "@/prisma/generated/main"
 
 const contactSchema = z.object({
   name: z.string().min(2, { message: "Contact name must be at least 2 characters." }),
@@ -22,28 +23,34 @@ const contactSchema = z.object({
   remarks: z.string().optional(),
   companyId: z.coerce.number(),
 })
-
-export default function ContactForm({ contact = null }) {
+interface ContactFormProps {
+  contact?: Partial<z.infer<typeof contactSchema>> | null
+}
+type CompanyWithContactsAndCounts = Company & {
+  contacts: ContactPerson[]
+  _count: {
+    contacts: number
+    projects: number
+  }
+}
+export default function ContactForm({ contact = null }: ContactFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [companies, setCompanies] = useState([])
+  const [companies, setCompanies] = useState<CompanyWithContactsAndCounts[]>([])
   const [loading, setLoading] = useState(true)
 
   const form = useForm({
     resolver: zodResolver(contactSchema),
-    defaultValues: contact
-      ? {
-          ...contact,
-        }
-      : {
-          name: "",
-          title: "",
-          email: "",
-          phone: "",
-          expertise: "",
-          remarks: "",
-          companyId: "",
-        },
+    defaultValues: {
+      name: "",
+      title: "",
+      email: "",
+      phone: "",
+      expertise: "",
+      remarks: "",
+      companyId: 0,
+      ...contact,
+    },
   })
 
   // Fetch companies on component mount
@@ -64,20 +71,24 @@ export default function ContactForm({ contact = null }) {
 
     fetchCompanies()
   }, [])
+  type ContactFormData = z.infer<typeof contactSchema>
 
-  async function onSubmit(data) {
+  async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true)
 
     try {
       if (contact) {
-        const result = await updateContact(contact.id, data)
+        if (!contact.companyId) {
+          throw new Error("Missing companyId")
+        }
+        const result = await updateContact(contact.companyId, data)
 
         if (result.error) {
           form.setError("root", { message: result.error })
           return
         }
 
-        router.push(`/crm/contacts/${contact.id}`)
+        router.push(`/crm/contacts/${contact.companyId}`)
       } else {
         // Create new contact
         const result = await createContact(data)

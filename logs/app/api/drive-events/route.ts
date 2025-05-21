@@ -1,17 +1,12 @@
 import { NextRequest } from "next/server"
+import { addClient, broadcastChange, createSSEStream } from "./driveEvents"
 
-type SSEPush = (data: string) => void
-
-let clients: SSEPush[] = []
 export async function GET(req: NextRequest) {
   const { readable, push } = createSSEStream()
 
-  // Add this client to listeners
-  clients.push(push)
+  const removeClient = addClient(push)
 
-  req.signal.addEventListener("abort", () => {
-    clients = clients.filter(c => c !== push)
-  })
+  req.signal.addEventListener("abort", removeClient)
 
   return new Response(readable, {
     headers: {
@@ -22,29 +17,8 @@ export async function GET(req: NextRequest) {
   })
 }
 
-// Notify all connected clients
-export function broadcastChange(data: unknown) {
-  clients.forEach((push) => push(JSON.stringify(data)))
-}
 export async function POST(req: NextRequest) {
   const data = await req.json()
   broadcastChange(data)
   return new Response("OK")
-}
-
-
-export function createSSEStream() {
-  let controller: ReadableStreamDefaultController
-
-  const readable = new ReadableStream({
-    start(c) {
-      controller = c
-    },
-  })
-
-  const push = (data: string) => {
-    controller.enqueue(`data: ${data}\n\n`)
-  }
-
-  return { readable, push }
 }

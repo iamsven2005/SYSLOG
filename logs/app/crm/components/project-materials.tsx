@@ -45,7 +45,7 @@ export default function ProjectMaterials({ projectId, materials }: ProjectMateri
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState("")
   const [assignDialogOpen, setAssignDialogOpen] = useState(false)
-  const [materialToAssign, setMaterialToAssign] = useState<Material | null>(null)
+  const [materialToAssign] = useState<Material | null>(null)
 
   const handleDeleteClick = (material: Material) => {
     setMaterialToDelete(material)

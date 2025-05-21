@@ -5,7 +5,7 @@ import { getCurrentUser } from "../login/actions"
 import { checkUserPermission } from "../permissions/permission-actions"
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string
     category?: string
     pubYearFrom?: string
@@ -17,30 +17,34 @@ interface PageProps {
     hasAttachment?: string
     page?: string
     pageSize?: string
-  }
+  }>
 }
+export default async function Page({ searchParams }: { searchParams: PageProps["searchParams"] }) {
+  const resolvedParams = await searchParams
 
-export default async function Page({ searchParams }: PageProps) {
   const currentUser = await getCurrentUser()
   if (!currentUser) {
     redirect("/login")
   }
+
   const perm = await checkUserPermission(currentUser.id, "/library")
-  if (perm.hasPermission === false) {
+  if (!perm.hasPermission) {
     return notFound()
   }
+
   const isAdmin = currentUser.role.includes("admin")
-  const page = searchParams.page ? Number.parseInt(searchParams.page) : 1
-  const pageSize = Number(searchParams.pageSize || "10")
-  const search = searchParams.search || ""
-  const category = searchParams.category || ""
-  const pubYearFrom = searchParams.pubYearFrom ? Number.parseInt(searchParams.pubYearFrom) : undefined
-  const pubYearTo = searchParams.pubYearTo ? Number.parseInt(searchParams.pubYearTo) : undefined
-  const creationDateFrom = searchParams.creationDateFrom ? new Date(searchParams.creationDateFrom) : undefined
-  const creationDateTo = searchParams.creationDateTo ? new Date(searchParams.creationDateTo) : undefined
-  const sortBy = searchParams.sortBy || "refNo"
-  const sortOrder = searchParams.sortOrder || "asc"
-  const hasAttachment = searchParams.hasAttachment ? searchParams.hasAttachment === "true" : undefined
+
+  const page = resolvedParams.page ? parseInt(resolvedParams.page) : 1
+  const pageSize = parseInt(resolvedParams.pageSize || "10")
+  const search = resolvedParams.search || ""
+  const category = resolvedParams.category || ""
+  const pubYearFrom = resolvedParams.pubYearFrom ? parseInt(resolvedParams.pubYearFrom) : undefined
+  const pubYearTo = resolvedParams.pubYearTo ? parseInt(resolvedParams.pubYearTo) : undefined
+  const creationDateFrom = resolvedParams.creationDateFrom ? new Date(resolvedParams.creationDateFrom) : undefined
+  const creationDateTo = resolvedParams.creationDateTo ? new Date(resolvedParams.creationDateTo) : undefined
+  const sortBy = resolvedParams.sortBy || "refNo"
+  const sortOrder = resolvedParams.sortOrder === "desc" ? "desc" : "asc"
+  const hasAttachment = resolvedParams.hasAttachment ? resolvedParams.hasAttachment === "true" : undefined
 
   const { entries, total, totalPages } = await getLibraryEntries(
     page,
@@ -52,7 +56,7 @@ export default async function Page({ searchParams }: PageProps) {
     creationDateFrom,
     creationDateTo,
     sortBy,
-    sortOrder as "asc" | "desc",
+    sortOrder,
     hasAttachment,
   )
 
@@ -67,4 +71,3 @@ export default async function Page({ searchParams }: PageProps) {
     />
   )
 }
-

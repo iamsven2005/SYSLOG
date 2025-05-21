@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/utils"
 import { ShoppingBag } from "lucide-react"
-
-export default function EquipmentLoans({ loans = [] }) {
+import { Company, EquipmentLoan, Project } from "@/prisma/generated/main"
+type ex = EquipmentLoan & {
+  project: Project
+  company: Company
+}
+export default function EquipmentLoans({ loans = [] }: {loans: ex[]}) {
   return (
     <Card>
       <CardHeader>

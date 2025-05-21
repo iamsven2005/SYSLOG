@@ -13,6 +13,11 @@ export async function GET(request: NextRequest) {
 
     // Get all alert conditions
     const conditions = await getAlertConditions()
+    if (!conditions) {
+      console.error("No alert conditions returned")
+      return NextResponse.json({ error: "No alert conditions found" }, { status: 500 })
+    }
+
     console.log(`Found ${conditions.length} alert conditions to evaluate`)
 
     // Evaluate each condition
@@ -39,13 +44,20 @@ export async function GET(request: NextRequest) {
         }
 
         const evaluation = await evaluateAlertCondition(condition.id)
-
+        if (!evaluation) {
+          console.error("No alert evaluation returned")
+          return NextResponse.json({ error: "No alert evaluation found" }, { status: 500 })
+        }
         // Create an actual alert event if requested and condition is triggered
         let alertEventId = null
         if (createEvents && evaluation.shouldTrigger) {
           try {
             const notes = `Alert triggered by debug check: ${evaluation.data?.reason || "Condition met"}`
             const result = await createAlertEvent(condition.id, notes)
+            if (!result) {
+              console.error("No alert result returned")
+              return NextResponse.json({ error: "No alert result found" }, { status: 500 })
+            }
             alertEventId = result.alertEvent.id
             console.log(`Created alert event ${alertEventId} for condition ${condition.id}`)
           } catch (eventError) {

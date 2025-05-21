@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import { diskmetric } from "@/prisma/generated/main"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {

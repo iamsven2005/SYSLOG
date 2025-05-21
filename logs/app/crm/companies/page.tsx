@@ -19,9 +19,10 @@ import { CompanyType } from "@/prisma/generated/main"
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: { type?: CompanyType }
+    searchParams: Promise<{ type?: CompanyType }>
+
 }) {
-  const type = searchParams.type
+  const type = (await searchParams).type
   const { companies, error } = await getCompanies(type ? { type } : undefined)
 
   return (

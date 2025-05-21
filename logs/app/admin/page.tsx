@@ -10,7 +10,7 @@ import MemoryUsageChart from "./memory-usage-chart"
 import SensorChart from "./sensor-chart"
 import DiskUsageChart from "./disk-usage-chart"
 
-export default function LogsPage({ userId }: {userId: number}) {
+export default function LogsPage() {
   const [isBackingUp, setIsBackingUp] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
   async function sendEmail() {
@@ -39,12 +39,12 @@ export default function LogsPage({ userId }: {userId: number}) {
     try {
       if (dbType === "both") {
         // Call both endpoints sequentially
-        const mainResponse = await fetch("/api/backup", { method: "POST" })
+        const mainResponse = await fetch("/api/backup")
         const mainData = await mainResponse.json()
 
         if (!mainResponse.ok) throw new Error(mainData.message || "Main database backup failed")
 
-        const vectorResponse = await fetch("/api/backup2", { method: "POST" })
+        const vectorResponse = await fetch("/api/backup2")
         const vectorData = await vectorResponse.json()
 
         if (!vectorResponse.ok) throw new Error(vectorData.message || "Vector database backup failed")
@@ -74,7 +74,7 @@ export default function LogsPage({ userId }: {userId: number}) {
       } else {
         // Original logic for single database backup
         const endpoint = dbType === "main" ? "/api/backup" : "/api/backup2"
-        const response = await fetch(endpoint, { method: "POST" })
+        const response = await fetch(endpoint)
         const data = await response.json()
 
         if (!response.ok) throw new Error(data.message || "Backup failed")
@@ -93,17 +93,20 @@ export default function LogsPage({ userId }: {userId: number}) {
           document.body.removeChild(link)
         }
       }
-    } catch (error) {
-      console.error("Backup error:", error)
-      toast.error(
-        `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} backup failed.`,
-        {
-          description: error.message,
-        },
-      )
-    } finally {
-      setIsBackingUp(false)
-    }
+   } catch (error) {
+  console.error("Backup error:", error)
+
+  const message =
+    error instanceof Error ? error.message : "An unknown error occurred"
+
+  toast.error(
+    `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} backup failed.`,
+    {
+      description: message,
+    },
+  )
+}
+
   }
 
   const handleRestoreDatabase = async (dbType = "both") => {
@@ -136,17 +139,22 @@ export default function LogsPage({ userId }: {userId: number}) {
           description: `Restored from: ${data.latestBackup}`,
         })
       }
-    } catch (error) {
-      console.error("Restore error:", error)
-      toast.error(
-        `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} restore failed.`,
-        {
-          description: error.message,
-        },
-      )
-    } finally {
-      setIsRestoring(false)
+} catch (error) {
+  console.error("Restore error:", error)
+
+  const errorMessage =
+    error instanceof Error ? error.message : "An unknown error occurred."
+
+  toast.error(
+    `${dbType === "both" ? "All databases" : dbType === "main" ? "Main database" : "Vector database"} restore failed.`,
+    {
+      description: errorMessage,
     }
+  )
+} finally {
+  setIsRestoring(false)
+}
+
   }
   const handleRefreshData = () => {
     // Refresh data logic here
@@ -157,7 +165,6 @@ export default function LogsPage({ userId }: {userId: number}) {
     <div className="container py-10 px-4 md:px-6">
       <DatabaseStatusBar onRetry={handleRefreshData} className="mb-6" />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Logs {userId}</h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <DropdownMenu>

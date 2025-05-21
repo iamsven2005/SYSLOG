@@ -173,24 +173,26 @@ const fieldNameWatch = useWatch({ control: form.control, name: "fieldName" })
 
 useEffect(() => {
   const shouldBeText = isTextBasedField(sourceTable, fieldNameWatch)
+
+  // Only reset comparator if the text/numeric nature changes
+  setIsTextBasedCondition((prev) => {
+    if (prev !== shouldBeText) {
+      form.setValue("comparator", "")
+    }
+    return shouldBeText
+  })
+}, [sourceTable, fieldNameWatch, form])
+
+
+useEffect(() => {
+  const currentTable = form.getValues("sourceTable")
+  const currentField = form.getValues("fieldName")
+  const shouldBeText = isTextBasedField(currentTable, currentField)
+
   form.setValue("comparator", "")
   setIsTextBasedCondition(shouldBeText)
-}, [fieldNameWatch, sourceTable, form])
+}, [form])
 
-
-  // Update available comparators when field name changes
-  useEffect(() => {
-    const currentTable = form.getValues("sourceTable")
-    const currentField = form.getValues("fieldName")
-
-    if (currentField) {
-      // Reset comparator when field name changes
-      form.setValue("comparator", "")
-
-      // Check if we need to update the isTextBasedCondition state
-      setIsTextBasedCondition(isTextBasedField(currentTable, currentField))
-    }
-  }, [form.watch("fieldName")])
 
   // Handle form submission
   async function onSubmit(values: z.infer<typeof formSchema>) {

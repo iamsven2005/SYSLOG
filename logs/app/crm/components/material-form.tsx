@@ -10,6 +10,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createMaterial, updateMaterial } from "@/app/crm/actions/materials"
+import { BridgeMaterial, BridgeProject, Company, MaterialOrder, Project } from "@/prisma/generated/main"
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -18,8 +19,22 @@ const formSchema = z.object({
   unit: z.string().min(1, "Unit is required"),
   estimatedCost: z.coerce.number().optional(),
 })
-
-export default function MaterialForm({ projectId, material = null }) {
+type MaterialWithBridgeProject = BridgeMaterial & {
+  bridgeProject?: {
+    id: number
+  } | null
+}
+export type ExtendedMaterial = BridgeMaterial & {
+  bridgeProject: (BridgeProject & { project: Project }) | null
+  orders: (MaterialOrder & { vendor: Company })[]
+}
+export default function MaterialForm({
+  projectId,
+  material = null,
+}: {
+  projectId: number
+  material?: MaterialWithBridgeProject | null
+}) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!material
@@ -28,19 +43,20 @@ export default function MaterialForm({ projectId, material = null }) {
     resolver: zodResolver(formSchema),
     defaultValues: material
       ? {
-          name: material.name,
-          specification: material.specification || "",
-          quantity: material.quantity,
-          unit: material.unit,
-          estimatedCost: material.estimatedCost || undefined,
-        }
+        name: material.name,
+        specification: material.specification || "",
+        quantity: material.quantity,
+        unit: material.unit,
+        estimatedCost: material.estimatedCost ? Number(material.estimatedCost) : undefined,
+      }
       : {
-          name: "",
-          specification: "",
-          quantity: 0,
-          unit: "",
-          estimatedCost: undefined,
-        },
+        name: "",
+        specification: "",
+        quantity: 0,
+        unit: "",
+        estimatedCost: undefined,
+      },
+
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -62,7 +78,8 @@ export default function MaterialForm({ projectId, material = null }) {
         }
       } else {
         // Create new material
-        const bridgeProjectId = material?.bridgeProject?.id || projectId
+        const bridgeProjectId = (material as unknown as MaterialWithBridgeProject)?.bridgeProject?.id || projectId
+
 
         const result = await createMaterial({
           bridgeProjectId,

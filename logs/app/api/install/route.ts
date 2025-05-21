@@ -5,8 +5,8 @@ import { readFile } from "fs/promises"
 import path from "path"
 
 export async function GET(req: NextRequest) {
-  // Get client IP
-  const rawIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.ip || "127.0.0.1"
+  // Get client IP from x-forwarded-for header
+  const rawIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1"
   const ip = rawIp.replace(/^::ffff:/, "")
 
   // Path to the bash script stored in /public/scripts/
@@ -15,8 +15,7 @@ export async function GET(req: NextRequest) {
   try {
     let script = await readFile(filePath, "utf8")
 
-    // Inject or replace a placeholder IP (optional if you want to use it)
-    // Example: Replace PLACEHOLDER_IP inside uninstall.sh
+    // Replace PLACEHOLDER_IP with client IP
     script = script.replace(/PLACEHOLDER_IP/g, ip)
 
     return new NextResponse(script, {

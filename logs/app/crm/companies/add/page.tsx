@@ -6,9 +6,9 @@ import {  ArrowLeft } from "lucide-react"
 import { getProject } from "@/app/crm/actions/projects"
 import { getCompanies } from "@/app/crm/actions/companies"
 import ProjectCompanyForm from "@/app/crm/components/project-company-form"
-
-export default async function AddCompanyToProjectPage({ params }: { params: { id: string } }) {
-  const projectId = Number.parseInt(params.id)
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = props.params
+  const projectId = Number.parseInt((await params).id)
   const { project, error: projectError } = await getProject(projectId)
   const { companies } = await getCompanies()
 

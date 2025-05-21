@@ -17,10 +17,11 @@ interface Message {
   createdAt: Date
   sender: {
     id: number
-    username: string
+    username: string | null
     email?: string | null
   }
 }
+
 
 export function MessageSearch({
   groupId,
@@ -117,7 +118,8 @@ export function MessageSearch({
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Avatar className="h-6 w-6">
-                      <AvatarFallback>{message.sender.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+<AvatarFallback>{(message.sender.username ?? "??").substring(0, 2).toUpperCase()}</AvatarFallback>
+<span className="font-medium text-sm">{message.sender.username ?? "Unknown"}</span>
                     </Avatar>
                     <span className="font-medium text-sm">{message.sender.username}</span>
                     <span className="text-xs text-muted-foreground">

@@ -18,6 +18,10 @@ export async function GET(request: NextRequest) {
 
     const results = await runAlertEvaluation()
 
+    if (!results || !Array.isArray(results.results)) {
+      console.warn("Unexpected result structure from runAlertEvaluation:", results)
+      return NextResponse.json({ error: "Unexpected result structure" }, { status: 500 })
+    }
     // Count triggered alerts
     const triggeredCount = results.results.filter((r) => r.triggered).length
     console.log(`Alert evaluation complete. Found ${triggeredCount} triggered alerts.`)

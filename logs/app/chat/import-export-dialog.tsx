@@ -34,41 +34,37 @@ export function ImportExportDialog({
   }
 
 const processFile = useCallback(async (file: File) => {
-    try {
-      setImporting(true)
-      setImportError(null)
+  try {
+    setImporting(true)
+    setImportError(null)
 
-      // Check file type
-      if (!file.name.endsWith(".xml")) {
-        throw new Error("Only XML files are supported")
-      }
-
-      // Read file content
-      const text = await file.text()
-
-      // Parse XML
-      const transcript = parseXMLTranscript(text)
-
-      if (!transcript.messages || transcript.messages.length === 0) {
-        throw new Error("No messages found in the XML file")
-      }
-
-      // Import messages
-      const result = await importXMLMessages(groupId, transcript.messages)
-
-      toast.success(`Successfully imported ${result.count} messages`)
-      onOpenChange(false)
-    } catch (error) {
-      console.error("Import error:", error)
-      setImportError(error instanceof Error ? error.message : "Failed to import XML file")
-      toast.error("Failed to import XML file")
-    } finally {
-      setImporting(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
+    if (!file.name.endsWith(".xml")) {
+      throw new Error("Only XML files are supported")
     }
-  }, [])
+
+    const text = await file.text()
+    const transcript = parseXMLTranscript(text)
+
+    if (!transcript.messages || transcript.messages.length === 0) {
+      throw new Error("No messages found in the XML file")
+    }
+
+    const result = await importXMLMessages(groupId, transcript.messages)
+
+    toast.success(`Successfully imported ${result.count} messages`)
+    onOpenChange(false)
+  } catch (error) {
+    console.error("Import error:", error)
+    setImportError(error instanceof Error ? error.message : "Failed to import XML file")
+    toast.error("Failed to import XML file")
+  } finally {
+    setImporting(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+}, [groupId, onOpenChange])
+
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

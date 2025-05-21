@@ -11,7 +11,7 @@ import { Plus } from "lucide-react"
 export default async function InteractionsPage({
   searchParams,
 }: {
-  searchParams: { type?: string; search?: string }
+        searchParams: Promise<{ type?: string; search?: string }>
 }) {
   const { interactions, error } = await getInteractions()
   const mappedInteractions = interactions?.map((i) => ({
@@ -36,13 +36,13 @@ export default async function InteractionsPage({
         </Button>
       </div>
 
-      <InteractionControls initialSearch={searchParams.search} initialType={searchParams.type} />
+      <InteractionControls initialSearch={(await searchParams).search} initialType={(await searchParams).type} />
 
       <Card>
         <CardHeader>
           <CardTitle>
-            {searchParams.type && searchParams.type !== "all"
-              ? `${searchParams.type} Interactions`
+            {(await searchParams).type && (await searchParams).type !== "all"
+              ? `${(await searchParams).type} Interactions`
               : "All Interactions"}
           </CardTitle>
           <CardDescription>Track communications with contractors, vendors, and other stakeholders</CardDescription>

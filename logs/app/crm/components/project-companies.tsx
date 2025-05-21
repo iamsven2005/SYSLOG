@@ -2,8 +2,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDate, formatCurrency } from "@/lib/utils"
-
-export default function ProjectCompanies({ project }) {
+import { Company, Project, ProjectCompanyLink } from "@/prisma/generated/main"
+type ProjectWithCompanies = Project & {
+  companies: (ProjectCompanyLink & { company: Company })[]
+}
+export default function ProjectCompanies({ project }: { project: ProjectWithCompanies }) {
   return (
     <Card>
       <CardHeader>
@@ -37,20 +40,22 @@ export default function ProjectCompanies({ project }) {
                     </Link>
                   </div>
                   <div>{link.role}</div>
-                  <div>{formatCurrency(link.contractValue)}</div>
-                  <div>{formatDate(link.startDate)}</div>
-                  <div>{formatDate(link.endDate)}</div>
+                  <div>
+                    {link.contractValue !== null ? formatCurrency(link.contractValue.toNumber()) : "N/A"}
+                  </div>
+                  <div>{link.startDate ? formatDate(link.startDate) : "N/A"}</div>
+                  <div>{link.endDate ? formatDate(link.endDate) : "N/A"}</div>
+
                   <div>
                     <span
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                        link.contractStatus === "ACTIVE"
-                          ? "bg-green-100 text-green-800"
-                          : link.contractStatus === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : link.contractStatus === "COMPLETED"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
-                      }`}
+                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${link.contractStatus === "ACTIVE"
+                        ? "bg-green-100 text-green-800"
+                        : link.contractStatus === "PENDING"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : link.contractStatus === "COMPLETED"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {link.contractStatus || "N/A"}
                     </span>

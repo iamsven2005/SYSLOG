@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
-import { Prisma } from "@/prisma/generated/main"
+import { devices, Prisma, SupportTicket, TicketAttachment, TicketComment, User } from "@/prisma/generated/main"
 import { getSession } from "@/lib/auth"
 
 // Types
@@ -156,36 +156,28 @@ export async function getTickets({
   }
 }
 
-// Get a single ticket by ID
-export async function getTicket(id: number) {
+interface ExtendedTicket extends SupportTicket {
+  relatedDevice?: devices | null
+  attachments: (TicketAttachment & { uploader: User })[]
+  createdBy: User
+  assignedTo?: User | null
+  comments: (TicketComment & {
+    attachments: TicketAttachment[]
+    user: User
+  })[]
+}
+
+export async function getTicket(id: number): Promise<ExtendedTicket | null> {
   try {
     const ticket = await db.supportTicket.findUnique({
       where: { id },
       include: {
-        assignedTo: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-          },
-        },
-        createdBy: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-          },
-        },
+        assignedTo: true,
+        createdBy: true,
         relatedDevice: true,
         comments: {
           include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
+            user: true,
             TicketAttachment: true,
           },
           orderBy: {
@@ -194,24 +186,18 @@ export async function getTicket(id: number) {
         },
         attachments: {
           include: {
-            uploader: {
-              select: {
-                id: true,
-                username: true,
-              },
-            },
+            uploader: true,
           },
         },
       },
     })
 
-    return ticket
+    return ticket as unknown as ExtendedTicket
   } catch (error) {
     console.error("Error fetching ticket:", error)
     throw new Error("Failed to fetch ticket")
   }
 }
-
 // Create a new ticket
 export async function createTicket(data: CreateTicketParams) {
   try {
@@ -744,12 +730,6 @@ export async function getTicketStats() {
 export async function getAssignableUsers() {
   try {
     const users = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        role: true,
-      },
       orderBy: {
         username: "asc",
       },

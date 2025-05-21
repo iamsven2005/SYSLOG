@@ -17,6 +17,7 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { getProjects } from "@/app/crm/actions/projects"
 import { getCompanies } from "@/app/crm/actions/companies"
+import { BridgeMaterial, BridgeProject, Company, ContactPerson, Project, ProjectType } from "@/prisma/generated/main"
 
 const materialOrderSchema = z.object({
   projectId: z.coerce.number(),
@@ -31,14 +32,33 @@ const materialOrderSchema = z.object({
   invoiceNumber: z.string().optional(),
   notes: z.string().optional(),
 })
+type BridgeProjectWithMaterials = BridgeProject & {
+  materials: BridgeMaterial[];
+};
 
+type ProjectWithExtras = Project & {
+  projectType: ProjectType | null;
+  bridgeProject: BridgeProjectWithMaterials | null;
+  _count: {
+    companies: number;
+  };
+};
+
+
+type CompanyWithContactsAndCount = Company & {
+  contacts: ContactPerson[];
+  _count: {
+    projects: number;
+    contacts: number;
+  };
+}
 export default function OrderForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [projects, setProjects] = useState([])
-  const [vendors, setVendors] = useState([])
-  const [materials, setMaterials] = useState([])
-  const [selectedProject, setSelectedProject] = useState(null)
+  const [projects, setProjects] = useState<ProjectWithExtras[]>([])
+const [vendors, setVendors] = useState<CompanyWithContactsAndCount[]>([])
+const [materials, setMaterials] = useState<BridgeMaterial[]>([]);
+const [selectedProject, setSelectedProject] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [noVendors, setNoVendors] = useState(false)
   const [noMaterials, setNoMaterials] = useState(false)
@@ -46,9 +66,9 @@ export default function OrderForm() {
   const form = useForm({
     resolver: zodResolver(materialOrderSchema),
     defaultValues: {
-      projectId: "",
-      materialId: "",
-      vendorId: "",
+      projectId: 0,
+      materialId: 0,
+      vendorId: 0,
       orderDate: new Date(),
       deliveryDate: undefined,
       status: "PLANNED",
@@ -102,9 +122,9 @@ export default function OrderForm() {
   }, [])
 
   // Fetch materials when project changes
-  async function fetchMaterialsForProject(projectId) {
-    try {
-      setSelectedProject(projectId)
+async function fetchMaterialsForProject(projectId: string) {
+  try {
+    setSelectedProject(projectId)
       // In a real app, this would be an API call
       // For now, we'll simulate it by filtering projects
       const project = projects.find((p) => p.id === Number.parseInt(projectId))
@@ -117,23 +137,15 @@ export default function OrderForm() {
       ) {
         setMaterials(project.bridgeProject.materials)
         setNoMaterials(false)
-      } else {
-        // Simulate API call
-        const dummyMaterials = [
-          { id: 1, name: "Structural Steel", specification: "ASTM A992", unit: "tons" },
-          { id: 2, name: "Concrete", specification: "5000 PSI", unit: "cubic yards" },
-          { id: 3, name: "Rebar", specification: "Grade 60", unit: "tons" },
-        ]
-        setMaterials(dummyMaterials)
-        setNoMaterials(true)
       }
     } catch (error) {
       console.error("Error fetching materials:", error)
       setNoMaterials(true)
     }
   }
+type MaterialOrderFormValues = z.infer<typeof materialOrderSchema>
 
-  async function onSubmit(data) {
+  async function onSubmit(data: MaterialOrderFormValues) {
     setIsSubmitting(true)
 
     try {
@@ -423,9 +435,18 @@ export default function OrderForm() {
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting || loading || noVendors || (noMaterials && selectedProject)}>
-            {isSubmitting ? "Creating..." : "Create Order"}
-          </Button>
+<Button
+  type="submit"
+  disabled={
+    isSubmitting ||
+    loading ||
+    noVendors ||
+    (noMaterials && selectedProject !== null)
+  }
+>
+  {isSubmitting ? "Creating..." : "Create Order"}
+</Button>
+
         </div>
       </form>
     </Form>

@@ -6,16 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { WorkflowSteps } from "../workflow-steps"
 import { getWorkflowById } from "../actions"
 import { WorkflowStepsSkeleton } from "../workflow-steps-skeleton"
+export default async function Page(props: { params: Promise<{ id: string }> }) {
 
-export default async function WorkflowDetailPage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const { id } = params
-  const { success, data: workflow, error } = await getWorkflowById(id)
 
-  if (!success) {
+  const { id } = await props.params; // ✅ await the promise
+  const { success, data, error } = await getWorkflowById(id)
+
+  if (!success || !data) {
     return (
       <div className="container py-10">
         <div className="p-4 border rounded-md bg-destructive/10 text-destructive">
@@ -24,6 +21,7 @@ export default async function WorkflowDetailPage({
       </div>
     )
   }
+  const workflow = data; // ✅ TypeScript now knows it's defined
 
   return (
     <div className="container py-10">

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge"
 
 interface User {
   id: number
-  username: string
+  username: string | null
   email?: string | null
   role?: string[]
 }
@@ -26,9 +26,10 @@ interface Message {
   createdAt: Date
   sender: {
     id: number
-    username: string
+    username: string | null
   }
 }
+
 
 interface GroupMember {
   id: number
@@ -208,9 +209,8 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                 return (
                   <div
                     key={group.id}
-                    className={`p-2 rounded-md cursor-pointer mb-1 ${
-                      isActive ? "bg-primary/10 dark:bg-blue-900/30" : "hover:bg-muted/50 dark:hover:bg-gray-700"
-                    }`}
+                    className={`p-2 rounded-md cursor-pointer mb-1 ${isActive ? "bg-primary/10 dark:bg-blue-900/30" : "hover:bg-muted/50 dark:hover:bg-gray-700"
+                      }`}
                     onClick={() => handleSelectGroup(group.id)}
                   >
                     <div className="flex items-center gap-3">
@@ -223,7 +223,7 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                         <div className="font-medium truncate dark:text-white">{group.name}</div>
                         {lastMessage && (
                           <div className="text-xs text-muted-foreground truncate dark:text-gray-400">
-                            <span className="font-medium">{lastMessage.sender.username}:</span> {lastMessage.content}
+                            <span className="font-medium">{lastMessage.sender.username ?? "Unknown"}:</span>
                           </div>
                         )}
                         {groupRoles.length > 0 && (

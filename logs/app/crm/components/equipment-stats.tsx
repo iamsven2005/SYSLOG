@@ -1,8 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PenToolIcon as Tool, ShoppingBag, AlertTriangle, Wrench } from "lucide-react"
+export type EquipmentStats = {
+  totalEquipment: number
+  statusBreakdown: {
+    status: string
+    count: number
+  }[]
+  conditionBreakdown: {
+    condition: string
+    count: number
+  }[]
+  categoryBreakdown: {
+    category: string
+    count: number
+  }[]
+  activeLoans: number
+  scheduledMaintenance: number
+  error?: string
+}
+type EquipmentStatsWithError = EquipmentStats | { error: string }
 
-export default function EquipmentStats({ stats }) {
-  if (!stats || stats.error) {
+export default function EquipmentStats({ stats }: {stats:  EquipmentStatsWithError}) {
+if (!stats || "error" in stats) {
     return (
       <>
         <Card>

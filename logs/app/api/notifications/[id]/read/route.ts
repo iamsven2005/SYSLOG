@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getCurrentUser } from "@/app/login/actions"
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const user = await getCurrentUser()
 
@@ -10,7 +10,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const notificationId = Number.parseInt(params.id)
+    const notificationId = Number.parseInt((await params).id)
 
     if (isNaN(notificationId)) {
       return NextResponse.json({ error: "Invalid notification ID" }, { status: 400 })

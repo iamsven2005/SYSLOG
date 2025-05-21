@@ -184,6 +184,7 @@ model User {
   password            String
   email               String?               @unique
   role                String[]
+  roles               Roles[]               @relation("UserRoles")
   Mobile              Int?
   Pay                 Int?
   PrimaryContact      String?
@@ -279,8 +280,9 @@ model UserEmailTemplate {
 
 model Roles {
   id          Int    @id @default(autoincrement())
-  name        String
+  name        String @unique
   description String
+  users       User[] @relation("UserRoles")
 }
 
 model Notification {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -40,9 +40,20 @@ type DiskMetricPoint = {
   timestamp: string
   [key: string]: number | string
 }
+type DiskData = {
+  totalgb: number
+  usedgb: number
+  freegb: number
+  usedPercent: number
+  label?: string | null
+}
 
 
 
+
+type Entry = NonNullable<TooltipProps<number, string>["payload"]>[number] & {
+  diskName: string
+}
 export default function DiskUsageChart() {
   const [chartData, setChartData] = useState<diskmetric[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -75,13 +86,12 @@ export default function DiskUsageChart() {
   }
 
   // Fetch disk usage data
-  const fetchDiskUsageData = async () => {
+  const fetchDiskUsageData = useCallback(async () => {
     setIsLoading(true)
     try {
       const data = await getDiskUsageData(timeRange)
       setChartData(data.timeSeriesData)
 
-      // Extract unique disks and hosts
       const uniqueDisks = new Set<string>()
       const uniqueHosts = new Set<string>()
 
@@ -97,16 +107,13 @@ export default function DiskUsageChart() {
 
       setDisks(Array.from(uniqueDisks))
 
-      // Set hosts and default to all hosts selected
       const hostsList = Array.from(uniqueHosts)
       setHosts(hostsList)
 
-      // If no hosts are selected yet, select all by default
       if (selectedHosts.length === 0 && hostsList.length > 0) {
         setSelectedHosts([...hostsList])
       }
 
-      // If no disks are selected yet, select all by default
       if (selectedDisks.length === 0 && uniqueDisks.size > 0) {
         setSelectedDisks(Array.from(uniqueDisks))
       }
@@ -116,7 +123,7 @@ export default function DiskUsageChart() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [timeRange, selectedDisks.length, selectedHosts.length])
 
   // Handle disk selection for filtering
   const handleDiskSelect = (value: string) => {
@@ -139,7 +146,7 @@ export default function DiskUsageChart() {
   // Load data on initial render and when time range changes
   useEffect(() => {
     fetchDiskUsageData()
-  }, [timeRange, viewMode, fetchDiskUsageData])
+  }, [fetchDiskUsageData])
 
 
   // Format timestamp for display
@@ -157,7 +164,7 @@ export default function DiskUsageChart() {
   }
 
   // Get color for a host
-  const getHostColor = (host: string, index: number) => {
+  const getHostColor = (host: string) => {
     const hostIndex = hosts.indexOf(host)
     return HOST_COLORS[hostIndex % HOST_COLORS.length]
   }
@@ -167,11 +174,14 @@ export default function DiskUsageChart() {
 
     if (active && payload && payload.length) {
       // Group by host
-      const hostGroups = payload.reduce((groups: any, entry: any) => {
-        const [host, diskName] = entry.dataKey.split("|")
+      const hostGroups = payload.reduce<Record<string, (Entry & { diskName: string })[]>>((groups, entry) => {
+        if (!entry.dataKey) return groups
+
+        const [host, diskName] = String(entry.dataKey).split("|")
         if (!groups[host]) {
           groups[host] = []
         }
+
         groups[host].push({
           ...entry,
           diskName,
@@ -183,11 +193,11 @@ export default function DiskUsageChart() {
         <div className="bg-background border rounded-md shadow-md p-3">
           <p className="text-sm font-medium">{new Date(label).toLocaleString()}</p>
 
-          {Object.entries(hostGroups).map(([host, entries]: [string, any]) => (
+          {Object.entries(hostGroups).map(([host, entries]: [string, Entry[]]) => (
             <div key={host} className="mt-2">
               <p className="text-xs font-semibold border-b pb-1 mb-1">{host}</p>
               <div className="space-y-1">
-                {entries.map((entry: any, index: number) => {
+                {entries.map((entry: Entry, index: number) => {
                   const value = entry.value
                   const unit = viewMode === "percent" ? "%" : "GB"
 
@@ -218,27 +228,28 @@ export default function DiskUsageChart() {
     // Create a new array with the same timestamps
     return chartData.map((dataPoint) => {
       const newPoint: DiskMetricPoint = { timestamp: dataPoint.timestamp.toISOString() }
+const pointWithDynamicKeys = dataPoint as unknown as Record<string, DiskData | Date>
 
-      // For each disk, add data points if the host is selected
       Object.keys(dataPoint).forEach((key) => {
         if (key !== "timestamp" && key.includes("|")) {
           const [host] = key.split("|")
-
           if (selectedHosts.includes(host) && selectedDisks.includes(key)) {
-            const diskData = (dataPoint as Record<string, any>)[key]
+            const value = pointWithDynamicKeys[key]
+            if (typeof value === "object" && value !== null && "usedgb" in value) {
+              const diskData = value as DiskData
 
-            // Add the appropriate metric based on view mode
-            if (viewMode === "used") {
-              newPoint[key] = diskData.usedgb
-            } else if (viewMode === "free") {
-              newPoint[key] = diskData.freegb
-            } else {
-              // percent
-              newPoint[key] = diskData.usedPercent
+              if (viewMode === "used") {
+                newPoint[key] = diskData.usedgb
+              } else if (viewMode === "free") {
+                newPoint[key] = diskData.freegb
+              } else {
+                newPoint[key] = diskData.usedPercent
+              }
             }
           }
         }
       })
+
 
       return newPoint
     })
@@ -249,7 +260,15 @@ export default function DiskUsageChart() {
     if (chartData.length === 0) return {}
 
     const latestData = chartData[chartData.length - 1]
-    const readings: Record<string, any[]> = {}
+    const readings: Record<string, {
+      key: string
+      name: string
+      label: string
+      totalgb: number
+      usedgb: number
+      freegb: number
+      usedPercent: number
+    }[]> = {}
 
     // Group readings by host
     Object.keys(latestData).forEach((key) => {
@@ -261,16 +280,19 @@ export default function DiskUsageChart() {
             readings[host] = []
           }
 
-          const diskData = (latestData as Record<string, any>)[key]
-          readings[host].push({
-            key,
-            name: diskName,
-            label: diskData.label || diskName,
-            totalgb: diskData.totalgb,
-            usedgb: diskData.usedgb,
-            freegb: diskData.freegb,
-            usedPercent: diskData.usedPercent,
-          })
+          const maybeDisk = (latestData as Record<string, unknown>)[key]
+          if (maybeDisk && typeof maybeDisk === "object" && "usedgb" in maybeDisk) {
+            const diskData = maybeDisk as DiskData
+            readings[host].push({
+              key,
+              name: diskName,
+              label: diskData.label || diskName,
+              totalgb: diskData.totalgb,
+              usedgb: diskData.usedgb,
+              freegb: diskData.freegb,
+              usedPercent: diskData.usedPercent,
+            })
+          }
         }
       }
     })
@@ -283,8 +305,9 @@ export default function DiskUsageChart() {
 
   // Get a friendly name for a disk
   const getDiskDisplayName = (diskKey: string) => {
-    const [host, name] = diskKey.split("|")
+    const name = diskKey.split("|")[1]
     return name
+
   }
 
   return (
@@ -420,20 +443,16 @@ export default function DiskUsageChart() {
       </CardHeader>
 
       {/* Selected hosts badges */}
-      {selectedHosts.length > 0 && selectedHosts.length < hosts.length && (
-        <div className="px-6 pb-2 flex flex-wrap gap-1">
-          <span className="text-sm text-muted-foreground mr-2 my-auto">Devices:</span>
-          {selectedHosts.map((host, index) => (
-            <Badge key={host} variant="outline" className="gap-1" style={{ borderColor: getHostColor(host, index) }}>
-              {host}
-              <button onClick={() => handleHostSelect(host)} className="ml-1 rounded-full hover:bg-muted p-0.5">
-                <X className="h-3 w-3" />
-                <span className="sr-only">Remove</span>
-              </button>
-            </Badge>
-          ))}
-        </div>
-      )}
+      {selectedHosts.map((host) => (
+        <Badge key={host} variant="outline" className="gap-1" style={{ borderColor: getHostColor(host) }}>
+          {host}
+          <button onClick={() => handleHostSelect(host)} className="ml-1 rounded-full hover:bg-muted p-0.5">
+            <X className="h-3 w-3" />
+            <span className="sr-only">Remove</span>
+          </button>
+        </Badge>
+      ))}
+
 
       {/* Selected disks badges */}
       {selectedDisks.length > 0 && selectedDisks.length < disks.length && (
@@ -484,7 +503,7 @@ export default function DiskUsageChart() {
                   if (!hasData) return null
 
                   const hostIndex = hosts.indexOf(host)
-                  const color = getHostColor(host, hostIndex)
+                  const color = getHostColor(host)
 
                   return (
                     <Line
@@ -510,10 +529,10 @@ export default function DiskUsageChart() {
             <h4 className="text-sm font-medium text-muted-foreground mb-3">Current Disk Usage by Device</h4>
 
             <div className="space-y-4">
-              {Object.entries(currentReadingsByHost).map(([host, disks], hostIndex) => (
+              {Object.entries(currentReadingsByHost).map(([host, disks]) => (
                 <div key={host} className="border rounded-md p-3">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getHostColor(host, hostIndex) }} />
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getHostColor(host) }} />
                     <h5 className="font-medium">{host}</h5>
                   </div>
 

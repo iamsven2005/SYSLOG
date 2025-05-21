@@ -16,6 +16,15 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { createProject } from "../actions/projects"
+import type { Project, BridgeProject } from "@/prisma/generated/main"
+
+type ProjectWithBridge = Project & {
+  bridgeProject?: BridgeProject | null
+}
+
+type ProjectFormProps = {
+  project?: ProjectWithBridge | null
+}
 
 const projectSchema = z.object({
   businessCode: z.string().min(2, { message: "Business code must be at least 2 characters." }),
@@ -56,8 +65,9 @@ const projectSchema = z.object({
   environmentalConsiderations: z.string().optional(),
   trafficImpact: z.string().optional(),
 })
+type ProjectFormValues = z.infer<typeof projectSchema>
 
-export default function ProjectForm({ project = null }) {
+export default function ProjectForm({ project = null }: ProjectFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -65,38 +75,48 @@ export default function ProjectForm({ project = null }) {
     resolver: zodResolver(projectSchema),
     defaultValues: project
       ? {
-          ...project,
-          bridgeType: project.bridgeProject?.bridgeType,
-          spanLength: project.bridgeProject?.spanLength,
-          width: project.bridgeProject?.width,
-          height: project.bridgeProject?.height,
-          loadCapacity: project.bridgeProject?.loadCapacity,
-          waterway: project.bridgeProject?.waterway,
-          environmentalConsiderations: project.bridgeProject?.environmentalConsiderations,
-          trafficImpact: project.bridgeProject?.trafficImpact,
-        }
+        businessCode: project.businessCode,
+        projectCode: project.projectCode,
+        name: project.name,
+        description: project.description ?? "",
+        location: project.location ?? "",
+        startDate: project.startDate ?? undefined,
+        estimatedEndDate: project.estimatedEndDate ?? undefined,
+        budget: project.budget ? project.budget.toNumber() : undefined,
+        status: project.status ?? "PLANNING",
+
+        bridgeType: project.bridgeProject?.bridgeType ?? "BEAM",
+        spanLength: project.bridgeProject?.spanLength ?? undefined,
+        width: project.bridgeProject?.width ?? undefined,
+        height: project.bridgeProject?.height ?? undefined,
+        loadCapacity: project.bridgeProject?.loadCapacity ?? undefined,
+        waterway: project.bridgeProject?.waterway ?? "",
+        environmentalConsiderations: project.bridgeProject?.environmentalConsiderations ?? "",
+        trafficImpact: project.bridgeProject?.trafficImpact ?? "",
+      }
+
       : {
-          businessCode: "",
-          projectCode: "",
-          name: "",
-          description: "",
-          location: "",
-          startDate: undefined,
-          estimatedEndDate: undefined,
-          budget: undefined,
-          status: "PLANNING",
-          bridgeType: "BEAM",
-          spanLength: undefined,
-          width: undefined,
-          height: undefined,
-          loadCapacity: undefined,
-          waterway: "",
-          environmentalConsiderations: "",
-          trafficImpact: "",
-        },
+        businessCode: "",
+        projectCode: "",
+        name: "",
+        description: "",
+        location: "",
+        startDate: undefined,
+        estimatedEndDate: undefined,
+        budget: undefined,
+        status: "PLANNING",
+        bridgeType: "BEAM",
+        spanLength: undefined,
+        width: undefined,
+        height: undefined,
+        loadCapacity: undefined,
+        waterway: "",
+        environmentalConsiderations: "",
+        trafficImpact: "",
+      },
   })
 
-  async function onSubmit(data) {
+  async function onSubmit(data: ProjectFormValues) {
     setIsSubmitting(true)
 
     try {
@@ -136,6 +156,11 @@ export default function ProjectForm({ project = null }) {
 
         if (result.error) {
           form.setError("root", { message: result.error })
+          return
+        }
+
+        if (!result.project) {
+          form.setError("root", { message: "Project creation failed. No project returned." })
           return
         }
 

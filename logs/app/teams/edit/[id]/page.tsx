@@ -3,11 +3,7 @@ import { notFound } from "next/navigation"
 import { EditTeamForm } from "../../edit-team-form"
 import { db } from "@/lib/db"
 
-interface EditTeamPageProps {
-  params: {
-    id: string
-  }
-}
+
 
 interface TeamUser {
   user: { id: number }
@@ -17,8 +13,9 @@ interface TeamLocation {
   location: { id: number }
 }
 
-export default async function EditTeamPage({ params }: EditTeamPageProps) {
-  const teamId = Number.parseInt(params.id)
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+    const teamId = Number.parseInt(params.id)
 
   if (isNaN(teamId)) {
     notFound()

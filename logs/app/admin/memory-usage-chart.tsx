@@ -69,10 +69,7 @@ interface MemoryStats {
   free_memory?: number
   available_memory?: number
 }
-type VMDataPoint = {
-  timestamp: string
-  [vmName: string]: { percent_usage: number } | string
-}
+
 interface MemoryUsageEntry {
   timestamp: string
   [host: string]: MemoryStats | string // string is for 'timestamp'

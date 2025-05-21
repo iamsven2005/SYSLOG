@@ -16,7 +16,8 @@ export const metadata: Metadata = {
   description: "View alert condition details and history",
 }
 
-export default async function AlertConditionDetailPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = Number.parseInt(params.id, 10)
   const currentUser = await getCurrentUser()
   if (!currentUser) {
@@ -34,7 +35,13 @@ export default async function AlertConditionDetailPage({ params }: { params: { i
   }
 
   // Get recent alert events for this condition
-  const { alertEvents } = await getAlertEvents({ conditionId: id, page: 1, pageSize: 10 })
+  const alertEventResult = await getAlertEvents({ conditionId: id, page: 1, pageSize: 10 })
+
+  if (!alertEventResult || !Array.isArray(alertEventResult.alertEvents)) {
+    return notFound()
+  }
+
+  const { alertEvents } = alertEventResult
 
   // Format date for display
   const formatDate = (dateString: string | Date | null | undefined) => {

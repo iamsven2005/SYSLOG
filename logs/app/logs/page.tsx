@@ -273,18 +273,19 @@ export default function LogsTable() {
 
 
   // Load logs when filters or pagination changes
-  useEffect(() => {
-    fetchLogs()
-  }, [
-    debouncedSearchQuery,
-    selectedHosts,
-    selectedActions,
-    selectedRuleGroups,
-    selectedRules,
-    currentPage,
-    pageSize,
-    isResourceFiltersEnabled,
-  ])
+useEffect(() => {
+  fetchLogs()
+}, [
+  debouncedSearchQuery,
+  selectedHosts,
+  selectedActions,
+  selectedRuleGroups,
+  selectedRules,
+  currentPage,
+  pageSize,
+  isResourceFiltersEnabled,
+  fetchLogs, // ✅ Include this
+])
 
   // Handle host selection
   const handleHostSelect = (value: string) => {

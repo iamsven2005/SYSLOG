@@ -16,6 +16,7 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { createInspection } from "../actions/phases"
+import { BridgeProject, Project } from "@/prisma/generated/main"
 
 const inspectionSchema = z.object({
   bridgePhaseId: z.coerce.number(),
@@ -24,15 +25,20 @@ const inspectionSchema = z.object({
   result: z.enum(["PASS", "FAIL", "CONDITIONAL PASS"]),
   notes: z.string().optional(),
 })
+type ProjectWithBridgePhases = Project & {
+  bridgeProject: (BridgeProject & {
+    phases: { id: number; name: string }[]
+  }) | null
+}
 
-export default function InspectionForm({ project }) {
+export default function InspectionForm({ project }: { project: ProjectWithBridgePhases }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(inspectionSchema),
     defaultValues: {
-      bridgePhaseId: "",
+      bridgePhaseId: 0,
       inspectionDate: new Date(),
       inspector: "",
       result: "PASS",
@@ -40,7 +46,7 @@ export default function InspectionForm({ project }) {
     },
   })
 
-  async function onSubmit(data) {
+  async function onSubmit(data: { bridgePhaseId: number; inspectionDate: Date; inspector: string; result: string; notes?: string; attachments?: string[] }) {
     setIsSubmitting(true)
 
     try {
@@ -79,11 +85,12 @@ export default function InspectionForm({ project }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {project.bridgeProject.phases.map((phase) => (
+                    {project.bridgeProject?.phases.map((phase) => (
                       <SelectItem key={phase.id} value={phase.id.toString()}>
                         {phase.name}
                       </SelectItem>
                     ))}
+
                   </SelectContent>
                 </Select>
                 <FormMessage />

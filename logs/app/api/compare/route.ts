@@ -1,30 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db2 } from "@/lib/db2"
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: JSONValue }
-  | JSONValue[]
-
-type Serializable = JSONValue | bigint | { [key: string]: Serializable } | Serializable[]
-
-export function serializeBigInts(obj: Serializable): JSONValue {
-  if (Array.isArray(obj)) {
-    return obj.map((item) => serializeBigInts(item))
-  } else if (typeof obj === "bigint") {
-    return obj.toString()
-  } else if (obj !== null && typeof obj === "object") {
-    const result: { [key: string]: JSONValue } = {}
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = serializeBigInts(value as Serializable)
-    }
-    return result
-  } else {
-    return obj
-  }
-}
+import { serializeBigInts } from "./serialize"
 
 
 export async function POST(req: NextRequest) {

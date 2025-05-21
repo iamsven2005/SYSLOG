@@ -18,7 +18,7 @@ export function AlertStats() {
     async function fetchStats() {
       try {
         // Get alert conditions
-        const conditions = await getAlertConditions()
+        const conditions = await getAlertConditions() || []
         const activeConditions = conditions.filter((c) => c.active)
 
         // Get alert events

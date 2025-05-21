@@ -6,7 +6,8 @@ import {  ArrowLeft } from "lucide-react"
 import { getMaterial } from "@/app/crm/actions/materials"
 import MaterialOrderForm from "@/app/crm/components/material-order-form"
 
-export default async function NewMaterialOrderPage({ params }: { params: { id: string; materialId: string } }) {
+export default async function Page(props: { params: Promise<{ id: string, materialId: string }> }) {
+  const params = await props.params;  
   const projectId = Number.parseInt(params.id)
   const materialId = Number.parseInt(params.materialId)
   const { material, error } = await getMaterial(materialId)

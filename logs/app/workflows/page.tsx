@@ -9,9 +9,10 @@ import { getWorkflows } from "./actions"
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: { query?: string }
+    searchParams: Promise<{ query: string }>
+
 }) {
-  const query = searchParams?.query || ""
+  const query = (await searchParams).query || ""
   const { success, data: workflows, error } = await getWorkflows(query)
 
   return (
@@ -26,7 +27,7 @@ export default async function HomePage({
         </div>
       </div>
 
-      {!success ? (
+      {!success || !workflows ? (
         <div className="p-4 border rounded-md bg-destructive/10 text-destructive">
           Error: {error || "Failed to load workflows"}
         </div>

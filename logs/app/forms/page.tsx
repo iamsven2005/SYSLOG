@@ -5,18 +5,20 @@ import { getForms } from "./[id]/actions"
 import { SearchAndFilterBar } from "./search-and-filter-bar";
 import { FormCard } from "./form-card";
 
-export default async function Home({ searchParams }: { searchParams: { q?: string; sort?: string } }) {
+export default async function Home({ searchParams }: {
+  searchParams: Promise<{ q?: string; sort?: string }>
+}) {
   const forms = await getForms()
-  const searchQuery = searchParams.q?.toLowerCase() || ""
-  const sortOption = searchParams.sort || "newest"
+  const searchQuery = (await searchParams).q?.toLowerCase() || ""
+  const sortOption = (await searchParams).sort || "newest"
 
   // Filter forms based on search query
   const filteredForms = searchQuery
     ? forms.filter(
-        (form) =>
-          form.title.toLowerCase().includes(searchQuery) ||
-          (form.description && form.description.toLowerCase().includes(searchQuery)),
-      )
+      (form) =>
+        form.title.toLowerCase().includes(searchQuery) ||
+        (form.description && form.description.toLowerCase().includes(searchQuery)),
+    )
     : forms
 
   // Sort forms based on sort option
@@ -72,13 +74,16 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
         </div>
       )}
 
-      {sortedForms.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedForms.map((form) => (
-            <FormCard key={form.id} form={form} />
-          ))}
-        </div>
-      )}
+      {sortedForms.map((form) => (
+        <FormCard
+          key={form.id}
+          form={{
+            ...form,
+            description: form.description ?? undefined,
+          }}
+        />
+      ))}
+
     </div>
   )
 }

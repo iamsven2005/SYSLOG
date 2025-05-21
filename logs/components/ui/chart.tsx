@@ -22,27 +22,33 @@ import {
   YAxis,
 } from "recharts"
 
-export interface ChartConfig {
-  series: any[]
-  height?: number
-  width?: number
-  colors?: string[]
-  showXAxis?: boolean
-  showYAxis?: boolean
-  showLegend?: boolean
-  showTooltip?: boolean
-  showCartesianGrid?: boolean
-  showPolarGrid?: boolean
-  showPolarRadiusAxis?: boolean
-  [key: string]: any
+export interface ChartDataPoint {
+  [key: string]: string | number | boolean | null | undefined;
 }
+
+export interface ChartConfig<T extends Record<string, unknown> = ChartDataPoint> {
+  series: T[];
+  height?: number;
+  width?: number;
+  colors?: string[];
+  showXAxis?: boolean;
+  showYAxis?: boolean;
+  showLegend?: boolean;
+  showTooltip?: boolean;
+  showCartesianGrid?: boolean;
+  showPolarGrid?: boolean;
+  showPolarRadiusAxis?: boolean;
+  [key: string]: unknown;
+}
+
+
 
 export const Chart = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     config: ChartConfig
   }
->(({ config, className, children, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   return (
     <div ref={ref} className={className} {...props}>
       {children}

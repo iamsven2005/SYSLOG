@@ -5,17 +5,35 @@ import {  ArrowLeft } from "lucide-react"
 import InteractionForm from "@/app/crm/components/interaction-form"
 import { getCompanies } from "@/app/crm/actions/companies"
 import { getContact } from "@/app/crm/actions/contacts"
-
-export default async function NewInteractionPage({ searchParams }: { searchParams: { contactId?: string } }) {
-  const contactId = searchParams.contactId ? Number.parseInt(searchParams.contactId) : undefined
+interface Company {
+  id: number
+  name: string
+  contacts?: {
+    id: number
+    name: string
+    phone: string | null
+    email: string | null
+    remarks: string | null
+    createdAt: Date
+    updatedAt: Date
+    title: string | null
+    expertise: string | null
+    companyId: number
+  }[]
+}
+export default async function NewInteractionPage({ searchParams }: { 
+      searchParams: Promise<{ contactId?: string }>
+ }) {
+const { contactId: contactIdRaw } = await searchParams
+const contactId = contactIdRaw ? Number.parseInt(contactIdRaw) : undefined
 
   // Fetch all companies for the dropdown
-  const { companies } = await getCompanies()
+const { companies = [] } = await getCompanies()
 
   // If contactId is provided, fetch the contact and its company
-  let contact = null
-  let preSelectedCompanyId = undefined
-  let companyContacts = []
+let contact: Awaited<ReturnType<typeof getContact>>["contact"] | null = null
+let preSelectedCompanyId: number | undefined = undefined
+let companyContacts: Company["contacts"] = []
 
   if (contactId) {
     const contactResult = await getContact(contactId)
@@ -23,11 +41,10 @@ export default async function NewInteractionPage({ searchParams }: { searchParam
       contact = contactResult.contact
       preSelectedCompanyId = contact.company.id
 
-      // Get all contacts from this company for the contacts dropdown
-      const company = companies.find((c) => c.id === preSelectedCompanyId)
-      if (company && company.contacts) {
-        companyContacts = company.contacts
-      }
+const company = companies.find((c) => c.id === preSelectedCompanyId)
+  if (company?.contacts) {
+    companyContacts = company.contacts
+  }
     }
   }
 

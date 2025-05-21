@@ -18,6 +18,7 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { createMaterialOrder } from "@/app/crm/actions/materials"
 import { getCompanies } from "@/app/crm/actions/companies"
+import { BridgeMaterial, Company } from "@/prisma/generated/main"
 
 const materialOrderSchema = z.object({
   vendorId: z.coerce.number({
@@ -38,16 +39,16 @@ const materialOrderSchema = z.object({
   notes: z.string().optional(),
 })
 
-export default function MaterialOrderForm({ projectId, materialId, material }) {
+export default function MaterialOrderForm({ projectId, materialId, material }:{ projectId: number, materialId: number, material: BridgeMaterial }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [vendors, setVendors] = useState([])
+const [vendors, setVendors] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
 
   const form = useForm({
     resolver: zodResolver(materialOrderSchema),
     defaultValues: {
-      vendorId: "",
+      vendorId: 0,
       orderDate: new Date(),
       deliveryDate: undefined,
       status: "PLANNED",
@@ -89,7 +90,7 @@ export default function MaterialOrderForm({ projectId, materialId, material }) {
     fetchVendors()
   }, [])
 
-  async function onSubmit(data) {
+async function onSubmit(data: z.infer<typeof materialOrderSchema>) {
     setIsSubmitting(true)
 
     try {

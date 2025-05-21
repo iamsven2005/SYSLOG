@@ -6,7 +6,8 @@ import { ResponsesRealTimeIndicator } from "../../responses-realtime-indicator"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export default async function FormResponsesPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const formId = Number.parseInt(params.id)
   const formWithResponses = await getFormWithResponses(formId)
 
@@ -16,11 +17,11 @@ export default async function FormResponsesPage({ params }: { params: { id: stri
 
   return (
     <div className="m-5 p-5">
-<div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2">
         <h1 className="text-3xl font-bold">{formWithResponses.title}</h1>
         <ResponsesRealTimeIndicator formId={formId} />
       </div>      <Button><Link href={"/forms"}>
-        
+
         Back to Forms</Link></Button><p className="text-muted-foreground mb-8">{formWithResponses.responses.length} responses received</p>
 
       <Tabs defaultValue="summary">

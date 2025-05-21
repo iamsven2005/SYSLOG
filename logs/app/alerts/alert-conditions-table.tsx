@@ -52,7 +52,11 @@ export function AlertConditionsTable({ initialAlertConditions }: { initialAlertC
           }
           setIsLoading(true)
           const conditions = await getAlertConditions()
-          setAlertConditions(conditions)
+          if (conditions) {
+            setAlertConditions(conditions)
+          } else {
+            setAlertConditions([]) // fallback to avoid setting undefined
+          }
         } catch (error) {
           console.error("Error fetching alert conditions:", error)
           toast.error("Failed to load alert conditions")

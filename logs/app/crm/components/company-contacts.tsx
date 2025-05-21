@@ -2,8 +2,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, Phone, Plus } from "lucide-react"
-
-export default function CompanyContacts({ company }) {
+import { Company, ContactPerson } from "@/prisma/generated/main"
+type ExtendedCompany = Company & {
+  contacts: ContactPerson[]
+}
+export default function CompanyContacts({ company }: {company: ExtendedCompany}) {
   return (
     <Card>
       <CardHeader>

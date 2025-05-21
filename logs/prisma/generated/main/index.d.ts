@@ -8485,6 +8485,7 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    roles: number
     ActivityLog: number
     audit_steps: number
     CommandMatch: number
@@ -8518,6 +8519,7 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roles?: boolean | UserCountOutputTypeCountRolesArgs
     ActivityLog?: boolean | UserCountOutputTypeCountActivityLogArgs
     audit_steps?: boolean | UserCountOutputTypeCountAudit_stepsArgs
     CommandMatch?: boolean | UserCountOutputTypeCountCommandMatchArgs
@@ -8559,6 +8561,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RolesWhereInput
   }
 
   /**
@@ -8809,6 +8818,37 @@ export namespace Prisma {
    */
   export type GroupCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MessageWhereInput
+  }
+
+
+  /**
+   * Count Type RolesCountOutputType
+   */
+
+  export type RolesCountOutputType = {
+    users: number
+  }
+
+  export type RolesCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | RolesCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RolesCountOutputType without action
+   */
+  export type RolesCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RolesCountOutputType
+     */
+    select?: RolesCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RolesCountOutputType without action
+   */
+  export type RolesCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -26031,6 +26071,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     location?: boolean
+    roles?: boolean | User$rolesArgs<ExtArgs>
     ActivityLog?: boolean | User$ActivityLogArgs<ExtArgs>
     audit_steps?: boolean | User$audit_stepsArgs<ExtArgs>
     CommandMatch?: boolean | User$CommandMatchArgs<ExtArgs>
@@ -26132,6 +26173,7 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "email" | "role" | "Mobile" | "Pay" | "PrimaryContact" | "MobileContact" | "Relationship" | "SecondContact" | "SecondMobile" | "SecondRelationship" | "Remarks" | "ndafile" | "ndasubmissiondate" | "createdAt" | "updatedAt" | "location", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roles?: boolean | User$rolesArgs<ExtArgs>
     ActivityLog?: boolean | User$ActivityLogArgs<ExtArgs>
     audit_steps?: boolean | User$audit_stepsArgs<ExtArgs>
     CommandMatch?: boolean | User$CommandMatchArgs<ExtArgs>
@@ -26170,6 +26212,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      roles: Prisma.$RolesPayload<ExtArgs>[]
       ActivityLog: Prisma.$ActivityLogPayload<ExtArgs>[]
       audit_steps: Prisma.$AuditStepPayload<ExtArgs>[]
       CommandMatch: Prisma.$CommandMatchPayload<ExtArgs>[]
@@ -26615,6 +26658,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolesPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     ActivityLog<T extends User$ActivityLogArgs<ExtArgs> = {}>(args?: Subset<T, User$ActivityLogArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     audit_steps<T extends User$audit_stepsArgs<ExtArgs> = {}>(args?: Subset<T, User$audit_stepsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditStepPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     CommandMatch<T extends User$CommandMatchArgs<ExtArgs> = {}>(args?: Subset<T, User$CommandMatchArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommandMatchPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
@@ -27078,6 +27122,30 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.roles
+   */
+  export type User$rolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Roles
+     */
+    select?: RolesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Roles
+     */
+    omit?: RolesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    where?: RolesWhereInput
+    orderBy?: RolesOrderByWithRelationInput | RolesOrderByWithRelationInput[]
+    cursor?: RolesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RolesScalarFieldEnum | RolesScalarFieldEnum[]
   }
 
   /**
@@ -32502,6 +32570,8 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
+    users?: boolean | Roles$usersArgs<ExtArgs>
+    _count?: boolean | RolesCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["roles"]>
 
   export type RolesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -32523,10 +32593,18 @@ export namespace Prisma {
   }
 
   export type RolesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description", ExtArgs["result"]["roles"]>
+  export type RolesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | Roles$usersArgs<ExtArgs>
+    _count?: boolean | RolesCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RolesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RolesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $RolesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Roles"
-    objects: {}
+    objects: {
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       name: string
@@ -32925,6 +33003,7 @@ export namespace Prisma {
    */
   export interface Prisma__RolesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    users<T extends Roles$usersArgs<ExtArgs> = {}>(args?: Subset<T, Roles$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -32974,6 +33053,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * Filter, which Roles to fetch.
      */
     where: RolesWhereUniqueInput
@@ -32992,6 +33075,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * Filter, which Roles to fetch.
      */
     where: RolesWhereUniqueInput
@@ -33009,6 +33096,10 @@ export namespace Prisma {
      * Omit specific fields from the Roles
      */
     omit?: RolesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
     /**
      * Filter, which Roles to fetch.
      */
@@ -33058,6 +33149,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * Filter, which Roles to fetch.
      */
     where?: RolesWhereInput
@@ -33106,6 +33201,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * Filter, which Roles to fetch.
      */
     where?: RolesWhereInput
@@ -33148,6 +33247,10 @@ export namespace Prisma {
      * Omit specific fields from the Roles
      */
     omit?: RolesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
     /**
      * The data needed to create a Roles.
      */
@@ -33196,6 +33299,10 @@ export namespace Prisma {
      * Omit specific fields from the Roles
      */
     omit?: RolesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
     /**
      * The data needed to update a Roles.
      */
@@ -33263,6 +33370,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * The filter to search for the Roles to update in case it exists.
      */
     where: RolesWhereUniqueInput
@@ -33289,6 +33400,10 @@ export namespace Prisma {
      */
     omit?: RolesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
+    /**
      * Filter which Roles to delete.
      */
     where: RolesWhereUniqueInput
@@ -33309,6 +33424,30 @@ export namespace Prisma {
   }
 
   /**
+   * Roles.users
+   */
+  export type Roles$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
    * Roles without action
    */
   export type RolesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -33320,6 +33459,10 @@ export namespace Prisma {
      * Omit specific fields from the Roles
      */
     omit?: RolesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RolesInclude<ExtArgs> | null
   }
 
 
@@ -105914,6 +106057,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     location?: StringNullableListFilter<"User">
+    roles?: RolesListRelationFilter
     ActivityLog?: ActivityLogListRelationFilter
     audit_steps?: AuditStepListRelationFilter
     CommandMatch?: CommandMatchListRelationFilter
@@ -105966,6 +106110,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     location?: SortOrder
+    roles?: RolesOrderByRelationAggregateInput
     ActivityLog?: ActivityLogOrderByRelationAggregateInput
     audit_steps?: AuditStepOrderByRelationAggregateInput
     CommandMatch?: CommandMatchOrderByRelationAggregateInput
@@ -106021,6 +106166,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     location?: StringNullableListFilter<"User">
+    roles?: RolesListRelationFilter
     ActivityLog?: ActivityLogListRelationFilter
     audit_steps?: AuditStepListRelationFilter
     CommandMatch?: CommandMatchListRelationFilter
@@ -106367,22 +106513,25 @@ export namespace Prisma {
     id?: IntFilter<"Roles"> | number
     name?: StringFilter<"Roles"> | string
     description?: StringFilter<"Roles"> | string
+    users?: UserListRelationFilter
   }
 
   export type RolesOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    users?: UserOrderByRelationAggregateInput
   }
 
   export type RolesWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    name?: string
     AND?: RolesWhereInput | RolesWhereInput[]
     OR?: RolesWhereInput[]
     NOT?: RolesWhereInput | RolesWhereInput[]
-    name?: StringFilter<"Roles"> | string
     description?: StringFilter<"Roles"> | string
-  }, "id">
+    users?: UserListRelationFilter
+  }, "id" | "name">
 
   export type RolesOrderByWithAggregationInput = {
     id?: SortOrder
@@ -112065,6 +112214,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -112117,6 +112267,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -112168,6 +112319,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -112220,6 +112372,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -112555,23 +112708,27 @@ export namespace Prisma {
   export type RolesCreateInput = {
     name: string
     description: string
+    users?: UserCreateNestedManyWithoutRolesInput
   }
 
   export type RolesUncheckedCreateInput = {
     id?: number
     name: string
     description: string
+    users?: UserUncheckedCreateNestedManyWithoutRolesInput
   }
 
   export type RolesUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    users?: UserUpdateManyWithoutRolesNestedInput
   }
 
   export type RolesUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    users?: UserUncheckedUpdateManyWithoutRolesNestedInput
   }
 
   export type RolesCreateManyInput = {
@@ -118322,6 +118479,12 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type RolesListRelationFilter = {
+    every?: RolesWhereInput
+    some?: RolesWhereInput
+    none?: RolesWhereInput
+  }
+
   export type ActivityLogListRelationFilter = {
     every?: ActivityLogWhereInput
     some?: ActivityLogWhereInput
@@ -118446,6 +118609,10 @@ export namespace Prisma {
     every?: FormResponseWhereInput
     some?: FormResponseWhereInput
     none?: FormResponseWhereInput
+  }
+
+  export type RolesOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type ActivityLogOrderByRelationAggregateInput = {
@@ -123179,6 +123346,12 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type RolesCreateNestedManyWithoutUsersInput = {
+    create?: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput> | RolesCreateWithoutUsersInput[] | RolesUncheckedCreateWithoutUsersInput[]
+    connectOrCreate?: RolesCreateOrConnectWithoutUsersInput | RolesCreateOrConnectWithoutUsersInput[]
+    connect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+  }
+
   export type ActivityLogCreateNestedManyWithoutUserInput = {
     create?: XOR<ActivityLogCreateWithoutUserInput, ActivityLogUncheckedCreateWithoutUserInput> | ActivityLogCreateWithoutUserInput[] | ActivityLogUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ActivityLogCreateOrConnectWithoutUserInput | ActivityLogCreateOrConnectWithoutUserInput[]
@@ -123385,6 +123558,12 @@ export namespace Prisma {
     connectOrCreate?: FormResponseCreateOrConnectWithoutResponderInput | FormResponseCreateOrConnectWithoutResponderInput[]
     createMany?: FormResponseCreateManyResponderInputEnvelope
     connect?: FormResponseWhereUniqueInput | FormResponseWhereUniqueInput[]
+  }
+
+  export type RolesUncheckedCreateNestedManyWithoutUsersInput = {
+    create?: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput> | RolesCreateWithoutUsersInput[] | RolesUncheckedCreateWithoutUsersInput[]
+    connectOrCreate?: RolesCreateOrConnectWithoutUsersInput | RolesCreateOrConnectWithoutUsersInput[]
+    connect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
   }
 
   export type ActivityLogUncheckedCreateNestedManyWithoutUserInput = {
@@ -123603,6 +123782,19 @@ export namespace Prisma {
   export type UserUpdatelocationInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type RolesUpdateManyWithoutUsersNestedInput = {
+    create?: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput> | RolesCreateWithoutUsersInput[] | RolesUncheckedCreateWithoutUsersInput[]
+    connectOrCreate?: RolesCreateOrConnectWithoutUsersInput | RolesCreateOrConnectWithoutUsersInput[]
+    upsert?: RolesUpsertWithWhereUniqueWithoutUsersInput | RolesUpsertWithWhereUniqueWithoutUsersInput[]
+    set?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    disconnect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    delete?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    connect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    update?: RolesUpdateWithWhereUniqueWithoutUsersInput | RolesUpdateWithWhereUniqueWithoutUsersInput[]
+    updateMany?: RolesUpdateManyWithWhereWithoutUsersInput | RolesUpdateManyWithWhereWithoutUsersInput[]
+    deleteMany?: RolesScalarWhereInput | RolesScalarWhereInput[]
   }
 
   export type ActivityLogUpdateManyWithoutUserNestedInput = {
@@ -124021,6 +124213,19 @@ export namespace Prisma {
     update?: FormResponseUpdateWithWhereUniqueWithoutResponderInput | FormResponseUpdateWithWhereUniqueWithoutResponderInput[]
     updateMany?: FormResponseUpdateManyWithWhereWithoutResponderInput | FormResponseUpdateManyWithWhereWithoutResponderInput[]
     deleteMany?: FormResponseScalarWhereInput | FormResponseScalarWhereInput[]
+  }
+
+  export type RolesUncheckedUpdateManyWithoutUsersNestedInput = {
+    create?: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput> | RolesCreateWithoutUsersInput[] | RolesUncheckedCreateWithoutUsersInput[]
+    connectOrCreate?: RolesCreateOrConnectWithoutUsersInput | RolesCreateOrConnectWithoutUsersInput[]
+    upsert?: RolesUpsertWithWhereUniqueWithoutUsersInput | RolesUpsertWithWhereUniqueWithoutUsersInput[]
+    set?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    disconnect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    delete?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    connect?: RolesWhereUniqueInput | RolesWhereUniqueInput[]
+    update?: RolesUpdateWithWhereUniqueWithoutUsersInput | RolesUpdateWithWhereUniqueWithoutUsersInput[]
+    updateMany?: RolesUpdateManyWithWhereWithoutUsersInput | RolesUpdateManyWithWhereWithoutUsersInput[]
+    deleteMany?: RolesScalarWhereInput | RolesScalarWhereInput[]
   }
 
   export type ActivityLogUncheckedUpdateManyWithoutUserNestedInput = {
@@ -124639,6 +124844,44 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutEmailTemplatesInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmailTemplatesInput, UserUpdateWithoutEmailTemplatesInput>, UserUncheckedUpdateWithoutEmailTemplatesInput>
+  }
+
+  export type UserCreateNestedManyWithoutRolesInput = {
+    create?: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput> | UserCreateWithoutRolesInput[] | UserUncheckedCreateWithoutRolesInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutRolesInput | UserCreateOrConnectWithoutRolesInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutRolesInput = {
+    create?: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput> | UserCreateWithoutRolesInput[] | UserUncheckedCreateWithoutRolesInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutRolesInput | UserCreateOrConnectWithoutRolesInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUpdateManyWithoutRolesNestedInput = {
+    create?: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput> | UserCreateWithoutRolesInput[] | UserUncheckedCreateWithoutRolesInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutRolesInput | UserCreateOrConnectWithoutRolesInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutRolesInput | UserUpsertWithWhereUniqueWithoutRolesInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutRolesInput | UserUpdateWithWhereUniqueWithoutRolesInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutRolesInput | UserUpdateManyWithWhereWithoutRolesInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutRolesNestedInput = {
+    create?: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput> | UserCreateWithoutRolesInput[] | UserUncheckedCreateWithoutRolesInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutRolesInput | UserCreateOrConnectWithoutRolesInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutRolesInput | UserUpsertWithWhereUniqueWithoutRolesInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutRolesInput | UserUpdateWithWhereUniqueWithoutRolesInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutRolesInput | UserUpdateManyWithWhereWithoutRolesInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type NotificationReadCreateNestedManyWithoutNotificationInput = {
@@ -128781,6 +129024,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -128832,6 +129076,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -128932,6 +129177,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -128983,6 +129229,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -129589,6 +129836,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     devices?: DeviceUserCreateNestedManyWithoutUserInput
@@ -129640,6 +129888,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     devices?: DeviceUserUncheckedCreateNestedManyWithoutUserInput
@@ -129739,6 +129988,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -129790,6 +130040,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -129856,6 +130107,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     devices?: DeviceUserUpdateManyWithoutUserNestedInput
@@ -129907,6 +130159,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     devices?: DeviceUserUncheckedUpdateManyWithoutUserNestedInput
@@ -130054,6 +130307,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
     devices?: DeviceUserCreateNestedManyWithoutUserInput
@@ -130105,6 +130359,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
     devices?: DeviceUserUncheckedCreateNestedManyWithoutUserInput
@@ -130171,6 +130426,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
     devices?: DeviceUserUpdateManyWithoutUserNestedInput
@@ -130222,6 +130478,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
     devices?: DeviceUserUncheckedUpdateManyWithoutUserNestedInput
@@ -130569,6 +130826,22 @@ export namespace Prisma {
     userId?: IntFilter<"UserEmailTemplate"> | number
     emailTemplateId?: IntFilter<"UserEmailTemplate"> | number
     assignedAt?: DateTimeFilter<"UserEmailTemplate"> | Date | string
+  }
+
+  export type RolesCreateWithoutUsersInput = {
+    name: string
+    description: string
+  }
+
+  export type RolesUncheckedCreateWithoutUsersInput = {
+    id?: number
+    name: string
+    description: string
+  }
+
+  export type RolesCreateOrConnectWithoutUsersInput = {
+    where: RolesWhereUniqueInput
+    create: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput>
   }
 
   export type ActivityLogCreateWithoutUserInput = {
@@ -131395,6 +131668,31 @@ export namespace Prisma {
   export type FormResponseCreateManyResponderInputEnvelope = {
     data: FormResponseCreateManyResponderInput | FormResponseCreateManyResponderInput[]
     skipDuplicates?: boolean
+  }
+
+  export type RolesUpsertWithWhereUniqueWithoutUsersInput = {
+    where: RolesWhereUniqueInput
+    update: XOR<RolesUpdateWithoutUsersInput, RolesUncheckedUpdateWithoutUsersInput>
+    create: XOR<RolesCreateWithoutUsersInput, RolesUncheckedCreateWithoutUsersInput>
+  }
+
+  export type RolesUpdateWithWhereUniqueWithoutUsersInput = {
+    where: RolesWhereUniqueInput
+    data: XOR<RolesUpdateWithoutUsersInput, RolesUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type RolesUpdateManyWithWhereWithoutUsersInput = {
+    where: RolesScalarWhereInput
+    data: XOR<RolesUpdateManyMutationInput, RolesUncheckedUpdateManyWithoutUsersInput>
+  }
+
+  export type RolesScalarWhereInput = {
+    AND?: RolesScalarWhereInput | RolesScalarWhereInput[]
+    OR?: RolesScalarWhereInput[]
+    NOT?: RolesScalarWhereInput | RolesScalarWhereInput[]
+    id?: IntFilter<"Roles"> | number
+    name?: StringFilter<"Roles"> | string
+    description?: StringFilter<"Roles"> | string
   }
 
   export type ActivityLogUpsertWithWhereUniqueWithoutUserInput = {
@@ -132260,6 +132558,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -132311,6 +132610,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -132405,6 +132705,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -132456,6 +132757,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -132528,6 +132830,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -132579,6 +132882,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -132695,6 +132999,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -132746,6 +133051,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -132856,6 +133162,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -132907,6 +133214,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -133011,6 +133319,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -133062,6 +133371,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -133091,6 +133401,130 @@ export namespace Prisma {
     Reminder?: ReminderUncheckedUpdateManyWithoutUserNestedInput
     Form?: FormUncheckedUpdateManyWithoutCreatorNestedInput
     FormResponse?: FormResponseUncheckedUpdateManyWithoutResponderNestedInput
+  }
+
+  export type UserCreateWithoutRolesInput = {
+    username?: string | null
+    password: string
+    email?: string | null
+    role?: UserCreateroleInput | string[]
+    Mobile?: number | null
+    Pay?: number | null
+    PrimaryContact?: string | null
+    MobileContact?: number | null
+    Relationship?: string | null
+    SecondContact?: string | null
+    SecondMobile?: number | null
+    SecondRelationship?: string | null
+    Remarks?: string | null
+    ndafile?: string | null
+    ndasubmissiondate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    location?: UserCreatelocationInput | string[]
+    ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
+    audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
+    CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
+    devices?: DeviceUserCreateNestedManyWithoutUserInput
+    DriveFile?: DriveFileCreateNestedManyWithoutOwnerInput
+    grantedPermissions?: DriveFilePermissionCreateNestedManyWithoutGranterInput
+    DriveFilePermission?: DriveFilePermissionCreateNestedManyWithoutUserInput
+    DriveFolder?: DriveFolderCreateNestedManyWithoutOwnerInput
+    Feedback?: FeedbackCreateNestedManyWithoutSenderInput
+    FeedbackRecipient?: FeedbackRecipientCreateNestedManyWithoutUserInput
+    GroupMember?: GroupMemberCreateNestedManyWithoutUserInput
+    Message?: MessageCreateNestedManyWithoutSenderInput
+    NotificationRead?: NotificationReadCreateNestedManyWithoutUserInput
+    ProjectAssignment?: ProjectAssignmentCreateNestedManyWithoutUserInput
+    assignedTickets?: SupportTicketCreateNestedManyWithoutAssignedToInput
+    createdTickets?: SupportTicketCreateNestedManyWithoutCreatedByInput
+    TeamLeader?: TeamLeaderCreateNestedManyWithoutUserInput
+    TeamMember?: TeamMemberCreateNestedManyWithoutUserInput
+    TicketAttachment?: TicketAttachmentCreateNestedManyWithoutUploaderInput
+    ticketComments?: TicketCommentCreateNestedManyWithoutUserInput
+    emailTemplates?: UserEmailTemplateCreateNestedManyWithoutUserInput
+    UserPermission?: UserPermissionCreateNestedManyWithoutUserInput
+    receivedPermissions?: DriveFilePermissionCreateNestedManyWithoutUserInput
+    addressedMatches?: CommandMatchCreateNestedManyWithoutUserInput
+    PollVote?: PollVoteCreateNestedManyWithoutUserInput
+    leaveRequests?: LeaveCreateNestedManyWithoutUserInput
+    leaveApprovals?: LeaveCreateNestedManyWithoutApproverInput
+    Reminder?: ReminderCreateNestedManyWithoutUserInput
+    Form?: FormCreateNestedManyWithoutCreatorInput
+    FormResponse?: FormResponseCreateNestedManyWithoutResponderInput
+  }
+
+  export type UserUncheckedCreateWithoutRolesInput = {
+    id?: number
+    username?: string | null
+    password: string
+    email?: string | null
+    role?: UserCreateroleInput | string[]
+    Mobile?: number | null
+    Pay?: number | null
+    PrimaryContact?: string | null
+    MobileContact?: number | null
+    Relationship?: string | null
+    SecondContact?: string | null
+    SecondMobile?: number | null
+    SecondRelationship?: string | null
+    Remarks?: string | null
+    ndafile?: string | null
+    ndasubmissiondate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    location?: UserCreatelocationInput | string[]
+    ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
+    CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
+    devices?: DeviceUserUncheckedCreateNestedManyWithoutUserInput
+    DriveFile?: DriveFileUncheckedCreateNestedManyWithoutOwnerInput
+    grantedPermissions?: DriveFilePermissionUncheckedCreateNestedManyWithoutGranterInput
+    DriveFilePermission?: DriveFilePermissionUncheckedCreateNestedManyWithoutUserInput
+    DriveFolder?: DriveFolderUncheckedCreateNestedManyWithoutOwnerInput
+    Feedback?: FeedbackUncheckedCreateNestedManyWithoutSenderInput
+    FeedbackRecipient?: FeedbackRecipientUncheckedCreateNestedManyWithoutUserInput
+    GroupMember?: GroupMemberUncheckedCreateNestedManyWithoutUserInput
+    Message?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    NotificationRead?: NotificationReadUncheckedCreateNestedManyWithoutUserInput
+    ProjectAssignment?: ProjectAssignmentUncheckedCreateNestedManyWithoutUserInput
+    assignedTickets?: SupportTicketUncheckedCreateNestedManyWithoutAssignedToInput
+    createdTickets?: SupportTicketUncheckedCreateNestedManyWithoutCreatedByInput
+    TeamLeader?: TeamLeaderUncheckedCreateNestedManyWithoutUserInput
+    TeamMember?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
+    TicketAttachment?: TicketAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    ticketComments?: TicketCommentUncheckedCreateNestedManyWithoutUserInput
+    emailTemplates?: UserEmailTemplateUncheckedCreateNestedManyWithoutUserInput
+    UserPermission?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    receivedPermissions?: DriveFilePermissionUncheckedCreateNestedManyWithoutUserInput
+    addressedMatches?: CommandMatchUncheckedCreateNestedManyWithoutUserInput
+    PollVote?: PollVoteUncheckedCreateNestedManyWithoutUserInput
+    leaveRequests?: LeaveUncheckedCreateNestedManyWithoutUserInput
+    leaveApprovals?: LeaveUncheckedCreateNestedManyWithoutApproverInput
+    Reminder?: ReminderUncheckedCreateNestedManyWithoutUserInput
+    Form?: FormUncheckedCreateNestedManyWithoutCreatorInput
+    FormResponse?: FormResponseUncheckedCreateNestedManyWithoutResponderInput
+  }
+
+  export type UserCreateOrConnectWithoutRolesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput>
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutRolesInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutRolesInput, UserUncheckedUpdateWithoutRolesInput>
+    create: XOR<UserCreateWithoutRolesInput, UserUncheckedCreateWithoutRolesInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutRolesInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutRolesInput, UserUncheckedUpdateWithoutRolesInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutRolesInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutRolesInput>
   }
 
   export type NotificationReadCreateWithoutNotificationInput = {
@@ -133177,6 +133611,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -133228,6 +133663,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -133328,6 +133764,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -133379,6 +133816,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -133562,6 +134000,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -133613,6 +134052,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -133733,6 +134173,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -133784,6 +134225,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -133834,6 +134276,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -133885,6 +134328,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -133940,6 +134384,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -133991,6 +134436,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -134141,6 +134587,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -134192,6 +134639,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -134253,6 +134701,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -134304,6 +134753,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -134472,6 +134922,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -134523,6 +134974,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -134653,6 +135105,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -134704,6 +135157,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -134951,6 +135405,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -135002,6 +135457,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -135087,6 +135543,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -135138,6 +135595,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -135228,6 +135686,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -135279,6 +135738,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -135375,6 +135835,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -135426,6 +135887,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -135621,6 +136083,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -135672,6 +136135,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -135764,6 +136228,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -135815,6 +136280,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -136605,6 +137071,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -136656,6 +137123,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -136776,6 +137244,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -136827,6 +137296,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -136956,6 +137426,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -137007,6 +137478,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -137142,6 +137614,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -137193,6 +137666,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -137313,6 +137787,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -137364,6 +137839,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -137487,6 +137963,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -137538,6 +138015,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -137634,6 +138112,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -137685,6 +138164,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -137740,6 +138220,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -137791,6 +138272,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -137846,6 +138328,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -137897,6 +138380,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -137999,6 +138483,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -138050,6 +138535,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -138111,6 +138597,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -138162,6 +138649,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -138361,6 +138849,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -138412,6 +138901,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -138512,6 +139002,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -138563,6 +139054,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -138641,6 +139133,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -138692,6 +139185,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -138792,6 +139286,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -138843,6 +139338,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -139076,6 +139572,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
     devices?: DeviceUserCreateNestedManyWithoutUserInput
@@ -139127,6 +139624,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
     devices?: DeviceUserUncheckedCreateNestedManyWithoutUserInput
@@ -139236,6 +139734,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
     devices?: DeviceUserUpdateManyWithoutUserNestedInput
@@ -139287,6 +139786,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
     devices?: DeviceUserUncheckedUpdateManyWithoutUserNestedInput
@@ -141762,6 +142262,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -141813,6 +142314,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -141917,6 +142419,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -141968,6 +142471,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -142068,6 +142572,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -142119,6 +142624,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -142174,6 +142680,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -142225,6 +142732,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -142291,6 +142799,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -142342,6 +142851,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -142403,6 +142913,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -142454,6 +142965,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -142504,6 +143016,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -142555,6 +143068,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -142621,6 +143135,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -142672,6 +143187,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -142722,6 +143238,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -142773,6 +143290,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -142891,6 +143409,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -142942,6 +143461,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -143268,6 +143788,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchCreateNestedManyWithoutAddressedByUserInput
@@ -143319,6 +143840,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     location?: UserCreatelocationInput | string[]
+    roles?: RolesUncheckedCreateNestedManyWithoutUsersInput
     ActivityLog?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     audit_steps?: AuditStepUncheckedCreateNestedManyWithoutAssignedToInput
     CommandMatch?: CommandMatchUncheckedCreateNestedManyWithoutAddressedByUserInput
@@ -143440,6 +143962,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -143491,6 +144014,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -145030,6 +145554,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -145081,6 +145606,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
@@ -145588,6 +146114,23 @@ export namespace Prisma {
     id?: number
     formId: number
     submittedAt?: Date | string
+  }
+
+  export type RolesUpdateWithoutUsersInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolesUncheckedUpdateWithoutUsersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RolesUncheckedUpdateManyWithoutUsersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
   }
 
   export type ActivityLogUpdateWithoutUserInput = {
@@ -146471,6 +147014,131 @@ export namespace Prisma {
     isPoll?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type UserUpdateWithoutRolesInput = {
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: UserUpdateroleInput | string[]
+    Mobile?: NullableIntFieldUpdateOperationsInput | number | null
+    Pay?: NullableIntFieldUpdateOperationsInput | number | null
+    PrimaryContact?: NullableStringFieldUpdateOperationsInput | string | null
+    MobileContact?: NullableIntFieldUpdateOperationsInput | number | null
+    Relationship?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondContact?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondMobile?: NullableIntFieldUpdateOperationsInput | number | null
+    SecondRelationship?: NullableStringFieldUpdateOperationsInput | string | null
+    Remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    ndafile?: NullableStringFieldUpdateOperationsInput | string | null
+    ndasubmissiondate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: UserUpdatelocationInput | string[]
+    ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
+    audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
+    CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
+    devices?: DeviceUserUpdateManyWithoutUserNestedInput
+    DriveFile?: DriveFileUpdateManyWithoutOwnerNestedInput
+    grantedPermissions?: DriveFilePermissionUpdateManyWithoutGranterNestedInput
+    DriveFilePermission?: DriveFilePermissionUpdateManyWithoutUserNestedInput
+    DriveFolder?: DriveFolderUpdateManyWithoutOwnerNestedInput
+    Feedback?: FeedbackUpdateManyWithoutSenderNestedInput
+    FeedbackRecipient?: FeedbackRecipientUpdateManyWithoutUserNestedInput
+    GroupMember?: GroupMemberUpdateManyWithoutUserNestedInput
+    Message?: MessageUpdateManyWithoutSenderNestedInput
+    NotificationRead?: NotificationReadUpdateManyWithoutUserNestedInput
+    ProjectAssignment?: ProjectAssignmentUpdateManyWithoutUserNestedInput
+    assignedTickets?: SupportTicketUpdateManyWithoutAssignedToNestedInput
+    createdTickets?: SupportTicketUpdateManyWithoutCreatedByNestedInput
+    TeamLeader?: TeamLeaderUpdateManyWithoutUserNestedInput
+    TeamMember?: TeamMemberUpdateManyWithoutUserNestedInput
+    TicketAttachment?: TicketAttachmentUpdateManyWithoutUploaderNestedInput
+    ticketComments?: TicketCommentUpdateManyWithoutUserNestedInput
+    emailTemplates?: UserEmailTemplateUpdateManyWithoutUserNestedInput
+    UserPermission?: UserPermissionUpdateManyWithoutUserNestedInput
+    receivedPermissions?: DriveFilePermissionUpdateManyWithoutUserNestedInput
+    addressedMatches?: CommandMatchUpdateManyWithoutUserNestedInput
+    PollVote?: PollVoteUpdateManyWithoutUserNestedInput
+    leaveRequests?: LeaveUpdateManyWithoutUserNestedInput
+    leaveApprovals?: LeaveUpdateManyWithoutApproverNestedInput
+    Reminder?: ReminderUpdateManyWithoutUserNestedInput
+    Form?: FormUpdateManyWithoutCreatorNestedInput
+    FormResponse?: FormResponseUpdateManyWithoutResponderNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRolesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: UserUpdateroleInput | string[]
+    Mobile?: NullableIntFieldUpdateOperationsInput | number | null
+    Pay?: NullableIntFieldUpdateOperationsInput | number | null
+    PrimaryContact?: NullableStringFieldUpdateOperationsInput | string | null
+    MobileContact?: NullableIntFieldUpdateOperationsInput | number | null
+    Relationship?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondContact?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondMobile?: NullableIntFieldUpdateOperationsInput | number | null
+    SecondRelationship?: NullableStringFieldUpdateOperationsInput | string | null
+    Remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    ndafile?: NullableStringFieldUpdateOperationsInput | string | null
+    ndasubmissiondate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: UserUpdatelocationInput | string[]
+    ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
+    CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput
+    devices?: DeviceUserUncheckedUpdateManyWithoutUserNestedInput
+    DriveFile?: DriveFileUncheckedUpdateManyWithoutOwnerNestedInput
+    grantedPermissions?: DriveFilePermissionUncheckedUpdateManyWithoutGranterNestedInput
+    DriveFilePermission?: DriveFilePermissionUncheckedUpdateManyWithoutUserNestedInput
+    DriveFolder?: DriveFolderUncheckedUpdateManyWithoutOwnerNestedInput
+    Feedback?: FeedbackUncheckedUpdateManyWithoutSenderNestedInput
+    FeedbackRecipient?: FeedbackRecipientUncheckedUpdateManyWithoutUserNestedInput
+    GroupMember?: GroupMemberUncheckedUpdateManyWithoutUserNestedInput
+    Message?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    NotificationRead?: NotificationReadUncheckedUpdateManyWithoutUserNestedInput
+    ProjectAssignment?: ProjectAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    assignedTickets?: SupportTicketUncheckedUpdateManyWithoutAssignedToNestedInput
+    createdTickets?: SupportTicketUncheckedUpdateManyWithoutCreatedByNestedInput
+    TeamLeader?: TeamLeaderUncheckedUpdateManyWithoutUserNestedInput
+    TeamMember?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
+    TicketAttachment?: TicketAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    ticketComments?: TicketCommentUncheckedUpdateManyWithoutUserNestedInput
+    emailTemplates?: UserEmailTemplateUncheckedUpdateManyWithoutUserNestedInput
+    UserPermission?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    receivedPermissions?: DriveFilePermissionUncheckedUpdateManyWithoutUserNestedInput
+    addressedMatches?: CommandMatchUncheckedUpdateManyWithoutUserNestedInput
+    PollVote?: PollVoteUncheckedUpdateManyWithoutUserNestedInput
+    leaveRequests?: LeaveUncheckedUpdateManyWithoutUserNestedInput
+    leaveApprovals?: LeaveUncheckedUpdateManyWithoutApproverNestedInput
+    Reminder?: ReminderUncheckedUpdateManyWithoutUserNestedInput
+    Form?: FormUncheckedUpdateManyWithoutCreatorNestedInput
+    FormResponse?: FormResponseUncheckedUpdateManyWithoutResponderNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutRolesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: UserUpdateroleInput | string[]
+    Mobile?: NullableIntFieldUpdateOperationsInput | number | null
+    Pay?: NullableIntFieldUpdateOperationsInput | number | null
+    PrimaryContact?: NullableStringFieldUpdateOperationsInput | string | null
+    MobileContact?: NullableIntFieldUpdateOperationsInput | number | null
+    Relationship?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondContact?: NullableStringFieldUpdateOperationsInput | string | null
+    SecondMobile?: NullableIntFieldUpdateOperationsInput | number | null
+    SecondRelationship?: NullableStringFieldUpdateOperationsInput | string | null
+    Remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    ndafile?: NullableStringFieldUpdateOperationsInput | string | null
+    ndasubmissiondate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: UserUpdatelocationInput | string[]
+  }
+
   export type NotificationReadCreateManyNotificationInput = {
     id?: number
     userId: number
@@ -147199,6 +147867,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUpdateManyWithoutAddressedByUserNestedInput
@@ -147250,6 +147919,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: UserUpdatelocationInput | string[]
+    roles?: RolesUncheckedUpdateManyWithoutUsersNestedInput
     ActivityLog?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     audit_steps?: AuditStepUncheckedUpdateManyWithoutAssignedToNestedInput
     CommandMatch?: CommandMatchUncheckedUpdateManyWithoutAddressedByUserNestedInput

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
+import emojiDictionary from "emoji-dictionary"
 
 interface EmojiPickerDialogProps {
   open: boolean
@@ -925,14 +926,19 @@ export function EmojiPickerDialog({ open, onOpenChange, onEmojiSelect }: EmojiPi
 
     emojiCategories.forEach((category) => {
       category.emojis.forEach((emoji) => {
-        if (results.length < 100 && !results.includes(emoji)) {
+        const name = emojiDictionary.getName(emoji)
+        const aliases = emojiDictionary.getAliases(emoji) || []
+        const matches = name?.toLowerCase().includes(query) || aliases.some(a => a.includes(query))
+        if (matches && !results.includes(emoji)) {
           results.push(emoji)
         }
+
       })
     })
 
-    return results
+    return results.slice(0, 100)
   }, [searchQuery])
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

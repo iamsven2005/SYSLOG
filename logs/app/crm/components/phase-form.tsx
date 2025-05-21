@@ -17,6 +17,7 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { createPhase, updatePhase } from "../actions/phases"
+import { BridgePhase, BridgeProject } from "@/prisma/generated/main"
 
 const phaseSchema = z.object({
   name: z.string().min(2, { message: "Phase name must be at least 2 characters." }),
@@ -26,28 +27,38 @@ const phaseSchema = z.object({
   status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "DELAYED", "ON_HOLD"]),
   completionPercentage: z.number().min(0).max(100),
 })
-
-export default function PhaseForm({ project, phase = null }) {
+type PhaseFormValues = z.infer<typeof phaseSchema>
+type PhaseFormProps = {
+  project: { id: number; bridgeProject: BridgeProject } // assuming only these are needed
+  phase?: BridgePhase | null
+}
+export default function PhaseForm({ project, phase = null }: PhaseFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm({
-    resolver: zodResolver(phaseSchema),
-    defaultValues: phase
-      ? {
-          ...phase,
-        }
-      : {
-          name: "",
-          description: "",
-          startDate: undefined,
-          endDate: undefined,
-          status: "NOT_STARTED",
-          completionPercentage: 0,
-        },
-  })
+  resolver: zodResolver(phaseSchema),
+  defaultValues: phase
+    ? {
+        name: phase.name,
+        description: phase.description ?? undefined,
+        startDate: phase.startDate ?? undefined,
+        endDate: phase.endDate ?? undefined,
+        status: phase.status,
+        completionPercentage: phase.completionPercentage,
+      }
+    : {
+        name: "",
+        description: "",
+        startDate: undefined,
+        endDate: undefined,
+        status: "NOT_STARTED",
+        completionPercentage: 0,
+      },
+})
 
-  async function onSubmit(data) {
+
+async function onSubmit(data: PhaseFormValues) {
     setIsSubmitting(true)
 
     try {

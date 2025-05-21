@@ -15,8 +15,9 @@ export const metadata: Metadata = {
   description: "View alert event details",
 }
 
-export default async function AlertEventDetailPage({ params }: { params: { id: string } }) {
-  const id = Number.parseInt(params.id, 10)
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+    const id = Number.parseInt(params.id, 10)
   const currentUser = await getCurrentUser()
   if (!currentUser) {
     redirect("/login")

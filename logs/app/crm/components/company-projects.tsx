@@ -2,8 +2,16 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDate, formatCurrency } from "@/lib/utils"
+import { Company, Project, ProjectCompanyLink } from "@/prisma/generated/main"
 
-export default function CompanyProjects({ company }) {
+type ProjectLinkWithProject = ProjectCompanyLink & {
+  project: Project
+}
+
+type CompanyWithProjects = Company & {
+  projects: ProjectLinkWithProject[]
+}
+export default function CompanyProjects({ company }: { company: CompanyWithProjects }) {
   return (
     <Card>
       <CardHeader>
@@ -37,12 +45,11 @@ export default function CompanyProjects({ company }) {
                     </Link>
                   </div>
                   <div>{link.role}</div>
-                  <div>{formatCurrency(link.contractValue)}</div>
-                  <div>{formatDate(link.startDate)}</div>
+                  <div>{link.contractValue != null ? formatCurrency(Number(link.contractValue)) : "N/A"}</div>
+                  <div>{link.startDate ? formatDate(link.startDate) : "N/A"}</div>
                   <div>
                     <span
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                        link.project.status === "PLANNING"
+                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${link.project.status === "PLANNING"
                           ? "bg-purple-100 text-purple-800"
                           : link.project.status === "BIDDING"
                             ? "bg-blue-100 text-blue-800"
@@ -61,7 +68,7 @@ export default function CompanyProjects({ company }) {
                                         : link.project.status === "CANCELLED"
                                           ? "bg-red-100 text-red-800"
                                           : "bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {link.project.status || "UNKNOWN"}
                     </span>

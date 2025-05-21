@@ -7,8 +7,24 @@ import { parseXMLDate, type XMLMessage } from "../utils/xml-utils"
 import { getSession } from "@/lib/auth"
 import { Prisma } from "@/prisma/generated/main"
 
-// Get all groups for the current user
-export async function getUserGroups() {
+export type GroupWithMembersAndLastMessage = Prisma.GroupGetPayload<{
+  include: {
+    members: {
+      include: {
+        user: true
+      }
+    }
+    messages: {
+      orderBy: { createdAt: "desc" }
+      take: 1
+      include: {
+        sender: true
+      }
+    }
+  }
+}>
+
+export async function getUserGroups(): Promise<GroupWithMembersAndLastMessage[]> {
   const user = await getCurrentUser()
   if (!user) throw new Error("Unauthorized")
 
@@ -19,26 +35,14 @@ export async function getUserGroups() {
         include: {
           members: {
             include: {
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  email: true,
-                  role: true,
-                },
-              },
+              user: true,
             },
           },
           messages: {
             orderBy: { createdAt: "desc" },
             take: 1,
             include: {
-              sender: {
-                select: {
-                  id: true,
-                  username: true,
-                },
-              },
+              sender: true,
             },
           },
         },

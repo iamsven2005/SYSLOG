@@ -40,14 +40,45 @@ const formSchema = z.object({
     .transform((val) => (val ? Number.parseInt(val) : undefined)),
 })
 
+interface Company {
+  id: number
+  name: string
+  contacts?: {
+    id: number
+    name: string
+    phone: string | null
+    email: string | null
+    remarks: string | null
+    createdAt: Date
+    updatedAt: Date
+    title: string | null
+    expertise: string | null
+    companyId: number
+  }[]
+}
+
+interface Project {
+  id: number
+  name: string
+}
+
+interface InteractionFormProps {
+  companies: Company[]
+  projects?: Project[]
+  preSelectedCompanyId?: number
+  preSelectedContactId?: number
+  preSelectedProjectId?: number
+  companyContacts: Company["contacts"]
+}
+
 export default function InteractionForm({
   companies = [],
   projects = [],
-  preSelectedCompanyId = undefined,
-  preSelectedContactId = undefined,
-  preSelectedProjectId = undefined,
+  preSelectedCompanyId,
+  preSelectedContactId,
+  preSelectedProjectId,
   companyContacts = [],
-}) {
+}: InteractionFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | undefined>(
@@ -65,10 +96,11 @@ export default function InteractionForm({
       outcome: "",
       followUpRequired: false,
       followUpDate: null,
-      companyId: preSelectedCompanyId ? preSelectedCompanyId.toString() : "",
-      contactId: preSelectedContactId ? preSelectedContactId.toString() : undefined,
-      projectId: preSelectedProjectId ? preSelectedProjectId.toString() : undefined,
-    },
+      companyId: preSelectedCompanyId ?? undefined,
+      contactId: preSelectedContactId ?? undefined,
+      projectId: preSelectedProjectId ?? undefined,
+    }
+
   })
 
   // Filter contacts when company changes
@@ -91,7 +123,11 @@ export default function InteractionForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     try {
-      const result = await createInteraction(values)
+      const result = await createInteraction({
+        ...values,
+        followUpDate: values.followUpDate ?? undefined,
+      })
+
 
       if (result.error) {
         console.error(result.error)

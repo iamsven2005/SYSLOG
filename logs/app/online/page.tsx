@@ -102,10 +102,10 @@ async function getActivityChartData(days = 30) {
 export default async function UserActivityPage({
   searchParams,
 }: {
-  searchParams: { page?: string; days?: string }
-}) {
-  const currentPage = Number(searchParams.page) || 1
-  const days = Number(searchParams.days) || 30
+      searchParams: Promise<{ page?: string; days?: string }>
+  }) {
+  const currentPage = Number((await searchParams).page) || 1
+  const days = Number((await searchParams).days) || 30
   const pageSize = 10
 
   const { activities, totalPages, totalCount } = await getUserActivityData(currentPage, pageSize)

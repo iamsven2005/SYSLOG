@@ -7,11 +7,8 @@ import { checkUserPermission } from "@/app/permissions/permission-actions"
 import { getAlertCondition } from "../../alert-actions"
 
 
-export default async function EditAlertConditionPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!params?.id || isNaN(Number(params.id))) {
     notFound()
   }

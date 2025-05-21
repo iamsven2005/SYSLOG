@@ -9,9 +9,11 @@ import ProjectListSkeleton from "@/app/crm/components/skeletons/project-list-ske
 export default async function ProjectsPage({
   searchParams,
 }: {
-  searchParams: { status?: string; search?: string }
+          searchParams: Promise<{ status?: string; search?: string }>
+
 }) {
-  const { status, search } = searchParams
+  const search = (await searchParams).search
+  const status = (await searchParams).status
   const { projects, error } = await getProjects()
   
   const filteredProjects = projects?.filter((p) => {

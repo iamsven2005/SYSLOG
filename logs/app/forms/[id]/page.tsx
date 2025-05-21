@@ -2,7 +2,8 @@ import { FormViewer } from "./form-viewer"
 import { getFormById } from "./actions"
 import { notFound } from "next/navigation"
 
-export default async function ViewFormPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const formId = Number.parseInt(params.id)
   const form = await getFormById(formId)
 

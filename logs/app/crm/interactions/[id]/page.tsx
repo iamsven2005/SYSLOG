@@ -9,11 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { getInteraction } from "./actions"
 
-export default async function InteractionDetailPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = Number.parseInt(params.id)
   if (isNaN(id)) {
     return notFound()

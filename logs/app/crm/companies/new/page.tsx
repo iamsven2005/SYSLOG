@@ -3,9 +3,8 @@ import CompanyForm from "@/app/crm/components/company-form"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { CompanyType } from "@/prisma/generated/main"
 
-export default function NewCompanyPage({ searchParams }: { searchParams?: { type?: string } }) {
+export default function NewCompanyPage() {
   return (
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

@@ -1,9 +1,9 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+export async function GET(request: NextRequest, { params }: { params: Promise<{ messageId: string }> }) {
 
-export async function GET(request: Request, { params }: { params: { messageId: string } }) {
   try {
-    const messageId = Number.parseInt(params.messageId)
+    const messageId = Number.parseInt((await params).messageId)
 
     if (isNaN(messageId)) {
       return NextResponse.json({ success: false, error: "Invalid message ID" }, { status: 400 })

@@ -4,8 +4,7 @@ import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
 import { getUserById } from "@/app/email-templates/user-actions"
-
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession()
 
@@ -13,7 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const userId = Number.parseInt(params.id)
+    const userId = Number.parseInt((await params).id)
     const currentuser = await getUserById(session.user.id)
     if (!currentuser) {
         throw new Error("User not found")

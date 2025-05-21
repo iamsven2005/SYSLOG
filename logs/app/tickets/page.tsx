@@ -10,11 +10,7 @@ import { getCurrentUser } from "../login/actions"
 import { notFound, redirect } from "next/navigation"
 import { checkUserPermission } from "../permissions/permission-actions"
 
-export default async function TicketsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+export default async function TicketsPage() {
 
     const currentUser = await getCurrentUser()
     if (!currentUser) {

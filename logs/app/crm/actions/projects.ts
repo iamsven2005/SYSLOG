@@ -8,7 +8,11 @@ export async function getProjects() {
   try {
     const projects = await db.project.findMany({
       include: {
-        bridgeProject: true,
+        bridgeProject: {
+          include: {
+            materials: true, // 👈 Add this line
+          },
+        },
         projectType: true,
         _count: {
           select: {
@@ -25,6 +29,7 @@ export async function getProjects() {
     return { error: "Failed to fetch projects" }
   }
 }
+
 
 export async function getProject(id: number) {
   try {
@@ -145,7 +150,7 @@ export async function updateProject(
     status?: ProjectStatus
     projectTypeId?: number
     bridgeProject?: {
-      bridgeType?: BridgeType
+      bridgeType: BridgeType
       spanLength?: number
       width?: number
       height?: number

@@ -3,15 +3,14 @@ import { readFile } from "fs/promises"
 import { join } from "path"
 import { db } from "@/lib/db"
 import { getSession } from "@/lib/auth"
-
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession()
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const id = Number.parseInt(params.id, 10)
+    const id = Number.parseInt((await params).id, 10)
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 })
     }

@@ -7,8 +7,9 @@ import { readFile } from "fs/promises"
 import path from "path"
 
 // Dynamic route: /api/install/[ip]
-export async function GET(req: NextRequest, { params }: { params: { ip: string } }) {
-  const ip = params.ip
+  export async function GET(request: NextRequest, { params }: { params: Promise<{ ip: string }> }) {
+
+  const ip = (await params).ip
 
   // Validate the IP (basic sanity check)
   if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) {

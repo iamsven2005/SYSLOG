@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { useState, useEffect, useCallback } from "react"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -35,9 +35,31 @@ const timeRangeOptions = [
   { label: "Last 24 Hours", value: "24h" },
   { label: "Last 7 Days", value: "7d" },
 ]
+type SensorReading = {
+  type: "temperature" | "voltage" | "power"
+  value: number
+  host: string
+}
+
+type SensorDataPoint = {
+  timestamp: string
+  [sensorId: string]: SensorReading | string // include timestamp as string
+}
+type ProcessedDataPoint = {
+  timestamp: string
+  [key: string]: number | string // e.g., "tempSensor1|host1": 68.5
+}
+
+
+
+type GroupedPayload = {
+  sensorName: string
+  entry: NonNullable<TooltipProps<number, string>["payload"]>[number]
+}
+
 
 export default function SensorChart() {
-  const [chartData, setChartData] = useState<any[]>([])
+const [chartData, setChartData] = useState<SensorDataPoint[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [timeRange, setTimeRange] = useState("24h")
   const [viewMode, setViewMode] = useState<"temperature" | "power">("temperature")
@@ -74,7 +96,7 @@ export default function SensorChart() {
   }
 
   // Fetch sensor data
-  const fetchSensorData = async () => {
+const fetchSensorData = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getSensorData(timeRange);
@@ -93,24 +115,32 @@ export default function SensorChart() {
       const voltSensors = new Set<string>();
       const uniqueHosts = new Set<string>();
   
-      data.timeSeriesData.forEach((entry: any) => {
-        if (!entry) return; // Ensure entry is not null
-  
-        Object.keys(entry).forEach((key) => {
-          if (key !== "timestamp" && entry[key]) {
-            if (entry[key]?.type === "temperature") {
-              tempSensors.add(key);
-            } else if (entry[key]?.type === "voltage") {
-              voltSensors.add(key);
-            }
-  
-            // Extract host from the data if available
-            if (entry[key]?.host) {
-              uniqueHosts.add(entry[key].host);
-            }
-          }
-        });
-      });
+data.timeSeriesData.forEach((entry: SensorDataPoint) => {
+  if (!entry) return
+
+  Object.keys(entry).forEach((key) => {
+    if (key === "timestamp") return
+
+    const value = entry[key]
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "type" in value &&
+      "host" in value
+    ) {
+      const sensor = value as SensorReading
+
+      if (sensor.type === "temperature") {
+        tempSensors.add(key)
+      } else if (sensor.type === "voltage") {
+        voltSensors.add(key)
+      }
+
+      uniqueHosts.add(sensor.host)
+    }
+  })
+})
+
   
       setSensors({
         temperature: Array.from(tempSensors),
@@ -131,7 +161,7 @@ export default function SensorChart() {
     } finally {
       setIsLoading(false);
     }
-  };
+}, [timeRange, selectedHosts]) // Add any internal dependencies
   
   // Handle sensor selection for filtering
   const handleSensorSelect = (value: string) => {
@@ -152,14 +182,15 @@ export default function SensorChart() {
   }
 
   // Load data on initial render and when time range changes
-  useEffect(() => {
-    fetchSensorData().then(() => {
-      const currentSensors = viewMode === "temperature" ? sensors.temperature : sensors.voltage
-      if (currentSensors.length > 0 && selectedSensors.length === 0) {
-        setSelectedSensors([...currentSensors])
-      }
-    })
-  }, [timeRange, viewMode])
+useEffect(() => {
+  fetchSensorData().then(() => {
+    const currentSensors = viewMode === "temperature" ? sensors.temperature : sensors.voltage
+    if (currentSensors.length > 0 && selectedSensors.length === 0) {
+      setSelectedSensors([...currentSensors])
+    }
+  })
+}, [fetchSensorData, viewMode, selectedSensors.length, sensors.temperature, sensors.voltage])
+
 
   // Add useEffect to update selected sensors when view mode changes
   useEffect(() => {
@@ -187,105 +218,108 @@ export default function SensorChart() {
   }
 
   // Custom tooltip for the chart
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      // Group by host
-      const hostGroups = payload.reduce((groups: any, entry: any) => {
-        const [sensorName, hostName] = entry.dataKey.split("|")
-        if (!groups[hostName]) {
-          groups[hostName] = []
-        }
-        groups[hostName].push({
-          ...entry,
-          sensorName,
-        })
-        return groups
-      }, {})
+const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload, label }) => {
+  
+  if (active && payload && payload.length) {
+const hostGroups: Record<string, GroupedPayload[]> = {}
 
-      return (
-        <div className="bg-background border rounded-md shadow-md p-3">
-          <p className="text-sm font-medium">{new Date(label).toLocaleString()}</p>
+payload.forEach((entry) => {
+  const [sensorName, hostName] = (entry.dataKey as string).split("|")
+  if (!hostGroups[hostName]) hostGroups[hostName] = []
+  hostGroups[hostName].push({ sensorName, entry })
+})
 
-          {Object.entries(hostGroups).map(([host, entries]: [string, any]) => (
-            <div key={host} className="mt-2">
-              <p className="text-xs font-semibold border-b pb-1 mb-1">{host}</p>
-              <div className="space-y-1">
-                {entries.map((entry: any, index: number) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                    <span className="text-sm">{entry.sensorName}:</span>
-                    <span className="text-sm font-medium">
-                      {entry.value.toFixed(1)}
-                      {viewMode === "temperature" ? "°C" : "mV"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+
+    return (
+      <div className="bg-background border rounded-md shadow-md p-3">
+        <p className="text-sm font-medium">{new Date(label as string).toLocaleString()}</p>
+{Object.entries(hostGroups).map(([host, entries]) => (
+  <div key={host} className="mt-2">
+    <p className="text-xs font-semibold border-b pb-1 mb-1">{host}</p>
+    <div className="space-y-1">
+      {entries.map(({ sensorName, entry }, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="text-sm">{sensorName}:</span>
+          <span className="text-sm font-medium">
+            {Number(entry.value).toFixed(1)}
+            {viewMode === "temperature" ? "°C" : "mV"}
+          </span>
         </div>
-      )
-    }
-    return null
+      ))}
+    </div>
+  </div>
+))}
+
+      </div>
+    )
   }
+
+  return null
+}
 
   // Process chart data to include host information
-  const processChartData = () => {
-    if (!chartData || chartData.length === 0) return []
+const processChartData = (): ProcessedDataPoint[] => {
+  if (!chartData || chartData.length === 0) return []
 
-    // Create a new array with the same timestamps
-    return chartData.map((dataPoint) => {
-      const newPoint: any = { timestamp: dataPoint.timestamp }
+  return chartData.map((dataPoint) => {
+    const newPoint: ProcessedDataPoint = { timestamp: dataPoint.timestamp }
 
-      // For each sensor, add host-specific data points
-      Object.keys(dataPoint).forEach((key) => {
-        if (key !== "timestamp") {
-          const sensorData = dataPoint[key]
-          if (sensorData && sensorData.host && selectedHosts.includes(sensorData.host)) {
-            // Use a composite key of sensor|host to uniquely identify each line
-            newPoint[`${key}|${sensorData.host}`] = sensorData.value
-          }
-        }
-      })
-
-      return newPoint
-    })
-  }
-
-  // Get current readings grouped by host
-  const getCurrentReadingsByHost = () => {
-    if (chartData.length === 0) return {}
-
-    const latestData = chartData[chartData.length - 1]
-    const readings: Record<string, any[]> = {}
-
-    // Group readings by host
-    Object.keys(latestData).forEach((key) => {
+    Object.keys(dataPoint).forEach((key) => {
       if (key !== "timestamp") {
-        const sensorData = latestData[key]
-        if (sensorData && sensorData.host && selectedHosts.includes(sensorData.host)) {
-          if (!readings[sensorData.host]) {
-            readings[sensorData.host] = []
-          }
-
-          if (
-            (viewMode === "temperature" && sensorData.type === "temperature") ||
-            (viewMode === "power" && sensorData.type === "power")
-          ) {
-            if (selectedSensors.includes(key)) {
-              readings[sensorData.host].push({
-                sensor: key,
-                value: sensorData.value,
-                type: sensorData.type,
-              })
-            }
+        const sensorData = dataPoint[key]
+        // Type guard to ensure it's a SensorReading
+        if (typeof sensorData === "object" && sensorData !== null && "host" in sensorData && "value" in sensorData) {
+          const { host, value } = sensorData as SensorReading
+          if (selectedHosts.includes(host)) {
+            newPoint[`${key}|${host}`] = value
           }
         }
       }
     })
 
-    return readings
-  }
+    return newPoint
+  })
+}
+
+
+const getCurrentReadingsByHost = () => {
+  if (chartData.length === 0) return {}
+
+  const latestData = chartData[chartData.length - 1]
+  const readings: Record<string, Array<{ sensor: string; value: number; type: string }>> = {}
+
+  Object.keys(latestData).forEach((key) => {
+    if (key === "timestamp") return
+
+    const sensorData = latestData[key]
+    
+    // Type guard to ensure sensorData is a SensorReading
+    if (typeof sensorData === "object" && sensorData !== null && "host" in sensorData && "value" in sensorData) {
+      if (selectedHosts.includes(sensorData.host)) {
+        if (
+          (viewMode === "temperature" && sensorData.type === "temperature") ||
+          (viewMode === "power" && sensorData.type === "power")
+        ) {
+          if (selectedSensors.includes(key)) {
+            if (!readings[sensorData.host]) {
+              readings[sensorData.host] = []
+            }
+
+            readings[sensorData.host].push({
+              sensor: key,
+              value: sensorData.value,
+              type: sensorData.type,
+            })
+          }
+        }
+      }
+    }
+  })
+
+  return readings
+}
+
 
   const processedData = processChartData()
   const currentReadingsByHost = getCurrentReadingsByHost()

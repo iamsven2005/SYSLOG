@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { sendMessage } from "./chat-actions"
@@ -43,21 +43,13 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
   const commandsRef = useRef<HTMLDivElement>(null)
 
   // Define available slash commands
-  const slashCommands: SlashCommand[] = [
-    {
-      command: "/poll",
-      description: "Create a voting poll",
-      icon: (
-        <span className="text-blue-500 mr-2">
-          <BarChart3 className="h-4 w-4" />
-        </span>
-      ),
-      action: () => {
-        setShowPollCreator(true)
-        setShowCommands(false)
-        setMessage("")
-      },
-    },
+const slashCommands: SlashCommand[] = useMemo(() => [
+  {
+    command: "/poll",
+    description: "Create a voting poll",
+    icon: <span className="text-blue-500 mr-2"><BarChart3 className="h-4 w-4" /></span>,
+    action: () => { setShowPollCreator(true); setShowCommands(false); setMessage("") }
+  },
     {
       command: "/calendar",
       description: "Insert a date or schedule an event",
@@ -160,7 +152,7 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
         return Math.random() > 0.5 ? "Coin flip: Heads" : "Coin flip: Tails"
       },
     },
-  ]
+  ], [])
 
   const handleSendMessage = async () => {
     if (!message.trim() && selectedFiles.length === 0) return
@@ -440,19 +432,19 @@ export function ChatInput({ groupId, userId }: { groupId: number; userId: number
 useEffect(() => {
   if (commandInput !== "") {
     const filtered = slashCommands.filter((cmd) =>
-      cmd.command.slice(1).toLowerCase().includes(commandInput.toLowerCase()),
+      cmd.command.slice(1).toLowerCase().includes(commandInput.toLowerCase())
     )
     setFilteredCommands(filtered)
     setShowCommands(filtered.length > 0)
   } else {
     setFilteredCommands(slashCommands)
   }
-}, [commandInput])
+}, [commandInput, slashCommands])
 
-// Initialize filtered commands
 useEffect(() => {
   setFilteredCommands(slashCommands)
-}, [])
+}, [slashCommands])
+
 
 
   const handlePollCreated = () => {

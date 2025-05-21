@@ -5,7 +5,8 @@ import { db } from "@/lib/db"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
-export default async function AlertConditionDetailPage({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const note = await db.notes.findFirst({
     where: {
       id: parseInt(params.id),
@@ -21,7 +22,7 @@ export default async function AlertConditionDetailPage({ params }: { params: { i
   }
   return (
     <div className="p-6">
-    <Button  asChild><Link href={"/tickets/new"}>Back to new ticket</Link></Button>
+      <Button asChild><Link href={"/tickets/new"}>Back to new ticket</Link></Button>
       <h1 className="text-2xl font-bold mb-4">{note?.title}</h1>
 
       {/* Safely render HTML */}

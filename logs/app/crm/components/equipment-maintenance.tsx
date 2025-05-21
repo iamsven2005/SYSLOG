@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import { Wrench } from "lucide-react"
+import type { EquipmentMaintenance } from "@/prisma/generated/main"
 
-export default function EquipmentMaintenance({ maintenanceRecords = [] }) {
-  const getMaintenanceTypeBadge = (type) => {
+export default function EquipmentMaintenance({ maintenanceRecords = [] }: { maintenanceRecords: EquipmentMaintenance[] }) {
+  const getMaintenanceTypeBadge = (type: string) => {
     switch (type) {
       case "ROUTINE":
         return <Badge className="bg-green-100 text-green-800">Routine</Badge>
@@ -61,7 +62,9 @@ export default function EquipmentMaintenance({ maintenanceRecords = [] }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{getMaintenanceTypeBadge(record.maintenanceType)}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{record.performedBy || "N/A"}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{record.cost ? formatCurrency(record.cost) : "N/A"}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {record.cost ? formatCurrency(Number(record.cost)) : "N/A"}
+                    </td>
                     <td className="px-6 py-4">{record.description || record.notes || "N/A"}</td>
                   </tr>
                 ))}

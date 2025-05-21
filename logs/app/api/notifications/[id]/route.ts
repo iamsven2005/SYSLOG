@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { updateNotification, deleteNotification } from "@/app/notifications/notification-actions"
 import { getCurrentUser } from "@/app/login/actions"
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const user = await getCurrentUser()
 
@@ -10,7 +10,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const id = Number.parseInt(params.id)
+    const id = Number.parseInt((await params).id)
 
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid notification ID" }, { status: 400 })
@@ -31,8 +31,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getCurrentUser()
 
@@ -40,7 +39,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const id = Number.parseInt(params.id)
+    const id = Number.parseInt((await params).id)
 
     if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid notification ID" }, { status: 400 })

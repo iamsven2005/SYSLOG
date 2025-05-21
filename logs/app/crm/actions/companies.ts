@@ -12,6 +12,7 @@ export async function getCompanies(filter?: { type?: CompanyType }) {
       where,
       orderBy: { name: "asc" },
       include: {
+        contacts: true,
         _count: {
           select: {
             projects: true,
