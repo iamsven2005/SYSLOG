@@ -1,116 +1,106 @@
----
-marp: true
-theme: default
-paginate: true
-title: Internship Summary @ YWL Engineering
-description: Weeks 1–10 Reflections
----
+<!-- .slide: data-transition="slide" data-background="#fdfdfd" -->
 
-# Internship Summary  
-### YWL Engineering  
-_Weeks 1 to 10 Overview_
+# 🚀 Internship Summary  
+### **YWL Engineering**
+_Reflections from Weeks 1–10_
 
 ---
 
-## Key Roles & Responsibilities
+## 👨‍💻 Core Responsibilities
 
-- Develop and enhance system infrastructure  
-  _(Syslog, user management, embedding pipelines)_
-- Backend and frontend feature implementation  
-  _(file manager, chat, CRM, calendar, form builder)_
-- Manage Windows and Ubuntu systems, including virtualization
-- Troubleshoot hardware and network issues
-- Conduct security testing and monitoring
-- Support cross-team collaboration and documentation
+- 🛠 Build & enhance system infrastructure  
+- 🔧 Full-stack features: file manager, chat, CRM, calendar  
+- 🖥 Manage Ubuntu + Windows systems & VMs  
+- 🛡 Conduct security tests & monitoring  
+- 🤝 Cross-team support & documentation
 
 ---
 
-## Daily Operations
+## ⚙️ Daily Ops & Tasks
 
-- Script writing (Bash, PowerShell, Python)
-- Database management (PostgreSQL, Prisma, pgvector)
-- System installations and hardware upgrades
-- User support and system troubleshooting
-- Sync meetings with international teams
-- Documentation of deployment and automation
-
----
-
-## Achievements
-
-- ✅ Scalable rule/user management with role + location assignment  
-- ✅ Automated system setup for logging and alerting  
-- ✅ AI-assisted file embedding & search  
-- ✅ Real-time file manager with drag-and-drop & nested folders  
-- ✅ Custom project/workflow/calendar tools  
-- ✅ Custom form builder with full tracking  
-- ✅ Fixed security vulnerabilities (e.g., directory traversal)  
-- ✅ Recovered systems from hardware failure
+- 🐚 Write/debug Bash, PowerShell, Python scripts  
+- 🗄 PostgreSQL & Prisma database ops  
+- 💻 Install OS, configure hardware  
+- 🧩 Troubleshoot user issues  
+- 🌐 Sync with global dev teams  
+- 📚 Document deployment & automation
 
 ---
 
-## Challenges & Resolutions
+## 🏆 Key Achievements
 
-| **Challenge**                         | **Resolution**                                           |
-|--------------------------------------|----------------------------------------------------------|
-| SMTP issues                          | In-system alert popup + admin board                      |
-| Frontend-backend validation mismatch | Client-side validation + staging                         |
-| IP conflicts in networks             | ARP scan + subnet recommendations                        |
-| Heavy load from AI models            | Refactored + optimized workflows                         |
-| Script instability on Windows        | Rewritten with VBA + `.bat` wrappers                     |
-| Hardware failures (switch, MB)       | Swift replacement and recovery                           |
-
----
-
-## What I Learnt
-
-### Knowledge
-
-- Infrastructure: AD, Samba, VPN, OPNSense  
-- AI/Embedding: BLIP, cosine similarity, pgvector  
-- Architecture: Microservices, multi-schema DB  
-- Dev: Next.js, Flask, Shadcn, Prisma, SSE  
+- 🧠 Role/location-based rule & user system  
+- ⚙️ Automated logging, alerting, and scripts  
+- 🔍 AI-embedded file search system  
+- 📁 Real-time file manager with drag & drop  
+- 🗓 Calendar & workflow management tools  
+- 📋 Custom form builder with response tracking  
+- 🔐 Patched security flaws (e.g., traversal)  
+- 💾 Data recovery after hardware failure
 
 ---
 
-## What I Learnt (Cont.)
+## 🧩 Challenges & Solutions
 
-### Skills
-
-- Full-stack development with clean architecture
-- Cross-platform scripting and automation
-- Hardware maintenance and recovery
-- Real-time monitoring and security
-- UI/UX & responsive design practices
-
----
-
-## What I Learnt (Cont.)
-
-### Attitudes
-
-- Resourcefulness and independence
-- Proactive problem-solving
-- Refactoring and cleanup mentality
-- Clear, respectful communication
-- Perseverance through challenges
+<table>
+<thead>
+<tr><th>⚠️ Challenge</th><th>✅ Solution</th></tr>
+</thead>
+<tbody>
+<tr><td>SMTP issues</td><td>Popup alert system + admin board</td></tr>
+<tr><td>Validation mismatches</td><td>Frontend staging & checks</td></tr>
+<tr><td>IP conflicts</td><td>ARP scanning + smart subnet hints</td></tr>
+<tr><td>AI model overload</td><td>Refactored pipelines</td></tr>
+<tr><td>Windows script instability</td><td>Rewritten with VBA/.bat</td></tr>
+<tr><td>Hardware failure</td><td>Fast recovery & re-deployment</td></tr>
+</tbody>
+</table>
 
 ---
 
-## Proposed Enhancements
+## 📘 Knowledge Gained
 
-- 🛠 Finalize production deployments + OPNSense integration  
-- 🧩 Improve Windows install scripts for logging/reliability  
-- 📦 Containerize AI modules (captioning, text extraction)  
-- 📊 Real-time dashboards for resource/security monitoring  
-- 🕵 Central audit trail and searchable user logs  
-- 📁 Version control and preview in file manager  
-- 🗂 Gantt chart and dependency support for workflows  
+- 🧠 **Infra:** AD, Samba, VPN, OPNSense  
+- 📊 **AI/Embeddings:** BLIP, cosine, pgvector  
+- 🧱 **Architecture:** microservices, schema separation  
+- 🌐 **Dev tools:** Next.js, Flask, Prisma, Shadcn, SSE
 
 ---
 
-## Thank You!
+## 🧰 Skills Acquired
 
-_Grateful for the learning and growth during this internship._
+- ⚙️ Full-stack with clean architecture  
+- 💾 Hardware setup & recovery  
+- 📜 Scripting across OS platforms  
+- 🔒 Real-time monitoring + security setup  
+- 🧑‍🎨 UI/UX best practices
 
-**YWL Engineering • Internship Weeks 1–10**
+---
+
+## 💡 Attitudes Developed
+
+- 🧗‍♂️ Resilience under pressure  
+- 🧼 Code hygiene and refactoring  
+- 🗣 Clear cross-team communication  
+- 🛠 Solution-driven approach  
+- 🌱 Growth mindset
+
+---
+
+## 🔮 Future Enhancements
+
+- 🚀 Full deployment across production + firewall logs  
+- 🪟 Refactor Windows install scripts with logging  
+- 📦 Containerize AI modules for scaling  
+- 📊 Enhance dashboards (resource + security alerts)  
+- 🕵️‍♂️ Centralized audit trail for user actions  
+- 📁 Add version control & preview to file manager  
+- 🗂 Gantt view & dependencies for workflows
+
+---
+
+## 🙏 Thank You!
+
+_Grateful for this opportunity to learn, contribute, and grow._
+
+**YWL Engineering** • _Internship Weeks 1–10_
