@@ -10,7 +10,7 @@ export async function getInteractions(filter?: { projectId?: number; companyId?:
       ...(filter?.companyId ? { companyId: filter.companyId } : {}),
     }
 
-    const interactions = await db.cRMInteraction.findMany({
+    const rawInteractions = await db.cRMInteraction.findMany({
       where,
       include: {
         company: true,
@@ -18,6 +18,36 @@ export async function getInteractions(filter?: { projectId?: number; companyId?:
         project: true,
       },
       orderBy: { interactionDate: "desc" },
+    })
+
+    // Map to match the expected Interaction type
+    const interactions = rawInteractions.map((interaction) => {
+      const fullName = interaction.contact?.name || ""
+      const [firstName = "", ...rest] = fullName.split(" ")
+      const lastName = rest.join(" ")
+
+      return {
+        ...interaction,
+        contact: interaction.contact
+          ? {
+              id: interaction.contact.id,
+              firstName,
+              lastName,
+            }
+          : null,
+        company: interaction.company
+          ? {
+              id: interaction.company.id,
+              name: interaction.company.name,
+            }
+          : null,
+        project: interaction.project
+          ? {
+              id: interaction.project.id,
+              name: interaction.project.name,
+            }
+          : null,
+      }
     })
 
     return { interactions }

@@ -43,6 +43,8 @@ import {
   Cell,
 } from "recharts"
 import { toast } from "sonner"
+import { generateReport } from "./generate"
+import { CustomReportInput } from "./customReportSchema"
 
 const customReportSchema = z.object({
   name: z.string().min(2, { message: "Report name must be at least 2 characters." }),
@@ -140,12 +142,23 @@ const groupByOptions = {
 }
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"]
+type ReportPreview = {
+  chartData: { name: string; value: number }[]
+  summary: Record<string, unknown>
+  reportName: string
+  reportDescription?: string
+  chartType: "bar" | "line" | "pie" | "radar" | "area" | "none"
+  dataSource: "projects" | "companies" | "contacts" | "materials" | "inspections" | "bids"
+  metrics: string[]
+  groupBy?: string
+}
+type DataSourceType = keyof typeof metricOptions
 
 export default function CustomReportForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedDataSource, setSelectedDataSource] = useState("projects")
-  const [previewData, setPreviewData] = useState(null)
+  const [selectedDataSource, setSelectedDataSource] = useState<DataSourceType>("projects")
+  const [previewData, setPreviewData] = useState<ReportPreview | null>(null)
   const [reportGenerated, setReportGenerated] = useState(false)
 
   const form = useForm({
@@ -176,185 +189,19 @@ export default function CustomReportForm() {
     }
   }, [dataSource, selectedDataSource, form])
 
-  async function onSubmit(data) {
+  async function onSubmit(data: CustomReportInput) {
     setIsSubmitting(true)
 
     try {
-      // In a real app, you would save the report configuration to the database
-      console.log("Report configuration:", data)
-
-      // Generate preview data
-      const generatedData = await generatePreviewData(data)
+      const generatedData = await generateReport(data)
       setPreviewData(generatedData)
       setReportGenerated(true)
-
-      // Show success toast
       toast.success("Your custom report has been successfully generated.")
     } catch (error) {
-      console.error("Error submitting form:", error)
-      form.setError("root", { message: "An unexpected error occurred" })
-      toast.error( "Failed to generate report. Please try again.")
+      console.error("Report generation error:", error)
+      toast.error("Failed to generate report.")
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  // Mock function to generate preview data
-  async function generatePreviewData(data) {
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Generate different data based on the data source and metrics
-    let chartData = []
-    let summaryData = {}
-
-    switch (data.dataSource) {
-      case "projects":
-        if (data.groupBy === "status") {
-          chartData = [
-            { name: "Planning", value: 4 },
-            { name: "In Progress", value: 7 },
-            { name: "On Hold", value: 2 },
-            { name: "Completed", value: 5 },
-            { name: "Cancelled", value: 1 },
-          ]
-          summaryData = {
-            total: 19,
-            average: 3.8,
-            min: 1,
-            max: 7,
-          }
-        } else if (data.groupBy === "bridge_type") {
-          chartData = [
-            { name: "Arch", value: 3 },
-            { name: "Beam", value: 5 },
-            { name: "Cable-stayed", value: 2 },
-            { name: "Suspension", value: 4 },
-            { name: "Truss", value: 6 },
-          ]
-          summaryData = {
-            total: 20,
-            average: 4,
-            min: 2,
-            max: 6,
-          }
-        } else {
-          chartData = [
-            { name: "Jan", value: 400000 },
-            { name: "Feb", value: 300000 },
-            { name: "Mar", value: 600000 },
-            { name: "Apr", value: 800000 },
-            { name: "May", value: 500000 },
-            { name: "Jun", value: 700000 },
-          ]
-          summaryData = {
-            total: 3300000,
-            average: 550000,
-            min: 300000,
-            max: 800000,
-          }
-        }
-        break
-
-      case "companies":
-        if (data.groupBy === "type") {
-          chartData = [
-            { name: "Contractor", value: 12 },
-            { name: "Supplier", value: 8 },
-            { name: "Consultant", value: 5 },
-            { name: "Other", value: 3 },
-          ]
-          summaryData = {
-            total: 28,
-            average: 7,
-            min: 3,
-            max: 12,
-          }
-        } else {
-          chartData = [
-            { name: "Rating 1", value: 2 },
-            { name: "Rating 2", value: 3 },
-            { name: "Rating 3", value: 8 },
-            { name: "Rating 4", value: 10 },
-            { name: "Rating 5", value: 5 },
-          ]
-          summaryData = {
-            total: 28,
-            average: 3.5,
-            min: 2,
-            max: 10,
-          }
-        }
-        break
-
-      case "materials":
-        chartData = [
-          { name: "Steel", value: 450000 },
-          { name: "Concrete", value: 320000 },
-          { name: "Timber", value: 180000 },
-          { name: "Asphalt", value: 240000 },
-          { name: "Other", value: 110000 },
-        ]
-        summaryData = {
-          total: 1300000,
-          average: 260000,
-          min: 110000,
-          max: 450000,
-        }
-        break
-
-      case "inspections":
-        chartData = [
-          { name: "Passed", value: 32 },
-          { name: "Failed", value: 8 },
-          { name: "Conditional", value: 14 },
-        ]
-        summaryData = {
-          total: 54,
-          passRate: "59%",
-          failRate: "15%",
-        }
-        break
-
-      case "bids":
-        chartData = [
-          { name: "Won", value: 8 },
-          { name: "Lost", value: 12 },
-          { name: "Pending", value: 5 },
-          { name: "Withdrawn", value: 3 },
-        ]
-        summaryData = {
-          total: 28,
-          winRate: "29%",
-          averageAmount: "$345,200",
-        }
-        break
-
-      default:
-        chartData = [
-          { name: "Category 1", value: 400 },
-          { name: "Category 2", value: 300 },
-          { name: "Category 3", value: 600 },
-          { name: "Category 4", value: 200 },
-          { name: "Category 5", value: 500 },
-        ]
-        summaryData = {
-          total: 2000,
-          average: 400,
-          min: 200,
-          max: 600,
-        }
-    }
-
-    return {
-      chartData,
-      summary: summaryData,
-      reportName: data.name,
-      reportDescription: data.description,
-      chartType: data.chartType,
-      dataSource: data.dataSource,
-      metrics: data.metrics,
-      groupBy: data.groupBy,
     }
   }
 
@@ -483,7 +330,9 @@ export default function CustomReportForm() {
       return (
         <div key={key} className="flex flex-col items-center p-4 bg-muted rounded-lg">
           <span className="text-sm text-muted-foreground">{formattedKey}</span>
-          <span className="text-2xl font-bold">{value}</span>
+          <span className="text-2xl font-bold">
+            {typeof value === "string" || typeof value === "number" ? value : "N/A"}
+          </span>
         </div>
       )
     })
@@ -492,288 +341,288 @@ export default function CustomReportForm() {
   }
 
   return (
-<main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
 
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Custom Report Configuration</CardTitle>
-            <CardDescription>Design a custom report with your preferred metrics and visualizations</CardDescription>
-          </CardHeader>
-          <CardContent>
-      {reportGenerated ? (
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">{previewData.reportName}</h2>
-              {previewData.reportDescription && (
-                <p className="text-muted-foreground">{previewData.reportDescription}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setReportGenerated(false)}>
-                Edit Report
-              </Button>
-              <Button onClick={handleExportReport} className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-            </div>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {previewData.dataSource.charAt(0).toUpperCase() + previewData.dataSource.slice(1)} Report
-                {previewData.groupBy && previewData.groupBy !== "none" && (
-                  <span className="text-muted-foreground text-sm font-normal ml-2">
-                    Grouped by {previewData.groupBy.replace(/_/g, " ")}
-                  </span>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {renderChart()}
-              {renderSummary()}
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Report Name*</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter report name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dataSource"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data Source*</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select data source" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="projects">Projects</SelectItem>
-                        <SelectItem value="companies">Companies</SelectItem>
-                        <SelectItem value="contacts">Contacts</SelectItem>
-                        <SelectItem value="materials">Materials</SelectItem>
-                        <SelectItem value="inspections">Inspections</SelectItem>
-                        <SelectItem value="bids">Bids</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Enter report description" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Metrics & Visualization</h3>
-
-              <FormField
-                control={form.control}
-                name="metrics"
-                render={() => (
-                  <FormItem>
-                    <div className="mb-4">
-                      <FormLabel>Metrics*</FormLabel>
-                      <FormDescription>Select the metrics to include in your report</FormDescription>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {metricOptions[selectedDataSource].map((metric) => (
-                        <FormField
-                          key={metric.id}
-                          control={form.control}
-                          name="metrics"
-                          render={({ field }) => {
-                            return (
-                              <FormItem key={metric.id} className="flex flex-row items-start space-x-3 space-y-0">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(metric.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, metric.id])
-                                        : field.onChange(field.value?.filter((value) => value !== metric.id))
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal">{metric.label}</FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="groupBy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Group By</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select grouping" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {groupByOptions[selectedDataSource].map((option) => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+      <Card>
+        <CardHeader>
+          <CardTitle>Custom Report Configuration</CardTitle>
+          <CardDescription>Design a custom report with your preferred metrics and visualizations</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {reportGenerated && previewData ? (
+            <div className="space-y-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">{previewData.reportName}</h2>
+                  {previewData.reportDescription && (
+                    <p className="text-muted-foreground">{previewData.reportDescription}</p>
                   )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="chartType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Chart Type*</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select chart type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="bar">Bar Chart</SelectItem>
-                          <SelectItem value="line">Line Chart</SelectItem>
-                          <SelectItem value="pie">Pie Chart</SelectItem>
-                          <SelectItem value="radar">Radar Chart</SelectItem>
-                          <SelectItem value="area">Area Chart</SelectItem>
-                          <SelectItem value="none">No Chart (Table Only)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setReportGenerated(false)}>
+                    Edit Report
+                  </Button>
+                  <Button onClick={handleExportReport} className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
               </div>
 
-              <FormField
-                control={form.control}
-                name="dateRange"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date Range</FormLabel>
-                    <div className="flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {previewData.dataSource.charAt(0).toUpperCase() + previewData.dataSource.slice(1)} Report
+                    {previewData.groupBy && previewData.groupBy !== "none" && (
+                      <span className="text-muted-foreground text-sm font-normal ml-2">
+                        Grouped by {previewData.groupBy.replace(/_/g, " ")}
+                      </span>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {renderChart()}
+                  {renderSummary()}
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Report Name*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter report name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="dataSource"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Data Source*</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value?.from && "text-muted-foreground",
-                              )}
-                            >
-                              {field.value?.from ? format(field.value.from, "PPP") : <span>From date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select data source" />
+                            </SelectTrigger>
                           </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value?.from}
-                            onSelect={(date) => field.onChange({ ...field.value, from: date })}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <span>to</span>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value?.to && "text-muted-foreground",
-                              )}
-                            >
-                              {field.value?.to ? format(field.value.to, "PPP") : <span>To date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value?.to}
-                            onSelect={(date) => field.onChange({ ...field.value, to: date })}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
+                          <SelectContent>
+                            <SelectItem value="projects">Projects</SelectItem>
+                            <SelectItem value="companies">Companies</SelectItem>
+                            <SelectItem value="contacts">Contacts</SelectItem>
+                            <SelectItem value="materials">Materials</SelectItem>
+                            <SelectItem value="inspections">Inspections</SelectItem>
+                            <SelectItem value="bids">Bids</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Enter report description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Metrics & Visualization</h3>
+
+                  <FormField
+                    control={form.control}
+                    name="metrics"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel>Metrics*</FormLabel>
+                          <FormDescription>Select the metrics to include in your report</FormDescription>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {metricOptions[selectedDataSource].map((metric) => (
+                            <FormField
+                              key={metric.id}
+                              control={form.control}
+                              name="metrics"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem key={metric.id} className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(metric.id)}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...field.value, metric.id])
+                                            : field.onChange(field.value?.filter((value) => value !== metric.id))
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">{metric.label}</FormLabel>
+                                  </FormItem>
+                                )
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="groupBy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Group By</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select grouping" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              {groupByOptions[selectedDataSource].map((option) => (
+                                <SelectItem key={option.id} value={option.id}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="chartType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Chart Type*</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select chart type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="bar">Bar Chart</SelectItem>
+                              <SelectItem value="line">Line Chart</SelectItem>
+                              <SelectItem value="pie">Pie Chart</SelectItem>
+                              <SelectItem value="radar">Radar Chart</SelectItem>
+                              <SelectItem value="area">Area Chart</SelectItem>
+                              <SelectItem value="none">No Chart (Table Only)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="dateRange"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Date Range</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal",
+                                    !field.value?.from && "text-muted-foreground",
+                                  )}
+                                >
+                                  {field.value?.from ? format(field.value.from, "PPP") : <span>From date</span>}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value?.from}
+                                onSelect={(date) => field.onChange({ ...field.value, from: date })}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <span>to</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal",
+                                    !field.value?.to && "text-muted-foreground",
+                                  )}
+                                >
+                                  {field.value?.to ? format(field.value.to, "PPP") : <span>To date</span>}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value?.to}
+                                onSelect={(date) => field.onChange({ ...field.value, to: date })}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {form.formState.errors.root && (
+                  <div className="text-red-500 text-sm">{form.formState.errors.root.message}</div>
                 )}
-              />
-            </div>
 
-            {form.formState.errors.root && (
-              <div className="text-red-500 text-sm">{form.formState.errors.root.message}</div>
-            )}
-
-            <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => router.back()}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Generating..." : "Generate Report"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      )}
-          </CardContent>
-        </Card>
-      </main>
+                <div className="flex justify-end gap-4">
+                  <Button type="button" variant="outline" onClick={() => router.back()}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Generating..." : "Generate Report"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
+        </CardContent>
+      </Card>
+    </main>
   )
 }

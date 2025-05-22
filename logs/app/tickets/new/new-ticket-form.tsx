@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { createTicket } from "@/app/tickets/ticket-actions"
 import { FileUpload } from "../file-upload"
-import NotesTable from "@/app/notes/page"
+import NotesTable from "@/app/notes/client"
 type Priority = "low" | "medium" | "high" | "critical"
 
 export function NewTicketForm({

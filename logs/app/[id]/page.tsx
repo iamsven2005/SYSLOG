@@ -6,10 +6,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const headersList = await headers()
 
-  const ip =
-    headersList.get("x-forwarded-for")?.split(",")[0].trim() ||
-    headersList.get("x-real-ip") ||
-    "unknown"
+const ip =
+  headersList.get("x-forwarded-for")?.split(",")[0].trim().replace(/^::ffff:/, "") ||
+  headersList.get("x-real-ip")?.replace(/^::ffff:/, "") ||
+  "unknown"
 
   const timestamp = new Date()
 

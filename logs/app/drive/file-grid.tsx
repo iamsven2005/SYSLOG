@@ -32,7 +32,7 @@ import { DriveFile, DriveFilePermission, DriveFolder, User } from "@/prisma/gene
 
 interface FileGridProps {
   folders: DriveFolder[]
-  files: (DriveFile & { owner: User; permissions: DriveFilePermission[] })[]
+files: (DriveFile & { owner: User; permissions: DriveFilePermission[] })[]
   isLoading: boolean
   onFileSelect: (file: DriveFile & { owner: User; permissions: DriveFilePermission[] }) => void
   onRefresh: () => Promise<void>

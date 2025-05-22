@@ -1,6 +1,16 @@
+import { BridgeProject, PhaseStatus, Project, ProjectStatus } from "@/prisma/generated/main"
 import Link from "next/link"
-
-export default function ProjectList({ projects }) {
+type ProjectWithPhases = Project & {
+  bridgeProject?: BridgeProject & {
+    phases?: {
+      id: number
+      name: string
+      status: PhaseStatus
+      completionPercentage: number
+    }[]
+  } | null
+}
+export default function ProjectList({ projects }: { projects: ProjectWithPhases[] }) {
   if (!projects || projects.length === 0) {
     return (
       <div className="p-8 text-center">
@@ -22,7 +32,10 @@ export default function ProjectList({ projects }) {
         {projects.map((project) => {
           // Calculate completion percentage based on phases if available
           let completionPercentage = 0
-          if (project.bridgeProject?.phases?.length > 0) {
+          if (
+            project.bridgeProject?.phases &&
+            project.bridgeProject.phases.length > 0
+          ) {
             const totalPhases = project.bridgeProject.phases.length
             const completedPhases = project.bridgeProject.phases.filter((phase) => phase.status === "COMPLETED").length
             const inProgressPhases = project.bridgeProject.phases.filter((phase) => phase.status === "IN_PROGRESS")
@@ -46,7 +59,7 @@ export default function ProjectList({ projects }) {
               <div>{project.bridgeProject?.bridgeType || "N/A"}</div>
               <div>{project.location || "N/A"}</div>
               <div>
-                <ProjectStatusBadge status={project.status} />
+                <ProjectStatusBadge status={project.status ?? "PLANNING"} />
               </div>
               <div>{completionPercentage}%</div>
             </div>
@@ -57,7 +70,7 @@ export default function ProjectList({ projects }) {
   )
 }
 
-function ProjectStatusBadge({ status }) {
+function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
   const statusStyles = {
     PLANNING: "bg-purple-100 text-purple-800",
     BIDDING: "bg-blue-100 text-blue-800",

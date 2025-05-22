@@ -6,9 +6,10 @@ import { formatDate } from "@/lib/utils"
 import { ShoppingBag } from "lucide-react"
 import { Company, EquipmentLoan, Project } from "@/prisma/generated/main"
 type ex = EquipmentLoan & {
-  project: Project
-  company: Company
+  project: Project | null
+  company: Company | null
 }
+
 export default function EquipmentLoans({ loans = [] }: {loans: ex[]}) {
   return (
     <Card>

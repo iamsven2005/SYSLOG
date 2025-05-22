@@ -10,36 +10,72 @@ import NdaUploadForm from "./nda-upload-form"
 import AccountInfoForm from "./account-info-form"
 import { toast } from "sonner"
 import { User } from "@/prisma/generated/main"
+import { updateEmergencyContactInfo } from "./actions"
+import { EmergencyContactData } from "./type"
 
 export default function ProfileClient({ user }: { user: User }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-const handleProfileUpdate = async (formData: { username: string; email: string }) => {
-  setIsSubmitting(true)
+  // Convert nullable fields to fallback values to satisfy stricter prop types
+const sanitizedUser = {
+  ...user,
+  username: user.username ?? "",
+  email: user.email ?? "",
+  updatedAt: user.updatedAt ?? new Date(),
+  Mobile: user.Mobile ?? undefined,
+  PrimaryContact: user.PrimaryContact ?? undefined,
+  MobileContact: user.MobileContact ?? undefined,
+  Relationship: user.Relationship ?? undefined,
+  SecondContact: user.SecondContact ?? undefined,
+  SecondMobile: user.SecondMobile ?? undefined,
+  SecondRelationship: user.SecondRelationship ?? undefined,
+  Remarks: user.Remarks ?? undefined,
+}
 
+
+  const handleProfileUpdate = async (formData: { username: string; email: string }) => {
+    setIsSubmitting(true)
+
+    try {
+      const result = await updateUserProfile({
+        userId: user.id,
+        username: formData.username,
+        email: formData.email,
+      })
+
+      if (result.success) {
+        toast.success("Your profile has been updated successfully.")
+        router.refresh()
+      } else {
+        toast.error("Failed to update profile")
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error("An unexpected error occurred")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+const handleEmergencyContactSubmit = async (data: EmergencyContactData) => {
+  setIsSubmitting(true)
   try {
-    const result = await updateUserProfile({
-      userId: user.id,
-      username: formData.username,
-      email: formData.email,
-    })
+    // Replace this with your actual update function for emergency contact info
+    const result = await updateEmergencyContactInfo(user.id, data)
 
     if (result.success) {
-      toast.success("Your profile has been updated successfully.")
+      toast.success("Emergency contact updated.")
       router.refresh()
     } else {
-      toast.error("Failed to update profile")
+      toast.error("Failed to update emergency contact")
     }
-  } catch (error) {
-    console.error(error)
-    toast.error("An unexpected error occurred")
+  } catch (err) {
+    console.error(err)
+    toast.error("An error occurred")
   } finally {
     setIsSubmitting(false)
   }
 }
-
-
 
   return (
     <Tabs defaultValue="emergency-contacts" className="w-full">
@@ -55,7 +91,11 @@ const handleProfileUpdate = async (formData: { username: string; email: string }
             <CardTitle>Emergency Contact Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <EmergencyContactForm user={user} onSubmit={handleProfileUpdate} isSubmitting={isSubmitting} />
+<EmergencyContactForm
+  user={sanitizedUser}
+  onSubmit={handleEmergencyContactSubmit}
+  isSubmitting={isSubmitting}
+/>
           </CardContent>
         </Card>
       </TabsContent>
@@ -77,7 +117,7 @@ const handleProfileUpdate = async (formData: { username: string; email: string }
             <CardTitle>Account Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <AccountInfoForm user={user} onSubmit={handleProfileUpdate} isSubmitting={isSubmitting} />
+            <AccountInfoForm user={sanitizedUser} onSubmit={handleProfileUpdate} isSubmitting={isSubmitting} />
           </CardContent>
         </Card>
       </TabsContent>

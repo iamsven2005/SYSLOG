@@ -27,8 +27,7 @@ export async function loginUser({ username, password }: LoginCredentials) {
     }
 
     // Set a session cookie with the user ID
-    const cookieStore =  await cookies()
-    cookieStore.set("userId", String(user.id), {
+    (await cookies()).set("userId", String(user.id), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // 1 week
@@ -51,8 +50,7 @@ export async function loginUser({ username, password }: LoginCredentials) {
 export async function logoutUser() {
   try {
     // Clear the session cookie
-    const cookieStore =  await cookies()
-    cookieStore.delete("userId")
+    (await cookies()).delete("userId")
 
     return { success: true }
   } catch (error) {
@@ -63,8 +61,7 @@ export async function logoutUser() {
 
 export async function getCurrentUser() {
   try {
-    const cookieStore =  await cookies()
-    const userId = cookieStore.get("userId")?.value
+    const userId = (await cookies()).get("userId")?.value
 
     if (!userId) {
       return null

@@ -66,7 +66,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   <div className="flex items-center">
                     <User className="mr-2 h-4 w-4 text-muted-foreground" />
                     <Link href={`/crm/contacts/${interaction.contactId}`} className="text-primary hover:underline">
-                      {interaction.contact.firstName} {interaction.contact.lastName}
+                      {interaction.contact.name}
                     </Link>
                   </div>
                 </div>

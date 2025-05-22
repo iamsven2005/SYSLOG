@@ -168,7 +168,7 @@ useEffect(() => {
   // Group messages by date
   const groupedMessages: { [date: string]: Message[] } = {}
   messages.forEach((message) => {
-    const date = new Date(message.createdAt).toLocaleDateString()
+const date = format(new Date(message.createdAt), "yyyy-MM-dd")
     if (!groupedMessages[date]) {
       groupedMessages[date] = []
     }

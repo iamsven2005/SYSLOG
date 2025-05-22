@@ -21,9 +21,10 @@ export default async function Page(props: { params: Promise<{ id: string, phaseI
   }
 
   // Verify that the phase belongs to the project
-  if (phase.bridgeProjectId !== project.bridgeProject.id) {
+  if (!project.bridgeProject || phase.bridgeProjectId !== project.bridgeProject.id) {
     notFound()
   }
+
 
   return (
 
@@ -44,7 +45,7 @@ export default async function Page(props: { params: Promise<{ id: string, phaseI
           <CardDescription>Edit phase details for {project.name}</CardDescription>
         </CardHeader>
         <CardContent>
-          <PhaseForm project={project} phase={phase} />
+          <PhaseForm project={{ id: project.id, bridgeProject: project.bridgeProject }} phase={phase} />
         </CardContent>
       </Card>
     </main>

@@ -150,7 +150,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
                 <dt className="col-span-1 font-medium text-muted-foreground">Purchase Price:</dt>
                 <dd className="col-span-2">
-                  {equipment.purchasePrice ? formatCurrency(equipment.purchasePrice) : "N/A"}
+{equipment.purchasePrice ? formatCurrency(equipment.purchasePrice.toNumber()) : "N/A"}
                 </dd>
 
                 <dt className="col-span-1 font-medium text-muted-foreground">Warranty Until:</dt>

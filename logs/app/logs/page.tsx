@@ -230,7 +230,20 @@ export default function LogsTable() {
         setMatchedCommands(result.matchedCommands || [])
 
         const matches = await processBatchForCommandMatches(result.logs, "system")
-        setCommandMatches(matches)
+
+        const transformedMatches: CommandMatchResult[] = matches.map((match) => ({
+          id: match.commandId,
+          command: match.command, // or match.commandText if that's your source
+          rule: {
+            id: match.ruleId,
+            name: match.ruleName,
+          },
+          emailTemplateId: match.emailTemplateId ?? undefined, // ✅ convert null → undefined
+          emailTemplateName: match.emailTemplateName ?? undefined, // ✅ convert null → undefined
+        }))
+
+
+        setCommandMatches(transformedMatches)
 
         if (matches.length > 0) {
           matches.forEach((match) => {
@@ -273,19 +286,19 @@ export default function LogsTable() {
 
 
   // Load logs when filters or pagination changes
-useEffect(() => {
-  fetchLogs()
-}, [
-  debouncedSearchQuery,
-  selectedHosts,
-  selectedActions,
-  selectedRuleGroups,
-  selectedRules,
-  currentPage,
-  pageSize,
-  isResourceFiltersEnabled,
-  fetchLogs, // ✅ Include this
-])
+  useEffect(() => {
+    fetchLogs()
+  }, [
+    debouncedSearchQuery,
+    selectedHosts,
+    selectedActions,
+    selectedRuleGroups,
+    selectedRules,
+    currentPage,
+    pageSize,
+    isResourceFiltersEnabled,
+    fetchLogs, // ✅ Include this
+  ])
 
   // Handle host selection
   const handleHostSelect = (value: string) => {

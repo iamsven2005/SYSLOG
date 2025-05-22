@@ -4,8 +4,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress"
 import { formatDate } from "@/lib/utils"
 import { Pencil, Plus } from "lucide-react"
-
-export default function ProjectPhases({ project }) {
+import { BridgeProject, PhaseStatus, Project } from "@/prisma/generated/main"
+type ProjectWithPhases = Project & {
+  bridgeProject?: BridgeProject & {
+    phases?: {
+      id: number
+      name: string
+      status: PhaseStatus
+      startDate: Date | null
+      endDate: Date | null
+      completionPercentage: number
+      description: string | null
+    }[]
+  } | null
+}
+export default function ProjectPhases({ project }: { project: ProjectWithPhases }) {
   const phases = project.bridgeProject?.phases || []
 
   return (
@@ -45,8 +58,7 @@ export default function ProjectPhases({ project }) {
                 <div className="flex justify-between mt-2 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                        phase.status === "NOT_STARTED"
+                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${phase.status === "NOT_STARTED"
                           ? "bg-gray-100 text-gray-800"
                           : phase.status === "IN_PROGRESS"
                             ? "bg-blue-100 text-blue-800"
@@ -55,14 +67,15 @@ export default function ProjectPhases({ project }) {
                               : phase.status === "DELAYED"
                                 ? "bg-orange-100 text-orange-800"
                                 : "bg-red-100 text-red-800"
-                      }`}
+                        }`}
                     >
                       {phase.status.replace("_", " ")}
                     </span>
                   </div>
                   <div className="flex gap-4">
-                    <span>Start: {formatDate(phase.startDate) || "Not set"}</span>
-                    <span>End: {formatDate(phase.endDate) || "Not set"}</span>
+                    <span>Start: {phase.startDate ? formatDate(phase.startDate) : "Not set"}</span>
+                    <span>End: {phase.endDate ? formatDate(phase.endDate) : "Not set"}</span>
+
                   </div>
                 </div>
                 {phase.description && <div className="mt-2 text-sm">{phase.description}</div>}

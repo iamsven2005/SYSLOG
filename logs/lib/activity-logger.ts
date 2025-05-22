@@ -13,8 +13,7 @@ type ActivityLogParams = {
 export async function logActivity({ actionType, targetType, targetId, details }: ActivityLogParams) {
   try {
     // Get the current user ID from cookies
-    const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
+    const userId = (await cookies()).get("userId")?.value
 
     if (!userId) {
       console.warn("Cannot log activity: No user is logged in")
@@ -141,8 +140,7 @@ export async function getCurrentUserActivityLogs({
 }) {
   try {
     // Get the current user ID from cookies
-    const cookieStore = await cookies()
-    const userId = cookieStore.get("userId")?.value
+    const userId = (await cookies()).get("userId")?.value
 
     if (!userId) {
       throw new Error("No user is logged in")

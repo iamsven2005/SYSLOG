@@ -2,8 +2,7 @@
 import { cookies } from "next/headers"
 
 export async function getSession() {
-  const cookieStore = await cookies()
-  const userId = cookieStore.get("userId")?.value
+  const userId = (await cookies()).get("userId")?.value
 
   if (!userId) {
     return null

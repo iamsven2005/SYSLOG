@@ -5,7 +5,7 @@ import { getUserById } from "../email-templates/user-actions";
 import { checkUserPermission } from "../permissions/permission-actions";
 import { notFound } from "next/navigation";
 
-export default async function Page() {
+export default async function Notes() {
   const session = await getSession()
 
   if (!session?.user) {

@@ -11,9 +11,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const projectId = Number.parseInt(params.id)
   const { project, error } = await getProject(projectId)
 
-  if (error || !project) {
+  if (error || !project || !project.bridgeProject) {
     notFound()
   }
+
 
   return (
 
@@ -34,7 +35,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <CardDescription>Add a new construction phase to {project.name}</CardDescription>
         </CardHeader>
         <CardContent>
-          <PhaseForm project={project} />
+          <PhaseForm project={{ id: project.id, bridgeProject: project.bridgeProject }} />
         </CardContent>
       </Card>
     </main>

@@ -12,19 +12,24 @@ import { format } from "date-fns"
 import { CalendarIcon, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getUsers, createStep } from "./actions"
-import type { AuditStep, User } from "./types"
+import type { AuditStep, StepStatus, User } from "./types"
 
 interface AddStepFormProps {
   workflowId: string
   onAddTempStep?: (step: Omit<AuditStep, "id">) => void
+}
+interface TempAuditStep extends Omit<AuditStep, "id"> {
+  id: number
+  createdAt: string
+  updatedAt: string
 }
 
 export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [status, setStatus] = useState<string>("PENDING")
-  const [assignedToId, setAssignedToId] = useState<string | null>(null)
+const [status, setStatus] = useState<StepStatus>("PENDING")
+const [assignedToId, setAssignedToId] = useState<number | null>(null)
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [users, setUsers] = useState<User[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -37,9 +42,10 @@ export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
     async function fetchUsers() {
       try {
         const result = await getUsers()
-        if (result.success) {
-          setUsers(result.data)
-        }
+if (result.success && result.data) {
+  setUsers(result.data)
+}
+
       } catch (err) {
         console.error("Error fetching users:", err)
       }
@@ -60,17 +66,19 @@ export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
       // If we're creating a new workflow, add the step to the temporary steps
       if (isNewWorkflow && onAddTempStep) {
         // Create a temporary step with a temporary ID
-        const tempStep: AuditStep = {
-          id: -Date.now(), // Use negative timestamp as temporary ID
+        const tempStep: TempAuditStep = {
+          id: -Date.now(),
           title,
-          description: description || "",
+          description,
           status,
           assignedToId,
-          dueDate: date?.toISOString(),
-          position: 0, // Position will be set by the parent component
+          dueDate: date ?? null,
+          position: 0,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          workflowId: 0
         }
+
 
         onAddTempStep(tempStep)
         resetForm()
@@ -82,7 +90,7 @@ export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
         title,
         description: description || undefined,
         status,
-        assignedToId,
+        assignedToId: assignedToId !== null ? assignedToId.toString() : null,
         dueDate: date?.toISOString() || undefined,
       })
 
@@ -142,7 +150,10 @@ export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="new-step-status">Status</Label>
-          <Select value={status} onValueChange={setStatus}>
+<Select
+  value={assignedToId?.toString() || ""}
+  onValueChange={(value) => setAssignedToId(value === "" ? null : Number(value))}
+>
             <SelectTrigger id="new-step-status">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -158,7 +169,10 @@ export function AddStepForm({ workflowId, onAddTempStep }: AddStepFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="new-step-assignee">Assigned To</Label>
-          <Select value={assignedToId || ""} onValueChange={(value) => setAssignedToId(value === "" ? null : value)}>
+<Select
+  value={assignedToId !== null ? assignedToId.toString() : ""}
+  onValueChange={(value) => setAssignedToId(value === "" ? null : Number(value))}
+>
             <SelectTrigger id="new-step-assignee">
               <SelectValue placeholder="Assign to user" />
             </SelectTrigger>

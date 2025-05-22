@@ -8,67 +8,56 @@ import { logActivity } from "@/lib/activity-logger"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
 import { db2 } from "@/lib/db2"
+import { DriveFolder } from "@/prisma/generated/main"
 
 // Get folders and files for a specific folder
 export async function getFolderContents(folderId: number | null = null) {
-  try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to access drive")
-    }
+  const session = await getSession()
+  if (!session?.user) {
+    throw new Error("You must be logged in to access drive")
+  }
 
-    const userId = Number(session.user.id)
+  const userId = Number(session.user.id)
 
-    // Get folders
-    const folders = await db.driveFolder.findMany({
-      where: {
-        parentId: folderId,
-        ownerId: userId,
-      },
-      orderBy: {
-        name: "asc",
-      },
-    })
+  const folders = await db.driveFolder.findMany({
+    where: {
+      parentId: folderId,
+      ownerId: userId,
+    },
+    orderBy: { name: "asc" },
+  })
 
-    // Get files
-    const files = await db.driveFile.findMany({
-      where: {
-        folderId: folderId,
-        OR: [
-          { ownerId: userId },
-          {
-            permissions: {
-              some: {
-                userId: userId,
-              },
+  const files = await db.driveFile.findMany({
+    where: {
+      folderId: folderId,
+      OR: [
+        { ownerId: userId },
+        {
+          permissions: {
+            some: {
+              userId: userId,
             },
           },
-        ],
-      },
-      include: {
-        permissions: true,
-        owner: {
-          select: {
-            id: true,
-            username: true,
-          },
         },
-      },
-      orderBy: [{ order: "asc" }, { name: "asc" }],
-    })
+      ],
+    },
+    include: {
+      permissions: true,
+      owner:true,
+    },
+    orderBy: [{ order: "asc" }, { name: "asc" }],
+  })
 
-    return { folders, files }
-  } catch (error) {
-    console.error("Error fetching folder contents:", error)
-    throw new Error("Failed to fetch folder contents")
-  }
+  return { folders, files }
 }
+
 export async function updateFolder2(id: number, data: { name?: string; parentId?: number }) {
   return db.driveFolder.update({
     where: { id },
     data
   })
 }
+type FolderWithParent = DriveFolder & { parent: DriveFolder | null }
 
 // Get folder breadcrumb path
 export async function getFolderPath(folderId: number | null) {
@@ -90,11 +79,18 @@ export async function getFolderPath(folderId: number | null) {
     // Add current folder
     path.unshift({ id: currentFolder.id, name: currentFolder.name })
 
-    // Add parent folders
     while (currentFolder?.parent) {
-      currentFolder = currentFolder.parent
+      const parentFolder: FolderWithParent | null = await db.driveFolder.findUnique({
+        where: { id: currentFolder.parent.id },
+        include: { parent: true },
+      })
+
+      if (!parentFolder) break
+
+      currentFolder = parentFolder
       path.unshift({ id: currentFolder.id, name: currentFolder.name })
     }
+
 
     // Add root
     path.unshift({ id: null, name: "My Drive" })
@@ -195,37 +191,37 @@ export async function uploadFile(formData: FormData) {
     await writeFile(filePath, buffer)
 
     // Determine file type from extension
-// Determine file type from extension
-const fileType = fileExtension.toLowerCase()
+    // Determine file type from extension
+    const fileType = fileExtension.toLowerCase()
 
-// Handle duplicate filenames
-const baseName = file.name.replace(/\.[^/.]+$/, "")
-const extension = fileExtension ? `.${fileExtension}` : ""
-let finalName = file.name
-let counter = 1
+    // Handle duplicate filenames
+    const baseName = file.name.replace(/\.[^/.]+$/, "")
+    const extension = fileExtension ? `.${fileExtension}` : ""
+    let finalName = file.name
+    let counter = 1
 
-while (await db.driveFile.findFirst({
-  where: {
-    name: finalName,
-    ownerId: userId,
-    folderId: folderId
-  }
-})) {
-  finalName = `${baseName} (copy${counter > 1 ? ` ${counter}` : ""})${extension}`
-  counter++
-}
+    while (await db.driveFile.findFirst({
+      where: {
+        name: finalName,
+        ownerId: userId,
+        folderId: folderId
+      }
+    })) {
+      finalName = `${baseName} (copy${counter > 1 ? ` ${counter}` : ""})${extension}`
+      counter++
+    }
 
-// Create file record in database
-const fileRecord = await db.driveFile.create({
-  data: {
-    name: finalName,
-    type: fileType,
-    size: file.size,
-    folderId: folderId,
-    ownerId: userId,
-    url: `/api/drive/file/${uniqueFilename}`,
-  },
-})
+    // Create file record in database
+    const fileRecord = await db.driveFile.create({
+      data: {
+        name: finalName,
+        type: fileType,
+        size: file.size,
+        folderId: folderId,
+        ownerId: userId,
+        url: `/api/drive/file/${uniqueFilename}`,
+      },
+    })
 
 
     await logActivity({
@@ -727,7 +723,7 @@ export async function updateFileName(fileId: number, newName: string) {
       name: newName,
     }
   })
-  
+
 
   await logActivity({
     actionType: "Renamed File",

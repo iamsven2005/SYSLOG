@@ -57,12 +57,7 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
     },
   })
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchUsers()
-      fetchModelEntries()
-    }
-  }, [isOpen, fetchUsers, fetchModelEntries])
+  
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -89,7 +84,12 @@ export function ModelEntryModal({ projectId, isOpen, onClose, onSuccess }: Model
       setLoadingEntries(false)
     }
   }, [projectId])
-
+useEffect(() => {
+    if (isOpen) {
+      fetchUsers()
+      fetchModelEntries()
+    }
+  }, [isOpen, fetchUsers, fetchModelEntries])
   const handleEdit = (entry: ModelEntry) => {
     setEditingEntryId(entry.id)
     form.setValue("code", entry.code)

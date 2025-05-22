@@ -1,23 +1,25 @@
 "use server"
 
 import { db } from "@/lib/db"
+import { Prisma } from "@/prisma/generated/main"
 
 // Function to get LDAP users with pagination and search
 export async function getLdapUsers(page = 1, pageSize = 30, searchTerm = "") {
   const skip = (page - 1) * pageSize
 
   // Create search conditions
-  const searchCondition = searchTerm
-    ? {
-        OR: [
-          { sAMAccountName: { contains: searchTerm, mode: "insensitive" } },
-          { displayName: { contains: searchTerm, mode: "insensitive" } },
-          { cn: { contains: searchTerm, mode: "insensitive" } },
-          { userPrincipalName: { contains: searchTerm, mode: "insensitive" } },
-          { description: { contains: searchTerm, mode: "insensitive" } },
-        ],
-      }
-    : {}
+const searchCondition = searchTerm
+  ? {
+      OR: [
+        { sAMAccountName: { contains: searchTerm, mode: Prisma.QueryMode.insensitive } },
+        { displayName: { contains: searchTerm, mode: Prisma.QueryMode.insensitive } },
+        { cn: { contains: searchTerm, mode: Prisma.QueryMode.insensitive } },
+        { userPrincipalName: { contains: searchTerm, mode: Prisma.QueryMode.insensitive } },
+        { description: { contains: searchTerm, mode: Prisma.QueryMode.insensitive } },
+      ],
+    }
+  : {}
+
 
   // Get total count for pagination
   const totalCount = await db.ldapuser.count({
@@ -50,25 +52,19 @@ export async function getLdapUserById(id: number) {
 export async function getLdapUserStats() {
   const totalUsers = await db.ldapuser.count()
 
-  const activeUsers = await db.ldapuser.count({
-    where: {
-      userAccountControl: {
-        not: {
-          // Not disabled (0x0002)
-          bitwiseAnd: [2, 2],
-        },
-      },
-    },
-  })
+ const [{ count }] = await db.$queryRaw<{ count: number }[]>`
+  SELECT COUNT(*) as count
+  FROM "ldapuser"
+  WHERE "userAccountControl" & 2 = 0
+`
 
-  const disabledUsers = await db.ldapuser.count({
-    where: {
-      userAccountControl: {
-        // Disabled (0x0002)
-        bitwiseAnd: [2, 2],
-      },
-    },
-  })
+const activeUsers = Number(count)
+
+const disabledUsers = await db.$queryRaw`
+  SELECT COUNT(*) as count
+  FROM "ldapuser"
+  WHERE "userAccountControl" & 2 = 2
+`
 
   const recentlyLoggedIn = await db.ldapuser.count({
     where: {

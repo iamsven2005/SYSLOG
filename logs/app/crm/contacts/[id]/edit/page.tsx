@@ -7,15 +7,26 @@ import { notFound } from "next/navigation"
 import ContactForm from "@/app/crm/components/contact-form"
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params; const contactId = Number.parseInt(params.id)
-  const { contact, error } = await getContact(contactId)
+  const params = await props.params;
+  const contactId = Number.parseInt(params.id);
+  const { contact, error } = await getContact(contactId);
 
   if (error || !contact) {
-    notFound()
+    notFound();
   }
 
-  return (
+  // Map the Prisma contact to the form schema type
+  const formCompatibleContact = {
+    name: contact.name ?? "",
+    title: contact.title ?? undefined,
+    email: contact.email ?? undefined,
+    phone: contact.phone ?? undefined,
+    expertise: contact.expertise ?? undefined,
+    remarks: contact.remarks ?? undefined,
+    companyId: contact.companyId,
+  };
 
+  return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
@@ -33,9 +44,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <CardDescription>Edit details for {contact.name}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ContactForm contact={contact} />
+          <ContactForm contact={formCompatibleContact} />
         </CardContent>
       </Card>
     </main>
-  )
+  );
 }
+

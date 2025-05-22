@@ -7,23 +7,45 @@ import InteractionList from "@/app/crm/components/interaction-list"
 import InteractionListSkeleton from "@/app/crm/components/skeletons/interaction-list-skeleton"
 import InteractionControls from "./interaction-controls"
 import { Plus } from "lucide-react"
-
+type RawContact = {
+  id: number
+  name: string
+}
 export default async function InteractionsPage({
   searchParams,
 }: {
-        searchParams: Promise<{ type?: string; search?: string }>
+  searchParams: Promise<{ type?: string; search?: string }>
 }) {
   const { interactions, error } = await getInteractions()
-  const mappedInteractions = interactions?.map((i) => ({
+
+  // Map contact.name → firstName + lastName BEFORE stripping it
+const mappedInteractions = interactions?.map((i) => {
+  const contact = i.contact as RawContact | null
+
+  let firstName = ""
+  let lastName = ""
+
+  if (contact?.name) {
+    const [first, ...rest] = contact.name.split(" ")
+    firstName = first
+    lastName = rest.join(" ")
+  }
+
+  return {
     ...i,
-    contact: i.contact
+    contact: contact
       ? {
-        id: i.contact.id,
-        firstName: i.contact.name?.split(" ")[0] || "",
-        lastName: i.contact.name?.split(" ").slice(1).join(" ") || "",
-      }
+          id: contact.id,
+          firstName,
+          lastName,
+        }
       : null,
-  }))
+  }
+})
+
+
+
+  const params = await searchParams
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -36,14 +58,12 @@ export default async function InteractionsPage({
         </Button>
       </div>
 
-      <InteractionControls initialSearch={(await searchParams).search} initialType={(await searchParams).type} />
+      <InteractionControls initialSearch={params.search} initialType={params.type} />
 
       <Card>
         <CardHeader>
           <CardTitle>
-            {(await searchParams).type && (await searchParams).type !== "all"
-              ? `${(await searchParams).type} Interactions`
-              : "All Interactions"}
+            {params.type && params.type !== "all" ? `${params.type} Interactions` : "All Interactions"}
           </CardTitle>
           <CardDescription>Track communications with contractors, vendors, and other stakeholders</CardDescription>
         </CardHeader>
@@ -54,3 +74,4 @@ export default async function InteractionsPage({
     </main>
   )
 }
+

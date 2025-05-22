@@ -2,8 +2,16 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDate } from "@/lib/utils"
+import { BridgePhase, BridgeProject, PhaseInspection, Project } from "@/prisma/generated/main"
+type ProjectWithInspections = Project & {
+  bridgeProject?: BridgeProject & {
+    phases: (BridgePhase & {
+      inspections: PhaseInspection[]
+    })[]
+  } | null
+}
 
-export default function ProjectInspections({ project }) {
+export default function ProjectInspections({ project }: { project: ProjectWithInspections }) {
   // Flatten inspections from all phases
   const inspections =
     project.bridgeProject?.phases
@@ -39,15 +47,14 @@ export default function ProjectInspections({ project }) {
                   <div>{inspection.inspector}</div>
                   <div>
                     <span
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                        inspection.result === "PASS"
+                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${inspection.result === "PASS"
                           ? "bg-green-100 text-green-800"
                           : inspection.result === "FAIL"
                             ? "bg-red-100 text-red-800"
                             : inspection.result === "CONDITIONAL PASS"
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {inspection.result}
                     </span>
@@ -60,7 +67,7 @@ export default function ProjectInspections({ project }) {
         ) : (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No inspections recorded for this project</p>
-            {project.bridgeProject?.phases?.length > 0 ? (
+            {project.bridgeProject?.phases && project.bridgeProject.phases.length > 0 ? (
               <Button className="mt-4" asChild>
                 <Link href={`/crm/projects/${project.id}/inspections/new`}>Add Inspection</Link>
               </Button>

@@ -1,15 +1,18 @@
 "use server"
 import { db } from "@/lib/db"
 import { JobTitle } from "@/prisma/generated/main"
+type NewJobTitle = Omit<JobTitle, "id" | "createdAt" | "updatedAt">
 
 export async function createJobTitle(data: JobTitle) {
   return db.jobTitle.create({ data })
 }
 
-export async function bulkInsertJobTitles(titles: JobTitle) {
-    console.log(titles)
+export async function bulkInsertJobTitles(titles: NewJobTitle[]) {
   return db.jobTitle.createMany({ data: titles })
 }
+
+
+
 
 export async function getJobTitles() {
   return db.jobTitle.findMany({ orderBy: { sn: "asc" } })

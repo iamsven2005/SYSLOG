@@ -3,8 +3,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users } from "lucide-react"
 import { formatRelativeTime } from "@/lib/utils"
+import { Company, ContactPerson, CRMInteraction, Project } from "@/prisma/generated/main"
 
-export default function ProjectInteractions({ project }) {
+type ProjectWithInteractions = Project & {
+  interactions: (CRMInteraction & {
+    company: Company | null
+    contact: ContactPerson | null
+  })[]
+}
+export default function ProjectInteractions({ project }: { project: ProjectWithInteractions }) {
   const interactions = project.interactions || []
 
   return (

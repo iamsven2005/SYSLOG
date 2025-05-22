@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft } from "lucide-react"
 import { getProject } from "@/app/crm/actions/projects"
 import InteractionForm from "@/app/crm/components/interaction-form"
+import { Company } from "@/prisma/generated/main"
+type ProjectCompanyRelation = { company: Company }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -34,7 +36,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <CardDescription>Record a new interaction related to project: {project.name}</CardDescription>
         </CardHeader>
         <CardContent>
-          <InteractionForm projectId={projectId} projectCompanies={project.companies || []} />
+<InteractionForm
+  projects={[project]}
+  preSelectedProjectId={projectId}
+companies={(project.companies || []).map((c: ProjectCompanyRelation) => c.company)}
+/>
+
+
         </CardContent>
       </Card>
     </main>

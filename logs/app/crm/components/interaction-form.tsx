@@ -68,7 +68,7 @@ interface InteractionFormProps {
   preSelectedCompanyId?: number
   preSelectedContactId?: number
   preSelectedProjectId?: number
-  companyContacts: Company["contacts"]
+  companyContacts?: Company["contacts"]
 }
 
 export default function InteractionForm({

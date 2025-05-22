@@ -91,9 +91,10 @@ export const AssignUsersModal: React.FC<AssignUsersModalProps> = ({ projectId, i
     }
   }
   
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+const filteredUsers = users.filter((user) =>
+  (user.username ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+)
+
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import {  Building2, FileText, Calendar, Clock, ArrowLeft, Download, Edit } from "lucide-react"
+import { Building2, FileText, Calendar, Clock, ArrowLeft, Download, Edit } from "lucide-react"
 import { getProject } from "@/app/crm/actions/projects"
 import { notFound } from "next/navigation"
 import { formatDate } from "@/lib/utils"
@@ -13,32 +13,32 @@ import ProjectInteractions from "@/app/crm/components/project-interactions"
 import ProjectInspections from "@/app/crm/components/project-inspections"
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params; 
+  const params = await props.params;
   const projectId = Number.parseInt(params.id)
   const { project, error } = await getProject(projectId)
 
   if (error) {
     return (
-     
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" asChild>
-              <Link href="/crm/projects">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="sr-only">Back</span>
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-bold">Project Details</h1>
-          </div>
 
-          <div className="text-center py-12">
-            <h2 className="text-xl font-semibold text-red-500">Error loading project</h2>
-            <p className="mt-2 text-muted-foreground">{error}</p>
-            <Button className="mt-6" asChild>
-              <Link href="/crm/projects">Return to Projects</Link>
-            </Button>
-          </div>
-        </main>
+      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" asChild>
+            <Link href="/crm/projects">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="sr-only">Back</span>
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-bold">Project Details</h1>
+        </div>
+
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold text-red-500">Error loading project</h2>
+          <p className="mt-2 text-muted-foreground">{error}</p>
+          <Button className="mt-6" asChild>
+            <Link href="/crm/projects">Return to Projects</Link>
+          </Button>
+        </div>
+      </main>
     )
   }
 
@@ -48,7 +48,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   // Calculate completion percentage based on phases
   let completionPercentage = 0
-if (Array.isArray(project.bridgeProject?.phases) && project.bridgeProject.phases.length > 0) {
+  if (Array.isArray(project.bridgeProject?.phases) && project.bridgeProject.phases.length > 0) {
     const totalPhases = project.bridgeProject.phases.length
     const completedPhases = project.bridgeProject.phases.filter((phase) => phase.status === "COMPLETED").length
     const inProgressPhases = project.bridgeProject.phases.filter((phase) => phase.status === "IN_PROGRESS")
@@ -66,194 +66,194 @@ if (Array.isArray(project.bridgeProject?.phases) && project.bridgeProject.phases
   const materials = project.bridgeProject?.materials || []
 
   return (
-   
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" asChild>
-            <Link href="/crm/projects">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="sr-only">Back</span>
+
+    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <div className="flex items-center gap-4">
+        <Button variant="outline" size="icon" asChild>
+          <Link href="/crm/projects">
+            <ArrowLeft className="h-4 w-4" />
+            <span className="sr-only">Back</span>
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">{project.name}</h1>
+        <div className="ml-auto flex gap-2">
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Export
+          </Button>
+          <Button asChild>
+            <Link href={`/projects/${project.id}/edit`}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Project
             </Link>
           </Button>
-          <h1 className="text-2xl font-bold">{project.name}</h1>
-          <div className="ml-auto flex gap-2">
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-            <Button asChild>
-              <Link href={`/projects/${project.id}/edit`}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Project
-              </Link>
-            </Button>
-          </div>
         </div>
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Project Status</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{project.status || "N/A"}</div>
-              <div className="mt-2">
-                <Progress value={completionPercentage} className="h-2" />
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">{completionPercentage}% completed</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Timeline</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {project.startDate && project.estimatedEndDate
-                  ? `${Math.ceil((new Date(project.estimatedEndDate).getTime() - new Date(project.startDate).getTime()) / (1000 * 60 * 60 * 24 * 30))} months`
-                  : "N/A"}
-              </div>
-<p className="text-xs text-muted-foreground">
-  Start: {project.startDate ? formatDate(project.startDate) : "N/A"}
-</p>
-<p className="text-xs text-muted-foreground">
-  Start: {project.estimatedEndDate ? formatDate(project.estimatedEndDate) : "N/A"}
-</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Budget</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{project.budget?.toString()}</div>
-              <p className="text-xs text-muted-foreground">
-                {/* In a real app, you would calculate spent amount from contracts and orders */}
-                Tracking in progress
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Companies</CardTitle>
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{project.companies?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                {project.companies?.length > 0
-                  ? `${project.companies.filter((c) => c.role.includes("Contractor")).length} contractors, 
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Project Status</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{project.status || "N/A"}</div>
+            <div className="mt-2">
+              <Progress value={completionPercentage} className="h-2" />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">{completionPercentage}% completed</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Timeline</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {project.startDate && project.estimatedEndDate
+                ? `${Math.ceil((new Date(project.estimatedEndDate).getTime() - new Date(project.startDate).getTime()) / (1000 * 60 * 60 * 24 * 30))} months`
+                : "N/A"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Start: {project.startDate ? formatDate(project.startDate) : "N/A"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Start: {project.estimatedEndDate ? formatDate(project.estimatedEndDate) : "N/A"}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Budget</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{project.budget?.toString()}</div>
+            <p className="text-xs text-muted-foreground">
+              {/* In a real app, you would calculate spent amount from contracts and orders */}
+              Tracking in progress
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Companies</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{project.companies?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {project.companies?.length > 0
+                ? `${project.companies.filter((c) => c.role.includes("Contractor")).length} contractors, 
                    ${project.companies.filter((c) => !c.role.includes("Contractor")).length} vendors`
-                  : "No companies assigned"}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+                : "No companies assigned"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-7">
-          <Card className="md:col-span-3">
-            <CardHeader>
-              <CardTitle>Bridge Details</CardTitle>
-              <CardDescription>Technical specifications for this bridge project</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {project.bridgeProject ? (
-                <dl className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Bridge Type</dt>
-                    <dd>{project.bridgeProject.bridgeType}</dd>
-                  </div>
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Span Length</dt>
-                    <dd>{project.bridgeProject.spanLength ? `${project.bridgeProject.spanLength} meters` : "N/A"}</dd>
-                  </div>
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Width</dt>
-                    <dd>{project.bridgeProject.width ? `${project.bridgeProject.width} meters` : "N/A"}</dd>
-                  </div>
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Height</dt>
-                    <dd>{project.bridgeProject.height ? `${project.bridgeProject.height} meters` : "N/A"}</dd>
-                  </div>
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Load Capacity</dt>
-                    <dd>{project.bridgeProject.loadCapacity ? `${project.bridgeProject.loadCapacity} tons` : "N/A"}</dd>
-                  </div>
-                  <div>
-                    <dt className="font-medium text-muted-foreground">Waterway</dt>
-                    <dd>{project.bridgeProject.waterway || "N/A"}</dd>
-                  </div>
-                  <div className="col-span-2">
-                    <dt className="font-medium text-muted-foreground">Environmental Considerations</dt>
-                    <dd>{project.bridgeProject.environmentalConsiderations || "N/A"}</dd>
-                  </div>
-                  <div className="col-span-2">
-                    <dt className="font-medium text-muted-foreground">Traffic Impact</dt>
-                    <dd>{project.bridgeProject.trafficImpact || "N/A"}</dd>
-                  </div>
-                </dl>
-              ) : (
-                <p className="text-muted-foreground">No bridge details available</p>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="md:col-span-4">
-            <CardHeader>
-              <CardTitle>Project Phases</CardTitle>
-              <CardDescription>Current progress of construction phases</CardDescription>
-            </CardHeader>
-            <CardContent>
-{project.bridgeProject && Array.isArray(project.bridgeProject.phases) && project.bridgeProject.phases.length > 0 ? (
-                <div className="space-y-4">
-                  {project.bridgeProject.phases.map((phase) => (
-                    <div key={phase.id}>
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="text-sm font-medium">{phase.name}</div>
-                        <div className="text-sm text-muted-foreground">{phase.completionPercentage}%</div>
-                      </div>
-                      <Progress value={phase.completionPercentage} className="h-2" />
-                      <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                        <div>{phase.status}</div>
-                        <div>{phase.endDate ? formatDate(phase.endDate) : "No end date"}</div>
-                      </div>
+      <div className="grid gap-4 md:grid-cols-7">
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Bridge Details</CardTitle>
+            <CardDescription>Technical specifications for this bridge project</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {project.bridgeProject ? (
+              <dl className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <dt className="font-medium text-muted-foreground">Bridge Type</dt>
+                  <dd>{project.bridgeProject.bridgeType}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-muted-foreground">Span Length</dt>
+                  <dd>{project.bridgeProject.spanLength ? `${project.bridgeProject.spanLength} meters` : "N/A"}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-muted-foreground">Width</dt>
+                  <dd>{project.bridgeProject.width ? `${project.bridgeProject.width} meters` : "N/A"}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-muted-foreground">Height</dt>
+                  <dd>{project.bridgeProject.height ? `${project.bridgeProject.height} meters` : "N/A"}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-muted-foreground">Load Capacity</dt>
+                  <dd>{project.bridgeProject.loadCapacity ? `${project.bridgeProject.loadCapacity} tons` : "N/A"}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-muted-foreground">Waterway</dt>
+                  <dd>{project.bridgeProject.waterway || "N/A"}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="font-medium text-muted-foreground">Environmental Considerations</dt>
+                  <dd>{project.bridgeProject.environmentalConsiderations || "N/A"}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="font-medium text-muted-foreground">Traffic Impact</dt>
+                  <dd>{project.bridgeProject.trafficImpact || "N/A"}</dd>
+                </div>
+              </dl>
+            ) : (
+              <p className="text-muted-foreground">No bridge details available</p>
+            )}
+          </CardContent>
+        </Card>
+        <Card className="md:col-span-4">
+          <CardHeader>
+            <CardTitle>Project Phases</CardTitle>
+            <CardDescription>Current progress of construction phases</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {project.bridgeProject && Array.isArray(project.bridgeProject.phases) && project.bridgeProject.phases.length > 0 ? (
+              <div className="space-y-4">
+                {project.bridgeProject.phases.map((phase) => (
+                  <div key={phase.id}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-sm font-medium">{phase.name}</div>
+                      <div className="text-sm text-muted-foreground">{phase.completionPercentage}%</div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No phases defined for this project</p>
-                  <Button className="mt-4" asChild>
-                    <Link href={`/projects/${project.id}/phases/new`}>Add Phase</Link>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                    <Progress value={phase.completionPercentage} className="h-2" />
+                    <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                      <div>{phase.status}</div>
+                      <div>{phase.endDate ? formatDate(phase.endDate) : "No end date"}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No phases defined for this project</p>
+                <Button className="mt-4" asChild>
+                  <Link href={`/projects/${project.id}/phases/new`}>Add Phase</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-        <Tabs defaultValue="companies">
-          <TabsList>
-            <TabsTrigger value="companies">Companies</TabsTrigger>
-            <TabsTrigger value="materials">Materials</TabsTrigger>
-            <TabsTrigger value="interactions">Interactions</TabsTrigger>
-            <TabsTrigger value="inspections">Inspections</TabsTrigger>
-          </TabsList>
-          <TabsContent value="companies" className="border-none p-0 pt-4">
-            <ProjectCompanies project={project} />
-          </TabsContent>
-          <TabsContent value="materials" className="border-none p-0 pt-4">
-            <ProjectMaterials projectId={project.id} materials={materials} />
-          </TabsContent>
-          <TabsContent value="interactions" className="border-none p-0 pt-4">
-            <ProjectInteractions project={project} />
-          </TabsContent>
-          <TabsContent value="inspections" className="border-none p-0 pt-4">
-            <ProjectInspections project={project} />
-          </TabsContent>
-        </Tabs>
-      </main>
+      <Tabs defaultValue="companies">
+        <TabsList>
+          <TabsTrigger value="companies">Companies</TabsTrigger>
+          <TabsTrigger value="materials">Materials</TabsTrigger>
+          <TabsTrigger value="interactions">Interactions</TabsTrigger>
+          <TabsTrigger value="inspections">Inspections</TabsTrigger>
+        </TabsList>
+        <TabsContent value="companies" className="border-none p-0 pt-4">
+          <ProjectCompanies project={project} />
+        </TabsContent>
+        <TabsContent value="materials" className="border-none p-0 pt-4">
+          <ProjectMaterials projectId={project.id} materials={materials} />
+        </TabsContent>
+        <TabsContent value="interactions" className="border-none p-0 pt-4">
+          <ProjectInteractions project={project} />
+        </TabsContent>
+        <TabsContent value="inspections" className="border-none p-0 pt-4">
+          <ProjectInspections project={project} />
+        </TabsContent>
+      </Tabs>
+    </main>
   )
 }

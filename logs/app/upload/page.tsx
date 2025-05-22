@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
+import * as pdfjsLib from "pdfjs-dist";
 import * as mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
@@ -69,8 +69,9 @@ export default function FileTextExtractor() {
           const content = await page.getTextContent();
           if (Array.isArray(content.items)) {
             const strings = content.items
-              .filter((item: TextItem): item is TextItem => (item as TextItem).str !== undefined)
-              .map((item: TextItem) => item.str);
+              .filter((item): item is TextItem => "str" in item)
+              .map((item) => item.str);
+
 
             text += strings.join(" ") + "\n";
           }

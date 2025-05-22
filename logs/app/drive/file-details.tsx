@@ -27,8 +27,9 @@ interface FileDetailsProps {
   onUpdate: () => Promise<void>
 }
 interface DriveFilePermissionWithUser extends DriveFilePermission {
-  user: User
+  user?: User
 }
+
 
 export function FileDetails({ file: initialFile, onClose, onUpdate }: FileDetailsProps) {
   const [file, setFile] = useState<FileData>(initialFile)

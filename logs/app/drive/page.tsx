@@ -10,20 +10,34 @@ import { CreateFolderButton } from "./create-folder-button"
 import { FileDetails } from "./file-details"
 import { getCurrentUser } from "../login/actions"
 import { checkUserPermission } from "../permissions/permission-actions"
-import { DriveFile, DriveFolder } from "@/prisma/generated/main"
+import { DriveFile, DriveFilePermission, DriveFolder, User } from "@/prisma/generated/main"
 interface PathItem {
   id: number | null;
   name: string;
 }
+interface FileData {
+  id: number
+  name: string
+  type: string
+  url: string
+  createdAt: Date
+  updatedAt: Date
+  owner: User
+  permissions: DriveFilePermissionWithUser[]
+}
+interface DriveFilePermissionWithUser extends DriveFilePermission {
+  user?: User
+}
+
 export default function DriveExplorer() {
   const searchParams = useSearchParams()
   const folderIdParam = searchParams.get("folder")
   const folderId = folderIdParam ? Number.parseInt(folderIdParam) : null
 
   const [folders, setFolders] = useState<DriveFolder[]>([])
-  const [files, setFiles] = useState<DriveFile[]>([])
+const [files, setFiles] = useState<(DriveFile & { owner: User; permissions: DriveFilePermission[] })[]>([])
   const [path, setPath] = useState<PathItem[]>([{ id: null, name: "My Drive" }])
-  const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null)
+  const [selectedFile, setSelectedFile] = useState<FileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [parentId, setparent] = useState<number | null>(null)
   const [userId, setuser] = useState<number>(0) // default dummy value
@@ -61,7 +75,7 @@ export default function DriveExplorer() {
     loadFolderContents()
   }, [folderId, path])
 
-  const handleFileSelect = (file: DriveFile) => {
+  const handleFileSelect = (file: FileData) => {
     setSelectedFile(file)
   }
 
@@ -86,6 +100,7 @@ useEffect(() => {
 
   return () => eventSource.close()
 }, [handleRefresh])
+const validFiles = files.filter(f => f.owner && f.permissions)
 
   return (
     <div className="flex flex-col h-full m-5 p-5">
@@ -102,15 +117,15 @@ useEffect(() => {
 
       <div className="flex flex-1 mt-4">
         <div className={`flex-1 transition-all ${selectedFile ? "pr-4 lg:pr-80" : ""}`}>
-          <FileGrid
-            folders={folders}
-            files={files}
-            isLoading={isLoading}
-            onFileSelect={handleFileSelect}
-            onRefresh={handleRefresh}
-            parentFolderId={parentId}
+<FileGrid
+  folders={folders}
+  files={validFiles} // ✅ Use filtered and properly typed files
+  isLoading={isLoading}
+  onFileSelect={handleFileSelect}
+  onRefresh={handleRefresh}
+  parentFolderId={parentId}
+/>
 
-          />
         </div>
 
         {selectedFile && (

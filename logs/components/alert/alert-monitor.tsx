@@ -32,11 +32,20 @@ export function AlertMonitor() {
         const newAlerts = await checkAlertConditionsRealtime()
 
         // Only add alerts that were triggered after our last check
-        const filteredAlerts = newAlerts.filter((alert) => new Date(alert.triggeredAt) > lastCheckedRef.current)
+        const filteredAlerts = newAlerts
+          .filter((alert): alert is NonNullable<typeof alert> => alert != null && new Date(alert.triggeredAt) > lastCheckedRef.current)
+          .map((alert): AlertEventProps => ({
+            id: alert.id,
+            conditionId: alert.alertCondition.id,
+            conditionName: alert.alertCondition.name,
+            triggeredAt: new Date(alert.triggeredAt),
+            notes: alert.notes ?? null,
+          }))
 
         if (filteredAlerts.length > 0) {
           setAlerts(filteredAlerts)
         }
+
 
         lastCheckedRef.current = now
       } catch (error) {

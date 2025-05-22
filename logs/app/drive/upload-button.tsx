@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { uploadFile } from "./drive-actions"
 import { toast } from "sonner"
 import { Progress } from "@/components/ui/progress"
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
+import * as pdfjsLib from 'pdfjs-dist';
 import * as mammoth from "mammoth";
 import * as XLSX from "xlsx";
 import { TextItem } from "pdfjs-dist/types/src/display/api"
@@ -78,7 +78,9 @@ export function UploadButton({ folderId, onUploadComplete, userId }: UploadButto
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const strings = content.items.map((item: TextItem) => item.str);
+          const strings = content.items
+            .filter((item): item is TextItem => 'str' in item)
+            .map(item => item.str);
           text += strings.join(" ") + "\n";
         }
 

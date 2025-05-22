@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { createTeam } from "@/app/teams/actions"
 import { toast } from "sonner"
 import { MultiCombobox, OptionType } from "@/components/multi-combobox"
+import { User } from "@/prisma/generated/main"
 
 // Define the form schema
 const formSchema = z.object({
@@ -28,10 +29,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-interface User {
-  id: number
-  username: string
-}
+
 
 interface Location {
   id: number
@@ -49,9 +47,10 @@ export function AddTeamForm({ users, locations }: AddTeamFormProps) {
 
   // Convert users and locations to options format for the multi-combobox
   const userOptions: OptionType[] = users.map((user) => ({
-    label: user.username,
+    label: user.username ?? "Unknown User",
     value: user.id.toString(),
   }))
+
 
   const locationOptions: OptionType[] = locations.map((location) => ({
     label: location.name,

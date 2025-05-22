@@ -28,9 +28,10 @@ export default function NewWorkflowPage() {
     async function fetchUsers() {
       try {
         const result = await getUsers()
-        if (result.success) {
+        if (result.success && result.data) {
           setUsers(result.data)
         }
+
       } catch (err) {
         console.error("Error fetching users:", err)
       }
@@ -69,14 +70,21 @@ export default function NewWorkflowPage() {
     setSteps(reorderedSteps)
   }
 
-  const handleAddTempStep = (step: AuditStep) => {
-    // Add the new step with the correct position
-    const newStep = {
+  const handleAddTempStep = (step: Omit<AuditStep, "id">) => {
+    const newStep: AuditStep = {
       ...step,
-      position: steps.length,
+      id: -Date.now(), // temp negative ID
     }
-    setSteps([...steps, newStep])
+
+    setSteps((prev) => [
+      ...prev,
+      {
+        ...newStep,
+        position: prev.length,
+      },
+    ])
   }
+
 
   const handleCreateWorkflow = async () => {
     if (!name.trim()) {
@@ -99,7 +107,7 @@ export default function NewWorkflowPage() {
         return
       }
 
-      const workflowId = workflowResult.data.id.toString()
+      const workflowId = workflowResult.data?.id?.toString() ?? ""
 
       // Then create all the steps if there are any
       if (steps.length > 0) {
@@ -108,12 +116,12 @@ export default function NewWorkflowPage() {
           const step = steps[i]
           await createStep(workflowId, {
             title: step.title,
-            description: step.description,
+            description: step.description ?? undefined,
             status: step.status,
-            assignedToId: step.assignedToId,
-            dueDate: step.dueDate,
-            position: step.position,
+            assignedToId: step.assignedToId !== null ? step.assignedToId.toString() : null,
+            dueDate: step.dueDate?.toISOString?.() ?? undefined,
           })
+
         }
       }
 
