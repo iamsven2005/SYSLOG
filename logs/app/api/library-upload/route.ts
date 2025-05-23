@@ -1,17 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
+import { getCurrentUser } from "@/app/login/actions"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-    }
 
     // Get form data from the request
     const formData = await request.formData()
@@ -27,12 +22,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "No library entry ID provided" }, { status: 400 })
     }
 
-    // Check if user has permission (admin only or specific role)
-    const currentUser = await db.user.findUnique({
-      where: { id: Number.parseInt(session.user.id.toString()) },
-    })
+    const user = await getCurrentUser()
 
-    if (!currentUser || !currentUser.role.includes("admin")) {
+    if (!user || user.role.includes("admin")) {
       return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 })
     }
 

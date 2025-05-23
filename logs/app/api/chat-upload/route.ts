@@ -1,23 +1,21 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
+import { notFound } from "next/navigation"
+import { getCurrentUser } from "@/app/login/actions"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-    }
 
     // Get form data from the request
     const formData = await request.formData()
     const file = formData.get("file") as File
     const groupId = Number.parseInt(formData.get("groupId") as string)
-    const userId = Number.parseInt(session.user.id.toString())
+        const user = await getCurrentUser()
+        if(!user) notFound()
+    const userId = Number.parseInt(user.id.toString())
 
     // Validate the request
     if (!file) {

@@ -259,3 +259,9 @@ make
 sudo make install
 
 sudo docker run -d --name pgvector-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=host-machine -e POSTGRES_DB=logs_database -p 5433:5432 ankane/pgvector
+
+npx @marp-team/marp-cli main.md -o output.pdf --allow-local-files
+
+reveal-md slides.md   
+
+allowed

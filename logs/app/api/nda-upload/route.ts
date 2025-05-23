@@ -1,40 +1,28 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
-import { getUserById } from "@/app/email-templates/user-actions"
+import { notFound } from "next/navigation"
+import { getCurrentUser } from "@/app/login/actions"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
-    }
-
+  
     // Get form data from the request
     const formData = await request.formData()
     const file = formData.get("file") as File
-    const userId = Number.parseInt(formData.get("userId") as string)
 
     // Validate the request
     if (!file) {
       return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 })
     }
-
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "No user ID provided" }, { status: 400 })
-    }
-
     // Ensure the user can only upload for themselves unless they're an admin
-    const currentuser = await getUserById(session.user.id)
-    if(!currentuser){
-        throw new Error("User not found")
-    }
-    const isAdmin = currentuser.role.includes("admin")
-    const isSelf = Number.parseInt(session.user.id.toString()) === userId
+    const user = await getCurrentUser()
+    if(!user) notFound()
+    const userId = user.id
+    const isAdmin = user.role.includes("admin")
+    const isSelf = Number.parseInt(user.id.toString()) === userId
 
     if (!isAdmin && !isSelf) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 })

@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, Bell, CheckCircle } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
-import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
 import { getAlertEvent, resolveAlertEvent } from "../../alert-actions"
+import { allowed } from "@/components/navbar"
 
 export const metadata: Metadata = {
   title: "Alert Event Details",
@@ -17,16 +16,9 @@ export const metadata: Metadata = {
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-    const id = Number.parseInt(params.id, 10)
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/alerts")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
-  // Get the alert event
+  const id = Number.parseInt(params.id, 10)
+ const a  = await allowed("/admin")
+  if(a === false) notFound()
   const alertEvent = await getAlertEvent(id).catch(() => null)
 
   if (!alertEvent) {

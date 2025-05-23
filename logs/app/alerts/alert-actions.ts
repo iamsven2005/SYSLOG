@@ -4,7 +4,6 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { logActivity } from "@/lib/activity-logger"
 import { cache } from "react"
-import { getSession } from "@/lib/auth"
 import { sendEmailWithTemplate } from "../email-templates/email-template-actions"
 
 // Types for alert condition creation/update
@@ -1015,11 +1014,7 @@ export async function getUnresolvedAlertCount() {
  */
 export async function resolveAllAlertEvents(notes = "Bulk resolved") {
   try {
-    const session = await getSession()
 
-    if (!session?.user?.id) {
-      throw new Error("User not authenticated")
-    }
 
     const result = await db.alertEvent.updateMany({
       where: {

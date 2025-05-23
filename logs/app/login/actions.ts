@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers"
 import { db } from "@/lib/db"
+import { NextRequest } from "next/server"
+import { notFound } from "next/navigation"
 
 interface LoginCredentials {
   username: string
@@ -47,10 +49,10 @@ export async function loginUser({ username, password }: LoginCredentials) {
   }
 }
 
-export async function logoutUser() {
+export async function logoutUser(req: NextRequest) {
   try {
     // Clear the session cookie
-    (await cookies()).delete("userId")
+    req.cookies.delete("userId")
 
     return { success: true }
   } catch (error) {
@@ -59,9 +61,9 @@ export async function logoutUser() {
   }
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(req?: NextRequest) {
   try {
-    const userId = (await cookies()).get("userId")?.value
+    const userId = req?.cookies.get("userId")?.value
 
     if (!userId) {
       return null
@@ -78,3 +80,15 @@ export async function getCurrentUser() {
   }
 }
 
+export async function getId(req?: NextRequest) {
+  try {
+    const userId = req?.cookies.get("userId")?.value
+    if (!userId) {
+      return 0
+    }
+    return Number(userId)
+  } catch (error) {
+    console.error("Get current user error:", error)
+    return null
+  }
+}

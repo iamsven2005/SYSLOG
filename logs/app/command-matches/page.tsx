@@ -4,9 +4,8 @@ import { CommandMatchNotification } from "@/app/command-matches/command-match-no
 import { BulkAddressCommandMatches } from "@/app/command-matches/bulk-address-command-matches"
 import { AddressedCommandMatchesTable } from "@/app/command-matches/addressed-command-matches-table"
 import { Suspense } from "react"
-import { getCurrentUser } from "../login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { allowed } from "@/components/navbar"
+import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -15,17 +14,9 @@ export default async function Page({
 }: {
   searchParams: Promise<{ tab?: string; page?: string }>
 }) {
+  const a = await allowed("/command-matches")
+  if(a === false) notFound()
   const resolvedParams = await searchParams
-
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-    return
-  }
-  const perm = await checkUserPermission(currentUser.id, "/command-matches")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
   const tab = resolvedParams.tab || "unaddressed"
   const page = Number.parseInt(resolvedParams.page || "1", 10)
   const pageSize = 10

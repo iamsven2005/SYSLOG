@@ -35,7 +35,7 @@ export default async function RootLayout({
             <AlertMonitorWrapper />
           </div>
           {userid && (
-          <Navbar id={userid}/>
+          <Navbar/>
           )}
 
           {children}

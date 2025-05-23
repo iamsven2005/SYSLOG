@@ -1,24 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
-import { getUserById } from "@/app/email-templates/user-actions"
+import { getCurrentUser } from "@/app/login/actions"
+import { notFound } from "next/navigation"
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getSession()
 
-    if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 })
-    }
 
-    const userId = Number.parseInt((await params).id)
-    const currentuser = await getUserById(session.user.id)
-    if (!currentuser) {
-        throw new Error("User not found")
-      }
+
+    const currentuser = await getCurrentUser()
+    if(!currentuser) notFound()
+      const userId = (await params).id
     const isAdmin = currentuser.role.includes("admin")
-    const isSelf = currentuser.id === userId
+    const isSelf = currentuser.id.toString() === userId
 
     if (!isAdmin && !isSelf) {
       return new NextResponse("Forbidden", { status: 403 })
@@ -26,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Get the user's NDA file
     const user = await db.user.findUnique({
-      where: { id: userId },
+      where: { id: Number(userId) },
       select: { ndafile: true },
     })
 

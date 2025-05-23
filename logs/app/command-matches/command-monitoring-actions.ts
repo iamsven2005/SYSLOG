@@ -3,10 +3,11 @@
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { sendEmailWithTemplate } from "../email-templates/email-template-actions"
-import { getSession } from "@/lib/auth"
 // Import the toast at the top of the file
 import { toast } from "sonner"
 import { auth, logs, Prisma } from "@/prisma/generated/main"
+import { getCurrentUser } from "../login/actions"
+import { notFound } from "next/navigation"
 
 interface CommandMatch {
   logId: number
@@ -401,13 +402,9 @@ export async function getCommandMatches({
 export async function markCommandMatchAsAddressed(matchId: number, notes?: string) {
   try {
     // Make sure to await cookies() to get the session
-    const session = await getSession()
-
-    if (!session?.user?.id) {
-      throw new Error("User not authenticated")
-    }
-
-    const userId = session.user.id
+    const session = await getCurrentUser()
+    if(!session) notFound()
+    const userId = session.id
 
     const updatedMatch = await db.commandMatch.update({
       where: { id: matchId },
@@ -446,11 +443,6 @@ export async function markCommandMatchAsAddressed(matchId: number, notes?: strin
  */
 export async function unmarkCommandMatchAsAddressed(matchId: number) {
   try {
-    const session = await getSession()
-
-    if (!session?.user?.id) {
-      throw new Error("User not authenticated")
-    }
 
     const match = await db.commandMatch.findUnique({
       where: { id: matchId },
@@ -552,13 +544,10 @@ export async function getUnaddressedCommandMatchCount() {
 export async function markAllCommandMatchesAsAddressed() {
   try {
     // Make sure to await cookies() to get the session
-    const session = await getSession()
 
-    if (!session?.user?.id) {
-      throw new Error("User not authenticated")
-    }
-
-    const userId = session.user.id
+    const user = await getCurrentUser()
+    if(!user) notFound()
+    const userId = user.id
 
     const result = await db.commandMatch.updateMany({
       where: {

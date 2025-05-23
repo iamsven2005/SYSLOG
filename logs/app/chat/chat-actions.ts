@@ -4,8 +4,8 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "../login/actions"
 import { parseXMLDate, type XMLMessage } from "../utils/xml-utils"
-import { getSession } from "@/lib/auth"
 import { Prisma } from "@/prisma/generated/main"
+import { notFound } from "next/navigation"
 
 export type GroupWithMembersAndLastMessage = Prisma.GroupGetPayload<{
   include: {
@@ -602,13 +602,6 @@ export async function editMessage(messageId: number, newContent: string) {
 // Update the importXMLMessages function to use our new date parsing
 export async function importXMLMessages(groupId: number, messages: XMLMessage[]) {
   try {
-    // Get the current user ID from the session
-    const session = await getSession()
-    if (!session?.user?.id) {
-      throw new Error("You must be logged in to import messages")
-    }
-
-    // Get the group to verify it exists
     const group = await db.group.findUnique({
       where: { id: groupId },
       include: { members: true },
@@ -617,9 +610,10 @@ export async function importXMLMessages(groupId: number, messages: XMLMessage[])
     if (!group) {
       throw new Error("Group not found")
     }
-
+    const user = await getCurrentUser() 
+    if(!user) notFound()
     // Check if the current user is a member of the group
-    const isMember = group.members.some((member) => member.userId === session.user.id)
+    const isMember = group.members.some((member) => member.userId === user.id)
     if (!isMember) {
       throw new Error("You are not a member of this group")
     }
@@ -646,7 +640,7 @@ export async function importXMLMessages(groupId: number, messages: XMLMessage[])
 
         // If sender not found, use the current user as the sender
         if (!senderId) {
-          senderId = session.user.id
+          senderId = user.id
         }
 
         // Parse the date using our custom function
@@ -672,7 +666,7 @@ export async function importXMLMessages(groupId: number, messages: XMLMessage[])
     // Log the activity
     await db.activityLog.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         actionType: "IMPORT_MESSAGES",
         details: `Imported ${importedMessages.length} messages to group ${groupId}`,
         targetType: "CHAT",

@@ -354,7 +354,7 @@ const fetchNotes = useCallback(async () => {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-500" />
-                      <TableCell><Link href={`/help/${note.id}`}>{note.title}</Link></TableCell>
+                      <TableCell><Link href={`/notes/${note.id}`}>{note.title}</Link></TableCell>
                     </div>
                   </TableCell>
                   <TableCell>{formatDate(note.time.toString())}</TableCell>

@@ -8,6 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model logs {
   id        Int      @id @default(autoincrement())
   name      String
@@ -185,6 +186,7 @@ model User {
   email               String?               @unique
   role                String[]
   roles  Roles[] @relation("UserRoles")
+  login               String                @unique
   Mobile              Int?
   Pay                 Int?
   PrimaryContact      String?

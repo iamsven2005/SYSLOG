@@ -2,8 +2,6 @@ import { notFound, redirect } from "next/navigation"
 import { AlertConditionForm } from "../../alert-condition-form"
 import { getAllEmailTemplates } from "@/app/email-templates/email-template-actions"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
-import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
 import { getAlertCondition } from "../../alert-actions"
 
 
@@ -12,14 +10,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   if (!params?.id || isNaN(Number(params.id))) {
     notFound()
   }
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/alerts")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
+
   const id = Number.parseInt(params.id, 10)
 
   const alertCondition = await getAlertCondition(id).catch(() => null)

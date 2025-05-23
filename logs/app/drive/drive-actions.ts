@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
 import { logActivity } from "@/lib/activity-logger"
@@ -9,15 +8,13 @@ import fs from "fs/promises"
 import { db } from "@/lib/db"
 import { db2 } from "@/lib/db2"
 import { DriveFolder } from "@/prisma/generated/main"
+import { getId } from "../login/actions"
+import { notFound } from "next/navigation"
 
 // Get folders and files for a specific folder
 export async function getFolderContents(folderId: number | null = null) {
-  const session = await getSession()
-  if (!session?.user) {
-    throw new Error("You must be logged in to access drive")
-  }
-
-  const userId = Number(session.user.id)
+  
+  const userId = await getId() || 0
 
   const folders = await db.driveFolder.findMany({
     where: {
@@ -105,12 +102,9 @@ export async function getFolderPath(folderId: number | null) {
 // Create a new folder
 export async function createFolder(name: string, parentId: number | null = null) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to create folders")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
+    if(!userId) notFound()
     const baseId = userId + 100000
 
     // Find the latest folder ID created by this user in the custom range
@@ -157,14 +151,11 @@ export async function createFolder(name: string, parentId: number | null = null)
 // Upload a file
 export async function uploadFile(formData: FormData) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to upload files")
-    }
-
-    const userId = Number(session.user.id)
+ 
+    const userId = await getId()
+    if(!userId) notFound()
     const file = formData.get("file") as File
-    let folderId = Number(formData.get("folderId") as string) || userId
+    let folderId = Number(formData.get("folderId") as string)
 
     if (!file) {
       throw new Error("No file provided")
@@ -242,12 +233,8 @@ export async function uploadFile(formData: FormData) {
 // Delete a file
 export async function deleteFile(fileId: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to delete files")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     // Get the file to check ownership
     const file = await db.driveFile.findUnique({
@@ -291,12 +278,8 @@ export async function deleteFile(fileId: number) {
 // Delete a folder
 export async function deleteFolder(folderId: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to delete folders")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     // Get the folder to check ownership
     const folder = await db.driveFolder.findUnique({
@@ -371,12 +354,7 @@ async function recursiveDeleteFolder(folderId: number) {
 // Share a file with another user
 export async function shareFile(fileId: number, userId: number, access = "read") {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to share files")
-    }
-
-    const granterId = Number(session.user.id)
+    const granterId = await getId()
 
     // Check if the file exists and the current user is the owner
     const file = await db.driveFile.findUnique({
@@ -440,12 +418,8 @@ export async function shareFile(fileId: number, userId: number, access = "read")
 // Remove file sharing permission
 export async function removeFilePermission(fileId: number, userId: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to manage file permissions")
-    }
 
-    const currentUserId = Number(session.user.id)
+    const currentUserId = await getId()
 
     // Check if the file exists and the current user is the owner
     const file = await db.driveFile.findUnique({
@@ -489,12 +463,8 @@ export async function removeFilePermission(fileId: number, userId: number) {
 // Get file details with permissions
 export async function getFileDetails(fileId: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to view file details")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     const file = await db.driveFile.findUnique({
       where: { id: fileId },
@@ -530,16 +500,12 @@ export async function getFileDetails(fileId: number) {
 // Get all users for sharing
 export async function getUsersForSharing() {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in")
-    }
 
-    const currentUserId = Number(session.user.id)
+    const currentUserId = await getId()
 
     const users = await db.user.findMany({
       where: {
-        id: { not: currentUserId }, // Exclude current user
+        id: { not: currentUserId || 0 }, // Exclude current user
       },
       orderBy: {
         username: "asc",
@@ -556,12 +522,8 @@ export async function getUsersForSharing() {
 // Function to update a folder
 export async function updateFolder(id: number, name: string) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to update folders")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     // Get the folder to check ownership
     const folder = await db.driveFolder.findUnique({
@@ -603,12 +565,8 @@ export async function updateFolder(id: number, name: string) {
 
 export async function renameFolder(folderId: number, newName: string) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to rename folders")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     // Get the folder to check ownership
     const folder = await db.driveFolder.findUnique({
@@ -646,12 +604,8 @@ export async function renameFolder(folderId: number, newName: string) {
 
 export async function updateFile(id: number, data: { folderId: number | null }) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to update files")
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
 
     // Get the file to check ownership
     const file = await db.driveFile.findUnique({
@@ -687,10 +641,8 @@ export async function updateFile(id: number, data: { folderId: number | null }) 
   }
 }
 export async function updateFileName(fileId: number, newName: string) {
-  const session = await getSession()
-  if (!session?.user) throw new Error("Not authenticated")
 
-  const userId = Number(session.user.id)
+  const userId =  await getId()
 
   const file = await db.driveFile.findUnique({
     where: { id: fileId },

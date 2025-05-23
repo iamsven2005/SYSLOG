@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { AlertEventsTable } from "../alert-events-table"
 import { Edit, Bell, Clock, AlertCircle, CheckCircle, ExternalLink } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
-import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
+
 import { getAlertCondition, getAlertEvents } from "../alert-actions"
 
 export const metadata: Metadata = {
@@ -19,14 +18,7 @@ export const metadata: Metadata = {
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = Number.parseInt(params.id, 10)
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/alerts")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
+ 
   // Get the alert condition
   const alertCondition = await getAlertCondition(id).catch(() => null)
 

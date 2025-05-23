@@ -1,18 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import fs from "fs/promises"
 import path from "path"
 import { db } from "@/lib/db"
+import { notFound } from "next/navigation"
+import { getCurrentUser, getId } from "@/app/login/actions"
 
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 })
-    }
 
-    const userId = Number(session.user.id)
+    const userId = await getId()
     const filename  = (await params).filename
 
     if (!filename) {

@@ -1,18 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
+import { getCurrentUser } from "@/app/login/actions"
+import { notFound } from "next/navigation"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const userId = session.user.id
-
+    const user = await getCurrentUser()
+    if(!user) notFound()
+    const userId = user.id
     // Add error handling for JSON parsing
     let matchIds, notes
     try {

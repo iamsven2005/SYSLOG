@@ -1,17 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
+import { notFound } from "next/navigation"
+import { getCurrentUser } from "@/app/login/actions"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const userId = session.user.id
 
     // Add error handling for JSON parsing
     let matchIds, notes
@@ -29,6 +24,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Update all the specified matches
+    const user = await getCurrentUser()
+    if (!user) notFound()
+    const userId = user.id
     const result = await db.commandMatch.updateMany({
       where: {
         id: {

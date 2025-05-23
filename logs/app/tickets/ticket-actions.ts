@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { devices, Prisma, SupportTicket, TicketAttachment, TicketComment, User } from "@/prisma/generated/main"
-import { getSession } from "@/lib/auth"
+import { getCurrentUser, getId } from "../login/actions"
+import { notFound } from "next/navigation"
 
 // Types
 interface CreateTicketParams {
@@ -61,25 +62,17 @@ export async function getTickets({
   pageSize = 10,
 }: GetTicketsParams) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to view tickets")
-    }
 
     // Build where conditions
     const where: Prisma.SupportTicketWhereInput = {}
 
-    // If not admin, only show tickets created by the current user
-    const user = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    })
 
+    const user = await getCurrentUser()
     const userIsAdmin = user?.role.includes("admin")
 
     // If not admin and no specific createdById is provided, filter by current user
     if (!userIsAdmin && !createdById) {
-      where.createdById = session.user.id
+      where.createdById = user?.id
     } else if (createdById) {
       // If a specific createdById is provided and user is admin, use that
       where.createdById = createdById
@@ -201,20 +194,14 @@ export async function getTicket(id: number): Promise<ExtendedTicket | null> {
 // Create a new ticket
 export async function createTicket(data: CreateTicketParams) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to create a ticket")
-    }
-
-    // Get user ID from session
-    const userId = session.user.id
+    const userId = await getId()
 
     const ticket = await db.supportTicket.create({
       data: {
         title: data.title,
         description: data.description,
         priority: data.priority,
-        createdById: userId,
+        createdById: userId || 0,
         relatedDeviceId: data.relatedDeviceId || null,
         assignedToId: data.assignedToId || null,
       },
@@ -238,10 +225,6 @@ export async function createTicket(data: CreateTicketParams) {
 // Update a ticket
 export async function updateTicket(data: UpdateTicketParams) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to update a ticket")
-    }
 
     // Get the original ticket for logging
     const originalTicket = await db.supportTicket.findUnique({
@@ -317,18 +300,7 @@ export async function updateTicket(data: UpdateTicketParams) {
 // Delete a ticket
 export async function deleteTicket(id: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to delete a ticket")
-    }
-
-    // Get user role
-    const user = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    })
-
-    // Only admins can delete tickets
+    const user = await getCurrentUser()
     if (!user?.role.includes("admin")) {
       throw new Error("Only admins can delete tickets")
     }
@@ -366,15 +338,11 @@ export async function deleteTicket(id: number) {
 // Add a comment to a ticket
 export async function addComment(data: AddCommentParams) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to add a comment")
-    }
-
+    const userId = await getId() || 0
     const comment = await db.ticketComment.create({
       data: {
         ticketId: data.ticketId,
-        userId: session.user.id,
+        userId,
         content: data.content,
       },
       include: {
@@ -406,10 +374,6 @@ export async function addComment(data: AddCommentParams) {
 // Delete a comment
 export async function deleteComment(id: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to delete a comment")
-    }
 
     // Get the comment for authorization check
     const comment = await db.ticketComment.findUnique({
@@ -427,14 +391,9 @@ export async function deleteComment(id: number) {
       throw new Error("Comment not found")
     }
 
-    // Get user role
-    const user = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    })
-
+    const user = await getCurrentUser()
     // Only the comment author or admins can delete comments
-    if (!user?.role.includes("admin") && comment.user.id !== session.user.id) {
+    if (!user?.role.includes("admin") && comment.user.id !== user?.id) {
       throw new Error("You don't have permission to delete this comment")
     }
 
@@ -461,10 +420,6 @@ export async function deleteComment(id: number) {
 // Delete an attachment
 export async function deleteAttachment(id: number) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      throw new Error("You must be logged in to delete an attachment")
-    }
 
     // Get the attachment for authorization check
     const attachment = await db.ticketAttachment.findUnique({
@@ -493,14 +448,9 @@ export async function deleteAttachment(id: number) {
       throw new Error("Attachment not found")
     }
 
-    // Get user role
-    const user = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    })
-
-    // Only the uploader or admins can delete attachments
-    if (!user?.role.includes("admin") && attachment.uploader.id !== session.user.id) {
+    const user = await getCurrentUser()
+    if(!user) notFound()
+    if (user.role.includes("admin") && attachment.uploader.id !== user.id) {
       throw new Error("You don't have permission to delete this attachment")
     }
 

@@ -2,15 +2,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/auth"
+import { notFound } from "next/navigation"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const formData = await request.formData()
     const file = formData.get("file") as File
     const ticketId = formData.get("ticketId") as string
@@ -39,7 +34,8 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     const filePath = join(uploadDir, uniqueFilename)
     await writeFile(filePath, buffer)
-
+    const userId = request.cookies.get("userId")?.value
+    if(!userId) notFound() 
     // Save file info to database
     const attachment = await db.ticketAttachment.create({
       data: {
@@ -49,7 +45,7 @@ export async function POST(request: NextRequest) {
         mimeType: file.type,
         ticketId: ticketId ? Number.parseInt(ticketId) : null,
         commentId: commentId ? Number.parseInt(commentId) : null,
-        uploaderId: session.user.id,
+        uploaderId: Number(userId),
       },
     })
 

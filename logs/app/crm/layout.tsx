@@ -1,23 +1,15 @@
 import { Button } from "@/components/ui/button"
-import { getCurrentUser } from "../login/actions"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
-
+import { allowed } from "@/components/navbar"
+import { notFound } from "next/navigation"
 
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/crm")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
+  const a = await allowed("/command-matches")
+  if(a === false) notFound()
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">

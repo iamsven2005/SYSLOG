@@ -16,7 +16,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   if (!currentUser) {
     redirect("/login")
   }
-  const perm = await checkUserPermission(currentUser.id, "/help")
+  const perm = await checkUserPermission(currentUser.id, "/notes")
   if (perm.hasPermission === false) {
     return notFound()
   }

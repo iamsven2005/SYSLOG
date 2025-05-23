@@ -23,3 +23,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const userId = req.cookies.get("userId")?.value
+
+    return NextResponse.json({ success: true, data: userId }, { status: 201 })
+  } catch (err) {
+    console.error("Auth log insert error:", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

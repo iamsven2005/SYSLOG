@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server"
-import { getSession } from "@/lib/auth"
 import { resolveAllAlertEvents } from "@/app/alerts/alert-actions"
 
 export async function POST(request: Request) {
   try {
-    // Check authentication
-    const session = await getSession()
-    if (!session?.user) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
-    }
 
-    // Get optional notes from request body
     const body = await request.json().catch(() => ({}))
     const notes = body.notes || "Bulk resolved via API"
 

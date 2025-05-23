@@ -2,7 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import fs from "fs/promises"
 import path from "path"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/auth"
+import { getCurrentUser, getId } from "@/app/login/actions"
+import { notFound } from "next/navigation"
 
 export async function GET(
   req: NextRequest,
@@ -10,10 +11,7 @@ export async function GET(
 ) {
 
   try {
-    const session = await getSession()
-    if (!session?.user) {
-      return new NextResponse("Unauthorized", { status: 401 })
-    }
+
 
     const filename = (await params).filename
     if (!filename) {
@@ -26,8 +24,7 @@ export async function GET(
     }
 
     const groupId = Number(groupIdMatch[1])
-    const userId = Number(session.user.id)
-
+    const userId = await getId() || 0
     const isMember = await db.groupMember.findUnique({
       where: {
         userId_groupId: {

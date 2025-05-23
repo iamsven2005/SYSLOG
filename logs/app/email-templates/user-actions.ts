@@ -437,11 +437,3 @@ const updateData: Prisma.UserUpdateInput = {
     }
   }
 }
-
-export async function getUserById(id: number) {
-  const user = await db.user.findUnique({
-    where: { id },
-  })
-
-  return user
-}

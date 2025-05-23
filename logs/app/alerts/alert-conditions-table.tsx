@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../permissions/permission-actions"
 import { AlertCondition } from "@/prisma/generated/main"
 
 export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: AlertCondition[] }) {
@@ -42,14 +41,7 @@ export function AlertConditionsTable({ initialAlertConditions }: { initialAlertC
     if (!initialAlertConditions) {
       const fetchAlertConditions = async () => {
         try {
-          const currentUser = await getCurrentUser()
-          if (!currentUser) {
-            redirect("/login")
-          }
-          const perm = await checkUserPermission(currentUser.id, "/alerts")
-          if (perm.hasPermission === false) {
-            return notFound()
-          }
+
           setIsLoading(true)
           const conditions = await getAlertConditions()
           if (conditions) {

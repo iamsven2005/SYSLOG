@@ -645,6 +645,7 @@ export default function LogsTable() {
               value={searchQuery}
               onChange={handleSearchChange}
             />
+            
           </div>
           <Button variant="outline" size="icon" onClick={() => fetchLogs()} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />

@@ -2,54 +2,56 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 import { UserNav } from "./user-nav"
 import { ThemeToggle } from "@/app/theme-toggle"
+import { getCurrentUser } from "@/app/login/actions"
+import { notFound } from "next/navigation"
 
 
-export async function getUserPermissions(userId: number) {
-    // Step 1: Get the user and their roles
-    const user = await db.user.findUnique({
-      where: { id: userId },
-    })
-  
-    const roles = user?.role || []
-  
-    const rolePermissions = await db.rolePermission.findMany({
-      where: {
-        roleName: { in: roles },
-      },
-      include: {
-        pagePermission: true,
-      },
-    })
+export async function getUserPermissions() {
+  const user = await getCurrentUser()
+  if (!user) notFound()
 
-    // Step 3: Get all user-specific permissions
-    const userPermissions = await db.userPermission.findMany({
-      where: { userId },
-      include: {
-        pagePermission: true,
-      },
-    })
-  
-    // Step 4: Combine and deduplicate permissions
-    const allPermissions = [
-      ...rolePermissions.map((rp) => rp.pagePermission),
-      ...userPermissions.map((up) => up.pagePermission),
-    ]
-  
-    const uniquePermissionsMap = new Map()
-    for (const perm of allPermissions) {
-      uniquePermissionsMap.set(perm.id, perm)
-    }
-  
-    const mergedPermissions = Array.from(uniquePermissionsMap.values())
-    console.log(mergedPermissions)
-    return mergedPermissions
+  const roles = user.role || []
+
+  const rolePermissions = await db.rolePermission.findMany({
+    where: {
+      roleName: { in: roles },
+    },
+    include: {
+      pagePermission: true,
+    },
+  })
+
+  const userPermissions = await db.userPermission.findMany({
+    where: { userId: user.id },
+    include: {
+      pagePermission: true,
+    },
+  })
+
+  const allPermissions = [
+    ...rolePermissions.map((rp) => rp.pagePermission),
+    ...userPermissions.map((up) => up.pagePermission),
+  ]
+
+  const uniquePermissionsMap = new Map()
+  for (const perm of allPermissions) {
+    uniquePermissionsMap.set(perm.id, perm)
   }
-type Props= {
-  id: number
-}
-export default async function Navbar({id}: Props) {
 
-  const permittedRoutes = await getUserPermissions(id)
+  const mergedPermissions = Array.from(uniquePermissionsMap.values())
+
+
+  return mergedPermissions
+}
+export async function allowed(path: string) {
+  const permissions = await getUserPermissions()
+  return permissions.some((perm) => perm.path === path)
+}
+
+
+export default async function Navbar() {
+
+  const permittedRoutes = await getUserPermissions()
 
   const navItems = await db.pagePermission.findMany()
   
