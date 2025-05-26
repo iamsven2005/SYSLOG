@@ -1,3 +1,21 @@
+/*
+ * memory-usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * Introduced <MemoryUsageChart> component for visualizing memory usage across hosts and virtual machines (VMs).
+ * Features:
+ *   - Toggle between "hosts" and "VMs" view modes with nested summary expansion
+ *   - Supports LineChart and AreaChart render modes via view switcher
+ *   - VM drill-down: display latest memory stats per VM (used, total, free, available)
+ *   - Color-coded UI (warning >60%, critical >80%) for usage percentage
+ *   - Interactive multi-host filtering using command-style popover
+ *   - Time range options: 1h, 6h, 24h, 7d with adaptive timestamp formatting
+ *   - Export chart data to Excel using `prepareChartDataForExport` and `exportToExcel`
+ *   - Custom tooltips for host/VM memory usage
+ *   - Graceful handling of null or missing backend values
+ * Dependencies:
+ *   - Recharts, Lucide, ShadCN UI components, toast notifications
+ *   - Data from `getMemoryUsageData` API and local `vmChartData` state
+ */
+
 "use client"
 
 import type React from "react"

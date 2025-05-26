@@ -1,3 +1,38 @@
+/**
+ * chat-actions.ts (Server Actions)
+ *
+ * Description:
+ * ------------
+ * This module handles all chat-related server actions in the application using Prisma ORM.
+ * It includes support for group management, messaging, member control, user search, and
+ * XML-based message import from legacy sources.
+ *
+ * Key Features:
+ * -------------
+ * - Secure access control using `getCurrentUser` for authentication
+ * - Group chat support with message history, member management, and metadata
+ * - Role-based filtering of users and groups
+ * - Full message lifecycle: send, edit, delete, search
+ * - XML message import with custom date parsing and sender mapping
+ *
+ * Dependencies:
+ * -------------
+ * - `db` from "@/lib/db" — Prisma client
+ * - `getCurrentUser()` from login actions for auth
+ * - `parseXMLDate()` from XML utils
+ * - `revalidatePath()` to trigger re-rendering on update
+ *
+ * Usage:
+ * ------
+ * These functions are designed to be used inside Next.js Server Actions (app router).
+ * Make sure the calling client components are using appropriate client-side mechanisms (SWR, hooks).
+ *
+ * Notes:
+ * ------
+ * - Ensure that your Prisma schema defines composite keys where needed (e.g., `userId_groupId`)
+ * - Consider rate-limiting or throttling for actions like `importXMLMessages`
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

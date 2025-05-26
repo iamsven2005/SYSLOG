@@ -1,3 +1,19 @@
+/*
+ * alert-event-details-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * Displays details of a specific alert event triggered by a monitoring rule.
+ *
+ * Features:
+ *   - Guards access with `allowed("/admin")`, returns 404 if unauthorized
+ *   - Retrieves alert event details via `getAlertEvent(id)`
+ *   - Displays alert status, trigger time, optional resolution time and notes
+ *   - Includes linked access to the parent alert condition
+ *   - Allows resolving active alerts via `resolveAlertEvent` with server action form
+ *   - Shows associated condition details: threshold expression, source table, time window, and email template used
+ *   - Integrates <DatabaseStatusBar> for live backend health visibility
+ *   - Uses Lucide icons for status indication (Active/Resolved)
+ *   - Defensive rendering with `notFound()` for invalid or missing data
+ */
+
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"

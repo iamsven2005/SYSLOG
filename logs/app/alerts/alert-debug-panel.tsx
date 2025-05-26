@@ -1,3 +1,32 @@
+/**
+ * AlertDebugPanel.tsx - 2025-05-25 by sven.tan
+ *
+ * A developer/debugging utility panel to test and evaluate alert condition logic manually.
+ *
+ * Features:
+ * - Toggle extended time window (100x) for broader match checks
+ * - Toggle actual alert event creation in the database
+ * - Display evaluation results including:
+ *   - Condition metadata
+ *   - Whether it was triggered
+ *   - Match count and sample matches
+ *   - Reason for result
+ *   - Errors if any
+ *   - AlertEvent ID if created
+ *
+ * Integration:
+ * - Calls `/api/alerts/debug` with query params:
+ *   - `extended` (boolean): Enables longer time window for logs
+ *   - `createEvents` (boolean): Enables writing actual alert events to DB
+ *
+ * Dependencies:
+ * - UI: ShadCN UI components (Accordion, Card, Switch, Button)
+ * - Feedback: `toast` from `sonner`
+ *
+ * Note:
+ * - Useful during alert tuning and verification without polluting production data (unless opted in).
+ */
+
 "use client"
 
 import { useState } from "react"

@@ -1,3 +1,33 @@
+/**
+ * AlertsPage.tsx - Alerts Management Dashboard
+ *
+ * Purpose:
+ * Provides an administrative interface for monitoring and managing alert conditions
+ * and triggered alert events within the system.
+ *
+ * Key Components:
+ * - `<DatabaseStatusBar />`: Shows DB connection/health status.
+ * - `<AlertStats />`: Dashboard cards summarizing alert condition counts and alert states.
+ * - `<Tabs>`: Two-tab interface for viewing alert conditions and alert events.
+ *   - `<AlertConditionsTable />`: Lists and manages all alert conditions.
+ *   - `<AlertEventsTable />`: Lists triggered alert events (filtered by unresolved).
+ * - `<AlertDebugPanel />`: Optional debugging tool to simulate or test alert evaluations.
+ * - "New Alert Condition" button: Link to creation form (`/alerts/new`).
+ *
+ * Features:
+ * - Uses `Suspense` to defer loading of heavy components for better UX.
+ * - Mobile-friendly grid layout with responsive columns for tabs and debug panel.
+ * - Separates concerns between configuration (conditions) and operational logs (events).
+ *
+ * Access:
+ * - This page should be protected for admin or system operator use only.
+ *
+ * Future Improvements:
+ * - Add filters, pagination, and search for both tables.
+ * - Include historical charting or trend data in stats.
+ * - Integrate with notification systems or incident response tools.
+ */
+
 import { Suspense } from "react"
 import { AlertConditionsTable } from "./alert-conditions-table"
 import { AlertEventsTable } from "./alert-events-table"

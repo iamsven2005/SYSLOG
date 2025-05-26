@@ -1,3 +1,28 @@
+/**
+ * AlertConditionForm.tsx - 2025-05-25 by sven.tan
+ * A client-side dynamic form for creating or editing alert conditions.
+ *
+ * Features:
+ * - Dynamically updates field and comparator options based on source table
+ * - Supports text or numeric threshold logic based on field type
+ * - Allows export/import of single alert condition in CSV format
+ * - Integrates with backend handlers: `createAlertCondition`, `updateAlertCondition`
+ * - Uses Zod for form validation and react-hook-form for state management
+ * - Supports optional email notification templates
+ * - UX enhancements: live feedback, flexible toggles, inline CSV file handling
+ *
+ * Expected Props:
+ * - `emailTemplates`: List of available email templates
+ * - `initialData`: Optional existing condition data (edit mode)
+ * - `isEditing`: Flag to distinguish between create vs. edit
+ *
+ * Depends on:
+ * - Lucide React Icons
+ * - ShadCN UI components
+ * - `toast` from `sonner` for feedback
+ */
+
+
 "use client"
 
 import type React from "react"

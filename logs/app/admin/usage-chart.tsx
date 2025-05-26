@@ -1,3 +1,19 @@
+/*
+ * usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * Initial release of <UsageChart> component for tracking CPU and Memory usage across devices.
+ * Features:
+ *   - Toggle between CPU and Memory metrics with tab-based control
+ *   - Time range selection (1h, 6h, 24h, 7d) with adaptive timestamp formatting
+ *   - Device multiselect filtering using popover-command interface
+ *   - Dynamic Recharts LineChart with host-specific colors and legends
+ *   - Custom tooltip showing per-device metric values
+ *   - Excel export via `prepareChartDataForExport` and `exportToExcel`
+ *   - Handles empty states, loading state with Skeleton, and API failures gracefully
+ *   - Uses `getDeviceUsageData(timeRange)` to retrieve time series metric data
+ * Dependencies:
+ *   - Recharts, ShadCN UI components, toast notifications (sonner), utility libraries
+ */
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"

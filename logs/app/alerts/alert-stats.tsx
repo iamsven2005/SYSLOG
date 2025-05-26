@@ -1,3 +1,26 @@
+/**
+ * AlertStats.tsx - 2025-05-25 by sven.tan
+ *
+ * Displays a real-time dashboard summary of alert conditions and events.
+ *
+ * Stats shown:
+ * - Total Alert Conditions: Number of defined alert rules (active + inactive)
+ * - Active Alerts: Currently unresolved alert events
+ * - Resolved Alerts: Total resolved alert events
+ * - Total Alerts: All historical alert events (resolved + active)
+ *
+ * Features:
+ * - Uses `getAlertConditions` and `getAlertEvents` server actions
+ * - Displays icons and summaries using ShadCN UI `Card` components
+ * - Fetches up to 1000 events per category (consider pagination or summary endpoint for scalability)
+ *
+ * Use Case:
+ * - Embedded in monitoring dashboards to provide quick health overview of alerting system
+ *
+ * Note:
+ * - Consider replacing bulk fetches with lightweight aggregate summary API for better performance at scale
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"

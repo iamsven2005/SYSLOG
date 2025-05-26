@@ -1,3 +1,20 @@
+/*
+ * sensor-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * Initial release of <SensorChart> component for visualizing system sensor data.
+ * Features:
+ *   - Displays temperature and voltage readings over time by host and sensor
+ *   - Toggle between temperature (°C) and voltage (mV) views
+ *   - Dynamic multiselect filters for hosts and sensors with popover interface
+ *   - Custom tooltip groups sensor readings by host with contextual labels
+ *   - Responsive Recharts LineChart with host-based color coding and dash patterns
+ *   - Current readings summary panel showing warning/critical thresholds
+ *   - Adaptive Y-axis scaling for temperature (0–100°C) and voltage (0–1200mV)
+ *   - Data export to Excel using `prepareChartDataForExport` and `exportToExcel`
+ *   - Fetches time series data from `getSensorData(timeRange)` API
+ * Dependencies:
+ *   - Recharts, ShadCN UI, Lucide icons, toast (sonner), and custom utility functions
+ */
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"

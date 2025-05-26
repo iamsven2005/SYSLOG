@@ -1,3 +1,17 @@
+/*
+ * alert-condition-details-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * Server-side page for displaying detailed information about a specific alert condition.
+ * Features:
+ *   - Validates and parses dynamic `id` param; triggers 404 if missing or invalid
+ *   - Fetches alert condition metadata and latest alert events via `getAlertCondition` and `getAlertEvents`
+ *   - Displays status badges, source table type, and alert trigger configuration
+ *   - Linked view to associated email template, if configured
+ *   - Visual statistics for active, resolved, total alerts, and most recent alert trigger
+ *   - Renders <AlertEventsTable> for full alert history (with resolved alerts visible)
+ *   - Includes <DatabaseStatusBar> for system health indicator
+ *   - Uses defensive checks to gracefully handle missing or malformed data
+ */
+
 import type { Metadata } from "next"
 import { notFound} from "next/navigation"
 import Link from "next/link"

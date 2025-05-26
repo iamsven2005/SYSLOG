@@ -1,3 +1,14 @@
+/*
+ * database-status-bar-1.0.tsx - 2025-05-25 by sven.tan:
+ * Introduced <DatabaseStatusBar> component for database connection health monitoring.
+ * Features:
+ *   - Performs `/api/health-check` GET request to verify DB status
+ *   - Displays destructive alert banner if DB is unreachable
+ *   - Auto-rechecks every 30 seconds, with manual retry option
+ *   - Accepts optional `onRetry` callback to re-trigger data refresh
+ *   - Utilizes ShadCN Alert, Button, and Lucide icons for consistent UI
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

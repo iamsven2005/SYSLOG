@@ -1,3 +1,20 @@
+/*
+ * logs-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * Initial implementation of LogsPage dashboard.
+ * Features:
+ *   - Backup & restore for main and vector databases (individually or together)
+ *   - File download support for completed backups
+ *   - Inline toast notifications for success/error states
+ *   - Test email sending via `/api/send-email`
+ *   - Real-time system usage charts with Suspense fallbacks:
+ *     - CPU/UsageChart
+ *     - MemoryUsageChart
+ *     - SensorChart
+ *     - DiskUsageChart
+ *   - Reload mechanism to retry data fetch on demand
+ *   - UI built with DropdownMenus, Lucide icons, and ShadCN components
+ */
+
 "use client"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { Button } from "@/components/ui/button"

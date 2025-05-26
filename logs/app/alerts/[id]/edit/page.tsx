@@ -1,3 +1,16 @@
+/*
+ * alert-condition-edit-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * Server-side page for editing an existing alert condition.
+ * Features:
+ *   - Validates `id` param from route; returns 404 via `notFound()` if invalid or missing
+ *   - Fetches alert condition data via `getAlertCondition(id)`
+ *   - Loads available email templates via `getAllEmailTemplates()`
+ *   - Formats timestamps and structure for form use
+ *   - Renders <AlertConditionForm> in editing mode with prefilled data
+ *   - Includes <DatabaseStatusBar> for connection health display
+ *   - Handles edge cases: invalid ID, failed fetch, or missing data gracefully
+ */
+
 import { notFound } from "next/navigation"
 import { AlertConditionForm } from "../../alert-condition-form"
 import { getAllEmailTemplates } from "@/app/email-templates/email-template-actions"

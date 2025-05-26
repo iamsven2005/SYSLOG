@@ -1,3 +1,40 @@
+/**
+ * ChatContainer Component
+ * -----------------------
+ * This client component is the main container for the chat interface.
+ * It handles the rendering of messages, input, and auxiliary actions like
+ * screenshot capture and import/export dialogs.
+ *
+ * Props:
+ * - id (number): The current user’s ID (used for message attribution).
+ *
+ * Features:
+ * ---------
+ * - Displays placeholder UI if no group is selected.
+ * - Renders ChatMessages and ChatInput for the active group.
+ * - Provides UI buttons to:
+ *   - Open the user list dialog
+ *   - Open import/export dialog
+ *   - Take a screenshot of the chat log
+ *
+ * Screenshot functionality:
+ * -------------------------
+ * - Captures the `#chat-messages-container` DOM element.
+ * - Saves the image with a timestamped filename.
+ * - Attempts to copy the image to clipboard.
+ * - Displays success/error via `sonner` toasts.
+ *
+ * Dependencies:
+ * -------------
+ * - `takeScreenshot` from `../utils/screenshot`
+ * - `ChatMessages`, `ChatInput`, `UsersListDialog`, `ImportExportDialog`
+ * - `useSearchParams` for routing
+ *
+ * Usage:
+ * ------
+ * Used inside the chat layout to display the right panel of the chat page.
+ */
+
 "use client"
 
 import { useState} from "react"

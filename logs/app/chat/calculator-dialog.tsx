@@ -1,3 +1,44 @@
+/**
+ * CalculatorDialog.tsx
+ *
+ * Description:
+ * -------------
+ * A modal calculator component built using React and ShadCN UI primitives.
+ * Designed to allow users to perform basic arithmetic operations and insert the final result
+ * into a parent context (e.g., chat, report, form) via the `onInsert` callback.
+ *
+ * Features:
+ * ---------
+ * - Basic operations: addition, subtraction, multiplication, division
+ * - Additional functions: toggle sign, percent, clear all, clear entry
+ * - Supports keyboard input for digits and operations
+ * - Maintains a scrollable calculation history
+ * - Highlight active operator buttons
+ * - Automatically resets when reopened
+ * - Emits a formatted result string upon confirmation (`onInsert`)
+ *
+ * Props:
+ * ------
+ * - `open`: Controls the dialog's visibility (boolean)
+ * - `onOpenChange`: Callback to update the dialog open state
+ * - `onInsert`: Callback that receives the final result string to be used outside the component
+ *
+ * Usage:
+ * ------
+ * <CalculatorDialog
+ *   open={showCalculator}
+ *   onOpenChange={setShowCalculator}
+ *   onInsert={(result) => {
+ *     setMessage(prev => prev + "\n" + result)
+ *   }}
+ * />
+ *
+ * Related:
+ * --------
+ * - Can be embedded in form UIs, chat interfaces, or note-taking tools
+ * - Complements markdown editors, rich-text inputs, or workflow builders
+ */
+
 "use client"
 
 import * as React from "react"

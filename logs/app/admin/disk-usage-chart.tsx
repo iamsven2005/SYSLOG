@@ -1,3 +1,20 @@
+/*
+ * disk-usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * Introduced <DiskUsageChart> component to visualize disk usage trends over time.
+ * Features:
+ *   - Supports 1h, 6h, 24h, 7d time ranges with dynamic formatting
+ *   - Filter by host (device) and disk label with multiselect popovers
+ *   - Toggle between usage %, used GB, or free GB via Tabs
+ *   - Custom grouped tooltip showing usage per host/disk combo
+ *   - Color-coded LineChart with dynamic legend and styles per host
+ *   - Current usage summary panel with visual bars and alerts (warning >70%, critical >90%)
+ *   - Export to Excel functionality with pre-formatted chart data
+ *   - Auto-host/disk detection from loaded time series
+ * Dependencies:
+ *   - Recharts, ShadCN UI, Lucide Icons, toast notifications
+ *   - Uses `getDiskUsageData()` API and `diskmetric` Prisma type
+ */
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"

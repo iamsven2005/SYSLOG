@@ -1,3 +1,38 @@
+/*
+ * alert-actions.ts - 2025-05-25 by sven.tan
+ * Core server module for managing alert conditions and events.
+ *
+ * Features:
+ *   - Create, update, delete, and toggle alert conditions
+ *   - Trigger alerts based on live data evaluation from:
+ *       - System metrics
+ *       - Auth logs
+ *       - System logs
+ *       - Activity logs
+ *   - Evaluate alert conditions on interval or demand
+ *   - Create alert events and optionally send templated email notifications
+ *   - Log all alert-related activities for audit trails
+ *   - Export: 
+ *       - runAlertEvaluation() - evaluate all conditions and generate alerts
+ *       - bulkImportAlertConditions() - import multiple alert rules from UI
+ *       - resolveAlertEvent() and resolveAllAlertEvents() - manual and bulk resolution
+ *       - checkAlertConditionsRealtime() - cache-aware real-time alert polling
+ *   - Supports pagination and filters for alert event history
+ *
+ * Design:
+ *   - Optimized for integration with Prisma ORM and Next.js App Router
+ *   - Respects caching and revalidation with `revalidatePath("/alerts")`
+ *   - Graceful error handling and consistent logging via `logActivity()`
+ *
+ * Dependencies:
+ *   - `@/lib/db` (Prisma database access)
+ *   - `@/lib/activity-logger` for audit trails
+ *   - `@/app/email-templates/email-template-actions` for email handling
+ *
+ * Notes:
+ *   - Ensure environment variable NEXT_PUBLIC_APP_URL is set for real-time fetch to work
+ *   - Evaluation logic is extensible per sourceTable
+ */
 "use server"
 
 import { db } from "@/lib/db"

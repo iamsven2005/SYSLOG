@@ -1,3 +1,20 @@
+/*
+ * activity-logs-1.0.tsx - 2025-05-25 by LT:
+ * Initial release of ActivityLogsTable component.
+ * Features:
+ *   - Fetch and display current user's activity logs with pagination
+ *   - Filter by action type, target type, and date range (today/week/month/all)
+ *   - Refresh functionality with visual loading state
+ *   - Uses color-coded badges for action and target types
+ *   - Responsive layout with fallback message when no logs exist
+ *   - Accessible pagination with dynamic adjustment of visible page numbers
+ * Dependencies:
+ *   - UI: Card, Table, Badge, Select, Pagination, Lucide Icons
+ *   - Utils: date-fns (format)
+ *   - API: getCurrentUserActivityLogs, getAllActivityTypes, getAllTargetTypes
+ */
+
+
 "use client"
 import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"

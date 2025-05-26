@@ -1,3 +1,26 @@
+/**
+ * AlertConditionsTable.tsx - 2025-05-25 by sven.tan
+ *
+ * Displays a list of alert conditions with full CRUD and CSV import/export capabilities.
+ *
+ * Features:
+ * - View, edit, activate/deactivate, and delete alert conditions
+ * - Bulk CSV export of all conditions
+ * - CSV import dialog with parsing support (server integration TODO)
+ * - Graceful handling of empty state, loading state, and delete confirmation
+ *
+ * Expected Props:
+ * - `initialAlertConditions` (optional): Pre-fetched list of alert conditions to avoid SSR load
+ *
+ * Depends on:
+ * - ShadCN UI components (`Button`, `Badge`, `Table`, `AlertDialog`, etc.)
+ * - `toast` from `sonner` for notifications
+ * - Server actions (`getAlertConditions`, `toggleAlertConditionStatus`, `deleteAlertCondition`)
+ *
+ * Note:
+ * - CSV import currently logs data to console. Server-side `bulkImportAlertConditions()` should be used in production.
+ */
+
 "use client"
 
 import type React from "react"

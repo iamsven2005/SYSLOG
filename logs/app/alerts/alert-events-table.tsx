@@ -1,3 +1,28 @@
+/**
+ * AlertEventsTable.tsx - 2025-05-25 by sven.tan
+ *
+ * Displays a table of alert events with options to:
+ * - View alert condition linked to each event
+ * - Mark individual or multiple alerts as resolved
+ * - Add resolution notes
+ * - Filter based on resolved/active status (controlled by `showResolved`)
+ *
+ * Props:
+ * - `initialAlertEvents`: Optional preloaded alert event data to avoid refetching on mount
+ * - `showResolved`: Toggle whether to display resolved alerts or only active ones
+ *
+ * Features:
+ * - Uses `getAlertEvents` and `resolveAlertEvent` server actions
+ * - Batched resolution via multi-select and dialog
+ * - Per-alert resolution via dropdown actions
+ * - UI/UX optimized with ShadCN components
+ * - Toast notifications via `sonner` for success/failure feedback
+ *
+ * Notes:
+ * - Ensure `AlertCondition` relation is included in fetched events for full rendering
+ * - Used within alert management dashboards to monitor and manage event states
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

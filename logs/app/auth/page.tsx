@@ -1,3 +1,33 @@
+/**
+ * DebugAlertButton.tsx
+ *
+ * Description:
+ * --------------
+ * This component renders a button that triggers the `runAlertEvaluation()` server action.
+ * It is primarily used to test and debug alert condition logic without creating actual alert events.
+ * 
+ * Key Features:
+ * - On click, it evaluates all alert conditions and logs detailed results to the console.
+ * - If any conditions are triggered, it displays a toast summarizing the number of matches.
+ * - Handles unexpected responses gracefully and informs the user through toast notifications.
+ * - Disables the button during async execution to prevent multiple submissions.
+ *
+ * Usage:
+ * ------
+ * This button is typically used by administrators or developers to verify the integrity
+ * and performance of alert evaluation logic in real-time, especially after changes to
+ * rules, thresholds, or monitoring logic.
+ *
+ * Example:
+ * -------
+ * <DebugAlertButton />
+ *
+ * Related:
+ * --------
+ * - `runAlertEvaluation()` - server action that performs the actual logic
+ * - `AlertDebugPanel` - an advanced debug UI with more controls (like extended time windows)
+ */
+
 "use client"
 
 import React, { useCallback } from "react"

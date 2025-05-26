@@ -1,3 +1,17 @@
+/*
+ * new-alert-condition-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * Provides UI and backend integration to create a new alert condition.
+ *
+ * Features:
+ *   - Fetches available email templates via `getAllEmailTemplates()`
+ *   - Transforms templates to include proper Date objects for form compatibility
+ *   - Renders `AlertConditionForm` with preloaded templates
+ *   - Includes a `DatabaseStatusBar` to show system connection health
+ *   - Displays title and description for user guidance
+ *   - Uses containerized and bordered layout with padding for clarity
+ *   - Declares page metadata (title + description) for SEO and navigation
+ */
+
 import type { Metadata } from "next"
 import { AlertConditionForm } from "../alert-condition-form"
 import { getAllEmailTemplates } from "@/app/email-templates/email-template-actions"

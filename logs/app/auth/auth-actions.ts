@@ -1,3 +1,37 @@
+/**
+ * auth-log-actions.ts - Server actions for managing auth logs and rule-based command matching
+ *
+ * Core Responsibilities:
+ * - Fetch and filter auth logs with support for:
+ *   - Full-text search
+ *   - Host filtering
+ *   - Rule group and rule-based command filtering
+ * - CRUD operations:
+ *   - Delete single or multiple auth logs
+ *   - Bulk delete by time period (e.g., 1 day, 7 days, all)
+ *   - Add matched command from log to a rule
+ * - Logs Prisma query durations for performance visibility
+ *
+ * Functions:
+ * - getAuthLogs(params): Paginated and filtered fetch of auth logs
+ * - deleteAuthLog(id): Deletes a single log entry by ID
+ * - deleteMultipleAuthLogs(ids): Deletes multiple logs by ID list
+ * - deleteAuthLogsByTimePeriod(period): Deletes logs older than a given time window
+ * - addAuthLogCommandToRule(authLogId, ruleId, commandText): Saves a command to a rule from log context
+ *
+ * Notes:
+ * - Uses Prisma middleware to log model/action performance timing
+ * - Dynamically builds filters based on input to support complex use cases
+ * - Integrates with activity logger to track changes to rules
+ * - Revalidates cache path `/logs` when mutations occur
+ *
+ * Expected Enhancements:
+ * - Add host extraction parsing logic from `log_entry` if needed
+ * - Enforce permission checks via middleware or wrappers
+ * - Support more dynamic command pattern parsing (e.g., regex)
+ */
+
+
 "use server"
 
 import { db } from "@/lib/db"
