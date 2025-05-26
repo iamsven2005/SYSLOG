@@ -1,17 +1,12 @@
-import { notFound, redirect } from "next/navigation";
-import { checkUserPermission } from "../permissions/permission-actions";
-import { getCurrentUser } from "../login/actions";
+
+import { notFound } from "next/navigation";
 import UploadForm from "./upload-form";
+import { allowed } from "@/components/navbar";
 // This page is for upload of books from html file
 export default async function UploadsPage() {
-      const currentUser = await getCurrentUser()
-      if (!currentUser) {
-        redirect("/login")
-      }
-      const perm = await checkUserPermission(currentUser.id, "/library-uploads")
-      if (perm.hasPermission === false) {
-        return notFound()
-      }
+
+      const a = await allowed("/library-upload")
+      if(a === false) notFound()
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-2xl font-bold mb-6">HTML Book Catalog Parser</h1>

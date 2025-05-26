@@ -3,10 +3,7 @@
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { getCurrentUser } from "../login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
-
+import { getId } from "../login/actions"
 const leaveFormSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),
@@ -19,14 +16,7 @@ type LeaveFormValues = z.infer<typeof leaveFormSchema>
 
 export async function submitLeaveApplication(data: LeaveFormValues) {
   const validatedData = leaveFormSchema.parse(data)
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/leave")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
+  const id = await getId() || 0
   await db.leave.create({
     data: {
       startDate: validatedData.startDate,
@@ -34,7 +24,7 @@ export async function submitLeaveApplication(data: LeaveFormValues) {
       leaveType: validatedData.leaveType,
       reason: validatedData.reason,
       status: "PENDING",
-      user: { connect: { id: currentUser.id } },
+      user: { connect: { id } },
       approver: { connect: { id: validatedData.approverId } },
     },
   })

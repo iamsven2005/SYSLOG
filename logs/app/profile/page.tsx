@@ -1,21 +1,17 @@
-import { notFound, redirect } from "next/navigation"
+import { allowed } from "@/components/navbar"
 import ProfileClient from "./profile-client"
+import { notFound } from "next/navigation"
 import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../permissions/permission-actions"
-export default async function ProfilePage() {
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/profile")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
 
+export default async function ProfilePage() {
+  const a = await allowed("/profile")
+  const user = await getCurrentUser()
+
+  if (a === false || !user) notFound()
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">My Profile</h1>
-      <ProfileClient user={currentUser} />
+      <ProfileClient user={user} />
     </div>
   )
 }

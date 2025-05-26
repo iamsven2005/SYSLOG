@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { notFound, redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,7 +24,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
-import { getCurrentUser } from "../login/actions"
 import { AlertCondition } from "@/prisma/generated/main"
 
 export function AlertConditionsTable({ initialAlertConditions }: { initialAlertConditions?: AlertCondition[] }) {

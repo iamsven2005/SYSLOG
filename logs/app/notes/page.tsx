@@ -1,15 +1,13 @@
 import NotesTable from "./client";
-import { checkUserPermission } from "../permissions/permission-actions";
 import { notFound } from "next/navigation";
-import { getCurrentUser } from "../login/actions";
+import { getCurrentUser, hasRole } from "../login/actions";
+import { allowed } from "@/components/navbar";
 
 export default async function Notes() {
-    const user = await getCurrentUser()
-    if(!user) notFound()
-  const perm = await checkUserPermission(user.id, "/tickets")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
-  const isAdmin = user.role.includes("admin")
+  const a = await allowed("/notes")
+  const user = await getCurrentUser()
+    if(a === false || !user) notFound()
+
+  const isAdmin = await hasRole(user, ["admin"])
   return <NotesTable isAdmin={isAdmin} />
 }

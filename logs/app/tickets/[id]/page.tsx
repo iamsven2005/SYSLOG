@@ -1,26 +1,18 @@
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { getTicket, getAssignableUsers } from "@/app/tickets/ticket-actions"
 import { TicketDetailSkeleton } from "./ticket-detail-skeleton"
 import { TicketDetail } from "./ticket-detail"
 import { Suspense } from "react"
 import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const ticketId = Number.parseInt(params.id)
-
   if (isNaN(ticketId)) {
     return notFound()
   }
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/tickets")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
+  const user = await getCurrentUser()
+  if(!user) notFound() 
   const ticketPromise = getTicket(ticketId)
   const usersPromise = getAssignableUsers()
 
@@ -33,7 +25,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   return (
     <div className="container py-6">
       <Suspense fallback={<TicketDetailSkeleton />}>
-        <TicketDetail ticket={ticket} assignableUsers={assignableUsers} currentUser={currentUser} />
+        <TicketDetail ticket={ticket} assignableUsers={assignableUsers} currentUser={user} />
       </Suspense>
     </div>
   )

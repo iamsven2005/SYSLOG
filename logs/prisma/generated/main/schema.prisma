@@ -184,9 +184,7 @@ model User {
   password            String
   email               String?               @unique
   role                String[]
-  roles               Roles[]               @relation("UserRoles")
   Mobile              Int?
-  Pay                 Int?
   PrimaryContact      String?
   MobileContact       Int?
   Relationship        String?
@@ -199,6 +197,7 @@ model User {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
   location            String[]
+  Pay                 Int?
   ActivityLog         ActivityLog[]
   audit_steps         AuditStep[]
   CommandMatch        CommandMatch[]
@@ -209,10 +208,16 @@ model User {
   DriveFolder         DriveFolder[]
   Feedback            Feedback[]            @relation("FeedbackSender")
   FeedbackRecipient   FeedbackRecipient[]   @relation("FeedbackRecipient")
+  Form                Form[]
+  FormResponse        FormResponse[]
   GroupMember         GroupMember[]
+  leaveApprovals      Leave[]               @relation("LeaveApprover")
+  leaveRequests       Leave[]               @relation("LeaveRequester")
   Message             Message[]
   NotificationRead    NotificationRead[]
+  PollVote            PollVote[]
   ProjectAssignment   ProjectAssignment[]
+  Reminder            Reminder[]
   assignedTickets     SupportTicket[]       @relation("AssignedTickets")
   createdTickets      SupportTicket[]       @relation("CreatedTickets")
   TeamLeader          TeamLeader[]
@@ -223,12 +228,6 @@ model User {
   UserPermission      UserPermission[]
   receivedPermissions DriveFilePermission[] @relation("DriveFilePermissionToUser")
   addressedMatches    CommandMatch[]        @relation("addressedBy")
-  PollVote            PollVote[]
-  leaveRequests       Leave[]               @relation("LeaveRequester")
-  leaveApprovals      Leave[]               @relation("LeaveApprover")
-  Reminder            Reminder[]
-  Form                Form[]
-  FormResponse        FormResponse[]
 }
 
 model Group {
@@ -282,7 +281,6 @@ model Roles {
   id          Int    @id @default(autoincrement())
   name        String @unique
   description String
-  users       User[] @relation("UserRoles")
 }
 
 model Notification {
@@ -477,22 +475,22 @@ model Project {
   businessCode               String
   projectCode                String
   name                       String
-  description                String? // New field
-  location                   String? // New field for project location
-  startDate                  DateTime? // New field
-  estimatedEndDate           DateTime? // New field
-  actualEndDate              DateTime? // New field
-  budget                     Decimal? // New field
-  status                     ProjectStatus? // New field
   createDate                 DateTime                     @default(now())
   projectTypeId              Int?
+  actualEndDate              DateTime?
+  budget                     Decimal?
+  description                String?
+  estimatedEndDate           DateTime?
+  location                   String?
+  startDate                  DateTime?
+  status                     ProjectStatus?
+  bridgeProject              BridgeProject?
+  interactions               CRMInteraction[]
+  EquipmentLoan              EquipmentLoan[]
   models                     ModelEntry[]
   projectType                ProjectType?                 @relation(fields: [projectTypeId], references: [id])
   assignments                ProjectAssignment[]
   companies                  ProjectCompanyLink[]
-  interactions               CRMInteraction[]
-  bridgeProject              BridgeProject? // New relation
-  EquipmentLoan              EquipmentLoan[]
   ProjectEquipmentAllocation ProjectEquipmentAllocation[]
 }
 
@@ -742,44 +740,27 @@ model StepLog {
   @@index([stepId])
 }
 
-enum StepStatus {
-  PENDING
-  IN_PROGRESS
-  REVIEW
-  COMPLETED
-  REJECTED
-}
-
 model Company {
   id             Int                  @id @default(autoincrement())
   name           String
-  type           CompanyType // e.g., CONTRACTOR, VENDOR, PARTNER
+  type           CompanyType
   industry       String?
   address        String?
   phone          String?
   email          String?
   website        String?
   remarks        String?
-  specialties    String[] // New field for bridge-specific specialties
-  certifications String[] // New field for certifications
-  rating         Float? // New field for vendor/contractor rating
+  specialties    String[]
+  certifications String[]
+  rating         Float?
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
-  contacts       ContactPerson[]
-  projects       ProjectCompanyLink[]
+  bids           BidSubmission[]
   interactions   CRMInteraction[]
-  bids           BidSubmission[] // New relation
-  materialOrders MaterialOrder[] // New relation
+  contacts       ContactPerson[]
   EquipmentLoan  EquipmentLoan[]
-}
-
-enum CompanyType {
-  CONTRACTOR
-  VENDOR
-  PARTNER
-  CONSULTANT // New type for engineering consultants
-  REGULATORY // New type for regulatory bodies
-  SUBCONTRACTOR // New type for specialized subcontractors
+  materialOrders MaterialOrder[]
+  projects       ProjectCompanyLink[]
 }
 
 model ContactPerson {
@@ -789,12 +770,12 @@ model ContactPerson {
   email         String?
   phone         String?
   remarks       String?
-  expertise     String? // New field for bridge-specific expertise
+  expertise     String?
   companyId     Int
-  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   interactions  CRMInteraction[]
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   EquipmentLoan EquipmentLoan[]
 }
 
@@ -802,137 +783,103 @@ model CRMInteraction {
   id               Int            @id @default(autoincrement())
   title            String
   notes            String?
-  interactionType  String // e.g., "Call", "Meeting", "Site Visit"
+  interactionType  String
   interactionDate  DateTime
-  outcome          String? // New field for interaction outcome
-  followUpRequired Boolean        @default(false) // New field
-  followUpDate     DateTime? // New field
+  outcome          String?
+  followUpRequired Boolean        @default(false)
+  followUpDate     DateTime?
   contactId        Int?
-  contact          ContactPerson? @relation(fields: [contactId], references: [id])
   companyId        Int?
-  company          Company?       @relation(fields: [companyId], references: [id])
   projectId        Int?
-  project          Project?       @relation(fields: [projectId], references: [id])
   createdAt        DateTime       @default(now())
+  company          Company?       @relation(fields: [companyId], references: [id])
+  contact          ContactPerson? @relation(fields: [contactId], references: [id])
+  project          Project?       @relation(fields: [projectId], references: [id])
 }
 
 model ProjectCompanyLink {
   id             Int       @id @default(autoincrement())
   projectId      Int
   companyId      Int
-  role           String // e.g., "Main Contractor", "Steel Vendor", "Concrete Supplier"
+  role           String
   notes          String?
-  startDate      DateTime? // New field for contract start
-  endDate        DateTime? // New field for contract end
-  contractValue  Decimal? // New field for contract value
-  contractStatus String? // New field for contract status
+  startDate      DateTime?
+  endDate        DateTime?
+  contractValue  Decimal?
+  contractStatus String?
   createdAt      DateTime  @default(now())
-  project        Project   @relation(fields: [projectId], references: [id])
   company        Company   @relation(fields: [companyId], references: [id])
+  project        Project   @relation(fields: [projectId], references: [id])
 
   @@unique([projectId, companyId, role])
-}
-
-enum ProjectStatus {
-  PLANNING
-  BIDDING
-  DESIGN
-  PERMITTING
-  CONSTRUCTION
-  INSPECTION
-  COMPLETED
-  ON_HOLD
-  CANCELLED
 }
 
 model BridgeProject {
   id                          Int              @id @default(autoincrement())
   projectId                   Int              @unique
-  project                     Project          @relation(fields: [projectId], references: [id])
   bridgeType                  BridgeType
-  spanLength                  Float? // in meters
-  width                       Float? // in meters
-  height                      Float? // in meters
-  loadCapacity                Float? // in tons
-  waterway                    String? // name of waterway if applicable
+  spanLength                  Float?
+  width                       Float?
+  height                      Float?
+  loadCapacity                Float?
+  waterway                    String?
   environmentalConsiderations String?
   trafficImpact               String?
   permitNumbers               String[]
-  designDocuments             String[] // URLs or references to design documents
-  phases                      BridgePhase[]
-  materials                   BridgeMaterial[]
-  bids                        BidSubmission[]
+  designDocuments             String[]
   createdAt                   DateTime         @default(now())
   updatedAt                   DateTime         @updatedAt
-}
-
-enum BridgeType {
-  ARCH
-  BEAM
-  TRUSS
-  SUSPENSION
-  CABLE_STAYED
-  CANTILEVER
-  MOVABLE
-  CULVERT
-  OTHER
+  bids                        BidSubmission[]
+  materials                   BridgeMaterial[]
+  phases                      BridgePhase[]
+  project                     Project          @relation(fields: [projectId], references: [id])
 }
 
 model BridgePhase {
   id                   Int               @id @default(autoincrement())
   bridgeProjectId      Int
-  bridgeProject        BridgeProject     @relation(fields: [bridgeProjectId], references: [id])
-  name                 String // e.g., "Foundation", "Superstructure", "Deck Installation"
+  name                 String
   description          String?
   startDate            DateTime?
   endDate              DateTime?
   status               PhaseStatus
   completionPercentage Float             @default(0)
-  inspections          PhaseInspection[]
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
-}
-
-enum PhaseStatus {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETED
-  DELAYED
-  ON_HOLD
+  bridgeProject        BridgeProject     @relation(fields: [bridgeProjectId], references: [id])
+  inspections          PhaseInspection[]
 }
 
 model PhaseInspection {
   id             Int         @id @default(autoincrement())
   bridgePhaseId  Int
-  bridgePhase    BridgePhase @relation(fields: [bridgePhaseId], references: [id])
   inspectionDate DateTime
   inspector      String
-  result         String // e.g., "Pass", "Fail", "Conditional Pass"
+  result         String
   notes          String?
-  attachments    String[] // URLs or references to inspection documents
+  attachments    String[]
   createdAt      DateTime    @default(now())
+  bridgePhase    BridgePhase @relation(fields: [bridgePhaseId], references: [id])
 }
 
 model BridgeMaterial {
   id              Int             @id @default(autoincrement())
   bridgeProjectId Int
-  bridgeProject   BridgeProject   @relation(fields: [bridgeProjectId], references: [id])
-  name            String // e.g., "Structural Steel", "Concrete", "Rebar"
-  specification   String? // Technical specifications
+  name            String
+  specification   String?
   quantity        Float
-  unit            String // e.g., "tons", "cubic meters"
+  unit            String
   estimatedCost   Decimal?
-  orders          MaterialOrder[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+  bridgeProject   BridgeProject   @relation(fields: [bridgeProjectId], references: [id])
+  orders          MaterialOrder[]
 }
 
 model MaterialOrder {
   id               Int            @id @default(autoincrement())
   bridgeMaterialId Int
-  bridgeMaterial   BridgeMaterial @relation(fields: [bridgeMaterialId], references: [id])
   vendorId         Int
-  vendor           Company        @relation(fields: [vendorId], references: [id])
   orderDate        DateTime
   deliveryDate     DateTime?
   status           OrderStatus
@@ -943,22 +890,14 @@ model MaterialOrder {
   notes            String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
-}
-
-enum OrderStatus {
-  PLANNED
-  ORDERED
-  PARTIALLY_DELIVERED
-  DELIVERED
-  CANCELLED
+  bridgeMaterial   BridgeMaterial @relation(fields: [bridgeMaterialId], references: [id])
+  vendor           Company        @relation(fields: [vendorId], references: [id])
 }
 
 model BidSubmission {
   id               Int           @id @default(autoincrement())
   bridgeProjectId  Int
-  bridgeProject    BridgeProject @relation(fields: [bridgeProjectId], references: [id])
   companyId        Int
-  company          Company       @relation(fields: [companyId], references: [id])
   submissionDate   DateTime
   bidAmount        Decimal
   proposedSchedule String?
@@ -966,18 +905,11 @@ model BidSubmission {
   status           BidStatus
   evaluationScore  Float?
   evaluationNotes  String?
-  attachments      String[] // URLs or references to bid documents
+  attachments      String[]
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
-}
-
-enum BidStatus {
-  SUBMITTED
-  UNDER_REVIEW
-  SHORTLISTED
-  ACCEPTED
-  REJECTED
-  WITHDRAWN
+  bridgeProject    BridgeProject @relation(fields: [bridgeProjectId], references: [id])
+  company          Company       @relation(fields: [companyId], references: [id])
 }
 
 model Poll {
@@ -985,10 +917,10 @@ model Poll {
   question    String
   multiSelect Boolean      @default(false)
   messageId   Int          @unique
+  createdAt   DateTime     @default(now())
   message     Message      @relation(fields: [messageId], references: [id], onDelete: Cascade)
   options     PollOption[]
   votes       PollVote[]
-  createdAt   DateTime     @default(now())
 }
 
 model PollOption {
@@ -1005,9 +937,9 @@ model PollVote {
   optionId  Int
   pollId    Int
   createdAt DateTime   @default(now())
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
   poll      Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, optionId, pollId])
 }
@@ -1016,20 +948,18 @@ model Leave {
   id              Int       @id @default(autoincrement())
   startDate       DateTime
   endDate         DateTime
-  leaveType       String // FULL_DAY, AM, PM
+  leaveType       String
   reason          String
-  status          String // PENDING, APPROVED, REJECTED
+  status          String
   approverComment String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
   approvedAt      DateTime?
   rejectedAt      DateTime?
-
-  // Relations
-  userId     Int
-  user       User @relation("LeaveRequester", fields: [userId], references: [id])
-  approverId Int
-  approver   User @relation("LeaveApprover", fields: [approverId], references: [id])
+  userId          Int
+  approverId      Int
+  approver        User      @relation("LeaveApprover", fields: [approverId], references: [id])
+  user            User      @relation("LeaveRequester", fields: [userId], references: [id])
 }
 
 model Holiday {
@@ -1047,84 +977,73 @@ model Reminder {
   title       String
   date        DateTime
   description String?
-  color       String?  @default("#6366f1") // Default indigo color
+  color       String?  @default("#6366f1")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  // Relations
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Form {
   id          Int            @id @default(autoincrement())
   title       String
   description String?
-  creator     User           @relation(fields: [creatorId], references: [id])
   creatorId   Int
-  questions   Question[]
-  responses   FormResponse[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @default(now()) @updatedAt
+  creator     User           @relation(fields: [creatorId], references: [id])
+  responses   FormResponse[]
+  questions   Question[]
 }
 
 model Question {
   id       Int              @id @default(autoincrement())
-  form     Form             @relation(fields: [formId], references: [id])
   formId   Int
   text     String
   type     QuestionType
   required Boolean          @default(false)
   order    Int
-  options  QuestionOption[] // for radio, checkbox, dropdown
   answers  Answer[]
+  form     Form             @relation(fields: [formId], references: [id])
+  options  QuestionOption[]
 }
 
 model QuestionOption {
   id         Int      @id @default(autoincrement())
-  question   Question @relation(fields: [questionId], references: [id])
   questionId Int
   text       String
   value      String
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
 model FormResponse {
   id          Int      @id @default(autoincrement())
-  form        Form     @relation(fields: [formId], references: [id])
   formId      Int
-  responder   User?    @relation(fields: [responderId], references: [id])
   responderId Int?
   submittedAt DateTime @default(now())
   answers     Answer[]
+  form        Form     @relation(fields: [formId], references: [id])
+  responder   User?    @relation(fields: [responderId], references: [id])
 }
 
 model Answer {
   id                Int          @id @default(autoincrement())
-  question          Question     @relation(fields: [questionId], references: [id])
   questionId        Int
-  response          FormResponse @relation(fields: [responseId], references: [id])
   responseId        Int
-  textAnswer        String? // for text or dropdown
-  selectedOptionIds Int[] // for checkbox, radio; store selected option IDs
-  fileUrl           String? // for file uploads
-}
-
-enum QuestionType {
-  TEXT
-  TEXTAREA
-  RADIO
-  CHECKBOX
-  DROPDOWN
-  FILE
+  textAnswer        String?
+  selectedOptionIds Int[]
+  fileUrl           String?
+  question          Question     @relation(fields: [questionId], references: [id])
+  response          FormResponse @relation(fields: [responseId], references: [id])
 }
 
 model EquipmentCategory {
   id          Int         @id @default(autoincrement())
   name        String      @unique
   description String?
-  equipment   Equipment[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  equipment   Equipment[]
 }
 
 model Equipment {
@@ -1133,14 +1052,13 @@ model Equipment {
   name                String
   description         String?
   categoryId          Int
-  category            EquipmentCategory            @relation(fields: [categoryId], references: [id])
   manufacturer        String?
   model               String?
   serialNumber        String?
   purchaseDate        DateTime?
   purchasePrice       Decimal?
   warrantyExpiry      DateTime?
-  location            String? // Storage location
+  location            String?
   status              EquipmentStatus              @default(AVAILABLE)
   condition           EquipmentCondition           @default(GOOD)
   lastMaintenanceDate DateTime?
@@ -1152,11 +1070,141 @@ model Equipment {
   damagedQuantity     Int                          @default(0)
   repairQuantity      Int                          @default(0)
   inStoreQuantity     Int                          @default(1)
+  createdAt           DateTime                     @default(now())
+  updatedAt           DateTime                     @updatedAt
+  category            EquipmentCategory            @relation(fields: [categoryId], references: [id])
   loans               EquipmentLoan[]
   maintenanceRecords  EquipmentMaintenance[]
   allocations         ProjectEquipmentAllocation[]
-  createdAt           DateTime                     @default(now())
-  updatedAt           DateTime                     @updatedAt
+}
+
+model EquipmentLoan {
+  id                 Int                 @id @default(autoincrement())
+  equipmentId        Int
+  projectId          Int?
+  companyId          Int?
+  contactId          Int?
+  quantity           Int                 @default(1)
+  checkoutDate       DateTime
+  expectedReturnDate DateTime
+  actualReturnDate   DateTime?
+  checkedOutBy       String
+  checkedOutNotes    String?
+  returnCondition    EquipmentCondition?
+  returnNotes        String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  company            Company?            @relation(fields: [companyId], references: [id])
+  contact            ContactPerson?      @relation(fields: [contactId], references: [id])
+  equipment          Equipment           @relation(fields: [equipmentId], references: [id])
+  project            Project?            @relation(fields: [projectId], references: [id])
+}
+
+model EquipmentMaintenance {
+  id              Int             @id @default(autoincrement())
+  equipmentId     Int
+  maintenanceType MaintenanceType
+  startDate       DateTime
+  endDate         DateTime?
+  cost            Decimal?
+  performedBy     String?
+  description     String?
+  notes           String?
+  attachments     String[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  equipment       Equipment       @relation(fields: [equipmentId], references: [id])
+}
+
+model ProjectEquipmentAllocation {
+  id          Int       @id @default(autoincrement())
+  projectId   Int
+  equipmentId Int
+  quantity    Int       @default(1)
+  startDate   DateTime
+  endDate     DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  project     Project   @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, equipmentId])
+}
+
+enum StepStatus {
+  PENDING
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  REJECTED
+}
+
+enum CompanyType {
+  CONTRACTOR
+  VENDOR
+  PARTNER
+  CONSULTANT
+  REGULATORY
+  SUBCONTRACTOR
+}
+
+enum ProjectStatus {
+  PLANNING
+  BIDDING
+  DESIGN
+  PERMITTING
+  CONSTRUCTION
+  INSPECTION
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum BridgeType {
+  ARCH
+  BEAM
+  TRUSS
+  SUSPENSION
+  CABLE_STAYED
+  CANTILEVER
+  MOVABLE
+  CULVERT
+  OTHER
+}
+
+enum PhaseStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  ON_HOLD
+}
+
+enum OrderStatus {
+  PLANNED
+  ORDERED
+  PARTIALLY_DELIVERED
+  DELIVERED
+  CANCELLED
+}
+
+enum BidStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SHORTLISTED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum QuestionType {
+  TEXT
+  TEXTAREA
+  RADIO
+  CHECKBOX
+  DROPDOWN
+  FILE
 }
 
 enum EquipmentStatus {
@@ -1175,64 +1223,10 @@ enum EquipmentCondition {
   UNUSABLE
 }
 
-model EquipmentLoan {
-  id                 Int                 @id @default(autoincrement())
-  equipmentId        Int
-  equipment          Equipment           @relation(fields: [equipmentId], references: [id])
-  projectId          Int?
-  project            Project?            @relation(fields: [projectId], references: [id])
-  companyId          Int?
-  company            Company?            @relation(fields: [companyId], references: [id])
-  contactId          Int?
-  contact            ContactPerson?      @relation(fields: [contactId], references: [id])
-  quantity           Int                 @default(1)
-  checkoutDate       DateTime
-  expectedReturnDate DateTime
-  actualReturnDate   DateTime?
-  checkedOutBy       String
-  checkedOutNotes    String?
-  returnCondition    EquipmentCondition?
-  returnNotes        String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-}
-
-model EquipmentMaintenance {
-  id              Int             @id @default(autoincrement())
-  equipmentId     Int
-  equipment       Equipment       @relation(fields: [equipmentId], references: [id])
-  maintenanceType MaintenanceType
-  startDate       DateTime
-  endDate         DateTime?
-  cost            Decimal?
-  performedBy     String? // Person or company who performed maintenance
-  description     String?
-  notes           String?
-  attachments     String[] // URLs or references to maintenance documents
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-}
-
 enum MaintenanceType {
   ROUTINE
   REPAIR
   CALIBRATION
   INSPECTION
   REPLACEMENT
-}
-
-model ProjectEquipmentAllocation {
-  id          Int       @id @default(autoincrement())
-  projectId   Int
-  project     Project   @relation(fields: [projectId], references: [id])
-  equipmentId Int
-  equipment   Equipment @relation(fields: [equipmentId], references: [id])
-  quantity    Int       @default(1)
-  startDate   DateTime
-  endDate     DateTime?
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@unique([projectId, equipmentId])
 }

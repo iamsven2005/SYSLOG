@@ -1,27 +1,15 @@
-import type { Metadata } from "next"
-
 import { db } from "@/lib/db"
 import { subDays, startOfDay, endOfDay, format } from "date-fns"
 import UserActivityChart from "./user-activity-chart"
 import UserActivityTable from "./user-activity-table"
-import { getCurrentUser } from "../login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { allowed } from "@/components/navbar"
+import { notFound } from "next/navigation"
 
-export const metadata: Metadata = {
-  title: "User Activity",
-  description: "View and export user activity logs",
-}
+
 
 async function getUserActivityData(page = 1, pageSize = 10) {
-        const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          redirect("/login")
-        }
-        const perm = await checkUserPermission(currentUser.id, "/online")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
+  const a = await allowed("/online")
+  if(a === false) notFound()
   const skip = (page - 1) * pageSize
 
   const activities = await db.userActivity.findMany({

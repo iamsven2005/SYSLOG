@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { JSDOM } from "jsdom"
 import { addUser } from "@/app/email-templates/user-actions"
 
-export const dynamic = "force-dynamic"
 interface UserUploadInput {
   username: string
   email: string | null

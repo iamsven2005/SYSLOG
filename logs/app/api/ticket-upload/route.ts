@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
+import { getId } from "@/app/login/actions"
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     const filePath = join(uploadDir, uniqueFilename)
     await writeFile(filePath, buffer)
-    const userId = request.cookies.get("userId")?.value
+    const userId = await getId()
     if(!userId) notFound() 
     // Save file info to database
     const attachment = await db.ticketAttachment.create({

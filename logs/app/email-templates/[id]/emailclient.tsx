@@ -1,6 +1,6 @@
 "use client"
 
-import { notFound, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -9,8 +9,6 @@ import { getEmailTemplate } from "@/app/email-templates/email-template-actions"
 import { ArrowLeft, Edit, Eye } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
 import { EmailTemplateForm } from "@/app/email-templates/email-template-form"
-import { getCurrentUser } from "@/app/login/actions"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
 import { EmailTemplate } from "@/prisma/generated/main"
 
 interface FullEmailTemplate extends EmailTemplate {
@@ -39,15 +37,7 @@ export default function EmailTemplateDetailPage({ params }: { params: { id: stri
   useEffect(() => {
     async function loadEmailTemplate() {
       try {
-        const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          router.push("/login")
-          return
-        }
-        const perm = await checkUserPermission(currentUser.id, "/email-templates")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
+
         setLoading(true)
 
         // Transform assignedUsers into fake User[]

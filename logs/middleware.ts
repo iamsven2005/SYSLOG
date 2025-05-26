@@ -29,17 +29,25 @@
  * - Avoid triggering this redirect for legitimate frontend/admin routes.
  */
 
-
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
   const userId = request.cookies.get("userId")?.value
   const path = request.nextUrl.pathname
-  if (request.nextUrl.pathname.startsWith("/api/socket")) {
-    return NextResponse.next()
+
+  const response = NextResponse.next()
+
+  // Add user ID to request headers if available
+  if (userId) {
+    response.headers.set("x-user-id", userId)
   }
-  // If no user is logged in and trying to access protected routes
+
+  if (path.startsWith("/api/socket")) {
+    return response
+  }
+
+  // Redirect unauthenticated users
   if (
     !userId &&
     path !== "/" &&
@@ -59,12 +67,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  // For admin-only routes
-  if (userId && (path.startsWith("/logs") || path.startsWith("/command-matches"))) {
-    return NextResponse.next()
-  }
-
-  return NextResponse.next()
+  return response
 }
 
 export const config = {

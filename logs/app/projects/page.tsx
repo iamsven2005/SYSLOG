@@ -1,17 +1,10 @@
-import { notFound, redirect } from "next/navigation"
-import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { allowed } from "@/components/navbar";
 import ProjectsPage from "./client";
+import { notFound } from "next/navigation";
 
 export default async function Page(){
-    const currentUser = await getCurrentUser()
-    if (!currentUser) {
-      redirect("/login")
-    }
-    const perm = await checkUserPermission(currentUser.id, "/projects")
-    if (perm.hasPermission === false) {
-      return notFound()
-    }
+    const a = await allowed("/projects")
+    if(a === false) notFound()
     return(
         <ProjectsPage/>
     )

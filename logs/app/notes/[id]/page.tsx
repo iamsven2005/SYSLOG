@@ -1,9 +1,7 @@
-import { checkUserPermission } from "@/app/permissions/permission-actions"
-import { getCurrentUser } from "@/app/login/actions"
+
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -12,14 +10,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       id: parseInt(params.id),
     },
   })
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/notes")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
   return (
     <div className="p-6">
       <Button asChild><Link href={"/tickets/new"}>Back to new ticket</Link></Button>

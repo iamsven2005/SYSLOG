@@ -264,7 +264,6 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   role: 'role',
   Mobile: 'Mobile',
-  Pay: 'Pay',
   PrimaryContact: 'PrimaryContact',
   MobileContact: 'MobileContact',
   Relationship: 'Relationship',
@@ -276,7 +275,8 @@ exports.Prisma.UserScalarFieldEnum = {
   ndasubmissiondate: 'ndasubmissiondate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  location: 'location'
+  location: 'location',
+  Pay: 'Pay'
 };
 
 exports.Prisma.GroupScalarFieldEnum = {
@@ -475,15 +475,15 @@ exports.Prisma.ProjectScalarFieldEnum = {
   businessCode: 'businessCode',
   projectCode: 'projectCode',
   name: 'name',
-  description: 'description',
-  location: 'location',
-  startDate: 'startDate',
-  estimatedEndDate: 'estimatedEndDate',
+  createDate: 'createDate',
+  projectTypeId: 'projectTypeId',
   actualEndDate: 'actualEndDate',
   budget: 'budget',
-  status: 'status',
-  createDate: 'createDate',
-  projectTypeId: 'projectTypeId'
+  description: 'description',
+  estimatedEndDate: 'estimatedEndDate',
+  location: 'location',
+  startDate: 'startDate',
+  status: 'status'
 };
 
 exports.Prisma.ModelEntryScalarFieldEnum = {

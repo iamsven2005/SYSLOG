@@ -1,18 +1,15 @@
-import { notFound, redirect } from "next/navigation"
-import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../permissions/permission-actions"
+
+import { allowed } from "@/components/navbar"
 import DriveExplorer from "./client"
+import { notFound } from "next/navigation"
+import { getId } from "../login/actions"
 
 export default async function Page(){
-        const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          redirect("/login")
-        }
-        const perm = await checkUserPermission(currentUser.id, "/drive")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
+const a = await allowed("/drive")
+const id = await getId()
+if(a === false || !id) notFound()
+
         return(
-          <DriveExplorer id={currentUser.id}/>
+          <DriveExplorer id={id}/>
         )
 }

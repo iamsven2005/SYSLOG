@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect, useCallback } from "react"
 import { notFound, useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -8,11 +7,10 @@ import { Button } from "@/components/ui/button"
 import { MessageSquareIcon, SendIcon, InboxIcon, PlusCircleIcon, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Badge } from "@/components/ui/badge"
-import { getCurrentUser } from "../login/actions"
+import { getCurrentUser, hasRole } from "../login/actions"
 import FeedbackForm from "./feedback-form"
 import { toast } from "sonner"
 import { getReceivedFeedback, getSentFeedback, markFeedbackAsRead } from "./feedback-actions"
-import { checkUserPermission } from "../permissions/permission-actions"
 import { Feedback, User } from "@/prisma/generated/main"
 interface Feedbacks extends Feedback {
   recipients: Recipient[]; // Change this line to use the correct type
@@ -35,29 +33,24 @@ export default function FeedbackPage() {
   const [loadingReceived, setLoadingReceived] = useState(false)
   const router = useRouter()
 
-  useEffect(() => {
-    async function checkUserRole() {
-      try {
-        const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          router.push("/login")
-          return
-        }
-        const perm = await checkUserPermission(currentUser.id, "/feedback")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
-        setUser(currentUser)
-        setIsManager(currentUser.role.includes("manager") || currentUser.role.includes("admin"))
-        setIsLoading(false)
-      } catch (error) {
-        console.error("Error checking user role:", error)
-        router.push("/login")
-      }
-    }
+useEffect(() => {
+  async function checkUserRole() {
+    try {
+      const currentUser = await getCurrentUser();
+      if (!currentUser) return notFound();
 
-    checkUserRole()
-  }, [router])
+      setUser(currentUser);
+      setIsManager(await hasRole(currentUser, ["manager", "admin"]));
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error checking user role:", error);
+      router.push("/login");
+    }
+  }
+
+  checkUserRole();
+}, [router]);
+
 
 
 

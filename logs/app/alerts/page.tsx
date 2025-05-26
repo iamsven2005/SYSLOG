@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { PlusCircle } from "lucide-react"
 import { DatabaseStatusBar } from "@/components/database-status-bar"
-import { getCurrentUser } from "../login/actions"
-import { notFound, redirect } from "next/navigation"
 
 export default async function AlertsPage() {
 

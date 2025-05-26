@@ -2,9 +2,6 @@
 
 import { cookies } from "next/headers"
 import { db } from "@/lib/db"
-import { NextRequest } from "next/server"
-import { notFound } from "next/navigation"
-
 interface LoginCredentials {
   username: string
   password: string
@@ -49,40 +46,41 @@ export async function loginUser({ username, password }: LoginCredentials) {
   }
 }
 
-export async function logoutUser(req: NextRequest) {
+export async function logoutUser() {
   try {
     // Clear the session cookie
-    req.cookies.delete("userId")
-
+      const cookieStore = await cookies();
+    cookieStore.delete("userId")
     return { success: true }
   } catch (error) {
     console.error("Logout error:", error)
     return { success: false, message: "An error occurred during logout" }
   }
 }
-
-export async function getCurrentUser(req?: NextRequest) {
+export async function hasRole(user: { role: string[] }, rolesToCheck: string[]): Promise<boolean> {
+  return rolesToCheck.some(role => user.role.includes(role));
+}
+export async function getCurrentUser() {
   try {
-    const userId = req?.cookies.get("userId")?.value
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
 
-    if (!userId) {
-      return null
-    }
+    if (!userId) return null;
 
     const user = await db.user.findUnique({
-      where: { id: Number.parseInt(userId) }
-    })
+      where: { id: Number.parseInt(userId) },
+    });
 
-    return user
+    return user;
   } catch (error) {
-    console.error("Get current user error:", error)
-    return null
+    console.error("Get current user error:", error);
+    return null;
   }
 }
-
-export async function getId(req?: NextRequest) {
+export async function getId() {
   try {
-    const userId = req?.cookies.get("userId")?.value
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;    
     if (!userId) {
       return 0
     }

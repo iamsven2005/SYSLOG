@@ -1,18 +1,14 @@
 import { Suspense } from "react"
 import NotificationsClient from "./notifications-client"
-import { getCurrentUser } from "@/app/login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { allowed } from "@/components/navbar"
+import { getCurrentUser, hasRole } from "../login/actions"
+import { notFound } from "next/navigation"
 
 export default async function NotificationsPage() {
-      const currentUser = await getCurrentUser()
-      if (!currentUser) {
-        redirect("/login")
-      }
-      const perm = await checkUserPermission(currentUser.id, "/notifications")
-      if (perm.hasPermission === false) {
-        return notFound()
-      }
+  const a = await allowed("/notifications")
+  const user = await getCurrentUser()
+  if(a === false || !user) notFound()
+  const isadmin = await hasRole(user, ["admin"])
 
   return (
     <Suspense
@@ -22,7 +18,7 @@ export default async function NotificationsPage() {
         </div>
       }
     >
-      <NotificationsClient isAdmin={currentUser.role.includes("admin")} />
+      <NotificationsClient isAdmin={isadmin} />
     </Suspense>
   )
 }

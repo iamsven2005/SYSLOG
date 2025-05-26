@@ -6,8 +6,6 @@ import { AddressedCommandMatchesTable } from "@/app/command-matches/addressed-co
 import { Suspense } from "react"
 import { allowed } from "@/components/navbar"
 import { notFound } from "next/navigation"
-
-export const dynamic = "force-dynamic"
 export const revalidate = 0
 export default async function Page({
   searchParams,

@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { AlertConditionForm } from "../../alert-condition-form"
 import { getAllEmailTemplates } from "@/app/email-templates/email-template-actions"
 import { DatabaseStatusBar } from "@/components/database-status-bar"

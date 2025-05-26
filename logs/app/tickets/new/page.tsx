@@ -1,21 +1,17 @@
 import { NewTicketForm } from "@/app/tickets/new/new-ticket-form"
 import { getAssignableUsers } from "@/app/tickets/ticket-actions"
 import { db } from "@/lib/db"
-import { getCurrentUser } from "@/app/login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "@/app/permissions/permission-actions"
+import { getCurrentUser, hasRole } from "@/app/login/actions"
+import { notFound } from "next/navigation"
+import { allowed } from "@/components/navbar"
 
 
 export default async function NewTicketPage() {
-  const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-  const perm = await checkUserPermission(currentUser.id, "/tickets")
-  if (perm.hasPermission === false) {
-    return notFound()
-  }
-  const isAdmin = currentUser.role.includes("admin")
+  const a = await allowed("/notes")
+  const user = await getCurrentUser()
+    if(a === false || !user) notFound()
+
+  const isAdmin = await hasRole(user, ["admin"])
   const devices = await db.devices.findMany({
     select: {
       id: true,

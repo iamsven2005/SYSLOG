@@ -1,21 +1,21 @@
 "use server"
+import { getId } from "@/app/login/actions"
 import { db } from "@/lib/db"
 import { Prisma } from "@/prisma/generated/main"
-import { NextRequest } from "next/server"
+import { cookies } from "next/headers"
 
 type ActivityLogParams = {
-  req?: NextRequest
   actionType: string
   targetType: string
   targetId?: number
   details?: string
 }
 
-export async function logActivity({ req, actionType, targetType, targetId, details }: ActivityLogParams) {
+export async function logActivity({ actionType, targetType, targetId, details }: ActivityLogParams) {
   try {
     // Get the current user ID from cookies
-    const userId = req?.cookies.get("userId")?.value
-
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
     if (!userId) {
       console.warn("Cannot log activity: No user is logged in")
       return null
@@ -132,25 +132,23 @@ export async function getCurrentUserActivityLogs({
   dateRange,
   page = 1,
   pageSize = 10,
-  req
 }: {
   actionType?: string
   targetType?: string
   dateRange?: string
   page?: number
   pageSize?: number
-  req: NextRequest
 }) {
   try {
     // Get the current user ID from cookies
-    const userId = req.cookies.get("userId")?.value
+    const userId = await getId()
 
     if (!userId) {
       throw new Error("No user is logged in")
     }
 
     return getActivityLogs({
-      userId: Number.parseInt(userId),
+      userId: Number(userId),
       actionType,
       targetType,
       dateRange,

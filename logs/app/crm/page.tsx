@@ -12,22 +12,16 @@ import MaterialOrderList from "./components/material-order-list"
 import DashboardStatsSkeleton from "./components/skeletons/dashboard-stats-skeleton"
 import ProjectListSkeleton from "./components/skeletons/project-list-skeleton"
 import InteractionListSkeleton from "./components/skeletons/interaction-list-skeleton"
-import { getCurrentUser } from "../login/actions"
-import { notFound, redirect } from "next/navigation"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { notFound } from "next/navigation"
+import { allowed } from "@/components/navbar"
 
 export default async function Dashboard() {
   const { projects, error: projectsError } = await getProjects()
   const { companies, error: companiesError } = await getCompanies()
   const { interactions, error: interactionsError } = await getInteractions()
-const currentUser = await getCurrentUser()
-        if (!currentUser) {
-          redirect("/login")
-        }
-        const perm = await checkUserPermission(currentUser.id, "/crm")
-        if (perm.hasPermission === false) {
-          return notFound()
-        }
+
+        const a = await allowed("/crm")
+        if(a === false) notFound()
   // Calculate stats
   const activeProjects = projects?.filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED") || []
 

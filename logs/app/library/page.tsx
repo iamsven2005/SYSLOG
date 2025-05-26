@@ -1,8 +1,8 @@
 import { getLibraryEntries } from "@/app/library/library-actions"
 import { LibraryPage } from "./library-page"
-import { notFound, redirect } from "next/navigation"
-import { getCurrentUser } from "../login/actions"
-import { checkUserPermission } from "../permissions/permission-actions"
+import { getCurrentUser, hasRole } from "../login/actions"
+import { allowed } from "@/components/navbar"
+import { notFound } from "next/navigation"
 
 interface PageProps {
   searchParams: Promise<{
@@ -21,18 +21,10 @@ interface PageProps {
 }
 export default async function Page({ searchParams }: { searchParams: PageProps["searchParams"] }) {
   const resolvedParams = await searchParams
-
+  const a = await allowed("/library")
   const currentUser = await getCurrentUser()
-  if (!currentUser) {
-    redirect("/login")
-  }
-
-  const perm = await checkUserPermission(currentUser.id, "/library")
-  if (!perm.hasPermission) {
-    return notFound()
-  }
-
-  const isAdmin = currentUser.role.includes("admin")
+  if(a === false || !currentUser) notFound()
+  const isAdmin =  await hasRole(currentUser, ["admin"])
 
   const page = resolvedParams.page ? parseInt(resolvedParams.page) : 1
   const pageSize = parseInt(resolvedParams.pageSize || "10")

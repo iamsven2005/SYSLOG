@@ -1,17 +1,11 @@
-import { notFound, redirect } from "next/navigation";
-import { checkUserPermission } from "../../permissions/permission-actions";
-import { getCurrentUser } from "../../login/actions";
+
+import { allowed } from "@/components/navbar"
 import { FormBuilder } from "../[id]/form-builder"
+import { notFound } from "next/navigation"
 
 export default async function CreateFormPage() {
-      const currentUser = await getCurrentUser()
-      if (!currentUser) {
-        redirect("/login")
-      }
-      const perm = await checkUserPermission(currentUser.id, "/forms/create")
-      if (perm.hasPermission === false) {
-        return notFound()
-      }
+  const a = await allowed("/forms/create")
+  if(a === false) notFound()
   return (
       <FormBuilder />
 

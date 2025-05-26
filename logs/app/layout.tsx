@@ -5,7 +5,7 @@ import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CommandMatchAlert } from "@/app/command-matches/command-match-alert"
 import { AlertMonitorWrapper } from "@/components/alert/alert-monitor-wrapper"
-import { getCurrentUser } from "./login/actions"
+import { getCurrentUser} from "./login/actions"
 import Navbar from "@/components/navbar"
 
 export const metadata: Metadata = {
@@ -21,7 +21,6 @@ export default async function RootLayout({
 }>) {
 
   const user = await getCurrentUser()
-  const userid = user?.id
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
@@ -34,9 +33,7 @@ export default async function RootLayout({
           )}
             <AlertMonitorWrapper />
           </div>
-          {userid && (
           <Navbar/>
-          )}
 
           {children}
           <Toaster />
