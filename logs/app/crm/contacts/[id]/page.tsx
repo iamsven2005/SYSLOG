@@ -1,3 +1,25 @@
+/*
+ * crm/contacts/[id]/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Contact details page for viewing a specific contact's profile and interaction history.
+ *   Fetches the contact by ID, displays company affiliation, contact information,
+ *   and recent interactions.
+ *
+ * Props:
+ *   - params: Promise containing route parameters including contact `id` (string)
+ *
+ * Features:
+ *   - Shows contact info: title, company, email, phone, expertise, remarks
+ *   - Displays up to 5 recent interactions via <InteractionList />
+ *   - Links to edit the contact and add new interactions
+ *
+ * Dependencies:
+ *   - UI Components: Card, Button, Icons (Mail, Phone, Building2, Edit)
+ *   - Actions: `getContact`
+ *   - Component: `InteractionList`
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

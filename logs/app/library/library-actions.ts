@@ -1,3 +1,42 @@
+/**
+ * library-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides functions for managing library entries, including CRUD operations, checking out and returning books, and searching for library entries.
+ *   The library entries can be filtered and paginated, and actions are logged for activity tracking. The functions are built to handle both single-entry operations and bulk actions.
+ *
+ * Key Features:
+ *   - **Get Library Entries**: Fetches library entries with optional filtering and pagination.
+ *   - **Create, Update, and Delete Library Entries**: Allows creating, updating, and deleting library entries.
+ *   - **Checkout and Return Books**: Provides functionality to check out and return books.
+ *   - **Search and Stats**: Supports quick search functionality for library entries and fetching library statistics.
+ *   - **Activity Logging**: Logs actions like creating, updating, deleting, checking out, and returning books for tracking purposes.
+ *
+ * Key Components:
+ *   - `getLibraryEntries`: Fetches all library entries with optional filters and pagination.
+ *   - `createLibraryEntry`: Adds a new library entry.
+ *   - `updateLibraryEntry`: Updates an existing library entry.
+ *   - `deleteLibraryEntry`: Deletes a library entry.
+ *   - `checkoutBook`: Checks out a book to a borrower.
+ *   - `returnBook`: Marks a book as returned.
+ *   - `getLibraryStats`: Retrieves statistics for the library, including the total number of entries and checked-out books.
+ *   - `quickSearchLibrary`: Provides quick search functionality for library entries based on title or reference number.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   const entries = await getLibraryEntries(page, pageSize, search);
+ *   const entry = await createLibraryEntry(data);
+ *   const updatedEntry = await updateLibraryEntry(entryId, updatedData);
+ *   ```
+ *
+ * Notes:
+ *   - **Pagination**: The `getLibraryEntries` function supports pagination via `page` and `pageSize`.
+ *   - **Filters**: Users can filter entries by title, reference number, category, publication year, and date range.
+ *   - **Sorting**: Entries can be sorted by various fields, with validation to prevent SQL injection.
+ *   - **Transaction Support**: Operations like fetching entries and counting them are wrapped in transactions to ensure data consistency.
+ *   - **Activity Logging**: Every action is logged for traceability, including who performed the action and on which entry.
+ */
+
 "use server"
 
 import { revalidatePath } from "next/cache"

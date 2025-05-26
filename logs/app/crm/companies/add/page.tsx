@@ -1,3 +1,20 @@
+/*
+ * crm/projects/[id]/add/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Page to associate a company with a specific project in the CRM system.
+ *
+ * Features:
+ *   - Displays form to select a company and assign its role in the project
+ *   - Filters out companies already linked to the selected project
+ *   - Handles no available companies case with redirection options
+ *   - Fetches project and company data via server actions
+ *
+ * Notes:
+ *   - Uses ShadCN UI components and Next.js routing
+ *   - Relies on `getProject`, `getCompanies` and `ProjectCompanyForm`
+ *   - Graceful fallback if all companies are already linked
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"

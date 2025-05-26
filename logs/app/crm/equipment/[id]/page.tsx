@@ -1,3 +1,29 @@
+/*
+ * crm/equipment/[id]/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Displays a detailed overview of a single equipment item within the CRM system. 
+ *   Includes key metrics (status, quantity, category, maintenance), specifications, 
+ *   and historical records such as loan history, maintenance, and project allocations.
+ *
+ * Features:
+ *   - Overview cards for status, availability, category, and maintenance dates
+ *   - Specifications and purchase details with formatting utilities
+ *   - Tabs for:
+ *     • EquipmentLoans: lists past loan records
+ *     • EquipmentMaintenance: shows maintenance logs
+ *     • Allocations: projects where the equipment is assigned
+ *   - Action buttons: Edit, Check Out, Add Maintenance
+ *
+ * Props:
+ *   - params (Promise<{ id: string }>): Dynamic route param to fetch equipment by ID
+ *
+ * Dependencies:
+ *   - Actions: `getEquipmentById`
+ *   - Components: Badge, Tabs, Card, Table
+ *   - Icons: ArrowLeft, Edit, ShoppingBag, Wrench, Clock, etc.
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -5,7 +31,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, PenToolIcon as Tool, Calendar, Clock, Wrench, ShoppingBag } from "lucide-react"
-import { getEquipmentById } from "@/app//crm/actions/equipment"
+import { getEquipmentById } from "@/app/crm/equipment/equipment"
 import { formatDate, formatCurrency } from "@/lib/utils"
 import EquipmentLoans from "@/app/crm/components/equipment-loans"
 import EquipmentMaintenance from "@/app/crm/components/equipment-maintenance"

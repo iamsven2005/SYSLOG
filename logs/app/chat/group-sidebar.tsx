@@ -1,3 +1,34 @@
+/**
+ * GroupSidebar Component
+ * ----------------------
+ * Sidebar UI component for listing and managing chat groups.
+ *
+ * Features:
+ * - Displays user's chat groups sorted by most recently updated.
+ * - Search chats by group name.
+ * - Filter chats by member roles.
+ * - Displays the latest message, group initials, and role badges.
+ * - Opens `CreateGroupDialog` to create a new chat group.
+ *
+ * Internal State:
+ * - searchQuery: Tracks the search input value.
+ * - selectedRole: Currently selected role filter.
+ * - isCreateGroupOpen: Dialog visibility state for creating a group.
+ * - groups: Currently displayed groups (after search or filter).
+ * - availableRoles: Distinct roles extracted for filtering.
+ *
+ * Dependencies:
+ * - Uses `getAvailableRoles`, `searchGroups`, `getGroupsByMemberRole` from `chat-actions`.
+ * - Uses Next.js `useSearchParams` to highlight the current group.
+ * - Uses ShadCN UI components like `Select`, `ScrollArea`, `Avatar`, and `Badge`.
+ *
+ * Usage:
+ * ```tsx
+ * <GroupSidebar groups={initialGroups} />
+ * ```
+ */
+
+
 "use client"
 
 import { useState, useEffect } from "react"

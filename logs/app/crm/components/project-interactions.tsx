@@ -1,3 +1,23 @@
+/*
+ * crm/projects/components/project-interactions.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Displays a list of CRM interactions linked to a project, including contact and company info.
+ *   Allows users to view summaries and quickly add new interactions.
+ *
+ * Features:
+ *   - Shows interaction title, relative timestamp, notes, contact, company, and outcome
+ *   - Uses Lucide icons and ShadCN UI components
+ *   - Button to create a new interaction prelinked to the project
+ *   - Graceful fallback when no interactions exist
+ *
+ * Dependencies:
+ *   - formatRelativeTime utility from @/lib/utils
+ *   - ShadCN UI (Card, Button)
+ *   - Lucide React icons (Users)
+ *   - Types: Project, CRMInteraction, ContactPerson, Company
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

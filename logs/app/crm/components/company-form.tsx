@@ -1,3 +1,20 @@
+/*
+ * crm/companies/components/company-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Reusable form for creating or editing company records in BridgeCRM.
+ *
+ * Features:
+ *   - Supports both creation and update modes (based on presence of `company` prop)
+ *   - Uses Zod schema validation integrated with React Hook Form
+ *   - Handles transformation of comma-separated specialties and certifications
+ *   - Provides real-time form validation and error handling
+ *
+ * Notes:
+ *   - Submits to `createCompany()` or `updateCompany()` server actions
+ *   - Uses ShadCN UI components for inputs, buttons, and form layout
+ *   - Auto-redirects upon successful create/update based on operation mode
+ */
+
 "use client"
 
 import { useState } from "react"

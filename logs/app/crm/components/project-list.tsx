@@ -1,3 +1,27 @@
+/*
+ * crm/projects/components/project-list.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Renders a list of infrastructure bridge projects with metadata including location,
+ *   bridge type, overall project status, and calculated completion percentage.
+ *
+ * Features:
+ *   - Displays project name, location, status, and bridge type
+ *   - Computes completion percentage from bridge phases using:
+ *       - Completed phases count
+ *       - Weighted in-progress phase percentage
+ *   - Links each project name to its detailed CRM page
+ *   - Includes color-coded badges for project statuses
+ *
+ * Dependencies:
+ *   - Types: Project, BridgeProject, PhaseStatus, ProjectStatus
+ *   - Next.js Link
+ *   - TailwindCSS utility classes for styling
+ *
+ * Note:
+ *   Completion percentage calculation assumes equal weight per phase.
+ */
+
 import { BridgeProject, PhaseStatus, Project, ProjectStatus } from "@/prisma/generated/main"
 import Link from "next/link"
 type ProjectWithPhases = Project & {

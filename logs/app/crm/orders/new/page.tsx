@@ -1,3 +1,19 @@
+/**
+ * app/crm/orders/new/page.tsx
+ *
+ * Description:
+ *   Provides a UI page for creating a new material order within the CRM system.
+ *
+ * Features:
+ *   - Header with navigation back to the main Orders list.
+ *   - Encapsulates the `OrderForm` component to handle form input and submission.
+ *   - Utilizes ShadCN UI components (Card, Button, etc.) for consistent styling.
+ *
+ * Usage:
+ *   Accessed via `/crm/orders/new`.
+ *   Typically navigated from a project materials page or the orders overview.
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

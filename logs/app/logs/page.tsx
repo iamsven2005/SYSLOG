@@ -1,3 +1,39 @@
+/**
+ * page.tsx - 2025-05-25 by sven.tan
+ *
+ * Provides a detailed table for viewing, filtering, and managing system logs with support for command matching,
+ * rule associations, time-based log deletion, and exporting data.
+ *
+ * Functionality:
+ * - **Search**: Allows users to search logs based on keywords, with debounced input for performance.
+ * - **Filter**: Users can filter logs by host, action type (login, logout), rule groups, and rules.
+ * - **Command Matching**: Automatically detects command matches based on predefined rules and triggers notifications.
+ * - **Log Selection**: Users can select logs for batch operations, such as deletion.
+ * - **Resource Filters**: Filters to display logs based on CPU and memory usage thresholds.
+ * - **Pagination**: Supports pagination for large log sets with customizable page size.
+ * - **Log Export**: Allows exporting selected logs to an Excel file.
+ * - **Time-Based Log Deletion**: Provides an interface to delete logs based on time period (e.g., 1 day, 7 days).
+ * - **Rule Management**: Users can add commands to existing rules for automated monitoring and alerting.
+ *
+ * Usage:
+ * - Use this table component in an admin panel to monitor and manage system logs.
+ * - Provide controls to filter logs by host, action type, and resource usage.
+ * - Leverage command matching to detect and notify on suspicious or predefined command patterns.
+ * - Allow users to delete logs by selected criteria or time period.
+ * - Enable exporting logs for analysis or backup.
+ *
+ * Limitations:
+ * - Filters are applied locally, which may impact performance for very large datasets.
+ * - Time-based log deletion is irreversible and may result in the loss of important historical data.
+ * - Export functionality is limited to the current set of logs; users may need to manually adjust filters to export specific data.
+ *
+ * Improvements:
+ * - Introduce real-time log updates using WebSockets or Server-Sent Events (SSE) for more dynamic log monitoring.
+ * - Enhance the command matching system with more advanced pattern recognition and contextual analysis.
+ * - Implement more granular time-based filtering options for users to specify custom time ranges.
+ * - Improve the UI for handling large log datasets with virtual scrolling or lazy loading.
+ */
+
 "use client"
 
 import React, { useCallback } from "react"
@@ -61,7 +97,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Clock, AlertTriangle, Download } from "lucide-react"
-import { deleteLogsByTimePeriod, deleteMultipleLogs, getLogs } from "./actions"
+import { deleteLogsByTimePeriod, deleteMultipleLogs, getLogs } from "./systemMetrics"
 import { getAllDeviceNames } from "../devices/device-actions"
 import { exportToExcel, prepareLogsForExport } from "../../lib/export-utils"
 import { getAllRuleGroupsAndRules } from "../rules/rule-actions"

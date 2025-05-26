@@ -1,5 +1,5 @@
 /*
- * new-alert-condition-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * page.tsx ( new-alert-condition) - 2025-05-25 by sven.tan:
  * Provides UI and backend integration to create a new alert condition.
  *
  * Features:

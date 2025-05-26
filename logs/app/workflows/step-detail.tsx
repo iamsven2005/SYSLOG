@@ -1,3 +1,40 @@
+/**
+ * StepDetail Component
+ * 
+ * This component displays detailed information about a specific audit step, allowing the user to view and edit properties such as the 
+ * title, description, status, assigned user, and due date. It also includes the ability to view activity logs associated with the step.
+ * The component provides an option to save any changes made to the step and cancel the editing process.
+ * 
+ * Features:
+ * - Allows the user to view and edit the title, description, status, assigned user, and due date of the step.
+ * - Displays activity logs related to the step for tracking changes or actions.
+ * - Includes a "Save Changes" button to apply updates and a "Cancel" button to discard changes.
+ * - Supports the selection of a due date using a calendar popover.
+ * 
+ * Props:
+ * - `step` (AuditStep): The step object containing the current step details to be edited.
+ * - `workflowId` (string): The ID of the workflow the step belongs to.
+ * - `onClose` (function): A function to close the step details modal or component.
+ * - `onUpdate` (function): A function to update the step after changes are saved.
+ * - `users` (User[]): A list of users available to assign to the step.
+ * 
+ * Methods:
+ * - `handleSave`: Saves the updated step details by calling `onUpdate` and passing the edited step object.
+ * - `setDate`: Updates the due date when selected from the calendar popover.
+ * 
+ * Dependencies:
+ * - `Button`, `Input`, `Textarea`, `Label`, `Select`, `Popover`, `Calendar`: UI components for managing form inputs and UI interaction.
+ * - `StepLogs`: A component that displays the activity logs for the current step.
+ * - `format`: A function from `date-fns` for formatting the due date.
+ * 
+ * State:
+ * - `editedStep`: The current state of the step being edited.
+ * - `date`: The selected due date for the step.
+ * - `isSaving`: A boolean flag indicating whether the save operation is in progress.
+ * - `error`: Error message to be displayed if something goes wrong while saving.
+ */
+
+
 "use client"
 
 import { useState } from "react"

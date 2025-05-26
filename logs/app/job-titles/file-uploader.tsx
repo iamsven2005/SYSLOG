@@ -1,3 +1,34 @@
+/**
+ * FileUploader.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component allows users to upload HTML files by either dragging and dropping or clicking the "Browse Files" button.
+ *   It processes the file upload and alerts the user if the file is not an HTML file. Once an HTML file is selected,
+ *   the user can click to import the data from the file.
+ *
+ * Key Features:
+ *   - Drag-and-drop area for file upload.
+ *   - Button to browse for files.
+ *   - Validates that only HTML files are selected.
+ *   - Displays the selected file name after selection.
+ *   - Triggers a file upload process when the user confirms with the "Import Data" button.
+ *
+ * Key Functions:
+ *   - `handleDrag`: Manages drag events to indicate when a file is being dragged over the area.
+ *   - `handleDrop`: Handles the drop event and processes the selected file.
+ *   - `handleFileChange`: Handles file selection through the file input dialog.
+ *   - `handleFile`: Validates the file type (only allows HTML files).
+ *   - `handleUpload`: Triggers the file upload when the user clicks the "Import Data" button.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <FileUploader onFileUpload={handleFileUpload} isLoading={false} />
+ *   ```
+ *
+ * Notes:
+ *   - The `onFileUpload` prop is a function that will handle the file once it's selected.
+ *   - The `isLoading` prop is used to disable the UI elements when the file is being processed.
+ */
 "use client"
 
 import type React from "react"

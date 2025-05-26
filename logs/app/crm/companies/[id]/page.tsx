@@ -1,3 +1,20 @@
+/*
+ * crm/companies/[id]/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Company profile view page in the CRM system.
+ *
+ * Features:
+ *   - Displays detailed company information (type, contact, specialties, etc.)
+ *   - Shows metrics for associated projects, contacts, and interactions
+ *   - Tabbed interface for managing related data (contacts, projects, interactions)
+ *   - Navigation to edit page and back to companies list
+ *
+ * Notes:
+ *   - Uses ShadCN UI components and Lucide icons
+ *   - Supports fallback for error state and not found cases
+ *   - Relies on `getCompany` server action and Prisma data structure
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,10 +1,25 @@
+/*
+ * crm/companies/loading.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Skeleton loading state for the Companies page in the BridgeCRM system.
+ *
+ * Features:
+ *   - Displays header with navigation links
+ *   - Renders skeleton placeholders for search, filters, and company list tabs
+ *   - Uses CompanyListSkeleton for consistent UX during async data fetching
+ *
+ * Notes:
+ *   - Matches layout and UI structure of the full Companies page
+ *   - Improves perceived performance while data is loading
+ */
+
 import { HardHat } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import CompanyListSkeleton from "../components/skeletons/company-list-skeleton"
+import CompanyListSkeleton from "./company-list-skeleton"
 
 export default function Loading() {
   return (

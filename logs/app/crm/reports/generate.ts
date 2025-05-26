@@ -1,3 +1,24 @@
+/*
+ * generate.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This server-side function generates a custom report based on user input validated by `customReportSchema`.
+ *   It fetches data from the database for the selected data source (e.g., projects, companies, bids) and generates chart data and summary statistics.
+ *   Supports grouping data, calculating metrics, and returning a report with chart data and summary details.
+ *
+ * Features:
+ *   - Validates input data using the `customReportSchema`
+ *   - Supports various data sources (`projects`, `companies`, `bids`)
+ *   - Handles grouping by fields like `status`, `type`, and `groupBy`
+ *   - Calculates metrics such as budget sum, average rating, and bid amount
+ *   - Returns chart data and summary for the report, including optional description and chart type
+ *
+ * Dependencies:
+ *   - `db`: Interacts with the database using Prisma to fetch and aggregate data
+ *   - `customReportSchema`: Defines validation rules for report generation
+ *   - `CustomReportInput`: Type for report input data
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

@@ -1,3 +1,28 @@
+/*
+ * material-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side actions for managing bridge project materials and purchase orders.
+ *   Includes full lifecycle support for materials: creation, update, deletion, and vendor order management.
+ *
+ * Features:
+ *   - Material Management:
+ *     - `getMaterials`, `getMaterial`, `createMaterial`, `updateMaterial`, `deleteMaterial`
+ *     - Validates deletion (no associated orders allowed)
+ *   - Material Orders:
+ *     - `createMaterialOrder`, `updateMaterialOrder`, `deleteMaterialOrder`, `getAllMaterialOrders`
+ *     - Orders are linked to both vendors and bridge project materials
+ *   - Auto revalidates project and CRM order paths for consistent frontend display
+ *
+ * Dependencies:
+ *   - Prisma client (`db`) and enums (`OrderStatus`)
+ *   - Next.js cache revalidation (`revalidatePath`)
+ *
+ * Notes:
+ *   - Material orders inherit relational context from materials > bridgeProject > project
+ *   - Defensive checks prevent deletion of materials that are already ordered
+ *   - Optimized for dashboard views, procurement logs, and cost tracking in project management flows
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

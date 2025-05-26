@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import path from "path"
 import fs from "fs/promises"
 import { db } from "@/lib/db"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 import { notFound } from "next/navigation"
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

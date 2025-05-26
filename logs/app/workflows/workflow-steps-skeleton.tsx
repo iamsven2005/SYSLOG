@@ -1,3 +1,24 @@
+/**
+ * WorkflowStepsSkeleton Component
+ * 
+ * This component serves as a loading placeholder while workflow steps are being fetched. It uses animated skeletons to simulate the loading state 
+ * and give the user a visual cue that the data is being loaded.
+ * 
+ * Features:
+ * - Displays animated skeletons to represent the structure of workflow steps and details.
+ * - Placeholder cards with pulsing animations to indicate content is being loaded.
+ * - The layout includes placeholders for step titles, descriptions, and status.
+ * 
+ * Dependencies:
+ * - `Card`, `CardHeader`, `CardContent`, `CardTitle` from `@/components/ui/card` for structured card layout.
+ * - Tailwind CSS classes for creating the animated skeletons (`bg-muted`, `animate-pulse`).
+ * 
+ * Usage:
+ * - This component is typically used in pages where workflow steps are displayed, replacing the actual content until the data is loaded.
+ * - The `animate-pulse` class creates the pulsing effect, making it clear that the data is loading.
+ */
+
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

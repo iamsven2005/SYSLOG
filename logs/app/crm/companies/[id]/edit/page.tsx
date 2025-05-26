@@ -1,3 +1,24 @@
+/*
+ * crm/companies/[id]/edit/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Page component for editing a company’s details in the CRM system.
+ *
+ * Features:
+ *   - Fetches company data using `getCompany` based on dynamic route param
+ *   - Displays editable form via `CompanyForm` with prefilled values
+ *   - Handles not-found scenario with `notFound()` fallback
+ *   - Navigation button back to the company detail view
+ *
+ * Notes:
+ *   - Leverages ShadCN UI components for consistent styling
+ *   - Ensures server-side validation of company existence before rendering
+ *
+ * Dependencies:
+ *   - `getCompany` action from `actions/companies`
+ *   - UI components from ShadCN (`Button`, `Card`, etc.)
+ *   - `CompanyForm` for editing company info
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

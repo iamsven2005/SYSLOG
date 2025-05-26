@@ -1,3 +1,32 @@
+/*
+ * app/drive/client.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side component that serves as the main interface for exploring and managing files in a user's drive.
+ *   It allows users to browse folders, view file details, upload files, create folders, and interact with files.
+ *   The component supports real-time updates via Server-Sent Events (SSE) for file changes and updates.
+ *
+ * Features:
+ *   - Displays the folder structure and contents with navigation breadcrumbs
+ *   - Supports uploading files and creating new folders
+ *   - Displays file details when selected, with options to close the details panel
+ *   - Filters files to show only those with valid owner and permissions
+ *   - Uses SSE to listen for real-time updates to the drive content and refresh the file list
+ *   - Allows selecting files and viewing their details in a fixed side panel
+ *   - Supports pagination for large lists of files and folders
+ *
+ * Props:
+ *   - `id`: The user ID passed to the component, used for uploading and file interaction
+ *
+ * Dependencies:
+ *   - UI Components: `Button`, `Input`, `Checkbox`, `Dialog`, `Label`, `Badge`, etc.
+ *   - Custom Components: `FolderBreadcrumb`, `FileGrid`, `UploadButton`, `CreateFolderButton`, `FileDetails`
+ *   - `getFolderContents`, `getFolderPath`: Functions to fetch folder contents and path information
+ *   - `useSearchParams`: Used to read query parameters for folder navigation
+ *   - SSE for real-time updates: `EventSource` is used to listen for file changes and refresh the content
+ *   - `DriveFile`, `DriveFolder`, `DriveFilePermission`: Types from Prisma for file and folder management
+ */
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"

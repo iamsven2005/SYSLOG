@@ -1,3 +1,37 @@
+/**
+ * page.tsx (form) - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component displays the main page of the form builder, showcasing a list of forms that have been created,
+ *   and provides options to search, filter, and create new forms. It also handles sorting of forms based on various criteria.
+ *
+ * Key Features:
+ *   - Displays a list of forms with options to filter and search by form title or description.
+ *   - Allows users to sort forms by the following criteria: newest, oldest, alphabetical, or number of responses.
+ *   - Provides a button to create a new form, leading to a form creation page.
+ *   - Includes a `SearchAndFilterBar` for querying and sorting forms.
+ *   - Displays form details (title, description, number of questions, responses) using the `FormCard` component.
+ *   - Handles the display of messages when no forms match the search or when there are no forms created yet.
+ *
+ * Key Functions:
+ *   - `getForms`: Fetches all forms from the backend.
+ *   - `filteredForms`: Filters the forms based on the search query entered by the user.
+ *   - `sortedForms`: Sorts the filtered forms based on the selected sort option (newest, oldest, alphabetical, responses).
+ *
+ * Notes:
+ *   - The `searchParams` prop is passed to the component, allowing it to handle dynamic queries like search (`q`) and sort options (`sort`).
+ *   - If no forms match the search or there are no forms available, a message is displayed guiding the user to create a form or clear the search.
+ *   - Sorting by responses counts the number of responses attached to each form.
+ *   - The page is designed to show a clean and user-friendly UI for form management.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <Home searchParams={{ q: "feedback", sort: "responses" }} />
+ *   ```
+ *
+ *   - The component integrates search, filter, and sort functionality for a seamless form management experience.
+ */
+
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"

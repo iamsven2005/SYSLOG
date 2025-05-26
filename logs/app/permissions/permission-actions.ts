@@ -1,3 +1,32 @@
+/**
+ * permission-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides server-side functions for managing page permissions, including creating, updating, 
+ *   and deleting page permissions. It interacts with the database to manage roles and user access to specific routes.
+ *   The functions log activity and trigger path revalidation for logs to ensure data integrity and up-to-date access control.
+ * 
+ * Functions:
+ *   - `getAllPagePermissions`: Fetches all page permissions, including associated roles and users.
+ *   - `createPagePermission`: Creates a new page permission with specified route, description, roles, and users.
+ *   - `updatePagePermission`: Updates an existing page permission, modifying the route, description, roles, or users.
+ *   - `deletePagePermission`: Deletes an existing page permission along with its associated roles and users.
+ *   - `getAllRoles`: Fetches all roles from the database for use in dropdown selections.
+ *   - `getAllUsersForPermissions`: Fetches all users from the database for use in dropdown selections.
+ * 
+ * Behavior:
+ *   - Each function communicates with the database via Prisma ORM to perform the respective operation.
+ *   - `createPagePermission` and `updatePagePermission` handle permissions for both roles and individual users.
+ *   - `deletePagePermission` ensures related role and user permissions are deleted before removing the main permission.
+ *   - Each CRUD operation triggers an activity log to track changes, ensuring transparency and accountability.
+ *   - After modifying permissions, the path `/logs` is revalidated to reflect updates in the logs.
+ * 
+ * Error Handling:
+ *   - Each function includes error handling, with error messages logged and thrown if an operation fails, 
+ *     ensuring reliable operation and easier debugging.
+ */
+
+
 "use server"
 
 import { db } from "@/lib/db"

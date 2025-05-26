@@ -1,3 +1,31 @@
+/**
+ * ImportExportDialog Component
+ * ----------------------------
+ * A modal dialog for importing and exporting chat transcripts in XML format.
+ *
+ * Features:
+ * - **Import Tab**:
+ *   - Drag-and-drop or file picker to upload `.xml` files.
+ *   - Parses and validates XML message data using `parseXMLTranscript`.
+ *   - Submits valid messages via `importXMLMessages` API.
+ *   - Displays error feedback and loading spinner during import.
+ *
+ * - **Export Tab**:
+ *   - Fetches current chat history with sender/receiver metadata using `getGroupMessagesWithDetails`.
+ *   - Generates XML using `generateXMLTranscript`.
+ *   - Triggers browser download via `downloadXML`.
+ *
+ * UI:
+ * - Tabs to toggle between Import and Export modes.
+ * - Responsive design with feedback for loading, errors, and success.
+ * - Styled with ShadCN UI components and TailwindCSS dark mode support.
+ *
+ * Usage:
+ * ```tsx
+ * <ImportExportDialog open={isOpen} onOpenChange={setIsOpen} groupId={123} />
+ * ```
+ */
+
 "use client"
 
 import type React from "react"

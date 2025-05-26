@@ -1,3 +1,36 @@
+/**
+ * actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides comprehensive server-side logic for a form builder and response system.
+ *   It includes form creation, editing, response submission, file handling, deletion, broadcasting updates, and more.
+ *
+ * Key Functions:
+ *   - getForms / searchForms: Retrieve all forms or filter them by search query.
+ *   - getFormById / getFormWithResponses: Fetch form details with or without submitted responses.
+ *   - createForm: Creates a form with nested questions and options.
+ *   - updateForm: Updates form and its nested questions/options, handles addition/deletion intelligently.
+ *   - submitFormResponse: Accepts answers (text, options, file uploads) and stores them with a form response record.
+ *   - getAnswerWithFile: Retrieves an answer that includes a file for download.
+ *   - copyForm: Duplicates a form structure including questions and options.
+ *   - deleteForm: Fully deletes a form, including related answers, responses, questions, and files.
+ *   - checkFileExists: Utility for verifying file existence and inspecting directory contents.
+ *   - registerPresence / unregisterPresence: Emits real-time presence data for collaborative sessions.
+ *
+ * Features:
+ *   - Handles multiple question types (TEXT, TEXTAREA, RADIO, CHECKBOX, DROPDOWN, FILE).
+ *   - Supports nested option handling and file upload persistence.
+ *   - Broadcasts new responses and presence events via a publish-subscribe channel.
+ *   - Uses Prisma ORM for all DB operations, with manual cleanup and conditional logic.
+ *   - Validates IDs and types defensively to prevent incorrect mutations.
+ *
+ * Notes:
+ *   - Uploaded files are stored in `/uploads`, and referenced via relative paths (e.g., `uploads/filename.pdf`).
+ *   - Form submissions trigger revalidation of form listing and detail pages to reflect changes immediately.
+ *   - `creatorId` is hardcoded as 1 by default but should ideally use the current authenticated user.
+ *   - File deletion attempts are non-blocking and logged if errors occur.
+ */
+
 "use server"
 
 import fs from "fs"

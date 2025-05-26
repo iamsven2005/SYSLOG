@@ -1,3 +1,56 @@
+/**
+ * UsersTable Component
+ * 
+ * This component is responsible for displaying and managing a list of users in the system. It allows admins to perform CRUD operations on users, 
+ * such as adding, editing, deleting, and importing users. It also supports filtering, pagination, and role assignment.
+ * 
+ * Features:
+ * - Displays a table of users with columns for Username, Email, Roles, Devices, and other user-related details.
+ * - Supports bulk selection of users and the ability to delete multiple selected users.
+ * - Allows admins to add a new user, edit existing user details, and delete users.
+ * - Provides an import/export feature for users through Excel file handling.
+ * - Pagination and search functionality to easily navigate through large user datasets.
+ * 
+ * Props:
+ * - `users` (array): A list of users to be displayed in the table.
+ * - `roles` (array): A list of roles available for user assignment.
+ * - `locations` (array): A list of location options available for user assignment.
+ * 
+ * Dependencies:
+ * - `Table`, `TableBody`, `TableCell`, `TableHead`, `TableHeader`, `TableRow` from `@/components/ui/table` for table structure and styling.
+ * - `Button` from `@/components/ui/button` for interaction buttons.
+ * - `Input`, `Checkbox`, and other UI components for managing user input and selection.
+ * - `Dialog`, `DialogContent`, `DialogHeader`, `DialogFooter` for modals to add, edit, and delete users.
+ * - `Pagination`, `PaginationItem`, `PaginationLink`, etc., for managing table pagination.
+ * - `Toast` for providing feedback messages (e.g., success and error messages).
+ * - `XLSX` for handling file uploads and Excel exports.
+ * - `getUsers`, `addUser`, `updateUser`, `deleteUser` for API interaction related to user management.
+ * 
+ * Methods:
+ * - `debounceString`: A utility function to limit the frequency of search query updates.
+ * - `fetchUsers`: Fetches a list of users from the backend with filtering, pagination, and search functionality.
+ * - `fetchDevices`: Fetches a list of devices available in the system for user assignment.
+ * - `openAddModal`, `openEditModal`, `openDeleteModal`: Methods to open the respective modals for adding, editing, or deleting users.
+ * - `handleSearchChange`: Updates the search query and triggers the debounced search.
+ * - `handleAddUser`, `handleUpdateUser`, `handleDeleteUser`: Handle adding, updating, and deleting user actions.
+ * - `handleExport`: Exports the user data to an Excel file.
+ * - `handleImport`: Imports users from an Excel file.
+ * 
+ * State:
+ * - `users`: The list of users displayed in the table.
+ * - `selectedUsers`: Tracks selected users for bulk actions like delete.
+ * - `searchQuery`: Stores the current search query for filtering users.
+ * - `debouncedSearchQuery`: Stores the debounced search query for optimized filtering.
+ * - `isLoading`: A boolean flag indicating if data is being fetched.
+ * - `currentPage`, `pageSize`, `totalPages`, `totalItems`: Pagination-related state variables.
+ * - `userForm`: Tracks the form data for adding/editing users.
+ * - `importFile`: Stores the selected file for import.
+ * - `importPreview`: Previews the contents of the imported Excel file before submission.
+ * 
+ * Modal Handling:
+ * - The component includes modals for adding, editing, deleting, and importing users. These modals are controlled through their respective state variables (`addModalOpen`, `editModalOpen`, `deleteModalOpen`, `importModalOpen`).
+ */
+
 "use client"
 
 import type React from "react"

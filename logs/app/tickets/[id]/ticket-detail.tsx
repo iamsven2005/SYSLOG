@@ -1,3 +1,43 @@
+/**
+ * TicketDetail.tsx - 2025-05-27 by sven.tan
+ *
+ * Description:
+ *   This component renders the detailed view of a support ticket. It displays the ticket information, 
+ *   including the title, description, priority, status, and associated users. It also allows admins or 
+ *   the ticket creator to modify ticket details such as status, priority, and assignee.
+ *
+ *   The component supports the following functionalities:
+ *   - Displays the ticket title, status, priority, and related device (if applicable).
+ *   - Provides functionality to change ticket status, priority, and assignee.
+ *   - Allows adding, displaying, and deleting comments on the ticket.
+ *   - Displays ticket attachments and allows uploading new attachments for both the ticket and comments.
+ *   - Provides a delete confirmation dialog for ticket and comment removal.
+ *   - Allows uploading and displaying of related device information if available.
+ *
+ *   The component uses `React` for rendering, with the state and side-effects managed by `useState`, 
+ *   `useEffect`, and `useRef`. It includes form handling for status, priority, and comment submission 
+ *   and integrates with the backend through API calls to update and manage ticket information.
+ *   
+ *   Various UI elements like `Card`, `Badge`, `Select`, `Button`, and `Textarea` are used to create a 
+ *   structured and user-friendly interface, and `AlertDialog` is used for confirming deletions.
+ *
+ * Features:
+ *   - View and update ticket details (status, priority, assignee).
+ *   - Add and delete comments with attachments.
+ *   - Upload ticket and comment attachments.
+ *   - Display related device details if available.
+ *
+ *   Requires user authentication and role verification (admin or ticket creator) to edit or delete content.
+ *
+ * Dependencies:
+ *   - React (for state management and rendering)
+ *   - Next.js (for routing)
+ *   - `@/prisma/generated/main` (for data models and backend interaction)
+ *   - `sonner` (for toast notifications)
+ *   - UI components from `@/components/ui` (e.g., `Card`, `Button`, `Select`)
+ */
+
+
 "use client"
 
 import { AvatarFallback } from "@/components/ui/avatar"

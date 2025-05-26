@@ -2,7 +2,7 @@ import Link from "next/link"
 import { db } from "@/lib/db"
 import { UserNav } from "./user-nav"
 import { ThemeToggle } from "@/app/theme-toggle"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 import { notFound } from "next/navigation"
 
 

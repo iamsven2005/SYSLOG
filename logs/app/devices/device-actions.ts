@@ -1,3 +1,26 @@
+/*
+ * device-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server-side functions for managing devices within the CRM system.
+ *   Includes functionality for retrieving, adding, updating, and deleting devices, as well as fetching associated device names and IPs.
+ *   The functions support pagination, searching, and filtering based on device attributes.
+ *
+ * Features:
+ *   - `getAllDeviceIps`: Retrieves all unique device IP addresses from the database
+ *   - `getDevices`: Fetches a paginated list of devices based on search criteria and includes user information related to each device
+ *   - `addDevice`: Adds a new device to the database and logs the activity
+ *   - `updateDevice`: Updates an existing device's details and logs the activity
+ *   - `deleteDevice`: Deletes a device by ID and logs the activity
+ *   - `getAllDeviceNames`: Fetches all device names for filtering purposes
+ *   - Utilizes Prisma for interacting with the database and `logActivity` for logging actions
+ *   - Supports handling device attributes such as `name`, `ip_address`, `mac_address`, `password`, and `notes`
+ *
+ * Dependencies:
+ *   - `logActivity`: Logs user actions for auditing purposes
+ *   - `db`: Prisma client instance for interacting with the database
+ *   - `Prisma`: Types from Prisma ORM for type safety in database queries
+ */
 "use server"
 
 import { logActivity } from "@/lib/activity-logger"

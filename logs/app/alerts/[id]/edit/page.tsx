@@ -1,5 +1,5 @@
 /*
- * alert-condition-edit-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * page.tsx (alert-condition-edit) - 2025-05-25 by sven.tan:
  * Server-side page for editing an existing alert condition.
  * Features:
  *   - Validates `id` param from route; returns 404 via `notFound()` if invalid or missing

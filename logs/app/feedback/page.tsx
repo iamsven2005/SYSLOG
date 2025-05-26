@@ -1,3 +1,37 @@
+/**
+ * feedback-page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This is the main client-side interface for the feedback management system.
+ *   Users can submit feedback to managers, view sent feedback, and (if a manager)
+ *   view received feedback. Features include tab navigation, dynamic data loading,
+ *   feedback form integration, read status marking, and toast-based feedback.
+ *
+ * Key Features:
+ *   - Role-based rendering: Shows "Received" tab only for managers/admins.
+ *   - Tabs interface for: Overview, New Feedback, Sent Feedback, Received Feedback.
+ *   - Uses `getCurrentUser` and `hasRole` to determine role-based access.
+ *   - Uses `submitFeedback`, `getSentFeedback`, `getReceivedFeedback`, and `markFeedbackAsRead`.
+ *   - Displays feedback in `Card` layout with optional unread indicators.
+ *
+ * State Management:
+ *   - `user`: The current logged-in user.
+ *   - `isManager`: Boolean indicating if user is a manager or admin.
+ *   - `sentFeedback` / `receivedFeedback`: Feedback lists dynamically fetched.
+ *   - `isLoading`, `loadingSent`, `loadingReceived`: Boolean states for spinners.
+ *   - `activeTab`: UI state for current selected tab.
+ *
+ * UI Components:
+ *   - Uses custom ShadCN UI components like `Tabs`, `Card`, `Badge`, `Loader`, etc.
+ *   - Embeds `<FeedbackForm />` for feedback submission.
+ *   - Each tab section provides guidance text and dynamic content.
+ *
+ * Notes:
+ *   - Only managers/admins will see and can access the "Received" feedback tab.
+ *   - Uses `formatDistanceToNow` from `date-fns` for relative timestamps.
+ *   - Feedback read state is locally updated after marking as read.
+ */
+
 "use client"
 import { useState, useEffect, useCallback } from "react"
 import { notFound, useRouter } from "next/navigation"
@@ -7,7 +41,7 @@ import { Button } from "@/components/ui/button"
 import { MessageSquareIcon, SendIcon, InboxIcon, PlusCircleIcon, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Badge } from "@/components/ui/badge"
-import { getCurrentUser, hasRole } from "../login/actions"
+import { getCurrentUser, hasRole } from "../login/auth"
 import FeedbackForm from "./feedback-form"
 import { toast } from "sonner"
 import { getReceivedFeedback, getSentFeedback, markFeedbackAsRead } from "./feedback-actions"

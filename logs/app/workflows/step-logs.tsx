@@ -1,3 +1,39 @@
+/**
+ * StepLogs Component
+ * 
+ * This component is responsible for displaying the activity logs of a specific audit step. It allows users to add new logs, view existing logs,
+ * and interact with logs related to that specific step. It also fetches the current user to associate logs with a user and updates the logs in real-time.
+ * 
+ * Features:
+ * - Displays a list of logs for the given step, including the message, creator, and timestamp.
+ * - Allows the current user to add new log messages.
+ * - Provides a loading state when fetching logs.
+ * - Displays an error message if logs cannot be loaded or a log cannot be added.
+ * 
+ * Props:
+ * - `stepId` (string): The ID of the step for which the logs are to be displayed.
+ * 
+ * State:
+ * - `logs`: An array of logs for the current step.
+ * - `newLogMessage`: The value of the new log message being typed.
+ * - `isLoading`: A boolean flag indicating whether the logs are being fetched.
+ * - `isSubmitting`: A boolean flag indicating whether a log is being submitted.
+ * - `error`: A string that holds any error message if an operation fails.
+ * - `currentUser`: The current user who is adding a log or viewing logs.
+ * 
+ * Methods:
+ * - `handleAddLog`: Adds a new log for the given step and updates the logs state.
+ * 
+ * Dependencies:
+ * - `Button`, `Input`, `Avatar`, `AvatarFallback`: UI components for handling user input and displaying logs.
+ * - `getLogsByStepId`, `createLog`, `getCurrentUser`: Functions for interacting with the backend and handling the log data.
+ * 
+ * Notes:
+ * - The log creation is done asynchronously, with feedback shown to the user while the log is being processed.
+ * - If there are no logs, a "No activity logs yet" message is displayed.
+ */
+
+
 "use client"
 
 import { useState, useEffect } from "react"

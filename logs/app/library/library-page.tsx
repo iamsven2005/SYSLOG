@@ -1,3 +1,46 @@
+/**
+ * LibraryPage.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LibraryPage** component provides a library management interface with search filters, a table for displaying library entries,
+ *   pagination controls, and options for adding, editing, and managing library entries. It is designed for both admins and regular users.
+ *   Admins have access to the functionality to add new entries, while regular users can view and search through the library entries.
+ *
+ * Key Features:
+ *   - Displays a searchable list of library entries with pagination.
+ *   - Allows admins to add new entries to the library using the **AddLibraryEntryDialog**.
+ *   - Provides search filters like title, category, publication year, and attachments.
+ *   - Supports pagination with controls to navigate between pages of entries.
+ *   - Includes a refresh button for reloading the list of library entries.
+ *   - Provides the ability to select the number of entries per page for better control over the displayed results.
+ *
+ * Key Components:
+ *   - `LibrarySearchFilters`: A component to handle filtering options such as search query, category, publication year range, etc.
+ *   - `LibraryTable`: A component to display the list of library entries in a table format with options for sorting and filtering.
+ *   - `AddLibraryEntryDialog`: A dialog to allow admins to add new library entries.
+ *   - `Button`: Used for actions like refreshing, pagination, and opening dialogs.
+ *   - `Pagination Controls`: Enables the user to navigate between different pages of entries.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LibraryPage
+ *     entries={entries}
+ *     total={totalEntries}
+ *     totalPages={totalPages}
+ *     currentPage={currentPage}
+ *     pageSize={pageSize}
+ *     isAdmin={isAdmin}
+ *   />
+ *   ```
+ *
+ * Notes:
+ *   - The page includes filtering options and uses the URL query parameters to store filter values, which ensures that the user's search filters are maintained across page reloads.
+ *   - Admin users have additional capabilities to manage library entries, such as adding new entries.
+ *   - Pagination is implemented to allow users to navigate through large sets of entries efficiently.
+ *   - The `handleSearch` function dynamically updates the search parameters and reloads the entries based on the selected filters.
+ *   - **isSearching** is used to indicate that a search operation is in progress, providing feedback to the user while the results are being fetched.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

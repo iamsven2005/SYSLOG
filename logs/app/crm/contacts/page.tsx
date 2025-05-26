@@ -1,10 +1,32 @@
+/*
+ * crm/contacts/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This is the main Contacts Directory page in the CRM system. It displays all contact entries
+ *   with filtering via search parameters. Includes links to view, edit, and create contacts.
+ *
+ * Features:
+ *   - Fetches all contacts with associated companies
+ *   - Supports client-side filtering by name, title, email, phone, or company name
+ *   - Displays contact information in a responsive table
+ *   - Provides quick access to "Add Contact", "View", and "Edit" actions
+ *
+ * Props:
+ *   - searchParams (from Next.js route): { search?: string }
+ *
+ * Dependencies:
+ *   - Components: Button, Card, Input, Table
+ *   - Icons: Mail, Phone, Search, Plus
+ *   - Actions: `getContacts`
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search, Plus, Mail, Phone } from "lucide-react"
 import { getContacts } from "../actions/contacts"
-import ContactListSkeleton from "../components/skeletons/contact-list-skeleton"
+import ContactListSkeleton from "./contact-list-skeleton"
 
 export default async function ContactsPage({
   searchParams,

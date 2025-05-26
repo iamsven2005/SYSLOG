@@ -1,3 +1,28 @@
+/**
+ * page.tsx (Form Response Viewer) - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This page fetches a form by ID and renders the `FormViewer` component
+ *   for users to submit responses. It handles missing forms gracefully via `notFound()`.
+ *
+ * Key Features:
+ *   - Retrieves the form using `getFormById` from server actions
+ *   - Displays form title and optional description
+ *   - Renders `FormViewer` with the fetched form
+ *   - Uses `notFound()` from `next/navigation` to show a 404 if form is missing
+ *
+ * Params:
+ *   - `params`: Promise resolving to an object with the `id` string representing the form ID
+ *
+ * Dependencies:
+ *   - `getFormById`: Fetches form metadata and questions
+ *   - `FormViewer`: Client component for interactive form response
+ *   - `notFound`: Next.js function to trigger 404 rendering
+ *
+ * Notes:
+ *   - Intended to be used under dynamic routing like `/forms/[id]`
+ */
+
 import { FormViewer } from "./form-viewer"
 import { getFormById } from "./actions"
 import { notFound } from "next/navigation"

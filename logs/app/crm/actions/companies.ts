@@ -1,3 +1,25 @@
+/*
+ * company-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side actions for managing company records in the CRM system.
+ *   Includes fetching, creating, updating, and deleting companies with relevant relationship data.
+ *
+ * Features:
+ *   - `getCompanies`: Retrieves a list of companies, optionally filtered by type, with contact and project counts
+ *   - `getCompany`: Fetches detailed data for a single company, including contacts, interactions, and projects
+ *   - `createCompany`: Adds a new company entry with optional metadata (certifications, specialties, etc.)
+ *   - `updateCompany`: Updates existing company fields and triggers revalidation
+ *   - `deleteCompany`: Removes a company record and refreshes relevant CRM views
+ *
+ * Dependencies:
+ *   - Prisma client (`db`) with `CompanyType` enum
+ *   - Next.js cache revalidation (`revalidatePath`)
+ *
+ * Notes:
+ *   - `revalidatePath` ensures UI stays in sync after data mutations
+ *   - Uses consistent return pattern: `{ data }` or `{ error }` for client-side handling
+ */
+
 "use server"
 
 import { revalidatePath } from "next/cache"

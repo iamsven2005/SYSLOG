@@ -1,5 +1,5 @@
 /*
- * alert-condition-details-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * alert-condition-details-page.tsx - 2025-05-25 by sven.tan:
  * Server-side page for displaying detailed information about a specific alert condition.
  * Features:
  *   - Validates and parses dynamic `id` param; triggers 404 if missing or invalid

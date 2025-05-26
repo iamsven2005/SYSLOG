@@ -1,3 +1,40 @@
+/**
+ * LibraryTable.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LibraryTable** component is responsible for displaying a table of library entries. 
+ *   Users can view, edit, check out, and delete library entries depending on their permissions. 
+ *   The table supports selecting multiple entries for bulk deletion and includes a detailed modal view for each entry.
+ *
+ * Key Features:
+ *   - Displays a table of library entries with sorting and filtering capabilities.
+ *   - Allows for bulk deletion of selected entries.
+ *   - Provides actions like viewing details, editing, checking out, and returning books.
+ *   - Conditional actions and options based on user role (admin vs regular user).
+ *
+ * Key Components:
+ *   - `LibraryTable`: Displays the list of library entries with all necessary actions.
+ *   - `Button`: Provides UI controls for bulk actions, like deleting or viewing details.
+ *   - `DropdownMenu`: A dropdown for more actions such as editing, checking out, or deleting an entry.
+ *   - `LibraryEntryDetailsModal`: Modal to view detailed information about a selected entry.
+ *   - `EditLibraryEntryDialog`: Dialog for admins to edit a library entry.
+ *   - `CheckoutBookDialog`: Dialog for admins to check out or return books.
+ *   - `Toast`: For providing feedback on successful or failed actions like deletion.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LibraryTable entries={entries} onRefresh={refreshLibrary} isAdmin={true} />
+ *   ```
+ *
+ * Notes:
+ *   - **Bulk Deletion**: Users can select multiple entries and perform bulk deletion.
+ *   - **Entry Actions**: Admins have access to actions such as editing, deleting, and managing book checkouts.
+ *   - **UI State Management**: Manages UI state for dialog visibility, selected entries, and delete actions.
+ *   - **Sorting**: Entries are sorted by various fields like reference number, title, etc.
+ */
+
+
+
 "use client"
 
 import { useState } from "react"

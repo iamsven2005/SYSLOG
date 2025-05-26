@@ -1,3 +1,26 @@
+/*
+ * crm/contacts/[id]/edit/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server-side page component for editing a contact's information.
+ *   It fetches the contact by ID, converts it to a format compatible with the contact form,
+ *   and renders the editable `ContactForm`.
+ *
+ * Props:
+ *   - params: Promise containing route parameters, specifically the contact `id` (string)
+ *
+ * Features:
+ *   - Fetches contact data using `getContact`
+ *   - Handles missing or invalid contact data with `notFound()`
+ *   - Renders a prefilled `ContactForm` with existing data
+ *   - Includes a back button to return to the contact details page
+ *
+ * Dependencies:
+ *   - UI Components: Card, Button, Link, ArrowLeft icon
+ *   - Actions: `getContact`
+ *   - Form Component: `ContactForm`
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

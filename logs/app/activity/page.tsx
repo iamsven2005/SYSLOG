@@ -1,5 +1,5 @@
 /*
- * activity-logs-1.0.tsx - 2025-05-25 by LT:
+ * page.tsx - 2025-05-25 by sven.tan:
  * Initial release of ActivityLogsTable component.
  * Features:
  *   - Fetch and display current user's activity logs with pagination

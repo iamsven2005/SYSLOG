@@ -1,3 +1,41 @@
+/**
+ * book-list.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **BookList** component displays a list of books that have been extracted and allows the user to save them to the database.
+ *   It includes functionality for searching books, viewing their details, and checking their status (whether available or borrowed).
+ *   The component also provides the option to save the books to the database, handling the saving process asynchronously.
+ *
+ * Key Features:
+ *   - Displays a searchable list of books in a table format.
+ *   - Allows saving the books to the database.
+ *   - Shows success or error alerts after attempting to save the books.
+ *   - Supports searching books by title, author, category, or reference number.
+ *   - Handles books with or without attachments (PDFs).
+ *   - Handles borrowed books with a clear status indicator (borrowed/available).
+ *
+ * Key Components:
+ *   - `saveBooksToDB`: A function that saves books to the database and handles errors and success responses.
+ *   - `Input`: A search input field to filter books based on the entered search term.
+ *   - `Table`: Displays the list of books in a structured table format with columns for various book details.
+ *   - `Alert`: Provides feedback to the user regarding the success or failure of the save operation.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   const books = [
+ *     { refNo: "0001", category: "PM9", title: "Book Title", author: "Author Name", pubYear: "2023", isBorrowed: false, hasPdf: true, borrower: null },
+ *     { refNo: "0002", category: "PM9", title: "Another Book", author: "Author Name", pubYear: "2022", isBorrowed: true, hasPdf: false, borrower: "John Doe" }
+ *   ];
+ *   <BookList books={books} />
+ *   ```
+ *
+ * Notes:
+ *   - **State Management**: The component uses React's `useState` to manage search terms, saving states, and success/error states for saving books.
+ *   - **Filtering**: Books are filtered based on the search term in their title, author, category, or reference number.
+ *   - **Alert**: Feedback about the save process is displayed using an `Alert` component. A success or error message is shown based on the outcome of saving the books.
+ *   - **Table Styling**: The table dynamically highlights borrowed books with a background color.
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,9 +44,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { FileText, FileCheck, Save, Check, AlertCircle } from "lucide-react"
-import { saveBooksToDB } from "./actions"
+import { saveBooksToDB } from "./saveBooksToDB"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import Book from "./types"
+import Book from "./parseBookData"
 
 interface BookListProps {
   books: Book[]

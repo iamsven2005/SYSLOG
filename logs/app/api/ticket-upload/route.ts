@@ -3,7 +3,7 @@ import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
-import { getId } from "@/app/login/actions"
+import { getId } from "@/app/login/auth"
 
 export async function POST(request: NextRequest) {
   try {

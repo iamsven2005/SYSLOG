@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { updateNotification, deleteNotification } from "@/app/notifications/notification-actions"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 
   try {

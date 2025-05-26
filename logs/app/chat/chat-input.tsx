@@ -1,3 +1,45 @@
+/**
+ * ChatInput Component
+ * -------------------
+ * The `ChatInput` is a feature-rich messaging input field designed for a real-time group chat interface.
+ * It supports text input, file uploads, slash commands, drag-and-drop, and auxiliary tools like emoji picker,
+ * date picker, poll creation, and calculator dialog.
+ *
+ * Props:
+ * - groupId: number — ID of the group chat where messages will be sent.
+ * - userId: number — ID of the currently logged-in user (used for poll creation).
+ *
+ * Core Features:
+ * ---------------
+ * ✅ Send plain text messages using `sendMessage`.
+ * ✅ Upload files (via button, drag-and-drop, or paste), with size checks and visual previews.
+ * ✅ Handle slash commands (`/poll`, `/emoji`, `/calendar`, `/calculator`, etc.).
+ * ✅ Display live command suggestion list when typing `/`.
+ * ✅ Insert emoji at cursor position using the EmojiPickerDialog.
+ * ✅ Provide popovers for command reference and emoji access.
+ * ✅ Dynamically load:
+ *    - PollCreator for creating group polls
+ *    - DatePickerDialog for scheduling
+ *    - CalculatorDialog for math expressions
+ * ✅ Parse clipboard images (with fallback for modern Clipboard API).
+ * ✅ Keyboard interactions: Enter to send, Shift+Enter for new line, arrows to browse commands.
+ *
+ * Accessibility & Usability:
+ * ---------------------------
+ * - Keyboard-friendly with intuitive command navigation.
+ * - Graceful fallback for browsers without Clipboard API support.
+ * - Paste/upload preview and error handling.
+ *
+ * Related Modules:
+ * - `sendMessage` (API action for sending messages)
+ * - `/api/chat-upload` (handles file uploads)
+ * - UI Components: PollCreator, EmojiPickerDialog, CalculatorDialog, DatePickerDialog
+ *
+ * Usage:
+ * ------
+ * Used at the bottom of the chat panel in `ChatContainer`, handles all user input interactions.
+ */
+
 "use client"
 
 import type React from "react"

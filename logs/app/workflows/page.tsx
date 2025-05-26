@@ -1,3 +1,33 @@
+/**
+ * HomePage Component
+ * 
+ * This component serves as the main landing page for the "Audit Workflows" section. It displays a list of workflows if available,
+ * or prompts the user to create their first workflow if no workflows are present. It includes a search bar, a button to create a new workflow,
+ * and displays a list of workflows in a card format with key information such as name, creation date, description, and the number of steps.
+ * 
+ * Features:
+ * - Displays a search bar and button to create a new workflow.
+ * - Fetches and displays a list of workflows with key details.
+ * - Includes error handling if workflows cannot be fetched.
+ * - Provides a link to view all workflows if there are more than three.
+ * - Shows a prompt to create a workflow if none exist.
+ * 
+ * Dependencies:
+ * - `CreateWorkflowButton`: Button component for creating a new workflow.
+ * - `EmptyWorkflows`: Component displayed when no workflows are available.
+ * - `WorkflowSearch`: Component for searching workflows.
+ * - `Card`, `CardContent`, `CardHeader`, `CardFooter`, `CardTitle`, `CardDescription`: Components used to display each workflow in a card format.
+ * - `getWorkflows`: Function to fetch workflows based on a search query.
+ * 
+ * Props:
+ * - `searchParams`: A promise that resolves to the query string used for searching workflows.
+ * 
+ * Methods:
+ * - `getWorkflows(query)`: Fetches workflows based on the provided search query.
+ * - `toLocaleDateString()`: Formats the creation date of the workflow.
+ */
+
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"

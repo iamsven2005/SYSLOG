@@ -1,3 +1,22 @@
+/*
+ * app/crm/layout.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This layout component serves as the wrapper for the CRM pages. It includes a header with navigation links and checks for user access to the current page.
+ *   The layout ensures that only authorized users can access the `/command-matches` route, redirecting unauthorized users to the "Not Found" page.
+ *
+ * Features:
+ *   - Displays a sticky header with navigation buttons linking to various CRM sections (Dashboard, Projects, Companies, Contacts, Reports, Equipment)
+ *   - Validates user access using the `allowed` function to check permissions for `/command-matches`
+ *   - If access is denied, it redirects to the "Not Found" page using `notFound()`
+ *   - Renders children components as part of the layout, making it reusable across different CRM pages
+ *
+ * Dependencies:
+ *   - UI Components: `Button`, `Link` for navigation
+ *   - `allowed` function for checking user permissions
+ *   - `notFound()` for handling unauthorized access
+ */
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { allowed } from "@/components/navbar"

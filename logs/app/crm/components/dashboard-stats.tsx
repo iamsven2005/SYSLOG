@@ -1,3 +1,20 @@
+/*
+ * crm/dashboard/components/dashboard-stats.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays summary statistics for key metrics on the BridgeCRM dashboard.
+ *
+ * Features:
+ *   - Shows total number of active projects, contractors, inspections, and open bids
+ *   - Uses Lucide icons to visually represent each metric
+ *   - Responsive layout using a grid (2 to 4 columns based on screen size)
+ *
+ * Props:
+ *   - `activeProjects`: number of ongoing bridge projects
+ *   - `contractors`: count of registered contractor and subcontractor companies
+ *   - `upcomingInspections`: inspections scheduled within the next 30 days
+ *   - `openBids`: count of bids pending review
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HardHat, Building2, FileText, TrendingUp } from "lucide-react"
 

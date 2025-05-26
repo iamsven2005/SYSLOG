@@ -1,3 +1,44 @@
+/**
+ * Location Management Functions - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides server-side functions for managing location data within a database.
+ *   It includes functionalities to fetch, add, update, and delete locations, with integrated logging and validation.
+ *
+ * Key Features:
+ *   - Fetches locations with optional pagination and search filters.
+ *   - Adds new locations to the database.
+ *   - Updates existing location details, including propagating changes to associated users.
+ *   - Deletes a location and removes it from any user associations, with revalidation.
+ *   - Activity logging and path revalidation are integrated into each action.
+ *
+ * Key Components:
+ *   - `getLocations`: Retrieves a list of locations with pagination and optional filters.
+ *   - `addLocation`: Adds a new location to the database and logs the activity.
+ *   - `updateLocation`: Updates location details, handles name changes, and updates affected users.
+ *   - `deleteLocation`: Deletes a location, removes it from affected users, and logs the activity.
+ *
+ * Example Usage:
+ *   ```ts
+ *   // Fetch locations
+ *   const { locations, pageCount, totalCount } = await getLocations({ search: "New York" });
+ *
+ *   // Add a location
+ *   const newLocation = await addLocation({ code: "NYC", name: "New York City", Region: "East", WCI_URL: "example.com", CCY: "USD", Remarks: "Big city" });
+ *
+ *   // Update location
+ *   const updatedLocation = await updateLocation({ id: 1, code: "NYC", name: "New York City", Region: "East", WCI_URL: "example.com", CCY: "USD", Remarks: "Updated city" });
+ *
+ *   // Delete a location
+ *   const deletedLocation = await deleteLocation(1);
+ *   ```
+ *
+ * Notes:
+ *   - **Revalidation**: The `revalidatePath` function ensures that related pages (like `/locations` and `/logs`) are updated after changes.
+ *   - **User Impact**: When updating or deleting locations, any affected users are updated automatically to maintain consistency in their location data.
+ *   - **Error Handling**: Errors are logged to the console and activity logs, providing transparency in case of issues.
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

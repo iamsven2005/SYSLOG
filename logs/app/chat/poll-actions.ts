@@ -1,7 +1,26 @@
+/*
+ * poll-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server actions for creating polls, voting, and retrieving poll results in chat groups.
+ *   Integrates with Prisma ORM and Next.js cache revalidation.
+ *
+ * Features:
+ *   - `createPoll`: Creates a message and associated poll with options
+ *   - `votePoll`: Allows users to vote on a poll (single or multiple options)
+ *   - `getPollResults`: Retrieves poll details, options, and associated votes
+ *   - Automatically revalidates the chat path to reflect latest poll state
+ *
+ * Dependencies:
+ *   - Prisma client via `db` from `@/lib/db`
+ *   - `revalidatePath` from `next/cache` for route data freshness
+ *
+ */
+
 "use server"
 
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { getId } from "../login/auth"
 
 // Create a new poll
 export async function createPoll(
@@ -59,7 +78,7 @@ export async function createPoll(
 // Vote on a poll
 export async function votePoll(pollId: number, optionIds: number[]) {
   try {
-    const userId = 1 // Replace with actual user ID from session
+const userId = Number(await getId()) || 1;
 
     // Delete any existing votes by this user for this poll
     await db.pollVote.deleteMany({

@@ -1,3 +1,27 @@
+/**
+ * feedback-form.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side React component for submitting feedback to managers or admins.
+ *   The form includes fields for subject, message, and multiple recipient selection.
+ *   It handles fetching recipient lists, form submission, and user feedback via toasts.
+ *
+ * Features:
+ *   - Loads list of available managers from the server via `getManagers`.
+ *   - Provides a form for feedback subject, message, and recipients.
+ *   - Submits data via `submitFeedback`, which is a server action.
+ *   - Displays loading and submission states with visual indicators.
+ *
+ * Props:
+ *   - onSuccess (optional): Callback to run after successful submission.
+ *
+ * Dependencies:
+ *   - Uses custom UI components (Input, Textarea, Button, Checkbox, Label).
+ *   - Depends on `toast` from `sonner` for status messages.
+ *   - Relies on Prisma-generated `User` type for manager data.
+ */
+
+
 "use client"
 
 import { useState } from "react"

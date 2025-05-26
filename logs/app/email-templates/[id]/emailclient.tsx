@@ -1,3 +1,39 @@
+/**
+ * client.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This page displays details for a single email template based on its `id`.
+ *   Users can:
+ *     - View metadata (subject, creation/update timestamps, assigned users)
+ *     - Preview the formatted email body
+ *     - Switch to "Edit" mode to modify the template
+ *     - Toggle between "View" and "Edit" modes with a button
+ *
+ * Features:
+ *   - Fetches email template data using `getEmailTemplate()`
+ *   - Supports loading and error states
+ *   - Provides a toggle to switch between a read-only preview and an editable form
+ *   - Uses `EmailTemplateForm` to handle editing
+ *   - Displays assigned user IDs (username resolution deferred or handled elsewhere)
+ *
+ * Components:
+ *   - `DatabaseStatusBar`: Shows the DB connection status
+ *   - `EmailTemplateForm`: Form for editing the email template
+ *   - `Card` layout from ShadCN UI for detail sections and preview
+ *
+ * Props:
+ *   - `params.id` (string): The email template ID from the route (converted to number)
+ *
+ * State:
+ *   - `emailTemplate`: Holds the fetched email template object
+ *   - `loading`, `error`: Track API status
+ *   - `mode`: Determines if the UI is in "view" or "edit" mode
+ *
+ * Navigation:
+ *   - Back button links to `/alerts`
+ *   - Uses `router.refresh()` after saving edits to refetch data
+ */
+
 "use client"
 
 import { useRouter } from "next/navigation"

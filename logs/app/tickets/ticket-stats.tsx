@@ -1,3 +1,44 @@
+/**
+ * TicketStats Component
+ * 
+ * This component displays key statistics about the support tickets, including a breakdown of ticket status, priority,
+ * average resolution time, and other metrics. It provides a visual overview of the ticket data through various charts and cards,
+ * including the number of open tickets, tickets this week, and top assignees.
+ * 
+ * Features:
+ * - Displays total tickets, tickets created this week, and ticket resolution statistics.
+ * - Allows for viewing ticket data by status, priority, and assignee through tabs.
+ * - Provides a real-time loading skeleton and error handling during data fetch.
+ * - Shows badges for different ticket statuses and priorities.
+ * - Displays recent tickets with their respective status and priority.
+ * 
+ * Dependencies:
+ * - `useState`, `useEffect` from React for managing state and side effects.
+ * - `Card`, `CardContent`, `CardHeader`, `CardTitle` from `@/components/ui/card` for structuring the stats section.
+ * - `Tabs`, `TabsContent`, `TabsList`, `TabsTrigger` from `@/components/ui/tabs` for tabbed navigation.
+ * - `Badge` from `@/components/ui/badge` for displaying ticket statuses and priorities.
+ * - `getTicketStats` for fetching ticket statistics from the server.
+ * - `toast` from `sonner` for displaying notifications.
+ * - Icons from `lucide-react` for visual representation (e.g., `BarChart3`, `Clock`, `AlertCircle`).
+ * 
+ * State:
+ * - `stats`: Stores the fetched ticket statistics data.
+ * - `isLoading`: Tracks the loading state while data is being fetched.
+ * 
+ * Methods:
+ * - `useEffect`: Fetches the ticket statistics when the component mounts.
+ * - `getTicketStats`: Fetches the ticket statistics data from the backend.
+ * 
+ * Card Components:
+ * - Displays individual metrics such as total tickets, tickets this week, average resolution time, etc.
+ * - Each metric is displayed inside a card with a visual icon and number.
+ * 
+ * Tabs:
+ * - Allows users to view ticket data by status, priority, or assignee.
+ * - Each tab presents a breakdown of the tickets in that category (status: open, in-progress, resolved, closed; priority: low, medium, high, critical).
+ */
+
+
 "use client"
 
 import { useState, useEffect } from "react"

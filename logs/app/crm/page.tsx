@@ -1,3 +1,28 @@
+/*
+ * app/crm/dashboard.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server-side component for the "Dashboard" page in the CRM system.
+ *   It fetches data related to projects, companies, and interactions, calculates key statistics, and displays them in a dashboard view.
+ *   The dashboard includes tabs for managing active projects and viewing recent interactions.
+ *   The page uses skeleton loaders while fetching data to improve the user experience.
+ *
+ * Features:
+ *   - Fetches data for projects, companies, and interactions via `getProjects`, `getCompanies`, and `getInteractions` actions
+ *   - Displays key statistics such as active projects, contractors, upcoming inspections, and open bids
+ *   - Implements tabs for navigating between active projects and recent interactions
+ *   - Displays skeleton loaders while data is being fetched or if there is an error
+ *   - Provides buttons for creating new projects and exporting data
+ *   - Uses the `allowed` function to verify if the user has access to the CRM dashboard, redirecting to "Not Found" if not authorized
+ *
+ * Dependencies:
+ *   - UI Components: `Button`, `Link`, `Card`, `Tabs`, `TabsContent`, `TabsTrigger`, `TabsList`, etc.
+ *   - Actions: `getProjects`, `getCompanies`, `getInteractions`
+ *   - Subcomponents: `DashboardStats`, `ProjectList`, `InteractionList`, `DashboardStatsSkeleton`, `ProjectListSkeleton`, `InteractionListSkeleton`
+ *   - `allowed` for checking user permissions
+ *   - `notFound()` for handling unauthorized access
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,10 +33,9 @@ import { getInteractions } from "./actions/interactions"
 import DashboardStats from "./components/dashboard-stats"
 import ProjectList from "./components/project-list"
 import InteractionList from "./components/interaction-list"
-import MaterialOrderList from "./components/material-order-list"
-import DashboardStatsSkeleton from "./components/skeletons/dashboard-stats-skeleton"
-import ProjectListSkeleton from "./components/skeletons/project-list-skeleton"
-import InteractionListSkeleton from "./components/skeletons/interaction-list-skeleton"
+import DashboardStatsSkeleton from "./dashboard-stats-skeleton"
+import ProjectListSkeleton from "./projects/project-list-skeleton"
+import InteractionListSkeleton from "./interactions/interaction-list-skeleton"
 import { notFound } from "next/navigation"
 import { allowed } from "@/components/navbar"
 
@@ -52,7 +76,6 @@ export default async function Dashboard() {
             <TabsList>
               <TabsTrigger value="projects">Active Projects</TabsTrigger>
               <TabsTrigger value="interactions">Recent Interactions</TabsTrigger>
-              <TabsTrigger value="materials">Material Orders</TabsTrigger>
             </TabsList>
             <div className="ml-auto">
               <Button asChild>
@@ -100,21 +123,6 @@ export default async function Dashboard() {
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/crm/interactions">View All Interactions</Link>
                 </Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-          <TabsContent value="materials" className="border-none p-0">
-            <Card>
-              <CardHeader>
-                <CardTitle>Material Orders</CardTitle>
-                <CardDescription>Track pending and recent material orders for your projects.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MaterialOrderList />
-              </CardContent>
-              <CardFooter className="flex justify-between pt-4">
-                <Button variant="outline">New Order</Button>
-                <Button variant="outline">View All Orders</Button>
               </CardFooter>
             </Card>
           </TabsContent>

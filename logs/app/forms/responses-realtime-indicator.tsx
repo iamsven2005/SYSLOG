@@ -1,3 +1,34 @@
+/**
+ * ResponsesRealTimeIndicator.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component listens for real-time notifications of new responses submitted to a form. It displays a badge
+ *   showing the number of new responses and provides a button to refresh the view and reset the badge count.
+ *   It uses Server-Sent Events (SSE) to receive real-time updates and notifies the user via a toast when a new response is submitted.
+ *
+ * Key Features:
+ *   - Listens for real-time updates for new form responses using SSE.
+ *   - Displays a badge showing the number of new responses that have been submitted to the form.
+ *   - Allows the user to refresh the form data and reset the badge count by clicking the badge or the refresh button.
+ *   - Uses the `useSSE` hook to handle the SSE connection and the `toast` library for notifications.
+ *
+ * Key Functions:
+ *   - `onMessage`: When a new response is submitted, it updates the `newResponses` state and shows a toast notification.
+ *   - `setNewResponses`: Updates the count of new responses.
+ *   - `refresh`: Clears the new responses count and forces a page refresh when the user clicks the refresh button.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <ResponsesRealTimeIndicator formId={form.id} />
+ *   ```
+ *
+ * Notes:
+ *   - The `formId` is passed as a prop to indicate which form to listen to for responses.
+ *   - The `Badge` component shows the number of new responses, and clicking it will refresh the page.
+ *   - The `Button` with the "Refresh" icon allows manual refresh of the page.
+ *   - The component uses the `sonner` library to show success notifications when a new response is received.
+ */
+
 "use client"
 
 import { Badge } from "@/components/ui/badge"

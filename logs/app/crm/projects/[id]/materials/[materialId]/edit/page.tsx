@@ -1,3 +1,16 @@
+/**
+ * Page for editing the details of a material for a specific project.
+ * 
+ * - Fetches the material data using the materialId and ensures it is associated with the correct project.
+ * - Displays the material details in a form for editing.
+ * - Provides a back button to return to the project's detail page.
+ * - If the material is not found or if the project ID does not match, returns a 404 error page.
+ * 
+ * Route Params:
+ * - id: The ID of the project.
+ * - materialId: The ID of the material to edit.
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"

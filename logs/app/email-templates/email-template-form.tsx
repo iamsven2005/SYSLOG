@@ -1,3 +1,47 @@
+/**
+ * EmailTemplateForm.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This client component renders a form for creating or editing email templates.
+ *   It includes live preview functionality with placeholder substitution and user assignment logic.
+ *
+ * Key Features:
+ *   - create/edit email templates using form inputs.
+ *   - assign/unassign users via MultiSelect interface.
+ *   - validate input with Zod and React Hook Form.
+ *   - support for template preview using mock data substitution.
+ *
+ * Form Fields:
+ *   - name: string (required, min 2 characters)
+ *   - subject: string (required, min 2 characters)
+ *   - body: string (required, min 10 characters)
+ *   - assignedUsers: string[] (optional, user IDs)
+ *
+ * Placeholder Support:
+ *   - {{username}} – Replaced with "John Doe"
+ *   - {{email}} – Replaced with "john.doe@example.com"
+ *   - {{command}} – Replaced with "sudo rm -rf /"
+ *   - {{logEntry}} – Replaced with "2023-03-15 14:30:45 - User executed: sudo rm -rf /"
+ *   - {{ruleName}} – Replaced with "Dangerous Command"
+ *   - {{groupName}} – Replaced with "System Security"
+ *   - {{timestamp}} – Replaced with current date/time string
+ *
+ * Tabs:
+ *   - "Edit Template": Input form for email details and user assignment.
+ *   - "Preview": Live HTML rendering of the template with example substitutions.
+ *
+ * External Dependencies:
+ *   - assignUsersToEmailTemplate: Assigns users to the template (via userEmailTemplate table)
+ *   - removeUsersFromEmailTemplate: Removes assigned users
+ *   - createEmailTemplate / updateEmailTemplate: Saves form data
+ *   - getUsers: Fetches user list for selection
+ *
+ * Notes:
+ *   - Uses `toast` from `sonner` for user feedback.
+ *   - All user selections are converted between string (form state) and number (server).
+ *   - Automatically syncs user assignment delta between old and new values during updates.
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"

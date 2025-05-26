@@ -1,3 +1,31 @@
+/*
+ * devices\page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side component for displaying and managing devices within the CRM system.
+ *   It allows users to view, search, filter, paginate, add, edit, delete, and import devices.
+ *   The table provides real-time device status, supports IP address validation, and allows for bulk actions on selected devices.
+ *
+ * Features:
+ *   - Displays device details in a table format with search, filter, and pagination capabilities
+ *   - Supports adding, editing, and deleting devices via modals
+ *   - Validates and checks for duplicate IP addresses, suggesting available IPs from the same subnet
+ *   - Real-time status indicator for devices, showing if they are online or offline
+ *   - Includes functionality to export and import devices using Excel files
+ *   - Device import includes a preview of data before importing
+ *   - Allows for bulk selection of devices for actions like delete or update
+ *   - Shows device status, users assigned to each device, and related information
+ *
+ * Dependencies:
+ *   - UI Components: `Button`, `Table`, `Input`, `Checkbox`, `Dialog`, `Label`, `Badge`, `Pagination`, etc.
+ *   - Icons: `RefreshCw`, `Trash2`, `Edit`, `Plus`, `Server`, `Network`, `Key`, `FileText`, `Eye`, `EyeOff`, `Download`, `Upload`, `Wand2`
+ *   - Utilities: `debounce`, `toast` for notifications, `XLSX` for Excel file handling
+ *   - `addDevice`, `deleteDevice`, `getDevices`, `updateDevice`, `getAllDeviceIps` for device management actions
+ *   - `useDeviceStatus` for managing and displaying device connection statuses
+ *   - `exportToExcel`, `generateDeviceImportTemplate`, `prepareDevicesForExport` for export utilities
+ *   - State management for device selection, pagination, and modal handling
+ */
+
 "use client"
 
 import type React from "react"
@@ -18,7 +46,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import {
+import{
   Pagination,
   PaginationContent,
   PaginationEllipsis,

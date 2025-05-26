@@ -1,5 +1,5 @@
 /*
- * usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * usage-chart.tsx - 2025-05-25 by sven.tan:
  * Initial release of <UsageChart> component for tracking CPU and Memory usage across devices.
  * Features:
  *   - Toggle between CPU and Memory metrics with tab-based control
@@ -30,7 +30,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { getDeviceUsageData } from "../logs/actions"
+import { getDeviceUsageData } from "../logs/systemMetrics"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 
 // Color palette for different devices

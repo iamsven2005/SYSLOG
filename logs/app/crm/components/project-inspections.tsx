@@ -1,3 +1,22 @@
+/*
+ * crm/projects/components/project-inspections.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component displays a list of quality control inspections linked to a bridge project.
+ *   It flattens inspection data from all associated bridge phases for easier overview.
+ *
+ * Features:
+ *   - Dynamically lists inspections by phase, date, inspector, and result
+ *   - Color-coded badge for inspection outcomes: PASS, FAIL, CONDITIONAL PASS
+ *   - Fallback UI when no inspections are found
+ *   - CTA to add inspection (only if phases exist)
+ *
+ * Dependencies:
+ *   - formatDate utility from @/lib/utils
+ *   - ShadCN UI components (Card, Button)
+ *   - Types: BridgePhase, BridgeProject, PhaseInspection, Project
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

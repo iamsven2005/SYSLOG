@@ -37,7 +37,7 @@
 
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
-import { getCurrentUser } from "../login/actions"
+import { getCurrentUser } from "../login/auth"
 import { parseXMLDate, type XMLMessage } from "../utils/xml-utils"
 import { Prisma } from "@/prisma/generated/main"
 import { notFound } from "next/navigation"

@@ -1,3 +1,26 @@
+/*
+ * PollComponent.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component for displaying and interacting with polls in a chat application.
+ *   Supports single or multi-select options, live vote updates, and viewing vote breakdowns.
+ *
+ * Features:
+ *   - Displays poll question, options, and vote results
+ *   - Supports multi-select and single-select polling logic
+ *   - Allows users to submit votes, with optimistic UI updates
+ *   - Shows real-time vote progress with automatic refresh every 3 seconds
+ *   - Displays voter avatars and usernames when toggled
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (Checkbox, RadioGroup, Progress, Avatar, Button)
+ *   - Icons from Lucide React (Users, BarChart3)
+ *   - Server actions: `votePoll`, `getPollResults`
+ *
+ * Notes:
+ *   - Assumes `userId` is passed from the parent context (authenticated user)
+ *   - Uses fallback initials for avatar display
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

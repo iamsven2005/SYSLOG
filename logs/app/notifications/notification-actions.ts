@@ -1,7 +1,33 @@
+/**
+ * notification-actions.ts - 2025-05-25 by sven.tan
+ *
+ * Provides server-side functions for managing notifications including creation, updating, reading, and deletion.
+ *
+ * Functionality:
+ * - **getNotifications**: Fetches notifications for the current user with details on whether they have been read.
+ * - **markNotificationAsRead**: Marks a specific notification as read for the current user and triggers path revalidation.
+ * - **createNotification**: Allows an admin to create a new notification with optional expiry and importance flags.
+ * - **updateNotification**: Allows an admin to update an existing notification.
+ * - **deleteNotification**: Deletes a notification if the user has admin privileges.
+ * - **getAllNotificationsAdmin**: Fetches all notifications for admin users, including read counts.
+ *
+ * Usage:
+ * - These functions are used to manage notifications across the application, allowing users to view, mark, create, and delete notifications.
+ * - Admin users are granted additional privileges to create, update, and delete notifications.
+ * 
+ * Limitations:
+ * - Requires the user to be authenticated for all operations. If the user is not authenticated or lacks the necessary role, an error is thrown.
+ * - Admin-only operations ensure that only users with an "admin" role can create, update, or delete notifications.
+ *
+ * Improvements:
+ * - Could optimize the read/unread state tracking by implementing more efficient querying for large datasets.
+ * - More granular error handling could be added for specific cases (e.g., invalid input during update or create operations).
+ */
+
 "use server"
 
 import { db } from "@/lib/db"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 import { revalidatePath } from "next/cache"
 
 export async function getNotifications() {

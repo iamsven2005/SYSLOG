@@ -1,3 +1,29 @@
+/**
+ * question-editor.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component renders a form field for editing a question in a survey or form.
+ *   It allows the user to modify the question text, change the question type, and add or remove options if applicable.
+ *
+ * Key Features:
+ *   - Allows editing of the question's text and type (e.g., short answer, multiple choice, etc.)
+ *   - Supports adding and removing options for multiple choice, checkbox, and dropdown questions
+ *   - Provides a toggle to mark the question as required
+ *   - Removes the question if it is the only one in the form, with feedback to the user
+ *   - Auto-updates the parent component when any changes occur to the question
+ *   - Handles dynamic generation of option inputs for "RADIO", "CHECKBOX", and "DROPDOWN" question types
+ *
+ * Props:
+ *   - `question`: The current question data that will be displayed and edited.
+ *   - `onChange`: A function to propagate changes back to the parent component when the question is modified.
+ *   - `onRemove`: A function to handle the removal of the question.
+ *   - `isOnly`: A boolean that disables the removal of the question if it is the only question in the form.
+ *
+ * Notes:
+ *   - The component includes validation for required fields (question text and options for certain types).
+ *   - It supports different question types including `TEXT`, `TEXTAREA`, `RADIO`, `CHECKBOX`, `DROPDOWN`, and `FILE`.
+ */
+
 "use client"
 
 import { Button } from "@/components/ui/button"

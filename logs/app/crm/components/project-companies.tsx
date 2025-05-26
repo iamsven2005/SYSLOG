@@ -1,3 +1,21 @@
+/*
+ * crm/projects/components/project-companies.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a list of companies involved in a specific bridge project, including their roles,
+ *   contract values, durations, and status.
+ *
+ * Features:
+ *   - Lists companies linked to the project via `ProjectCompanyLink`
+ *   - Shows details such as role, contract value, start/end dates, and contract status
+ *   - Provides link to each company's details page
+ *   - Includes an "Add Company" button to associate new companies with the project
+ *
+ * Notes:
+ *   - Accepts a `ProjectWithCompanies` prop which includes nested company and link data
+ *   - Uses utility functions for formatting currency and dates
+ *   - Color codes contract statuses for quick visual reference
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

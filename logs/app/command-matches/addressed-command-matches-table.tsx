@@ -1,3 +1,29 @@
+/*
+ * AddressedCommandMatchesTable.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component that renders a table of addressed command matches.
+ *   Supports viewing match details, unmarking matches as addressed, single and bulk deletion.
+ *
+ * Features:
+ *   - Table listing each command match with rule, command, notes, timestamps, and addressed metadata
+ *   - Select/deselect matches for bulk actions
+ *   - View command match details in a dialog
+ *   - Unmark a match as addressed and move it to the unaddressed state
+ *   - Delete individual or multiple command matches with confirmation dialogs
+ *   - Displays user feedback via toast notifications
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (Table, Dialog, Button, Badge)
+ *   - Icons from Lucide React (Eye, Trash2, CheckSquare, Square, Undo2)
+ *   - `deleteCommandMatch` and `unmarkCommandMatchAsAddressed` server actions
+ *   - Toast notifications via `sonner`
+ *   - Uses Next.js `useRouter` for refreshing UI after mutations
+ *
+ * Notes:
+ *   - Designed for use in audit log or security monitoring interfaces
+ *   - Ensures safe actions with user confirmations and loading states
+ */
+
 "use client"
 
 import { useState } from "react"

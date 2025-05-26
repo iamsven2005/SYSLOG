@@ -1,3 +1,21 @@
+/*
+ * crm/actions/interactions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server-side functions for handling CRM interactions in the database.
+ *   Supports querying, retrieving, and creating interaction records linked to
+ *   projects, companies, and contacts.
+ *
+ * Functions:
+ *   - getInteractions(filter): Retrieve a list of interactions with optional filtering by projectId or companyId.
+ *   - getInteraction(id): Retrieve a single interaction by its ID, including related entities.
+ *   - createInteraction(data): Create a new interaction and trigger path revalidation for relevant entities.
+ *
+ * Notes:
+ *   - Uses Prisma client (`db`) for database operations.
+ *   - Applies `revalidatePath` to ensure UI updates for related paths after mutation.
+ */
+
 "use server"
 
 import { db } from "@/lib/db";

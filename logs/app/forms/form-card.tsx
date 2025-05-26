@@ -1,3 +1,38 @@
+/**
+ * FormCard.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component represents a card displaying basic information about a form, such as its title,
+ *   description, the number of questions, and the number of responses. It provides options to view,
+ *   edit, view results, make a copy, or delete the form. It is primarily used in a list of forms for
+ *   management or display purposes.
+ *
+ * Key Features:
+ *   - Displays form details including title, description, question count, and response count.
+ *   - Provides buttons for actions like viewing the form, editing, or viewing response results.
+ *   - Allows users to make a copy of the form and navigate to the copy for editing.
+ *   - Provides an option to delete the form, with a confirmation dialog to prevent accidental deletions.
+ *   - Uses dropdown menu for additional form management actions like copying or deleting.
+ *   
+ * Key Functions:
+ *   - `handleCopyForm`: Creates a copy of the form and redirects to the new form’s edit page.
+ *   - `handleDeleteForm`: Deletes the form after confirming with the user via an alert dialog.
+ *   - `handleFileInputChange`: Manages file upload and stores the file name or removes it when no file is selected.
+ *
+ * Notes:
+ *   - The `handleDeleteForm` function triggers an alert dialog asking for user confirmation before deleting the form.
+ *   - The form is only visible to users with the necessary permissions, and the component includes various 
+ *     UI elements for managing the form.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <FormCard form={{ id: 1, title: "Survey", description: "Customer satisfaction survey", createdAt: new Date(), questions: [], responses: [] }} />
+ *   ```
+ *   
+ *   - This card is interactive and handles events like copying and deleting forms. It provides a smooth user experience 
+ *     for administrators managing multiple forms.
+ */
+
 "use client"
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"

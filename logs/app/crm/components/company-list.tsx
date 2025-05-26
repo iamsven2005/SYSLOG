@@ -1,3 +1,19 @@
+/*
+ * crm/companies/components/company-list.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a tabular list of companies with key details and action buttons in BridgeCRM.
+ *
+ * Features:
+ *   - Shows company name, type, industry, specialties, and rating
+ *   - Includes "View" and "Edit" buttons for each company
+ *   - Uses dynamic badge coloring based on company type
+ *   - Renders star-based rating visualization (★/☆)
+ *
+ * Notes:
+ *   - Gracefully handles empty or missing data (e.g., N/A for specialties)
+ *   - `CompanyTypeBadge` provides consistent styling for type tags
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Company, CompanyType } from "@/prisma/generated/main"

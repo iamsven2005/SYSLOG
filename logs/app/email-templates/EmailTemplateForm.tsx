@@ -1,3 +1,50 @@
+/**
+ * EmailTemplateForm.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   React client component that renders a form for creating or editing email templates.
+ *   Provides live preview functionality using placeholder substitution, and user assignment
+ *   via a multi-select interface.
+ *
+ * Key Features:
+ *   - Editable fields: name, subject, body, and assigned users
+ *   - Supports both creation and update modes
+ *   - Preview tab with real-time placeholder rendering
+ *   - Validates inputs with Zod and React Hook Form
+ *   - Automatically syncs new and removed user assignments
+ *
+ * Props:
+ *   - template (optional): Existing template object to prefill form
+ *   - onSuccess (optional): Callback after successful submission
+ *   - onCancel (optional): Callback for cancel button
+ *
+ * Form Schema:
+ *   - name: string (min 2 chars)
+ *   - subject: string (min 2 chars)
+ *   - body: string (min 10 chars)
+ *   - assignedUsers: string[] (optional)
+ *
+ * Placeholder Support (Preview Only):
+ *   - {{username}} => John Doe
+ *   - {{email}} => john.doe@example.com
+ *   - {{command}} => sudo rm -rf /
+ *   - {{logEntry}} => 2023-03-15 14:30:45 - User executed: sudo rm -rf /
+ *   - {{ruleName}} => Dangerous Command
+ *   - {{groupName}} => System Security
+ *   - {{timestamp}} => current datetime
+ *
+ * External Dependencies:
+ *   - getUsers: Fetches available users for assignment
+ *   - createEmailTemplate / updateEmailTemplate: Saves the form to the backend
+ *   - assignUsersToEmailTemplate / removeUsersFromEmailTemplate: Manages user linkage
+ *   - toast (sonner): UI feedback for success/error states
+ *
+ * Notes:
+ *   - Uses Zod for input validation.
+ *   - Filtering excludes users without a username before rendering options.
+ *   - Converts between form `string[]` and backend `number[]` for user IDs.
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"

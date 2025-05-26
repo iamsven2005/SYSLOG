@@ -1,8 +1,29 @@
+/**
+ * feedback-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module handles server-side actions for a feedback system where users can send messages
+ *   to designated managers or admins. It supports feedback creation, retrieval, and read tracking.
+ *
+ * Key Functions:
+ *   - getManagers: Returns users who have the "manager" role.
+ *   - submitFeedback: Creates a feedback entry linked to the sender and recipients.
+ *   - getSentFeedback: Retrieves all feedback submitted by the current user.
+ *   - getReceivedFeedback: Retrieves feedback received by the current user (must be manager or admin).
+ *   - markFeedbackAsRead: Allows a recipient to mark a specific feedback entry as read.
+ *
+ * Notes:
+ *   - Uses the `feedback` and `feedbackRecipient` tables for tracking senders and recipients.
+ *   - Access to `getReceivedFeedback` is restricted to users with `manager` or `admin` roles.
+ *   - Relies on the current user session (via `getCurrentUser`) for all personalized operations.
+ *   - `revalidatePath` is used to refresh `/feedback`, `/feedback/sent`, and `/feedback/received` views after mutations.
+ */
+
 "use server"
 
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
-import { getCurrentUser } from "../login/actions"
+import { getCurrentUser } from "../login/auth"
 
 export async function getManagers() {
   try {

@@ -1,5 +1,5 @@
 "use server"
-import { getId } from "@/app/login/actions"
+import { getId } from "@/app/login/auth"
 import { db } from "@/lib/db"
 import { Prisma } from "@/prisma/generated/main"
 import { cookies } from "next/headers"

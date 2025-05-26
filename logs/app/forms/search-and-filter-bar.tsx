@@ -1,3 +1,31 @@
+/**
+ * SearchAndFilterBar.tsx - 2025-05-26
+ * 
+ * Description:
+ *   A component that allows users to search and filter forms by query and sort option. The search bar filters forms by their title and description, and the sort dropdown lets users choose sorting by newest, oldest, alphabetical order, or number of responses.
+ *   This component dynamically updates the URL with search and sort parameters and triggers the routing update when either of the parameters changes.
+ *
+ * Key Features:
+ *   - Users can input search queries to filter forms based on their title or description.
+ *   - Sort options available: "Newest First", "Oldest First", "Alphabetical", and "Most Responses".
+ *   - Automatically updates the URL query parameters when the search query or sort option is changed.
+ *   - A button that allows submitting the search query, which then updates the page content.
+ *
+ * Key Functions:
+ *   - `useEffect`: Updates the URL with the current search and sort parameters whenever they change.
+ *   - `handleSearch`: Handles the form submission for search, triggering a router push with the search query in the URL.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <SearchAndFilterBar />
+ *   ```
+ *
+ * Notes:
+ *   - The `router.push` method is used to update the URL and reflect the current search and sort options.
+ *   - The `Select` component is used to manage the sort options, and the `Input` field captures the user's search query.
+ *   - This component uses Next.js hooks, including `useRouter` and `useSearchParams`, to manage the query parameters and URL navigation.
+ */
+
 "use client"
 
 import type React from "react"

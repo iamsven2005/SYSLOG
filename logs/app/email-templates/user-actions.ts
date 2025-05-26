@@ -1,3 +1,30 @@
+/**
+ * user-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides server-side operations for managing users, their roles,
+ *   devices, profiles, and associated metadata such as NDA uploads and contact details.
+ *
+ * Key Functions:
+ *   - getUsers: Retrieves paginated and optionally filtered list of users by role or search.
+ *   - getAdminUsers: Retrieves all users assigned the "admin" role.
+ *   - addUser: Creates a new user, assigns roles, locations, and initializes root drive folder.
+ *   - updateUser: Updates user credentials and metadata (e.g. role, pay, location).
+ *   - deleteUser: Deletes a user and any device associations, and logs the action.
+ *   - getUserDevices: Returns devices associated with a given user.
+ *   - assignDeviceToUser: Links a device to a user with optional role.
+ *   - removeDeviceFromUser: Unlinks a device from a user, logging the removal.
+ *   - uploadNdaDocument: Uploads and stores an NDA PDF for a user, saves filename in database.
+ *   - updateUserProfile: Updates user profile data (emergency contacts, remarks, email, etc).
+ *
+ * Notes:
+ *   - Logs each change using the `logActivity` helper for audit tracking.
+ *   - Role and location fields are handled as string arrays.
+ *   - NDA files are stored in `uploads/nda/` and uniquely named by user ID and timestamp.
+ *   - Drive folder creation for each user ensures integration with file management system.
+ *   - Passwords are stored as plaintext here, but **should be hashed** before production use.
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

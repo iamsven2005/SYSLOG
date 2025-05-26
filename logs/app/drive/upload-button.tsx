@@ -1,3 +1,42 @@
+/*
+ * UploadButton.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component provides a button for uploading files. Upon selection, it handles:
+ *   - Uploading the file to the server
+ *   - Extracting text content from supported file types (PDF, DOCX, XLSX, TXT, CSV, and images)
+ *   - Sending the extracted text for embedding via an API
+ *   - Displaying upload progress and the extracted content
+ *
+ * Features:
+ *   - Supports file upload with progress indication.
+ *   - Extracts text from various file types (PDF, DOCX, XLSX, etc.) and sends it for embedding.
+ *   - Provides a text area to display extracted text.
+ *   - Integrates with external libraries like `pdfjs`, `mammoth`, and `XLSX` for file parsing.
+ *
+ * Security:
+ *   - Only accepts specific file types (PDF, TXT, DOCX, CSV, XLSX, images).
+ *   - Includes progress and success/error notifications via toast messages.
+ *
+ * Props:
+ *   - `folderId`: The ID of the folder to upload the file to (nullable).
+ *   - `onUploadComplete`: A callback function to call after the upload is complete.
+ *   - `userId`: The ID of the user uploading the file (used for metadata).
+ *
+ * Methods:
+ *   - `handleUploadAndExtract`: Handles the file upload process, progress simulation, and file parsing.
+ *   - `handleFileChange`: Handles parsing and extracting text from the selected file based on type.
+ *   - `sendTextForEmbedding`: Sends extracted text to the server for further processing (embedding).
+ *
+ * State:
+ *   - `isUploading`: Tracks the uploading state.
+ *   - `progress`: Tracks the progress of the upload.
+ *   - `extractedText`: Stores the extracted text content for display.
+ *   - `newFolderName`, `searchQuery`, `filteredFolders`, `filteredFiles`: Manages folder filtering and renaming.
+ *   - `selectBox`: Tracks mouse-drag select box for selecting multiple items.
+ *   - `showPopover`: Controls display of search suggestions and embedding results.
+ */
+
 "use client"
 
 import type React from "react"

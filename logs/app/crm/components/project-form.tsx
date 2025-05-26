@@ -1,3 +1,27 @@
+/*
+ * crm/projects/components/project-form.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component renders a comprehensive form to create (or later update) a bridge project
+ *   with both general project details and bridge-specific specifications.
+ *
+ * Features:
+ *   - Integrated form validation using Zod and React Hook Form
+ *   - Handles both project and nested bridge project attributes
+ *   - Dynamically pre-fills values if editing an existing project
+ *   - Uses controlled components with Tailwind-based UI inputs
+ *   - Redirects to the created project's page upon success
+ *
+ * Dependencies:
+ *   - @hookform/resolvers/zod
+ *   - lucide-react icons
+ *   - date-fns for formatting
+ *   - ShadCN UI components
+ *
+ * Note:
+ *   - Updating existing projects is scaffolded but not implemented yet.
+ */
+
 "use client"
 
 import { useState } from "react"

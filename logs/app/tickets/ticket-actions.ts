@@ -1,10 +1,47 @@
+/**
+ * Tickets API Functions
+ * 
+ * These functions provide backend functionality for managing support tickets, including:
+ * - Retrieving ticket data with filtering and pagination.
+ * - Creating, updating, and deleting tickets.
+ * - Adding and deleting comments on tickets.
+ * - Attaching, deleting, and managing attachments for tickets.
+ * - Gathering statistics related to tickets and ticket management.
+ * 
+ * Dependencies:
+ * - `Prisma` from `@/prisma/generated/main` for database access and data types.
+ * - `getCurrentUser` and `getId` for user authentication and role checks.
+ * - `logActivity` for logging actions (creating, updating, and deleting tickets).
+ * - `revalidatePath` from `next/cache` to trigger path revalidation after changes.
+ * - `notFound` for handling errors with access restrictions.
+ * 
+ * Methods:
+ * - `getTickets`: Retrieves a list of tickets with pagination and filtering by various parameters (status, priority, assignedTo, etc.).
+ * - `getTicket`: Retrieves a single ticket by ID, including associated comments, attachments, and related data.
+ * - `createTicket`: Creates a new support ticket with the specified parameters.
+ * - `updateTicket`: Updates an existing support ticket with new data.
+ * - `deleteTicket`: Deletes a support ticket, with permission checks to ensure the user is an admin.
+ * - `addComment`: Adds a comment to a ticket, allowing the user to contribute notes or updates.
+ * - `deleteComment`: Deletes a specific comment on a ticket.
+ * - `deleteAttachment`: Deletes an attachment from a ticket, ensuring only admins or the uploader can perform this action.
+ * - `getTicketStats`: Retrieves statistics related to tickets, such as status distribution, resolution times, and top assignees.
+ * - `getAssignableUsers`: Fetches a list of users who are eligible to be assigned tickets.
+ * 
+ * Types:
+ * - `CreateTicketParams`: Parameters required to create a new ticket, including title, description, priority, etc.
+ * - `UpdateTicketParams`: Parameters required to update an existing ticket, including title, description, status, assigned user, etc.
+ * - `AddCommentParams`: Parameters required to add a comment to a ticket.
+ * - `GetTicketsParams`: Parameters required to filter and paginate the ticket list.
+ * - `ExtendedTicket`: Extended ticket data, including comments, attachments, and related device info.
+ */
+
 "use server"
 
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { devices, Prisma, SupportTicket, TicketAttachment, TicketComment, User } from "@/prisma/generated/main"
-import { getCurrentUser, getId } from "../login/actions"
+import { getCurrentUser, getId } from "../login/auth"
 import { notFound } from "next/navigation"
 
 // Types

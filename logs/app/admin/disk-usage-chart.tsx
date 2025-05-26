@@ -1,5 +1,5 @@
 /*
- * disk-usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * disk-usage-chart.tsx - 2025-05-25 by sven.tan:
  * Introduced <DiskUsageChart> component to visualize disk usage trends over time.
  * Features:
  *   - Supports 1h, 6h, 24h, 7d time ranges with dynamic formatting
@@ -31,7 +31,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
-import { getDiskUsageData } from "../logs/actions"
+import { getDiskUsageData } from "../logs/systemMetrics"
 import { diskmetric } from "@/prisma/generated/main"
 
 // Host color palette

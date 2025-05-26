@@ -1,3 +1,16 @@
+/**
+ * Page to add a new quality control inspection for a specific project.
+ * 
+ * - Fetches project data by ID.
+ * - If the project does not exist, shows 404 (via notFound()).
+ * - Checks if the project has phases; if none, prompts user to add phases first.
+ * - If phases exist, displays the InspectionForm preloaded with project info.
+ * - Includes a back button to return to project details.
+ * 
+ * Route params:
+ * - id: project ID (number)
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,3 +1,28 @@
+/*
+ * BulkAddressCommandMatches.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component that allows bulk selection and addressing of command matches.
+ *   Users can review each match, select multiple items, and apply a shared note for addressing.
+ *
+ * Features:
+ *   - Displays command matches in a card-based layout
+ *   - Supports individual and bulk selection of matches
+ *   - Opens a confirmation dialog to apply notes and address selected matches
+ *   - Submits addressed matches via POST request to `/api/bulk-address`
+ *   - Displays toast notifications for success or error
+ *   - Provides select all / deselect all shortcuts
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (Card, Dialog, Button, Textarea)
+ *   - Icons from Lucide React (CheckSquare, Square, Check)
+ *   - Toast feedback via `sonner`
+ *   - Next.js `useRouter` for UI refresh
+ *
+ * Notes:
+ *   - Assumes `matches` are unaddressed and eligible for bulk processing
+ *   - Sends a single note value to apply across all selected matches
+ */
+
 "use client"
 
 import { useState } from "react"

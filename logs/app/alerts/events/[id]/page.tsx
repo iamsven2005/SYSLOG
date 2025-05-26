@@ -1,5 +1,5 @@
 /*
- * alert-event-details-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * page.tsx (alert-event-details)- 2025-05-25 by sven.tan:
  * Displays details of a specific alert event triggered by a monitoring rule.
  *
  * Features:

@@ -1,3 +1,48 @@
+/**
+ * EmailTemplateTable - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component renders a table for managing email templates. It allows users to create, edit,
+ *   delete, and preview email templates. It also supports displaying template details and assigning
+ *   users to templates.
+ *
+ * Key Features:
+ *   - Displays a list of all email templates with actions to edit or delete.
+ *   - Supports creating new templates with a dialog form.
+ *   - Allows previewing the email template with live updates.
+ *   - Displays confirmation dialogs for deleting templates.
+ *   - Fetches email templates and users for assignment from the backend.
+ *
+ * Props:
+ *   - None
+ *
+ * State:
+ *   - `templates`: Array of email templates fetched from the server.
+ *   - `isLoading`: Boolean indicating whether the templates are being fetched.
+ *   - `selectedTemplate`: The template currently selected for editing or deletion.
+ *   - `isCreateDialogOpen`: Boolean controlling the visibility of the create dialog.
+ *   - `isEditDialogOpen`: Boolean controlling the visibility of the edit dialog.
+ *   - `isDeleteDialogOpen`: Boolean controlling the visibility of the delete confirmation dialog.
+ *
+ * Methods:
+ *   - `fetchTemplates`: Fetches all email templates from the backend.
+ *   - `handleDeleteTemplate`: Deletes the selected email template after confirmation.
+ *   - `formatDate`: Formats date strings for display in the table.
+ *
+ * External Dependencies:
+ *   - `getAllEmailTemplates`: Fetches all email templates from the backend.
+ *   - `deleteEmailTemplate`: Deletes the selected email template.
+ *   - `EmailTemplateForm`: A form component for creating and editing email templates.
+ *   - `toast`: Provides feedback for successful or error actions.
+ *
+ * Notes:
+ *   - The table includes an option to create new templates, which opens a dialog form.
+ *   - Templates can be assigned to users, and these users are displayed in the template details.
+ *   - Actions such as "Edit" and "Delete" are available for each template.
+ *   - Templates are fetched from the backend when the component mounts.
+ *   - All delete actions are confirmed through an alert dialog to prevent accidental deletions.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

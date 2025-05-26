@@ -1,3 +1,27 @@
+/*
+ * phase-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side actions for managing bridge project phases and inspections.
+ *   Supports CRUD operations on project phases and logs associated inspections with revalidation hooks.
+ *
+ * Features:
+ *   - Phase Management:
+ *     - `getPhase`, `createPhase`, `updatePhase`, `deletePhase`
+ *     - Includes project-level path revalidation to keep CRM views up-to-date
+ *   - Inspection Records:
+ *     - `createInspection` supports attachment logging and nested project lookup
+ *   - Error-handling with safe returns and path-based cache invalidation
+ *
+ * Dependencies:
+ *   - Prisma client (`db`) with enums (`PhaseStatus`)
+ *   - Next.js cache revalidation (`revalidatePath`)
+ *
+ * Notes:
+ *   - Designed to integrate with CRM views under `/crm/projects/[id]`
+ *   - Phase and inspection data can support Gantt views, progress dashboards, and compliance audits
+ *   - Default optimistic updates supported via project-level cache invalidation
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

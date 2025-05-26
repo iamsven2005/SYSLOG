@@ -1,3 +1,31 @@
+/**
+ * EditStepItem Component
+ * 
+ * This component allows for the editing of an individual audit step in an audit process. It provides a form where the step's title, description, 
+ * status, assignee, and due date can be updated. It also includes functionality for expanding the step details, displaying and changing the status, 
+ * and assigning users to the step.
+ * 
+ * Features:
+ * - Displays a collapsible section for each audit step.
+ * - Allows editing of the step title, description, status, assignee, and due date.
+ * - Supports role-based assignment of users with a list of available users.
+ * - Displays the current status of the step with color-coded badges.
+ * - Includes a popover date picker for selecting due dates.
+ * - Provides an option to delete the step.
+ * 
+ * Props:
+ * - `step` (AuditStep): The current audit step data that can be edited.
+ * - `users` (User[]): A list of users that can be assigned to the audit step.
+ * - `onUpdate` (function): A callback function to update the audit step when any of its values are changed.
+ * - `onDelete` (function): A callback function to delete the audit step.
+ * 
+ * Dependencies:
+ * - `Button`, `Input`, `Textarea`, `Label`, `Select`, `Popover`, `Calendar`, and `Badge` from the UI components library for rendering form fields, dropdowns, and popovers.
+ * - `format` from `date-fns` for formatting dates.
+ * - `ChevronDown`, `ChevronUp`, `Trash2`, `CalendarIcon` from `lucide-react` for icons and UI elements.
+ */
+
+
 "use client"
 
 import { useState } from "react"

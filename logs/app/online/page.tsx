@@ -1,7 +1,35 @@
+/**
+ * page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This page serves as the container for displaying user activity logs and analytics. 
+ *   It fetches and displays user activity data and visualizes activity trends over time.
+ *   The page includes two main sections:
+ *   1. A chart showing user activity over a specified period (default is 30 days).
+ *   2. A table displaying user activity logs with pagination for easier navigation.
+ *
+ * Components:
+ *   - `UserActivityChart`: A chart component that visualizes user activity over time and shows page distribution.
+ *   - `UserActivityTable`: A table that displays user activity logs with pagination, showing details like login time, page visited, etc.
+ *   - `Suspense`: Handles loading state while fetching data for the activity chart and table.
+ *
+ * Props:
+ *   - `searchParams`: A promise containing the query parameters for pagination (`page`) and date range (`days`).
+ * 
+ * Behavior:
+ *   - The page checks if the user has access to the `/online` route via the `allowed("/online")` function. If access is denied, 
+ *     it redirects to a not-found page.
+ *   - The `getUserActivityData` function fetches the user activity logs from the database with pagination support.
+ *   - The `getActivityChartData` function retrieves and groups user activity by day over the specified number of days and calculates 
+ *     the daily counts for the chart.
+ *   - The data fetched includes details like page visits and login times, which are displayed in both chart and table formats.
+ *   - The page ensures that the data is fetched asynchronously and the user interface is updated accordingly, providing a smooth experience.
+ */
+
 import { db } from "@/lib/db"
 import { subDays, startOfDay, endOfDay, format } from "date-fns"
 import UserActivityChart from "./user-activity-chart"
-import UserActivityTable from "./user-activity-table"
+import UserActivityTable from "./UserActivityTable"
 import { allowed } from "@/components/navbar"
 import { notFound } from "next/navigation"
 

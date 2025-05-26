@@ -1,10 +1,34 @@
+/*
+ * crm/equipment/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Main equipment dashboard for the CRM module. Provides a centralized view 
+ *   to manage all equipment records, including their availability, status, and 
+ *   category filters. Supports search, filtering, and segmented tab views.
+ *
+ * Features:
+ *   - Displays overall equipment statistics (via `EquipmentStats`)
+ *   - Search bar and (future) advanced filter button
+ *   - Tabs for quick views: All, Available, On Loan, Maintenance
+ *   - Lists equipment with dynamic filters and search (via `EquipmentList`)
+ *   - Add new equipment via a "Plus" button
+ *
+ * Data:
+ *   - Uses `getEquipment`, `getEquipmentStats`, and `getEquipmentCategories` from actions
+ *   - Filters applied: categoryId, status, condition, search (via searchParams)
+ *
+ * UI Components:
+ *   - Tabs, Cards, Buttons, Inputs, Lucide icons
+ *   - Custom components: `EquipmentStats`, `EquipmentList`
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, Search, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { getEquipment, getEquipmentStats, getEquipmentCategories } from "@/app/crm/actions/equipment"
+import { getEquipment, getEquipmentStats, getEquipmentCategories } from "@/app/crm/equipment/equipment"
 import EquipmentStats from "../components/equipment-stats"
 import EquipmentList from "../components/equipment-list"
 import { EquipmentCondition, EquipmentStatus } from "@/prisma/generated/main"

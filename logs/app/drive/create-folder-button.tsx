@@ -1,3 +1,30 @@
+/*
+ * create-folder-button.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side component for creating a new folder in the user's drive.
+ *   It opens a dialog where users can input a folder name, and upon submission, a new folder is created.
+ *   The component also provides a confirmation message and updates the parent component after the folder is created.
+ *
+ * Features:
+ *   - Allows users to create a new folder by entering a folder name
+ *   - Validates that the folder name is not empty before submission
+ *   - Displays a "Creating..." button state while the folder is being created
+ *   - Closes the dialog upon successful folder creation and resets the input field
+ *   - Sends a notification via `toast` to inform the user of the result (success or error)
+ *   - Triggers an event via the `/api/drive-events` endpoint to notify the system of the new folder creation
+ *   - Includes a button to open the dialog and an input field for the folder name
+ *
+ * Props:
+ *   - `parentId`: The ID of the parent folder where the new folder will be created (can be `null` for root)
+ *   - `onFolderCreated`: A callback function to trigger after the folder is created, usually used to refresh the list of folders
+ *
+ * Dependencies:
+ *   - UI Components: `Button`, `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogTrigger`, `DialogClose`, `Input`, `Label`
+ *   - `createFolder`: Function that interacts with the backend to create the folder
+ *   - `toast`: For displaying success and error messages
+ */
+
 "use client"
 
 import { useState } from "react"

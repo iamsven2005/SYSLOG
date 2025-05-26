@@ -1,3 +1,24 @@
+/*
+ * crm/projects/components/material-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component for creating or updating a bridge material entry associated with a project.
+ *
+ * Features:
+ *   - Handles both creation and editing of bridge materials
+ *   - Validates input using Zod schema with react-hook-form
+ *   - Supports unit selection from predefined list
+ *   - Submits data to server actions (`createMaterial` / `updateMaterial`)
+ *   - Redirects to the corresponding project page upon success
+ *
+ * Props:
+ *   - `projectId`: ID of the parent project
+ *   - `material` (optional): Existing material data for edit mode
+ *
+ * Notes:
+ *   - Uses optimistic navigation via `router.push` and `router.refresh()`
+ *   - Reusable for both new material creation and editing
+ */
+
 "use client"
 
 import { useState } from "react"

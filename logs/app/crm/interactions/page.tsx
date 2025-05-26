@@ -1,10 +1,29 @@
+/**
+ * app/crm/interactions/page.tsx
+ *
+ * Description:
+ *   Displays a searchable and filterable list of CRM interactions.
+ *   Includes interaction creation and detailed viewing functionality.
+ *
+ * Features:
+ *   - Fetches all CRM interactions from the database via `getInteractions`.
+ *   - Parses search and type filters from `searchParams` to dynamically update results.
+ *   - Maps contact names into firstName and lastName fields for more structured display.
+ *   - Provides controls for searching and filtering via `InteractionControls`.
+ *   - Includes loading skeleton (`InteractionListSkeleton`) for smoother UX on slow fetches.
+ *
+ * Usage:
+ *   Rendered at `/crm/interactions` via Next.js routing.
+ *   Accessible via sidebar or interaction-related views across the CRM.
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { getInteractions } from "../actions/interactions"
 import InteractionList from "@/app/crm/components/interaction-list"
-import InteractionListSkeleton from "@/app/crm/components/skeletons/interaction-list-skeleton"
+import InteractionListSkeleton from "@/app/crm/interactions/interaction-list-skeleton"
 import InteractionControls from "./interaction-controls"
 import { Plus } from "lucide-react"
 type RawContact = {

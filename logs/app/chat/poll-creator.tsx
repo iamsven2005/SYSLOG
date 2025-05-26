@@ -1,3 +1,27 @@
+/*
+ * PollCreator.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component for creating new polls in a chat group.
+ *   Includes dynamic form inputs for poll question, up to 10 options, and multi-select toggle.
+ *
+ * Features:
+ *   - Add/remove/edit poll options (minimum 2, maximum 10)
+ *   - Form validation for question and options
+ *   - Toggle switch for allowing multiple selections
+ *   - Submits poll via `createPoll` server action
+ *   - Displays success or error feedback using `sonner` toast
+ *
+ * Dependencies:
+ *   - ShadCN UI components (Input, Button, Label, Switch)
+ *   - Icons from Lucide React (Trash2, Plus, X)
+ *   - Server action: `createPoll`
+ *   - Toast feedback via `sonner`
+ *
+ * Notes:
+ *   - On successful submission, triggers `onSuccess` callback and closes the component
+ *   - UI disables interaction during submission to prevent duplicate requests
+ */
+
 "use client"
 
 import { useState } from "react"

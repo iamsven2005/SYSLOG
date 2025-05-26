@@ -1,3 +1,37 @@
+/*
+ * drive-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server-side functions for managing files and folders in the drive system.
+ *   Includes functionality for creating, updating, deleting, and fetching folders and files, as well as handling file uploads, renaming, and permissions.
+ *   The functions also support folder path retrieval, and they log activity to track user actions within the drive system.
+ *
+ * Features:
+ *   - `getFolderContents`: Retrieves the contents (folders and files) of a specific folder
+ *   - `getFolderPath`: Fetches the breadcrumb path for a folder, starting from the root "My Drive"
+ *   - `createFolder`: Creates a new folder in the drive, and generates a unique folder ID
+ *   - `uploadFile`: Handles file upload, generating a unique file name, saving it to disk, and creating a record in the database
+ *   - `deleteFile`: Deletes a file from the drive, including its permissions and database record
+ *   - `deleteFolder`: Deletes a folder and its contents (recursively), including all files and subfolders
+ *   - `shareFile`: Shares a file with another user, setting the access level (read/write)
+ *   - `removeFilePermission`: Removes a user's permission to access a file
+ *   - `getFileDetails`: Fetches detailed information about a file, including its permissions and folder details
+ *   - `getUsersForSharing`: Retrieves all users (excluding the current user) for file sharing purposes
+ *   - `updateFolder`: Updates a folder's name or parent folder
+ *   - `renameFolder`: Renames a folder and logs the change
+ *   - `updateFile`: Updates a file's folder and logs the change
+ *   - `updateFileName`: Renames a file both on disk and in the database, ensuring that the file path is updated accordingly
+ *   - Uses Prisma for interacting with the database and logs activity for auditing purposes
+ *   - Handles recursive deletion for folders and their contents, and ensures unique filenames for uploaded files
+ *
+ * Dependencies:
+ *   - `logActivity`: Logs user actions for auditing purposes
+ *   - `db`, `db2`: Prisma client instances for interacting with the database
+ *   - `getId`: Retrieves the current user's ID
+ *   - `fs`, `path`: Node.js modules for file system operations (reading, writing, renaming files)
+ *   - `revalidatePath`: Triggers revalidation of paths to update the UI with the latest data
+ */
+
 "use server"
 
 import { revalidatePath } from "next/cache"
@@ -8,7 +42,7 @@ import fs from "fs/promises"
 import { db } from "@/lib/db"
 import { db2 } from "@/lib/db2"
 import { DriveFolder } from "@/prisma/generated/main"
-import { getId } from "../login/actions"
+import { getId } from "../login/auth"
 import { notFound } from "next/navigation"
 
 // Get folders and files for a specific folder

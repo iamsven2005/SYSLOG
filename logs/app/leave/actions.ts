@@ -1,9 +1,40 @@
+/**
+ * leave/actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This file contains server-side functions for handling leave applications, including submission, approval, rejection, and fetching of leave data.
+ *   It also includes functions for retrieving pending and approved leave requests, utilizing Prisma for database operations.
+ *   The functions work with a leave form schema, handle validations using Zod, and provide revalidation for paths to update the leave status.
+ *
+ * Key Functions:
+ *   - `submitLeaveApplication`: Submits a new leave application by validating the input data and storing it in the database.
+ *   - `approveLeave`: Approves a leave application and records the approval with comments and timestamp.
+ *   - `rejectLeave`: Rejects a leave application and records the rejection with comments and timestamp.
+ *   - `getLeavesByDateRange`: Fetches approved leaves within a specific date range.
+ *   - `getPendingLeaves`: Fetches all pending leave requests for approval.
+ *   - `getApprovedLeaves`: Fetches all approved leave requests.
+ *
+ * Example Usage:
+ *   ```ts
+ *   await submitLeaveApplication({ startDate, endDate, leaveType, reason, approverId });
+ *   await approveLeave(leaveId, "Approved for annual leave.");
+ *   await rejectLeave(leaveId, "Insufficient reason for leave.");
+ *   const pendingLeaves = await getPendingLeaves();
+ *   const approvedLeaves = await getApprovedLeaves();
+ *   ```
+ *
+ * Notes:
+ *   - The `leaveFormSchema` defined using Zod ensures that leave applications are validated before they are submitted to the database.
+ *   - The `approveLeave` and `rejectLeave` functions update the leave status and add comments along with timestamps.
+ *   - `getLeavesByDateRange` checks for overlapping leave dates to determine if there is any conflict with other approved leaves.
+ *   - The system utilizes `revalidatePath` to refresh pages related to leave data whenever changes occur.
+ */
 "use server"
 
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { getId } from "../login/actions"
+import { getId } from "../login/auth"
 const leaveFormSchema = z.object({
   startDate: z.date(),
   endDate: z.date(),

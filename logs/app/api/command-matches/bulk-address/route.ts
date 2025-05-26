@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logActivity } from "@/lib/activity-logger"
 import { notFound } from "next/navigation"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 
 export async function POST(request: NextRequest) {
   try {

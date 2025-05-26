@@ -1,3 +1,24 @@
+/**
+ * EmojiPickerDialog Component
+ * ---------------------------
+ * A modal dialog for selecting emojis, supporting:
+ * - Category tabs (e.g. Smileys, People, Food)
+ * - Search functionality using `emoji-dictionary`
+ * - Recently used emojis (persisted via localStorage)
+ *
+ * Features:
+ * - Search emojis by name or alias.
+ * - Tabs for browsing emoji categories.
+ * - Shows recently used emojis with persistence.
+ *
+ * Usage:
+ * <EmojiPickerDialog
+ *   open={open}
+ *   onOpenChange={setOpen}
+ *   onEmojiSelect={(emoji) => handleInsert(emoji)}
+ * />
+ */
+
 "use client"
 
 import * as React from "react"

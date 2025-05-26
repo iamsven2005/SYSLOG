@@ -1,3 +1,30 @@
+/**
+ * page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LeavePage** component provides a leave management interface where users can either apply for leave
+ *   or view the leave calendar. The page utilizes tabs to switch between the leave application form and the leave calendar.
+ *
+ * Key Features:
+ *   - Displays a **Leave Application Form** where users can submit leave requests.
+ *   - Displays a **Leave Calendar** to view approved leaves and holidays.
+ *   - Uses tabs for seamless switching between the "Apply for Leave" form and the "Leave Calendar".
+ *   - Integrates metadata for proper page description and title.
+ *
+ * Key Components:
+ *   - `LeaveApplicationForm`: A component to allow users to apply for leave by filling out a form.
+ *   - `LeaveCalendar`: A component to show the leave calendar, displaying approved leaves and holidays.
+ *   - `Tabs`: A component to toggle between different views (Apply for Leave and Leave Calendar).
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LeavePage />
+ *   ```
+ *
+ * Notes:
+ *   - **Tabs** are used to display the different sections for leave management. The user can toggle between applying for leave and viewing the leave calendar.
+ *   - Metadata (`title`, `description`) ensures that the page is properly identified for SEO and provides relevant information.
+ */
 import { LeaveCalendar } from "./leave-calendar-server"
 import { LeaveApplicationForm } from "./leave-application-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"

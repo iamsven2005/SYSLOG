@@ -1,3 +1,21 @@
+/*
+ * crm/equipment/components/equipment-stats.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Dashboard summary displaying key statistics on equipment inventory.
+ *
+ * Features:
+ *   - Displays total number of equipment and category breakdown
+ *   - Highlights equipment on loan, in maintenance, or damaged
+ *   - Handles loading error state gracefully with fallback placeholders
+ *
+ * Props:
+ *   - `stats`: EquipmentStats object containing status, condition, and category breakdowns
+ *
+ * Notes:
+ *   - Uses Lucide icons for visual representation of each stat card
+ *   - Fallback UI is shown if stats data contains an error field
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PenToolIcon as Tool, ShoppingBag, AlertTriangle, Wrench } from "lucide-react"
 export type EquipmentStats = {

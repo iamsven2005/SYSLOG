@@ -1,3 +1,34 @@
+/**
+ * user-activity-chart.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component visualizes user activity data with two distinct views: 
+ *   a timeline showing user logins over time and a pie chart displaying the distribution of 
+ *   user activities across different pages. The user can toggle between these views and adjust 
+ *   the time range of the activity data shown.
+ * 
+ * Components:
+ *   - `Card`: A container for the chart and UI elements.
+ *   - `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`: Used to switch between the timeline view 
+ *     and the page distribution view.
+ *   - `Select`: Allows users to choose a time range (7, 14, 30, or 90 days) to filter the displayed data.
+ *   - `LineChart`, `Line`, `XAxis`, `YAxis`, `CartesianGrid`, `Tooltip`: A line chart from `recharts` 
+ *     used to display the login activity over time.
+ *   - `PieChart`, `Pie`, `Cell`, `Legend`, `Tooltip`: A pie chart from `recharts` used to show the 
+ *     distribution of user activity across pages.
+ * 
+ * Props:
+ *   - `dailyActivity`: An array of daily activity data, including the date and login count for each day.
+ *   - `pageDistribution`: An array representing the distribution of user activity across different pages.
+ *   - `days`: The number of days to display (based on the selected time range).
+ * 
+ * Behavior:
+ *   - The `Select` dropdown allows users to choose a time range, which updates the displayed data based on the `days` parameter.
+ *   - The `Tabs` component switches between two views: a timeline of user logins (`timeline`) and the distribution of user activity by page (`pages`).
+ *   - The `LineChart` visualizes the login count for each day over the selected time range, while the `PieChart` visualizes the proportion of activity across different pages.
+ *   - Custom tooltips are displayed on both the line chart and pie chart, showing detailed information about the data points when hovered over.
+ */
+
 "use client"
 
 import { useState } from "react"

@@ -1,3 +1,24 @@
+/**
+ * app/crm/interactions/new/page.tsx
+ * 
+ * Description:
+ *   This page provides a form to create a new CRM interaction, either 
+ *   generically or pre-filled with a selected contact (if `contactId` is in query).
+ * 
+ * Behavior:
+ *   - Fetches all companies for dropdown selection in the form.
+ *   - If a `contactId` is provided via searchParams:
+ *       - Fetches the contact and its associated company.
+ *       - Pre-selects the company and contact in the form.
+ *       - Filters the company's contacts for better UX.
+ *   - Renders the `InteractionForm` with optional pre-filled data.
+ *   - Includes back navigation to the interactions list.
+ * 
+ * Components:
+ *   - `InteractionForm` handles form UI and submission.
+ *   - `Card` and `Button` from ShadCN UI library for layout and UI consistency.
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,3 +1,46 @@
+
+/**
+ * TicketsTable Component
+ * 
+ * This component displays a table of support tickets with various filtering options, including status and priority.
+ * It provides pagination controls to navigate through large sets of tickets and includes a search function to find specific tickets.
+ * Admin users have additional features such as filtering by priority and viewing the priority of each ticket.
+ * 
+ * Features:
+ * - Allows filtering tickets by status (e.g., open, in progress, resolved) and priority (e.g., low, medium, high, critical).
+ * - Supports pagination to display a manageable number of tickets per page.
+ * - Provides a search bar to find tickets by title or description.
+ * - Displays ticket details such as ID, title, status, priority, created by, and assigned to.
+ * - Admins can view and filter tickets by priority.
+ * - Displays badges for ticket status and priority, color-coded for easy recognition.
+ * 
+ * Dependencies:
+ * - `Button`, `Input` from `@/components/ui/button` and `@/components/ui/input` for UI elements.
+ * - `Table`, `TableBody`, `TableCell`, `TableHead`, `TableHeader`, `TableRow` from `@/components/ui/table` for rendering ticket data.
+ * - `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` from `@/components/ui/select` for filter controls.
+ * - `Pagination`, `PaginationContent`, `PaginationItem`, `PaginationLink`, `PaginationNext`, `PaginationPrevious` for pagination functionality.
+ * - `Badge` from `@/components/ui/badge` for status and priority labels.
+ * - `getTickets` from `@/app/tickets/ticket-actions` to fetch ticket data based on filter criteria.
+ * - `formatDate` from `@/lib/utils` for formatting ticket creation dates.
+ * 
+ * State:
+ * - `tickets`: Stores the list of tickets fetched from the server.
+ * - `pageCount`: Total number of pages for pagination.
+ * - `loading`: Tracks the loading state while ticket data is being fetched.
+ * - `searchInput`: Stores the value of the search input for filtering tickets.
+ * 
+ * Methods:
+ * - `handleStatusChange`: Handles status filter changes and updates the query parameters.
+ * - `handlePriorityChange`: Handles priority filter changes and updates the query parameters.
+ * - `handleSearch`: Handles the search form submission and updates the query parameters.
+ * - `createQueryString`: Builds a query string from the selected filters and page number.
+ * 
+ * Pagination:
+ * - Provides links to navigate through pages of tickets.
+ * - The `PaginationPrevious` and `PaginationNext` buttons allow the user to go to the previous or next page.
+ * - The page numbers are clickable and highlight the current page.
+ */
+
 "use client"
 
 import type React from "react"

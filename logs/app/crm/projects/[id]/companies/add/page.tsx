@@ -1,3 +1,27 @@
+/*
+ * crm/projects/[id]/companies/add/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server component for the "Add Company to Project" page.
+ *   It fetches the project by ID and filters out companies that are already linked to the project.
+ *   Displays a form for selecting a company and assigning it to the project with role and contract info.
+ *
+ * Props:
+ *   - params: Route parameters, specifically the `id` of the project (as a string promise)
+ *
+ * Features:
+ *   - Fetches project and company data via `getProject` and `getCompanies`
+ *   - Filters out companies already linked to the project
+ *   - Displays `ProjectCompanyForm` if available companies exist
+ *   - Otherwise, shows a message with options to create a new company or return to the project
+ *
+ * Dependencies:
+ *   - UI Components: Card, Button, Link, ArrowLeft icon
+ *   - Actions: `getProject`, `getCompanies`
+ *   - Subcomponent: `ProjectCompanyForm`
+ *   - Uses `notFound()` to handle missing or invalid project data
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"

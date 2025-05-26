@@ -1,3 +1,30 @@
+/*
+ * page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side component that allows users to configure and generate custom reports.
+ *   It features a form with options for selecting metrics, grouping data, and customizing chart types and date ranges.
+ *   On submission, it triggers report generation, displays a preview of the report, and supports exporting the generated report.
+ *
+ * Features:
+ *   - Form validation using `zod` for report configuration (name, metrics, data source, etc.)
+ *   - Options for selecting various data sources (`projects`, `companies`, etc.) and metrics
+ *   - Grouping options based on the selected data source (e.g., by status, type, etc.)
+ *   - Chart type selection for visualizing data (Bar, Line, Pie, Radar, Area)
+ *   - Date range selection for filtering the data
+ *   - Report preview including generated charts and summary statistics
+ *   - Export functionality for downloading the generated report
+ *   - Display of validation errors and loading state while generating the report
+ *
+ * Dependencies:
+ *   - UI Components: Button, Form, Input, Textarea, Select, Checkbox, Calendar, Popover, etc.
+ *   - Recharts for rendering various chart types (Bar, Line, Pie, etc.)
+ *   - `react-hook-form` for form management and validation
+ *   - `zod` for input validation schema
+ *   - `sonner` for toast notifications
+ *   - `generateReport` for triggering the report generation logic
+ *   - `customReportSchema` for report validation
+ */
 
 
 "use client"

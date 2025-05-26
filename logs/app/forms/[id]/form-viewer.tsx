@@ -1,3 +1,36 @@
+/**
+ * form-viewer.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component renders a form for user submission.
+ *   Supports answering text, radio, checkbox, dropdown, and file questions.
+ *   Validates required fields and handles form submission with file upload support.
+ *
+ * Key Features:
+ *   - Renders questions dynamically using `QuestionView`
+ *   - Tracks user input with local state for answers and file uploads
+ *   - Validates required fields before submission
+ *   - Submits responses via `submitFormResponse` with `FormData` including files
+ *   - Listens for real-time Server-Sent Events (SSE) to detect form deletion
+ *
+ * Props:
+ *   - `form: Form`: The form object containing an ID and a list of questions
+ *
+ * Internal State:
+ *   - `answers`: Map of question IDs to their input values (string, number[], or undefined)
+ *   - `files`: Map of file upload question IDs to their selected `File` objects
+ *   - `isSubmitting`: Boolean to track loading state during submission
+ *
+ * Notable Hooks:
+ *   - `useSSE`: Subscribes to deletion events for the current form
+ *   - `useRouter`: Used to navigate on success or deletion
+ *
+ * Notes:
+ *   - Required question types are validated differently (e.g., file presence, array length for checkboxes)
+ *   - Error handling and submission feedback are provided via `toast` from `sonner`
+ *   - On successful submission, redirects user to homepage ("/")
+ */
+
 "use client"
 
 import { Button } from "@/components/ui/button"

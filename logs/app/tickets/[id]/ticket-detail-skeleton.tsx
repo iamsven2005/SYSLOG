@@ -1,3 +1,32 @@
+/**
+ * TicketDetailSkeleton.tsx - 2025-05-27 by [Your Name]
+ *
+ * Description:
+ *   This component renders a skeleton loader UI for the Ticket Detail page. It provides a placeholder 
+ *   layout for the ticket details while the actual content is being loaded asynchronously. The skeleton 
+ *   is structured to mimic the design of the Ticket Detail page and provides loading indications for 
+ *   various sections such as title, description, actions, and other related information.
+ *
+ *   - The skeleton loader is composed of multiple `Skeleton` components arranged within cards and grids 
+ *     to match the structure of the Ticket Detail page.
+ *   - It includes placeholders for text, such as titles and descriptions, as well as placeholders for 
+ *     actions, user information, and related content.
+ *
+ * Components:
+ *   - `Skeleton`: Placeholder component that simulates the loading state of content (text, images, etc.).
+ *   - `Card`, `CardHeader`, `CardContent`: Used to structure the skeleton layout in a visually consistent 
+ *     manner with the actual Ticket Detail page.
+ *   - `Button`: Placeholder button components indicating actions like editing or deleting a ticket.
+ *   - `Badge`: Placeholder badges for representing ticket tags, statuses, or user roles.
+ * 
+ * Behavior:
+ *   - The component shows loading placeholders for different sections like ticket details, user information, 
+ *     and actions, with appropriate spacing to reflect the actual layout.
+ *   - It uses the `Array.from` method to generate multiple placeholders for related lists, such as comments or tasks.
+ *   - Once the actual data is loaded, this skeleton is replaced by the real content of the Ticket Detail page.
+ */
+
+
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 

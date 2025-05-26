@@ -1,3 +1,27 @@
+/*
+ * UsersListDialog.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side dialog component that displays a searchable list of all users.
+ *   Fetches user data on open and supports live filtering by username or email.
+ *
+ * Features:
+ *   - Fetches all users on dialog open via `getAllUsers` server action
+ *   - Search bar filters users by username or email (case-insensitive)
+ *   - Displays user avatar with fallback initials, name, email, and admin role icon
+ *   - Shows loading spinner while fetching
+ *   - Uses scrollable container for long user lists
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (Dialog, Input, ScrollArea, Avatar)
+ *   - Icons from Lucide React (Search, Shield, Loader2)
+ *   - Toast feedback via `sonner`
+ *   - Server action: `getAllUsers`
+ *
+ * Notes:
+ *   - Ensures fallback value for missing usernames
+ *   - Dialog resets user list on each open to reflect latest state
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

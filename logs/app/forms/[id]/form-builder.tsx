@@ -1,3 +1,39 @@
+/**
+ * form-builder.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side React component for building and editing forms dynamically.
+ *   Allows adding, updating, and removing questions, with live option editing and auto-save.
+ *
+ * Key Features:
+ *   - Dynamic rendering and ordering of form questions
+ *   - Support for multiple question types (TEXT, RADIO, CHECKBOX, DROPDOWN, etc.)
+ *   - Validation for required fields and questions with options
+ *   - Auto-save functionality with debounce timer (3s inactivity)
+ *   - Save as new form (via `createForm`) or update existing form (via `updateForm`)
+ *
+ * Props:
+ *   - `form?: Form`: Optional form object for edit mode. If absent, operates in create mode.
+ *
+ * Internal State:
+ *   - `title`: Form title (required)
+ *   - `description`: Optional description for the form
+ *   - `questions`: List of questions, each with ID, type, order, and options
+ *   - `isSubmitting`: Boolean to indicate if the form is currently saving
+ *   - `autoSaveTimer`: NodeJS timeout used for throttled auto-saving
+ *   - `lastSaved`: Date object representing the last successful save
+ *
+ * Notable Hooks:
+ *   - `useEffect`: Triggers auto-save if editing an existing form with valid content
+ *   - `useCallback`: `handleSubmit()` handles both manual and auto-save submission
+ *
+ * Notes:
+ *   - New questions and options are assigned `temp-` IDs, which are stripped before saving
+ *   - Uses `QuestionEditor` for nested question input and logic
+ *   - Uses `toast` from `sonner` for user notifications
+ *   - Designed for integration with `/forms/:id/edit` and `/forms/new`
+ */
+
 "use client"
 
 import { Button } from "@/components/ui/button"

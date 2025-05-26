@@ -1,3 +1,36 @@
+/**
+ * client.tsx LocationsTable Component - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LocationsTable** component displays a list of locations with pagination, search, and management functionalities.
+ *   It allows for filtering, adding, editing, deleting, and managing location details, with interactive modals and pagination.
+ *
+ * Key Features:
+ *   - Displays a table of locations with the ability to search by multiple filters (code, name, region, etc.).
+ *   - Provides CRUD functionality for location management: add, edit, delete locations.
+ *   - Implements bulk deletion of selected locations.
+ *   - Allows for dynamic pagination, including page size change and page navigation.
+ *   - Responsive UI, works well for large lists with a user-friendly interface for actions like adding/editing locations.
+ *
+ * Key Components:
+ *   - `Table`: Displays the list of locations.
+ *   - `Dialog`: Modals for adding, editing, and deleting locations.
+ *   - `Pagination`: Navigation for paginated data.
+ *   - `Input`, `Button`, `Checkbox`, `Label`: UI components for form handling and actions.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LocationsTable />
+ *   ```
+ *
+ * Notes:
+ *   - **Pagination**: Pagination controls adjust based on the `currentPage`, `totalPages`, and `pageSize`.
+ *   - **Search**: The search bar filters locations based on user input, updating the list dynamically using debounced input.
+ *   - **CRUD Actions**: Admin users can add, edit, or delete locations directly from the table with modals for input.
+ *   - **Bulk Delete**: Multiple locations can be selected for bulk deletion.
+ *   - **Responsive Design**: Layout adjusts for both desktop and mobile views, with controls to manage location entries efficiently.
+ */
+
 "use client"
 
 import type React from "react"

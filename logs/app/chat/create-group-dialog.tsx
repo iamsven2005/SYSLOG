@@ -1,3 +1,41 @@
+/**
+ * CreateGroupDialog Component
+ * ---------------------------
+ * This component provides a dialog interface for creating a new chat group in the system.
+ * It supports group naming, user selection with optional role filtering, and user search.
+ *
+ * Props:
+ * - open: boolean — Determines whether the dialog is open or closed.
+ * - onOpenChange: (open: boolean) => void — Callback to control dialog visibility from parent.
+ *
+ * Key Features:
+ * -------------
+ * ✅ Group name input with validation.
+ * ✅ User list with:
+ *    - Avatar, email, roles, and admin badge indicator.
+ *    - Search by username/email.
+ *    - Filter by user role using a Select dropdown.
+ * ✅ Fetches all users using `getAllUsers()` or by role with `searchUsersByRole()`.
+ * ✅ Displays available user roles dynamically from fetched data.
+ * ✅ Handles group creation via `createGroup()` and redirects to the new group on success.
+ * ✅ Resets internal state on dialog close.
+ *
+ * UX & Styling:
+ * -------------
+ * - Dark mode support using Tailwind dark variants.
+ * - Scrollable user list area.
+ * - Visual loading indicator while fetching users or creating group.
+ *
+ * Usage Context:
+ * --------------
+ * Typically invoked from a chat sidebar or dashboard to initiate new group discussions.
+ *
+ * Dependencies:
+ * -------------
+ * - `chat-actions.ts` for user and group API interactions.
+ * - `lucide-react`, `shadcn/ui`, and `sonner` for UI and toast feedback.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

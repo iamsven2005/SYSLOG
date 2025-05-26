@@ -8,7 +8,7 @@ import { getProject } from "@/app/crm/actions/projects"
 import { notFound } from "next/navigation"
 import { formatDate } from "@/lib/utils"
 import ProjectCompanies from "@/app/crm/components/project-companies"
-import ProjectMaterials from "@/app/crm/components/project-materials"
+import ProjectMaterials from "@/app/crm/projects/[id]/project-materials"
 import ProjectInteractions from "@/app/crm/components/project-interactions"
 import ProjectInspections from "@/app/crm/components/project-inspections"
 

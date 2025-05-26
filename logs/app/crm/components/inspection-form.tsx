@@ -1,3 +1,22 @@
+/*
+ * crm/phases/components/inspection-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component for recording a new bridge phase inspection within a project.
+ *
+ * Features:
+ *   - Select associated bridge phase for inspection
+ *   - Input inspection date using calendar popover
+ *   - Capture inspector name, result (Pass/Fail/Conditional), and notes
+ *   - Handles form validation and submission via zod + react-hook-form
+ *
+ * Props:
+ *   - `project`: A Project object containing bridgeProject and its phases
+ *
+ * Notes:
+ *   - Uses `createInspection` action to persist inspection data
+ *   - On success, redirects back to the project detail page
+ */
+
 "use client"
 
 import { useState } from "react"

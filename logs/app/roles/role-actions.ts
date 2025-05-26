@@ -1,3 +1,34 @@
+/**
+ * roles-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This file provides server-side functions for managing roles in the database. 
+ *   It includes functions for fetching, adding, updating, and deleting roles, 
+ *   along with ensuring consistency between roles, users, and related permissions.
+ *
+ * Functions:
+ *   - `getRoles`: Fetches all roles and users from the database and returns them.
+ *   - `addRole`: Adds a new role to the database if it does not already exist.
+ *   - `updateRole`: Updates an existing role, and ensures that users and permissions are synchronized with the new role details.
+ *   - `deleteRole`: Deletes a role from the database, removes it from users' roles, and cleans up related permissions.
+ *
+ * Components:
+ *   - `db`: The database instance used to perform CRUD operations on roles, users, and permissions.
+ *   - `revalidatePath`: A Next.js utility to revalidate paths after creating or updating roles.
+ *   - `toast`: For displaying success or error messages related to role operations.
+ *
+ * Behavior:
+ *   - `getRoles`: Fetches roles in ascending order and users, returning them as an object.
+ *   - `addRole`: Checks for an existing role, creates a new one if not found, and triggers a revalidation of the `/logs` path.
+ *   - `updateRole`: Fetches the current role and updates it, ensuring that users' role mappings and related permissions are updated accordingly if the role name changes.
+ *   - `deleteRole`: Deletes the role from the database, updates all users to remove the role, and deletes related permissions from `rolePermission` entries.
+ *
+ * Notes:
+ *   - Error handling is implemented for each function to ensure any issues during database operations are logged and handled gracefully.
+ *   - The `updateRole` function ensures that all users with the old role name have their roles updated, and related role permissions are also updated.
+ *   - The `deleteRole` function ensures that the role is safely removed from all users and permissions, with appropriate messaging upon completion.
+ */
+
 "use server"
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";

@@ -4,7 +4,7 @@ import path from "path"
 import { logActivity } from "@/lib/activity-logger"
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
-import { getCurrentUser } from "@/app/login/actions"
+import { getCurrentUser } from "@/app/login/auth"
 
 export async function POST(request: NextRequest) {
   try {

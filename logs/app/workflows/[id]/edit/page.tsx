@@ -1,3 +1,49 @@
+/**
+ * EditWorkflowPage Component
+ * 
+ * This page allows the user to edit a workflow, including updating the workflow's name, description, and steps. It provides the ability to:
+ * - Edit the workflow's name and description.
+ * - Reorder steps via drag-and-drop.
+ * - Update individual step details like status, assignee, and due date.
+ * - Delete steps from the workflow.
+ * - Add new steps to the workflow.
+ * - Save changes to the workflow.
+ * - Navigate back to the previous page.
+ * 
+ * Features:
+ * - Workflow details editing (name, description).
+ * - Step management with drag-and-drop functionality to reorder steps.
+ * - Step-level editing (title, description, status, assignee, due date).
+ * - Adding and deleting steps within the workflow.
+ * - Real-time UI updates and server synchronization.
+ * - Error handling and success notifications for workflow changes.
+ * 
+ * Props:
+ * - `id` (string): The unique identifier for the workflow being edited (from the route).
+ * 
+ * Dependencies:
+ * - `DragDropContext`, `Draggable`, `Droppable`, `DropResult` from `@hello-pangea/dnd` for handling drag-and-drop reordering.
+ * - `getWorkflowById`, `updateWorkflow`, `updateStep`, `deleteStep`, `reorderSteps`, `getUsers` from the actions for interacting with workflow data.
+ * - `Button`, `Input`, `Textarea`, `Label`, `Card`, `CardContent`, `CardHeader`, `CardTitle` from the UI component library.
+ * - `ArrowLeft`, `GripVertical`, `Trash2` from `lucide-react` for icons.
+ * - `toast` from `sonner` for displaying notifications.
+ * 
+ * State:
+ * - `workflow`: Stores the current workflow data.
+ * - `name`, `description`: Workflow's name and description.
+ * - `steps`: List of workflow steps.
+ * - `isLoading`, `isSaving`: Flags for loading and saving states.
+ * - `error`: Stores any error messages.
+ * - `users`: List of users available for assignee selection.
+ * 
+ * Methods:
+ * - `handleDragEnd`: Handles the end of a drag-and-drop event to reorder steps.
+ * - `handleUpdateStep`: Updates a step when its details are changed.
+ * - `handleDeleteStep`: Deletes a step from the workflow.
+ * - `handleSaveWorkflow`: Saves the edited workflow data.
+ */
+
+
 "use client"
 
 import { useState, useEffect } from "react"

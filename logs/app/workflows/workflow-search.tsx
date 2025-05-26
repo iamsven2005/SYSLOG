@@ -1,3 +1,25 @@
+/**
+ * WorkflowSearch Component
+ * 
+ * This component allows users to search for workflows by updating the query parameters in the URL. 
+ * It uses the `useSearchParams` hook to read and update the search query, which is debounced to optimize performance when the user types.
+ * 
+ * Features:
+ * - Updates the search query in the URL as the user types.
+ * - Debounced search to reduce the number of updates and optimize performance.
+ * - Syncs the search term with the query parameter when the component mounts or the URL changes.
+ * 
+ * Dependencies:
+ * - `useSearchParams`, `useRouter`, `usePathname` from `next/navigation` for interacting with URL search parameters and router.
+ * - `useDebouncedCallback` from `use-debounce` to debounce the search query updates.
+ * - `Input` component from `@/components/ui/input` to capture the search term input.
+ * - `Search` icon from `lucide-react` for the search icon within the input field.
+ * 
+ * Usage:
+ * - This component can be used in any page where you need to filter workflows by a search term. It manages the query parameters directly in the URL, making it easy to share and bookmark search results.
+ */
+
+
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"

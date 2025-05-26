@@ -1,3 +1,27 @@
+/**
+ * email-template-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This module provides server-side actions for managing email templates.
+ *   It supports CRUD operations, user assignments, and sending emails using predefined templates.
+ *
+ * Key Functions:
+ *   - createEmailTemplate: Creates a new email template with optional assigned users.
+ *   - updateEmailTemplate: Updates name, subject, and body of an existing template.
+ *   - deleteEmailTemplate: Deletes a template and logs the activity.
+ *   - getEmailTemplate / getAllEmailTemplates: Fetches one or all email templates.
+ *   - sendEmailWithTemplate: Sends personalized emails using a template to a list of users.
+ *   - sendEmailToAllAdmins: Shortcut for sending a template email to all admin users.
+ *   - assignUsersToEmailTemplate: Associates users with an email template.
+ *   - removeUsersFromEmailTemplate: Removes user associations from a template.
+ *   - getUsersAssignedToEmailTemplate: Fetches user objects assigned to a specific template.
+ *
+ * Notes:
+ *   - Emails are sent via a local API endpoint at http://192.168.1.102:3000/api/send-email.
+ *   - Logs activity for each key action using `logActivity`.
+ *   - All paths involving user assignments reference the `userEmailTemplate` join table.
+ */
+
 "use server"
 
 import { db } from "@/lib/db"

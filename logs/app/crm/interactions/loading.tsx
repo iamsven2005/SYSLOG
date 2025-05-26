@@ -1,3 +1,19 @@
+/**
+ * loading.tsx
+ *
+ * Description:
+ *   Skeleton loading UI displayed while the "New Interaction" page is fetching initial data.
+ *
+ * Features:
+ *   - Mimics the layout and structure of the actual form to provide visual consistency.
+ *   - Uses reusable `Skeleton` components for a shimmer-loading effect.
+ *   - Provides feedback to users during data loading (e.g., fetching companies, contacts).
+ *
+ * Usage:
+ *   Used in conjunction with Next.js's `loading.tsx` or suspense boundaries
+ *   to enhance user experience with non-blocking UI while awaiting server-side data.
+ */
+
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 

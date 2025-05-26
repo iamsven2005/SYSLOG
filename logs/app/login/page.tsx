@@ -1,10 +1,41 @@
+/**
+ * LoginPage.tsx - 2025-05-25 by sven.tan
+ *
+ * Provides the user interface for logging into the system with a username and password.
+ *
+ * Functionality:
+ * - Handles form submission to trigger the `loginUser` function for authenticating users.
+ * - Displays loading state during login processing.
+ * - Redirects users based on their role (admin redirects to logs, others to notifications).
+ * - Provides feedback with toast notifications:
+ *   - Success on successful login, including a personalized welcome message.
+ *   - Error if login fails or an unexpected error occurs.
+ * - Includes a `DatabaseStatusBar` to show database connection status.
+ *
+ * Usage:
+ * - Add this page to your authentication flow for user login.
+ * - Ensure the `loginUser` function is correctly integrated for authenticating users.
+ * - Customize the redirection paths based on user roles as needed.
+ *
+ * Limitations:
+ * - Currently only handles basic username and password login without additional security features (e.g., two-factor authentication).
+ * - Error handling is generic; consider expanding for more specific error cases (e.g., invalid credentials vs. server issues).
+ * - Relies on the `loginUser` function to handle authentication, which could be refactored for improved security (e.g., password hashing).
+ *
+ * Improvements:
+ * - Implement input validation (e.g., username and password strength checks).
+ * - Add a loading spinner or visual feedback during the login process for better user experience.
+ * - Expand error messages to provide more context (e.g., incorrect password, account locked, etc.).
+ * - Integrate two-factor authentication or other secure methods for login.
+ */
+
 "use client"
 
 import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { loginUser } from "./actions"
+import { loginUser } from "./auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"

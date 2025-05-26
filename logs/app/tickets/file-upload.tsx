@@ -1,3 +1,38 @@
+/**
+ * FileUpload Component
+ * 
+ * This component allows users to upload files and attach them to a ticket or comment.
+ * It supports both drag-and-drop and file selection via the file input. It also allows for handling multiple file uploads at once.
+ * The component provides feedback during the upload process and calls a callback (`onUploadComplete`) once a file is successfully uploaded.
+ * 
+ * Props:
+ * - `ticketId` (number, optional): The ID of the ticket to which the file is being attached. Required for uploading files directly to a ticket.
+ * - `commentId` (number, optional): The ID of the comment to which the file is being attached. Required for uploading files to a comment.
+ * - `onUploadComplete` (function, optional): Callback function to be called when the file is successfully uploaded. It receives the uploaded `TicketAttachment` as an argument.
+ * - `multiple` (boolean, optional): Flag indicating whether multiple files can be selected/uploaded at once. Defaults to `false`.
+ * - `onFileSelect` (function, optional): Callback function to be called when files are selected or dropped. It is passed the array of `File` objects.
+ * 
+ * Features:
+ * - Allows for uploading files via a file input or drag-and-drop.
+ * - Ensures files do not exceed the 10MB size limit.
+ * - Supports both uploading to a ticket or a comment, based on the provided IDs.
+ * - Provides success and error feedback using `toast`.
+ * - Displays "Uploading..." during the file upload process to provide user feedback.
+ * 
+ * Dependencies:
+ * - `useState`, `useRef` from React for managing state and references.
+ * - `Button` from `@/components/ui/button` for the button UI.
+ * - `Paperclip` icon from `lucide-react` for the file attachment icon.
+ * - `toast` from `sonner` for displaying feedback messages.
+ * - `TicketAttachment` from `@/prisma/generated/main` for the type of uploaded file data.
+ * 
+ * Methods:
+ * - `handleFileChange`: Triggered when a file is selected via the file input. It either uploads the file or calls `onFileSelect` if provided.
+ * - `uploadFiles`: Uploads files to the server, checking for the 10MB file size limit and sending the file as `FormData`.
+ * - `handleDrag`, `handleDrop`: Handles drag-and-drop functionality, allowing the user to drag files into the upload area.
+ * - `handleButtonClick`: Opens the file input dialog when the attach button is clicked.
+ */
+
 "use client"
 
 import type React from "react"

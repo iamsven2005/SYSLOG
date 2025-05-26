@@ -1,3 +1,21 @@
+/**
+ * app/crm/orders/page.tsx
+ *
+ * Description:
+ *   Displays a list of material orders across projects, with optional filtering by order status.
+ *
+ * Features:
+ *   - Search input for filtering orders by keyword (UI only, no backend filtering yet).
+ *   - Status filter dropdown with options like Planned, Ordered, Delivered, Cancelled.
+ *   - Displays order details including material, project, vendor, quantity, price, status, and delivery date.
+ *   - Uses ShadCN UI components for consistent styling.
+ *   - Links to detailed views for materials, projects, vendors, and individual orders.
+ *
+ * Usage:
+ *   Accessible via `/crm/orders`.
+ *   Supports query param `status` for filtering displayed orders by status.
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

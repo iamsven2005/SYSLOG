@@ -1,3 +1,40 @@
+/**
+ * LeaveCalendarClient.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component displays a calendar view for employees' leaves, holidays, and reminders. It allows users to search for events
+ *   on a specific date, manage holidays and reminders, and navigate through months. It also supports adding, editing, and deleting
+ *   holidays and reminders via modals.
+ *
+ * Key Features:
+ *   - Displays a calendar with leave types, holidays, and reminders highlighted for each day.
+ *   - Provides an option to navigate between months and go back to today's date.
+ *   - Allows users to search for events by date, person, holiday, or activity (leave/reminder).
+ *   - Includes modals for adding, editing, and deleting holidays and reminders.
+ *   - Each date in the calendar highlights relevant events such as leaves, holidays, and reminders.
+ *   - Uses dropdowns, search input, and navigation controls for easy interaction.
+ *
+ * Key Functions:
+ *   - `handlePreviousMonth`: Navigates to the previous month.
+ *   - `handleNextMonth`: Navigates to the next month.
+ *   - `handleToday`: Resets the calendar view to the current month and date.
+ *   - `handleDeleteReminder`: Deletes a reminder and provides feedback.
+ *   - `handleDeleteHoliday`: Deletes a holiday and provides feedback.
+ *   - `handleEditReminder`: Opens the reminder edit dialog.
+ *   - `handleEditHoliday`: Opens the holiday edit dialog.
+ *   - `clearSearch`: Clears search results.
+ *   - `navigateToDate`: Navigates the calendar to a specific date and highlights it.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LeaveCalendarClient leaves={leavesData} holidays={holidaysData} reminders={remindersData} />
+ *   ```
+ *
+ * Notes:
+ *   - `leaves`, `holidays`, and `reminders` are provided as props, representing data about leave applications, holidays, and personal reminders.
+ *   - The search functionality allows users to find events by date, person, holiday, or activity type.
+ *   - When a user clicks on a date, it highlights the date and shows any relevant leave, holiday, or reminder.
+ */
 "use client"
 
 import { DialogTrigger } from "@/components/ui/dialog"

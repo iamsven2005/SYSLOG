@@ -1,3 +1,39 @@
+/**
+ * Server-side actions for managing workflows, steps, users, and logs.
+ * 
+ * This module handles CRUD operations for workflows and steps, including functionality for creating, updating, deleting,
+ * and reordering steps. It also manages logs related to steps and interacts with users to assign steps to them.
+ * 
+ * Key Features:
+ * - Workflow CRUD operations: Create, read, update, delete workflows.
+ * - Step CRUD operations: Create, read, update, delete steps, and reorder steps.
+ * - Log management: Create and fetch logs associated with workflow steps.
+ * - User management: Fetch user data and current user details.
+ * 
+ * Methods:
+ * - `getWorkflows`: Retrieves workflows, with an optional search query.
+ * - `getWorkflowById`: Retrieves a specific workflow by ID.
+ * - `createWorkflow`: Creates a new workflow with specified name and description.
+ * - `updateWorkflow`: Updates the details of a workflow by ID.
+ * - `deleteWorkflow`: Deletes a workflow and its associated steps and logs.
+ * - `getStepsByWorkflowId`: Retrieves steps for a given workflow, with an optional search query.
+ * - `createStep`: Creates a new step in a workflow.
+ * - `updateStep`: Updates the details of a specific step in a workflow.
+ * - `deleteStep`: Deletes a specific step from a workflow.
+ * - `reorderSteps`: Reorders steps in a workflow based on a given list of step IDs.
+ * - `getLogsByStepId`: Retrieves logs for a specific step by its ID.
+ * - `createLog`: Creates a new log entry for a specific step.
+ * - `getUsers`: Retrieves a list of all users.
+ * - `getCurrentUser`: Retrieves details of the current user (or a default demo user).
+ * 
+ * Dependencies:
+ * - `db`: Prisma database client for interacting with the database.
+ * - `Prisma`: The Prisma library used for database queries.
+ * - `StepStatus`: Enum for step statuses (e.g., "PENDING", "IN_PROGRESS").
+ * - `revalidatePath`: Next.js function to trigger revalidation of a page path.
+ */
+
+
 "use server"
 
 import { revalidatePath } from "next/cache"

@@ -1,3 +1,38 @@
+/*
+ * file-details.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Client-side component for displaying detailed information and managing access permissions of a selected file in the drive system.
+ *   Displays file preview (image, video, audio), metadata (owner, creation, modification dates), and allows users to download the file.
+ *   Enables sharing the file with other users and managing access permissions (read, write, comment).
+ *   Provides functionality for removing shared access from other users.
+ *
+ * Features:
+ *   - Displays file name, type, preview (for images, videos, audios), and metadata (owner, created at, updated at)
+ *   - Allows file download with a "Download" button
+ *   - Provides file sharing options: select a user and permission type (read, write, comment) and share the file
+ *   - Lists all users with access to the file, showing their permissions and allowing the removal of specific permissions
+ *   - Displays file preview based on its type (image, video, audio, or generic file icon)
+ *   - Handles the display of avatar and user information for file owners and users with access
+ *   - Uses API calls to share files, update permissions, and remove access from users
+ *   - Implements user feedback via toast notifications for success and error states
+ *
+ * Props:
+ *   - file: The file object containing its details (id, name, type, URL, permissions, etc.)
+ *   - onClose: Callback to close the file details modal
+ *   - onUpdate: Callback to refresh the file details after changes (such as sharing or permission updates)
+ *
+ * Dependencies:
+ *   - `getFileDetails`: Fetches detailed information about a file
+ *   - `getUsersForSharing`: Fetches the list of users eligible for sharing
+ *   - `shareFile`: Shares the file with a user and sets the selected permission
+ *   - `removeFilePermission`: Removes file access permission for a user
+ *   - `toast`: Used for displaying success and error messages
+ *   - `lucide-react`: Provides icons for various UI components (e.g., `Download`, `Share2`, `UserPen`, etc.)
+ *   - `Avatar`, `Select`, `Button`, `Input`, and other UI components from the design system
+ *   - `AvatarFallback`: Displays the first letter of a user's name if the avatar image is unavailable
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

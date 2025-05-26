@@ -1,3 +1,47 @@
+/**
+ * rule-actions.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This file contains server-side functions for managing rule groups, rules, and commands in the system. 
+ *   It includes functionality for importing rule groups and rules from Excel, fetching and manipulating rule data, 
+ *   and exporting rule data to Excel. These functions handle tasks like creating, updating, deleting, 
+ *   and logging activities related to rule groups and rules.
+ *   
+ * Functions:
+ *   - `importRuleGroups`: Imports rule groups, rules, and commands from an Excel file. It handles creating rule groups and rules, 
+ *     as well as associating commands with the corresponding rules.
+ *   - `prepareRuleGroupsForExport`: Prepares rule groups, rules, and commands for export to Excel.
+ *   - `getRuleGroups`: Fetches rule groups with pagination, searching, and associated rules, including their commands and email templates.
+ *   - `getRuleGroup`: Fetches a specific rule group by its ID.
+ *   - `createRuleGroup`: Creates a new rule group, optionally associating an email template with it.
+ *   - `updateRuleGroup`: Updates an existing rule group, including its associated email template.
+ *   - `deleteRuleGroup`: Deletes a rule group and all its associated rules and commands.
+ *   - `createRule`: Creates a new rule, optionally associating an email template with it, and adding commands to the rule.
+ *   - `updateRule`: Updates an existing rule, including its commands and email template.
+ *   - `deleteRule`: Deletes a rule and its associated commands.
+ *   - `getAllRuleGroupsAndRules`: Retrieves all rule groups and rules for filtering and searching.
+ *   - `searchLogsByRuleCommands`: Searches logs based on the commands associated with a set of rules.
+ *   - `addCommandToRule`: Adds a command to a specified rule, logging the action.
+ *
+ * Components:
+ *   - `db`: The database instance used to interact with the rule groups, rules, commands, and activity log.
+ *   - `revalidatePath`: A Next.js utility used to trigger revalidation of specific paths after data changes.
+ *   - `logActivity`: A function to log activities related to rule group and rule management.
+ *   
+ * Behavior:
+ *   - The functions handle the creation, updating, deletion, and retrieval of rule groups, rules, and commands.
+ *   - When importing rule groups from an Excel file, the system handles group creation, rule creation, and command assignment. 
+ *   - The `prepareRuleGroupsForExport` function prepares the data in a format suitable for Excel export, including all rule group, rule, and command data.
+ *   - The `getRuleGroups` function allows for search, pagination, and filtering of rule groups and their associated data.
+ *   - Each action is logged via `logActivity`, ensuring traceability of changes made to the rule groups and rules.
+ *
+ * Notes:
+ *   - Error handling and logging are incorporated into each function to ensure that failures are properly captured and reported.
+ *   - The `getRuleGroups` function supports a search filter that can be applied to rule group names, rule names, rule descriptions, and commands.
+ *   - The `importRuleGroups` function processes Excel data, ensuring that each entry is added correctly and avoids duplication.
+ */
+
+
 "use server"
 
 import { db } from "@/lib/db"

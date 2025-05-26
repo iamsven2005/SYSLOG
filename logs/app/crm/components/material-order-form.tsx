@@ -1,3 +1,25 @@
+/*
+ * crm/projects/components/material-order-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component for creating a material order linked to a bridge material within a project.
+ *
+ * Features:
+ *   - Fetches and lists vendors filtered by type (VENDOR)
+ *   - Pre-fills material data (quantity, name, etc.) for reference
+ *   - Automatically calculates total price from quantity and unit price
+ *   - Allows adding a vendor on the fly via link
+ *   - Submits order using `createMaterialOrder` action
+ *
+ * Props:
+ *   - `projectId`: ID of the parent project
+ *   - `materialId`: ID of the bridge material being ordered
+ *   - `material`: BridgeMaterial object used to display and validate order details
+ *
+ * Notes:
+ *   - Uses `getCompanies({ type: "VENDOR" })` to filter eligible vendors
+ *   - Validated via Zod schema and react-hook-form
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

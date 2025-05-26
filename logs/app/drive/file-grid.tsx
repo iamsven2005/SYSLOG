@@ -1,3 +1,42 @@
+/*
+ * file-grid.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The FileGrid component is the main interface for browsing, interacting with, and managing folders and files
+ *   in a Google Drive–like file system. It supports drag-and-drop movement, renaming, deletion, search with vector
+ *   embeddings, and bulk selection via click-and-drag.
+ *
+ * Key Features:
+ *   - Displays a grid of folders and files with icons based on file type
+ *   - Allows renaming folders/files inline with confirmation via Enter or blur
+ *   - Enables deleting individual or multiple files and folders with confirmation
+ *   - Supports drag-and-drop movement of files/folders to other folders or root
+ *   - Provides "drop to delete" feature via a fixed trash zone
+ *   - File preview triggering via onFileSelect callback (e.g., for details view)
+ *   - Embedding-based smart search via /api/embed-text and /api/compare (with popover preview)
+ *   - Box selection using click-and-drag to highlight multiple files
+ *   - Inline dropdown menu for each item (Rename, Delete, Share, Download)
+ *
+ * Props:
+ *   - folders: Array of folders in the current directory
+ *   - files: Array of files in the current directory, including owner and permissions
+ *   - isLoading: Whether folder/file data is still loading
+ *   - onFileSelect: Callback triggered when a file is selected for detail view
+ *   - onRefresh: Callback triggered after changes (rename, delete, move) to reload folder contents
+ *   - parentFolderId: The ID of the parent folder (used for drop-to-root logic)
+ *
+ * UI/UX Enhancements:
+ *   - Intelligent file icons for common types (images, videos, documents, audio, code, archives)
+ *   - Responsive grid layout across screen sizes
+ *   - Visual drag-over effects and popovers for search similarity ranking
+ *   - Optimistic UI with toasts for success/error feedback
+ *
+ * Backend Integration:
+ *   - updateFile, updateFileName, updateFolder, updateFolder2: for renaming and moving
+ *   - deleteFile, deleteFolder: for deletion
+ *   - Emits server-side events to /api/drive-events for real-time SSE updates
+ */
+
 "use client"
 
 import type React from "react"

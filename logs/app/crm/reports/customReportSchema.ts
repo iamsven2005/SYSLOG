@@ -1,3 +1,21 @@
+/*
+ * customReportSchema.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Defines the schema for creating a custom report using Zod validation.
+ *   It ensures that the report name, data source, metrics, and other fields follow the specified rules.
+ *   The schema also handles optional fields such as description, filters, groupBy, chartType, and dateRange.
+ *
+ * Features:
+ *   - Validates report name, description, data source, and metrics selection
+ *   - Validates filters as an array of field-operator-value objects
+ *   - Supports grouping, chart types, and date range filtering
+ *   - Defines a `CustomReportInput` type using `z.infer` for type safety
+ *
+ * Dependencies:
+ *   - Zod: `z.object`, `z.enum`, `z.string`, `z.date`, `z.array`
+ */
+
 import { z } from "zod"
 
 export const customReportSchema = z.object({

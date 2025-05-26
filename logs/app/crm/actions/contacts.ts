@@ -1,3 +1,27 @@
+/*
+ * contact-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side actions for managing contact persons in the CRM system.
+ *   Supports operations such as listing, creating, updating, and deleting contacts, with links to associated companies and interactions.
+ *
+ * Features:
+ *   - `getContacts`: Fetches a list of contacts, optionally filtered by `companyId`
+ *   - `getContact`: Retrieves detailed information for a single contact, including interactions
+ *   - `createContact`: Creates a new contact record with optional metadata and links to a company
+ *   - `updateContact`: Edits contact details and revalidates relevant CRM pages
+ *   - `deleteContact`: Deletes a contact and updates affected company and contact views
+ *
+ * Dependencies:
+ *   - Prisma client (`db`)
+ *   - Next.js cache revalidation (`revalidatePath`)
+ *
+ * Notes:
+ *   - Designed for use in server components and server actions
+ *   - All mutations include related company information for immediate context
+ *   - Revalidation keeps CRM views in sync post-update or deletion
+ */
+
+
 "use server"
 
 import { db } from "@/lib/db"

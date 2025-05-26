@@ -1,3 +1,20 @@
+/*
+ * crm/contacts/components/contact-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form for creating or updating a contact person in the BridgeCRM system.
+ *
+ * Features:
+ *   - Supports both new contact creation and editing of existing contacts
+ *   - Validates form fields using Zod schema and react-hook-form
+ *   - Fetches and displays a list of companies for association
+ *   - Submits contact data via `createContact` or `updateContact` server actions
+ *   - Handles submission state, error messages, and redirect upon success
+ *
+ * Notes:
+ *   - Uses `useEffect` to load company list on client side
+ *   - Accepts optional `contact` prop for editing existing records
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

@@ -1,3 +1,21 @@
+/*
+ * crm/equipment/components/equipment-maintenance.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a table of maintenance history for a specific equipment item.
+ *
+ * Features:
+ *   - Lists maintenance records including date range, type, technician, cost, and description
+ *   - Applies colored badges for different maintenance types (e.g., Routine, Repair, Calibration)
+ *   - Displays fallback UI with an option to schedule maintenance when no records are found
+ *
+ * Props:
+ *   - `maintenanceRecords`: Array of maintenance entries for the equipment
+ *
+ * Notes:
+ *   - Uses `formatDate()` and `formatCurrency()` for date and cost formatting
+ *   - Maintenance type badge styling handled via `getMaintenanceTypeBadge()`
+ */
+
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

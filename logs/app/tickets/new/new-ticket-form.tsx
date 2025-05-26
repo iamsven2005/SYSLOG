@@ -1,3 +1,35 @@
+/**
+ * NewTicketForm Component
+ * 
+ * This component is designed to create a new support ticket in the system.
+ * It provides a form where users can fill in details such as title, description, priority, and related device.
+ * The form includes optional file uploads and a user selection for ticket assignment.
+ * Admin users have additional options for managing ticket priority and assignment.
+ * 
+ * Props:
+ * - `deviceNames` (array): List of device names available to be linked to the ticket.
+ * - `assignableUsers` (array): List of users who can be assigned the ticket.
+ * - `isAdmin` (boolean): Flag indicating if the current user has admin rights, enabling additional controls.
+ * 
+ * Features:
+ * - Title and description fields (required).
+ * - Priority selection for admins.
+ * - User assignment (optional) for admins.
+ * - Device linkage (optional) for devices already present in the system.
+ * - File upload support with size validation (up to 10MB).
+ * 
+ * Dependencies:
+ * - `useState`, `useEffect`, `useRouter` from React.
+ * - `createTicket` and `uploadFiles` for ticket creation and file handling.
+ * - `toast` for displaying success and error notifications.
+ * 
+ * Methods:
+ * - `handleSubmit`: Handles form submission, creates the ticket, and uploads files if any.
+ * - `handleFileSelect`: Adds selected files to the upload queue.
+ * - `removeSelectedFile`: Removes a file from the selected list.
+ * - `uploadFiles`: Uploads files to the server, handling each file with size validation.
+ */
+
 "use client"
 
 import type React from "react"
@@ -13,7 +45,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { createTicket } from "@/app/tickets/ticket-actions"
 import { FileUpload } from "../file-upload"
-import NotesTable from "@/app/notes/client"
+import NotesTable from "@/app/notes/NotesTable"
 type Priority = "low" | "medium" | "high" | "critical"
 
 export function NewTicketForm({

@@ -1,5 +1,5 @@
 /*
- * memory-usage-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * memory-usage-chart.tsx - 2025-05-25 by sven.tan:
  * Introduced <MemoryUsageChart> component for visualizing memory usage across hosts and virtual machines (VMs).
  * Features:
  *   - Toggle between "hosts" and "VMs" view modes with nested summary expansion
@@ -45,7 +45,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { getMemoryUsageData } from "../logs/actions"
+import { getMemoryUsageData } from "../logs/systemMetrics"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
 type CustomTooltipPayload = {
   name: string;

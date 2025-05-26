@@ -1,3 +1,19 @@
+/*
+ * crm/companies/components/company-projects.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a list of projects associated with a given company in the BridgeCRM system.
+ *
+ * Features:
+ *   - Lists project name, role, contract value, start date, and project status
+ *   - Applies color-coded status badges based on project status enum
+ *   - Provides quick access to project details via "View Project" button
+ *   - Includes "Add to Project" button linking to new project creation
+ *
+ * Notes:
+ *   - Accepts `company` prop with nested `projects` from `ProjectCompanyLink`
+ *   - Uses `formatCurrency()` and `formatDate()` from utils for display formatting
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

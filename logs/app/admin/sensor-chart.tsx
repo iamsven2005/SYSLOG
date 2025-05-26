@@ -1,5 +1,5 @@
 /*
- * sensor-chart-1.0.tsx - 2025-05-25 by sven.tan:
+ * sensor-chart.tsx - 2025-05-25 by sven.tan:
  * Initial release of <SensorChart> component for visualizing system sensor data.
  * Features:
  *   - Displays temperature and voltage readings over time by host and sensor
@@ -31,7 +31,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { exportToExcel, prepareChartDataForExport } from "../../lib/export-utils"
-import { getSensorData } from "../logs/actions"
+import { getSensorData } from "../logs/systemMetrics"
 
 // Host color palette
 const HOST_COLORS = [

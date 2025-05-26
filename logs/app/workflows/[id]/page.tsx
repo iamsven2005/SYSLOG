@@ -1,3 +1,39 @@
+/**
+ * Page Component
+ * 
+ * This component displays detailed information about a specific workflow. It includes:
+ * - The workflow's name, description, and basic metadata such as creation and last update timestamps.
+ * - A tabbed interface with two sections: "Steps" and "Details".
+ * - The "Steps" tab displays a list of workflow steps, fetched asynchronously with a skeleton loading state.
+ * - The "Details" tab provides metadata about the workflow, including the creation date, last updated date, and the total number of steps.
+ * - An "Edit Workflow" button that links to the edit page for the workflow.
+ * 
+ * Features:
+ * - Workflow metadata display (name, description, created date, updated date, step count).
+ * - Tabbed navigation for viewing workflow steps and details.
+ * - Skeleton loader for workflow steps while data is being fetched.
+ * - Error handling in case the workflow cannot be fetched.
+ * 
+ * Props:
+ * - `params` (Promise<{ id: string }>): A promise that resolves to an object containing the workflow's ID.
+ * 
+ * Dependencies:
+ * - `Suspense` from React for handling asynchronous rendering of workflow steps.
+ * - `Button`, `Card`, `CardContent` from the UI component library for UI elements.
+ * - `Tabs`, `TabsContent`, `TabsList`, `TabsTrigger` for tabbed navigation.
+ * - `WorkflowSteps` for displaying the steps of the workflow.
+ * - `getWorkflowById` for fetching workflow data from the backend.
+ * - `WorkflowStepsSkeleton` for rendering a loading state while workflow steps are fetched.
+ * 
+ * Methods:
+ * - `getWorkflowById`: Fetches the workflow details by its ID.
+ * 
+ * State:
+ * - `workflow`: The fetched workflow data.
+ * - `error`: Any error that occurred while fetching the workflow data.
+ */
+
+
 import { Suspense } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"

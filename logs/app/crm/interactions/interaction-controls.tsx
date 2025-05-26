@@ -1,3 +1,22 @@
+/**
+ * InteractionControls.tsx
+ * 
+ * Description:
+ *   A client-side search control component for the CRM Interactions page.
+ * 
+ * Features:
+ *   - Renders a search input field with a search icon.
+ *   - On form submit, updates the URL query parameters to reflect the search term.
+ *   - Preserves other URL query parameters using `useSearchParams`.
+ *   - Uses Next.js's `useRouter` for client-side navigation.
+ * 
+ * Props:
+ *   - `initialSearch` (optional): Prefills the search input when provided.
+ * 
+ * Usage:
+ *   Should be placed above or near the interaction list to enable search filtering.
+ */
+
 "use client"
 
 import { Input } from "@/components/ui/input"

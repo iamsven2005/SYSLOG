@@ -1,3 +1,34 @@
+/**
+ * leave-application-form.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component provides a form for users to apply for leave. It allows users to specify the leave start and end dates,
+ *   leave type (full day, morning, afternoon), the approver for the leave request, and the reason for leave. The form uses
+ *   React Hook Form with Zod validation and submits the data to the server for processing.
+ *
+ * Key Features:
+ *   - Allows users to select start and end dates using a calendar picker.
+ *   - Provides options to select leave type (full day, morning, afternoon).
+ *   - Includes a description field to provide a reason for the leave request.
+ *   - Includes an approver dropdown to select the person who will approve the leave request.
+ *   - Validation ensures that the dates are correct, the reason is sufficiently long, and that the end date is after the start date.
+ *   - Upon submission, the leave application is sent to the server for approval.
+ *   - Displays appropriate feedback via toast notifications on success or failure.
+ *
+ * Key Functions:
+ *   - `onSubmit`: Submits the form and sends leave data to the server via `submitLeaveApplication`.
+ *   - `handleDateSelect`: Updates the start and end dates when the user selects a date.
+ *   - `handleSubmit`: Handles form submission, including validation and server request.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LeaveApplicationForm />
+ *   ```
+ *
+ * Notes:
+ *   - `APPROVERS` are predefined in this example but in a real application, they could be fetched from the database or an API.
+ *   - The calendar is disabled for past dates, ensuring users can only pick future dates.
+ */
 "use client"
 
 import { useState } from "react"

@@ -1,3 +1,33 @@
+/**
+ * AddStepForm Component
+ * 
+ * This component allows the user to add a new step to a workflow. It includes a form where the user can input step details 
+ * such as the title, description, status, assignee, and due date. It also provides functionality to temporarily add steps 
+ * in the "new workflow" mode before the workflow is saved.
+ * 
+ * Features:
+ * - Inputs for step title, description, status, assignee, and due date.
+ * - Status and assignee selection with options for various states and users.
+ * - Supports dynamic addition of new steps during the workflow creation process.
+ * - Handles form submission and step creation through API interaction.
+ * 
+ * Props:
+ * - `workflowId` (string): The ID of the workflow to which the step will be added.
+ * - `onAddTempStep` (function, optional): Callback for adding temporary steps during workflow creation.
+ * 
+ * Dependencies:
+ * - `getUsers`: Fetches the list of users to assign steps.
+ * - `createStep`: API function to create a new step in the workflow.
+ * - `Button`, `Input`, `Label`, `Textarea`: UI components for form fields and actions.
+ * - `Select`, `Popover`, `Calendar`: UI components for selecting status, assignee, and due date.
+ * 
+ * State:
+ * - `title`, `description`, `status`, `assignedToId`, `date`: Form input values for creating a new step.
+ * - `isSubmitting`: Indicates if the step is currently being added.
+ * - `error`: Holds any error message if something goes wrong during step creation.
+ * - `users`: Stores the list of users fetched for assigning to the step.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

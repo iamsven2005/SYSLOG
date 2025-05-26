@@ -1,3 +1,35 @@
+/**
+ * checkout-book-dialog.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **CheckoutBookDialog** component handles the process of either checking out a book or returning it.
+ *   If the book is available, users can fill out the borrower's name and check out the book. If the book is already borrowed, the user can return it.
+ *
+ * Key Features:
+ *   - **Check Out**: Allows the user to enter the borrower's name and check out the book.
+ *   - **Return**: If the book is already borrowed, the user can confirm its return.
+ *   - **Validation**: Ensures the borrower's name is provided when checking out the book.
+ *   - **Toast Notifications**: Displays success or error notifications based on the action performed (checkout or return).
+ *   - **Loading State**: Buttons are disabled during submission, showing a loading indicator.
+ *
+ * Key Components:
+ *   - `Dialog`: A modal dialog for checking out or returning books.
+ *   - `Input`: An input field for entering the borrower's name during checkout.
+ *   - `Button`: Used for submitting the form or cancelling the action.
+ *   - `toast`: Provides success or error feedback after the action.
+ *   - `Loader2`: Displays a loading spinner during processing.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <CheckoutBookDialog book={book} isOpen={isOpen} onClose={handleClose} onSuccess={handleSuccess} />
+ *   ```
+ *
+ * Notes:
+ *   - The dialog adapts based on the book's current status (borrowed or available).
+ *   - The `handleCheckout` function handles the book checkout process, while the `handleReturn` function handles returning a book.
+ *   - The dialog closes and updates the parent component upon success.
+ */
+
 "use client"
 
 import { useState } from "react"

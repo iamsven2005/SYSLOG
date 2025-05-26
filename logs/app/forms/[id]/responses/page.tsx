@@ -1,3 +1,31 @@
+/**
+ * view-form-responses-page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Displays summary and individual responses for a form with questions and answers.
+ *   Includes tabs for switching between "Summary" (aggregated insights) and "Individual Responses".
+ *
+ * Key Functions:
+ *   - getFormWithResponses: Fetches form details, questions, and associated responses.
+ *   - notFound: Redirects to a 404 page if form is not found.
+ *   - ResponsesRealTimeIndicator: Displays real-time updates for new incoming responses.
+ *
+ * Behavior:
+ *   - Loads the form by `params.id`, renders its title and response count.
+ *   - Each question is visualized differently depending on its type (TEXT, FILE, or OPTION).
+ *   - For "Summary", shows aggregated response data with percentage bars.
+ *   - For "Individual", shows full responses per respondent grouped by question.
+ *
+ * Components:
+ *   - Tabs, Cards, and various UI components from ShadCN UI for display.
+ *   - A back button using Next.js Link to return to the `/forms` list.
+ *
+ * Notes:
+ *   - Assumes answers may contain `textAnswer`, `fileUrl`, or `selectedOptionIds`.
+ *   - File links use `/api/files/{answerId}` for download access.
+ *   - Useful for administrators or form creators reviewing feedback data.
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { notFound } from "next/navigation"

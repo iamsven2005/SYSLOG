@@ -1,3 +1,26 @@
+/*
+ * crm/contacts/new/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Form page for creating a new contact in the CRM system. Handles input validation,
+ *   company assignment, and contact details submission.
+ *
+ * Features:
+ *   - Uses Zod + React Hook Form for schema validation and form state
+ *   - Dynamically fetches all available companies for selection
+ *   - Supports optional fields like email, phone, title, expertise, and remarks
+ *   - Redirects to `/crm/contacts` on successful creation
+ *
+ * Schema:
+ *   - name (required)
+ *   - title, email, phone, expertise, remarks (optional)
+ *   - companyId (required)
+ *
+ * Dependencies:
+ *   - Components: Input, Select, Textarea, Button, Card, Form
+ *   - Actions: `getCompanies`, `createContact`
+ *   - Utilities: `zod`, `react-hook-form`, `next/navigation`
+ */
 
 
 "use client"

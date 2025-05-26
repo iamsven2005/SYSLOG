@@ -1,3 +1,27 @@
+/**
+ * edit-form-page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This server-side page loads a specific form by ID for editing and renders the `FormBuilder` component.
+ *   It supports graceful handling of invalid or missing forms via `notFound()` from Next.js.
+ *
+ * Key Functions:
+ *   - `getFormById`: Fetches form data based on the dynamic route ID.
+ *   - `FormBuilder`: UI component used to render and edit the form structure.
+ *
+ * Parameters:
+ *   - `params.id`: Dynamic route parameter representing the form's numeric ID.
+ *
+ * Behavior:
+ *   - Converts the route param to a number and fetches the form.
+ *   - If the form does not exist, the page triggers a 404.
+ *   - Passes the form (with optional `description` sanitized) to `FormBuilder`.
+ *
+ * Notes:
+ *   - This page is intended to be used at a dynamic route like `/forms/edit/[id]`.
+ *   - Assumes `FormBuilder` can handle a missing or undefined `description` field.
+ */
+
 import { FormBuilder } from "../form-builder"
 import { getFormById } from "../actions"
 import { notFound } from "next/navigation"

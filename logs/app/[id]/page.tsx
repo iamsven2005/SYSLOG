@@ -1,7 +1,26 @@
-/*
- * Record invalid access attempts to group 1 as log messages for audit trail.
- * Log includes timestamp, user IP address (with IPv6-mapped IPv4 normalized), and URL param.
+/**
+ * Logs Unauthorized Access Attempts and Renders Warning Message
+ * 
+ * This Next.js server component is triggered when accessing a route with parameters (e.g., `/log-bot/[id]`).
+ * It performs the following tasks:
+ * 
+ * 1. **Logs Unauthorized Actions:**
+ *    - The component logs unauthorized access attempts to the `message` table for auditing purposes.
+ *    - The log entry includes:
+ *      - A timestamp of when the action occurred.
+ *      - The user’s IP address (normalized to handle both IPv4 and IPv6-mapped IPv4).
+ *      - The URL parameter (`id` in this case).
+ *    - This log serves as an audit trail for any unauthorized or bot-like behavior.
+ * 
+ * 2. **Renders Warning Message:**
+ *    - A generic warning message is shown to the user indicating that their action is being recorded.
+ *    - This message can be customized or extended for more detailed alerts.
+ * 
+ * **Usage Example:**
+ * - If a user or bot accesses an unauthorized route, the system logs the attempt and displays the message: 
+ *   `"Invalid action, your action will be recorded"`.
  */
+
 
 import { db } from "@/lib/db"
 import { headers } from "next/headers"

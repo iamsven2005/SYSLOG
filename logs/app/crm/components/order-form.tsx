@@ -1,3 +1,21 @@
+/*
+ * crm/orders/components/order-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form to create a new material order by selecting a project, material, and vendor.
+ *
+ * Features:
+ *   - Dynamically fetches all projects and filters materials per selected project
+ *   - Retrieves vendors of type VENDOR from the database
+ *   - Calculates total price in real-time based on quantity × unit price
+ *   - Provides fallback UI to add missing materials or vendors on the fly
+ *   - Validates using Zod schema and react-hook-form
+ *
+ * Notes:
+ *   - Uses `getProjects()` and `getCompanies({ type: "VENDOR" })` for dynamic population
+ *   - Materials list is populated based on selected project's `bridgeProject.materials`
+ *   - Will redirect to `/crm/orders` upon simulated form submission
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

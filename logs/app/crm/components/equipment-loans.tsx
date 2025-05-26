@@ -1,3 +1,21 @@
+/*
+ * crm/equipment/components/equipment-loans.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays the loan history of a specific equipment item in tabular format.
+ *
+ * Features:
+ *   - Lists loan records with checkout and return dates, quantity, project/company, and status
+ *   - Highlights active vs. returned loans using status badges
+ *   - Provides link to initiate new checkout if no history is found
+ *
+ * Props:
+ *   - `loans`: Array of equipment loan records (each including optional project and company details)
+ *
+ * Notes:
+ *   - Supports both project-based and company-based loan associations
+ *   - Uses `formatDate()` and conditional rendering for status handling
+ */
+
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

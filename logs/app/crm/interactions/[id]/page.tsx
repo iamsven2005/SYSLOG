@@ -1,3 +1,23 @@
+/**
+ * app/crm/interactions/[id]/page.tsx
+ * 
+ * Description:
+ *   This page displays detailed information for a specific CRM interaction,
+ *   including its date, type, associated company, contact, project, outcome, 
+ *   follow-up requirements, and notes.
+ * 
+ * Behavior:
+ *   - Uses server-side async function to fetch interaction data by ID.
+ *   - Redirects to 404 if the ID is invalid or the interaction is not found.
+ *   - Renders a structured view with conditional sections and icons.
+ *   - Provides a link to edit the interaction.
+ * 
+ * Dependencies:
+ *   - Lucide React for icons
+ *   - `getInteraction` for fetching the interaction from the database
+ *   - `Badge`, `Button`, `Card`, `Separator`, etc. from the ShadCN UI library
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"

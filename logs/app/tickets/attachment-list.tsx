@@ -1,3 +1,36 @@
+/**
+ * AttachmentList Component
+ * 
+ * This component is responsible for displaying a list of attachments associated with a support ticket.
+ * It shows attachment details like file name, size, and uploader information, along with the ability to download or delete attachments.
+ * Only admins or the original uploader of the attachment can delete it.
+ * 
+ * Props:
+ * - `attachments` (array): An array of `TicketAttachment` objects representing the attachments.
+ * - `currentUserId` (number): The ID of the currently logged-in user.
+ * - `isAdmin` (boolean): A flag indicating if the current user has admin privileges, allowing them to delete any attachment.
+ * 
+ * Features:
+ * - Displays attachment details such as file name, size, and uploader ID.
+ * - Downloads attachments via a direct link to the file.
+ * - Admins or the original uploader can delete the attachment via a confirmation dialog.
+ * 
+ * Dependencies:
+ * - `useState` from React to handle the deletion state.
+ * - `lucide-react` for icons used to represent file types and delete actions.
+ * - `toast` from `sonner` to show success and error messages.
+ * - `deleteAttachment` from `@/app/tickets/ticket-actions` to perform the deletion of attachments.
+ * - `AlertDialog` components for confirming deletion.
+ * 
+ * Methods:
+ * - `getFileIcon`: Returns an appropriate icon based on the MIME type of the file.
+ * - `handleDelete`: Deletes the attachment and provides feedback via toast notifications.
+ * 
+ * State:
+ * - `isDeleting`: A record that tracks the loading state of each attachment being deleted.
+ */
+
+
 "use client"
 
 import { useState } from "react"

@@ -1,3 +1,25 @@
+/*
+ * crm/interactions/components/interaction-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component for recording a new CRM interaction with companies, contacts, and/or projects.
+ *
+ * Features:
+ *   - Allows user to log details about the interaction (type, date, notes, outcome)
+ *   - Supports optional association with a contact or project
+ *   - Enables follow-up scheduling via date picker and toggle
+ *   - Dynamically updates contact list based on selected company
+ *
+ * Props:
+ *   - `companies`: List of companies and their contacts
+ *   - `projects`: Optional list of projects to associate the interaction
+ *   - `preSelectedCompanyId`, `preSelectedContactId`, `preSelectedProjectId`: Used to prefill related fields
+ *   - `companyContacts`: Optional contacts list if pre-selected company is passed
+ *
+ * Notes:
+ *   - Uses `createInteraction()` server action to persist data
+ *   - Redirects user to the relevant detail page upon successful creation
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

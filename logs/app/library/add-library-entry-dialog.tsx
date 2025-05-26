@@ -1,3 +1,34 @@
+/**
+ * add-library-entry-dialog.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **AddLibraryEntryDialog** component provides an interface for users to add a new library entry, which includes details such as the reference number, title, category, author, publication year, remarks, and an optional PDF attachment.
+ *   The dialog is opened when triggered, and once the entry is created, it uploads the PDF file if available and closes the dialog.
+ *
+ * Key Features:
+ *   - **Reference Number, Title, Category**: Required fields for the library entry.
+ *   - **Author, Publication Year, Remarks**: Optional fields for additional entry details.
+ *   - **PDF Upload**: Allows users to attach a PDF document to the library entry.
+ *   - **Validation**: Uses **zod** for validation and **react-hook-form** for form handling.
+ *   - **Loading States**: Displays loading states during submission and PDF upload.
+ *
+ * Key Components:
+ *   - `Dialog`: A modal dialog for adding the library entry.
+ *   - `Input`, `Textarea`: Input fields for entering details about the library entry.
+ *   - `Button`: Used to submit the form or close the dialog.
+ *   - `Loader2`: Displays a loading spinner during submission or file upload.
+ *   - `toast`: Provides success or error notifications after form submission.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <AddLibraryEntryDialog isOpen={isOpen} onClose={handleClose} onSuccess={handleSuccess} />
+ *   ```
+ *
+ * Notes:
+ *   - **PDF Upload**: If a file is selected, it is uploaded to the server via a POST request after the library entry is created.
+ *   - **Button Disablement**: The submit button is disabled while the form is submitting or the file is being uploaded.
+ */
+
 "use client"
 
 import type React from "react"

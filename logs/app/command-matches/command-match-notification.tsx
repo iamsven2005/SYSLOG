@@ -1,3 +1,27 @@
+/*
+ * CommandMatchNotification.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component that displays an individual command match alert card.
+ *   Allows users to view details, mark the match as addressed with optional notes, or delete it.
+ *
+ * Features:
+ *   - Displays command rule, log entry, timestamp, and optional group or addressed info
+ *   - Provides buttons to mark the match as addressed or delete it
+ *   - Prompts confirmation dialogs before updating or removing a match
+ *   - Uses toast notifications for feedback and hides card after action
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (Card, Dialog, Button, Textarea)
+ *   - Icons from Lucide React (Bell, Check, Trash2)
+ *   - Server actions: `markCommandMatchAsAddressed`, `deleteCommandMatch`
+ *   - Navigation via Next.js `useRouter`
+ *   - Toast feedback via `sonner`
+ *
+ * Notes:
+ *   - Optimistically hides the card after a successful update or deletion
+ *   - Accepts a single `match` prop with complete metadata
+ */
+
 "use client"
 
 import { useState } from "react"

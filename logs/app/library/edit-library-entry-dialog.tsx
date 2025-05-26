@@ -1,3 +1,35 @@
+/**
+ * edit-library-entry-dialog.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **EditLibraryEntryDialog** component allows users to edit existing library entries.
+ *   Users can modify the book's reference number, title, category, author, publication year, remarks, and attachment URL.
+ *   The component is designed to work with a modal dialog that displays the form fields and provides submit and cancel buttons.
+ *
+ * Key Features:
+ *   - **Edit Form**: Enables users to edit existing library entry details.
+ *   - **Validation**: Ensures that required fields (reference number, title, and category) are filled in correctly.
+ *   - **Submission Handling**: Handles submission of updated data and displays a success or error message.
+ *   - **Loading State**: The save button is disabled while the form is being submitted.
+ *
+ * Key Components:
+ *   - `Dialog`: A modal dialog that displays the edit form.
+ *   - `Form`: A form built using `react-hook-form` for validation and state management.
+ *   - `Button`: Buttons for submitting or canceling the form.
+ *   - `toast`: Provides feedback (success or error messages) after form submission.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <EditLibraryEntryDialog entry={entry} isOpen={isOpen} onClose={handleClose} onSuccess={handleSuccess} />
+ *   ```
+ *
+ * Notes:
+ *   - **Field validation**: Ensures that required fields (like reference number, title, and category) are entered correctly.
+ *   - The `handleSubmit` function handles form submission and calls the `updateLibraryEntry` function to save the changes.
+ *   - If the update is successful, a success message is shown and the form is reset. If there's an error, an error message is shown instead.
+ *   - The dialog is closed and refreshed upon successful submission.
+ */
+
 "use client"
 
 import { useState } from "react"

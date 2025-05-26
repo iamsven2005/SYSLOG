@@ -1,3 +1,43 @@
+/**
+ * LibraryEntryDetailsModal.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LibraryEntryDetailsModal** component provides a detailed view of a specific library entry,
+ *   allowing users (admins) to view detailed information, edit the entry, and perform checkout/return actions for the book.
+ *   The modal is designed to handle both viewing and editing modes, as well as book checkout and return functionalities.
+ *
+ * Key Features:
+ *   - Displays detailed information about a library entry, including title, author, publication year, creation date, status, borrower information, and remarks.
+ *   - Provides buttons for admins to edit the entry, check out the book, or return it.
+ *   - Opens additional dialogs for editing the entry and checking out/returning the book.
+ *   - Admin functionality includes access to edit or change book status (checked out or available).
+ *   - Includes navigation to related dialogs such as **EditLibraryEntryDialog** and **CheckoutBookDialog** for updating and managing books.
+ *
+ * Key Components:
+ *   - `Dialog`: Displays the modal containing detailed information and options for actions.
+ *   - `Button`: Provides actionable buttons for editing the entry, checking out the book, or returning it.
+ *   - `Badge`: Displays the status of the book, such as "Borrowed" or "Available."
+ *   - `EditLibraryEntryDialog`: A dialog to edit the details of the library entry.
+ *   - `CheckoutBookDialog`: A dialog to check out or return the book.
+ *   - `Pencil`, `BookUp`, `BookDown`, `FileText` (icons): Icons used for indicating actions like editing, checking out, returning, and viewing attachments.
+
+ * Example Usage:
+ *   ```tsx
+ *   <LibraryEntryDetailsModal
+ *     entry={selectedEntry}
+ *     isOpen={isModalOpen}
+ *     onClose={() => setIsModalOpen(false)}
+ *     onUpdate={fetchUpdatedEntries}
+ *     isAdmin={true}
+ *   />
+ *   ```
+ *
+ * Notes:
+ *   - This modal is designed for admins and displays different actions based on whether the book is currently checked out.
+ *   - **Edit** and **Checkout/Return** actions open respective dialogs that allow further management of the book's status.
+ *   - The modal automatically reflects the updated state once the entry is edited, checked out, or returned, and it refreshes the relevant data.
+ */
+
 "use client"
 
 import { useState } from "react"

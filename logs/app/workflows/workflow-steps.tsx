@@ -1,3 +1,44 @@
+/**
+ * WorkflowSteps Component
+ * 
+ * This component fetches and displays a list of steps for a specific workflow. It allows users to:
+ * - Search and filter the steps by title or description.
+ * - Drag and drop to reorder the steps.
+ * - Select a step to view and edit its details.
+ * - Update and reorder steps locally with immediate feedback, while syncing changes to the server.
+ * 
+ * Features:
+ * - Displays the workflow steps in a draggable list.
+ * - Allows the user to search and filter steps.
+ * - Supports drag-and-drop reordering of steps within the workflow.
+ * - Displays details for a selected step, including its title, description, status, assignee, and due date.
+ * - Displays an error message if data fetching or updating fails.
+ * 
+ * Dependencies:
+ * - `Card`, `CardHeader`, `CardContent`, `CardTitle` from `@/components/ui/card` for structured card layout.
+ * - `Badge`, `Avatar`, and `AvatarFallback` from `@/components/ui` for displaying step status and assignees.
+ * - `Input`, `Select`, and `Popover` from `@/components/ui` for user interaction with step details.
+ * - `DragDropContext`, `Draggable`, and `Droppable` from `@hello-pangea/dnd` for implementing drag-and-drop functionality.
+ * - `Search`, `GripVertical` from `lucide-react` for icons.
+ * 
+ * Methods:
+ * - `handleStepSelect`: Handles selecting a step to view and edit.
+ * - `handleStepUpdate`: Handles updating the selected step’s details and syncing with the server.
+ * - `handleDragEnd`: Handles reordering the steps and updating the server with the new order.
+ * - `handleSearchQuery`: Handles filtering steps by the search query.
+ * - `getStatusColor`: Determines the color for each step’s status badge based on its current status.
+ * 
+ * State:
+ * - `steps`: The list of steps for the workflow.
+ * - `filteredSteps`: A filtered list of steps based on the search query.
+ * - `selectedStep`: The currently selected step for editing.
+ * - `searchQuery`: The current search query entered by the user.
+ * - `isLoading`: Boolean indicating whether data is being fetched.
+ * - `error`: Holds any error message if an issue occurs while fetching or updating steps.
+ * - `users`: The list of users who can be assigned to steps.
+ */
+
+
 "use client"
 
 import { useState, useEffect } from "react"

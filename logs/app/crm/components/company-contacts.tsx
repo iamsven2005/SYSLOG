@@ -1,3 +1,18 @@
+/*
+ * crm/companies/components/company-contacts.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a list of contacts associated with a company in BridgeCRM.
+ *
+ * Features:
+ *   - Lists name, title, email, and phone for each contact person
+ *   - Provides "View" and "Edit" buttons for each contact
+ *   - Includes "Add Contact" button linking to new contact form
+ *   - Handles empty state gracefully with a placeholder message
+ *
+ * Notes:
+ *   - Receives `company` as prop, including its contacts (ExtendedCompany)
+ *   - Uses Tailwind and ShadCN UI components for layout and styling
+ */
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

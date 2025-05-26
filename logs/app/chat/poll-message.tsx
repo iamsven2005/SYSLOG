@@ -1,3 +1,25 @@
+/*
+ * PollMessage.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side component that renders a poll based on a given chat message ID.
+ *   Fetches the poll ID via API and loads full poll data to pass into the `PollComponent`.
+ *
+ * Features:
+ *   - Resolves poll ID from message ID via `/api/polls/by-message/:messageId`
+ *   - Retrieves full poll details including options and votes using `getPollResults`
+ *   - Handles loading and error states gracefully
+ *   - Displays `PollComponent` when data is successfully loaded
+ *
+ * Dependencies:
+ *   - `PollComponent` for rendering poll UI and interactions
+ *   - `getPollResults` server action
+ *   - API endpoint: `/api/polls/by-message/:messageId`
+ *
+ * Notes:
+ *   - Displays fallback messages for loading, error, or missing data
+ *   - Ensures type safety for poll data structure before rendering
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"

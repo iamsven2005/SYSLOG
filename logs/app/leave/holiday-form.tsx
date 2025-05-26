@@ -1,3 +1,33 @@
+/**
+ * holiday-form.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component handles the form for adding or editing holidays. It includes fields for the holiday name, date,
+ *   description, and whether the holiday is recurring. The form uses React Hook Form with Zod validation and supports
+ *   submission to add or update holiday data.
+ *
+ * Key Features:
+ *   - Supports both "add" and "edit" modes, with dynamic handling of form fields.
+ *   - Uses a date picker (Popover with Calendar) for selecting the holiday date.
+ *   - Allows adding a description and specifying if the holiday is recurring (annual).
+ *   - Submits the form data to either add a new holiday or update an existing one, with success and error messages via `toast`.
+ *   - Includes validation using Zod to ensure the input data is valid.
+ *
+ * Key Functions:
+ *   - `onSubmit`: Handles form submission to add or update holiday data based on the mode ("add" or "edit").
+ *   - `useEffect`: Resets the form with default values when the `defaultValues` prop changes (for edit mode).
+ *   - `handleSubmit`: Submits the form and invokes the appropriate server-side function (`addHoliday` or `updateHoliday`).
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <HolidayForm mode="add" onSuccess={() => alert('Holiday added!')} />
+ *   <HolidayForm mode="edit" holidayId={1} defaultValues={defaultValues} onSuccess={() => alert('Holiday updated!')} />
+ *   ```
+ *
+ * Notes:
+ *   - `addHoliday` and `updateHoliday` are server-side functions used to save holiday data in the database.
+ *   - `toast` is used to display success or error messages after submitting the form.
+ */
 "use client"
 
 import { useState, useEffect } from "react"

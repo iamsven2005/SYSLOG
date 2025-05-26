@@ -1,3 +1,19 @@
+/*
+ * crm/companies/components/company-interactions.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Displays a list of recorded CRM interactions linked to a specific company in BridgeCRM.
+ *
+ * Features:
+ *   - Shows each interaction with title, notes, associated contact, and project
+ *   - Provides relative timestamp for interaction date
+ *   - "New Interaction" button links to prefilled interaction creation form
+ *
+ * Notes:
+ *   - Uses `ExtendCompany` type to include related contact and project details per interaction
+ *   - Interaction links route to individual contact or project pages
+ *   - Falls back to default text if notes or outcome are missing
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,3 +1,20 @@
+/**
+ * app/crm/projects/[id]/edit/page.tsx
+ * 
+ * Page to edit an existing project.
+ * 
+ * Fetches the project by ID and displays a form pre-filled with project data.
+ * If the project is not found, redirects to a 404 page.
+ * 
+ * Includes:
+ * - Back button to the project details page
+ * - Header with project name
+ * - Editable form for project information (via ProjectForm component)
+ * 
+ * Route parameter:
+ * - id: project ID
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

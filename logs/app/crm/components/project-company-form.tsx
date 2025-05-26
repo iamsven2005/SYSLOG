@@ -1,3 +1,20 @@
+/*
+ * crm/projects/components/project-company-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component for associating a company with a specific bridge project, defining their role,
+ *   contract status, value, and participation duration.
+ *
+ * Features:
+ *   - Allows selection of existing companies from dropdown
+ *   - Specifies role, status, start/end dates, contract value, and notes
+ *   - Submits data via `addCompanyToProject()` server action
+ *
+ * Notes:
+ *   - Uses Zod for form validation and transformation (e.g., contractValue string → number)
+ *   - Defaults contract status to "PENDING"
+ *   - Integrates UI elements such as date pickers, dropdowns, and slider from ShadCN components
+ */
+
 "use client"
 
 import { useState } from "react"

@@ -1,0 +1,1410 @@
+/**
+ * UsersTable Component
+ * 
+ * This component is responsible for managing users within the system. It displays a table with user data, allows for searching,
+ * pagination, editing, deleting, and adding new users. It also handles importing and exporting user data, as well as assigning
+ * and removing devices to/from users.
+ * 
+ * Features:
+ * - **Search**: Filters users by username, email, or other properties.
+ * - **Pagination**: Allows users to navigate between pages of users.
+ * - **Actions**: Provides functionality to edit, delete, and add users.
+ * - **Device Management**: Assigns and removes devices to/from users.
+ * - **Excel Import/Export**: Users can import or export user data using Excel files.
+ * 
+ * Dependencies:
+ * - `useState` and `useEffect` for managing state and side-effects.
+ * - `getUsers`, `addUser`, `updateUser`, `deleteUser`, etc., for user management.
+ * - `Input`, `Button`, `Checkbox`, `Table`, `Pagination` components for the UI.
+ * - `toast` from "sonner" for user feedback.
+ * - `MultiCombobox` for selecting roles and devices.
+ * 
+ * State:
+ * - `users`: The list of users to display in the table.
+ * - `selectedUsers`: The list of selected user IDs for bulk actions.
+ * - `userForm`: The form data for adding or editing a user.
+ * - `roles`: The list of roles available for user assignment.
+ * - `devices`: The list of devices available for user assignment.
+ * - `searchQuery`: The search query for filtering users.
+ * - `currentPage`: The current page for pagination.
+ * - `pageSize`: The number of users per page.
+ * - `totalPages` and `totalItems`: For pagination controls.
+ * - `addModalOpen`, `editModalOpen`, `deleteModalOpen`, `importModalOpen`: States for modal visibility.
+ * - `isLoading`: Flag indicating if data is being loaded.
+ * - `isImporting`: Flag indicating if data is being imported.
+ * 
+ * Methods:
+ * - `fetchUsers`: Fetches the list of users with filtering and pagination.
+ * - `fetchDevices`: Fetches available devices for user assignment.
+ * - `fetchRoles`: Fetches available roles for user assignment.
+ * - `fetchLocations`: Fetches available locations for user assignment.
+ * - `handleAddUser`, `handleUpdateUser`, `handleDeleteUser`: Handlers for adding, updating, and deleting users.
+ * - `handleExport`: Exports users to an Excel file.
+ * - `handleImport`: Imports users from an Excel file.
+ * - `handleSelectUser`, `handleSelectAll`: Manages user selection for bulk actions.
+ * - `handlePageChange`, `handlePageSizeChange`: Handles pagination controls.
+ * 
+ * UI:
+ * - A table displays users with their attributes such as username, email, roles, devices, etc.
+ * - Modals for adding, editing, and deleting users, including forms for entering user data.
+ * - A search bar to filter users by different attributes.
+ * - Pagination controls for navigating through large sets of users.
+ * - Buttons for exporting and importing users in Excel format.
+ */
+
+
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { Badge } from "@/components/ui/badge"
+import {
+  Search,
+  RefreshCw,
+  Trash2,
+  Edit,
+  Plus,
+  Mail,
+  Key,
+  Download,
+  Upload,
+  Server,
+  Eye,
+  EyeOff,
+  Wand2,
+  UserPen,
+} from "lucide-react"
+import { toast } from "sonner"
+import {
+  getUsers,
+  addUser,
+  updateUser,
+  deleteUser,
+  getUserDevices,
+  assignDeviceToUser,
+  removeDeviceFromUser,
+} from "../email-templates/user-actions"
+import { getDevices } from "../devices/device-actions"
+import { exportToExcel, prepareUsersForExport, generateUserImportTemplate } from "../../lib/export-utils"
+import * as XLSX from "xlsx"
+import { MultiCombobox } from "@/components/multi-combobox"
+import ScrollableRoles from "./Scroll"
+import { generatePassword } from "@/lib/utils"
+import { devices, location, Roles, User } from "@/prisma/generated/main"
+
+// Debounce function to limit how often a function can run
+function debounceString(fn: (value: string) => void, wait: number) {
+  let timeout: NodeJS.Timeout | null = null
+  return (value: string) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => fn(value), wait)
+  }
+}
+
+
+// Page size options
+const pageSizeOptions = [10, 25, 50, 100]
+
+// User type definition
+interface UserRow {
+  Username?: string
+  username?: string
+  Email?: string
+  email?: string
+  Password?: string
+  password?: string
+  Remarks?: string
+  remarks?: string
+  Role?: []
+  role?: []
+  Location?: []
+  location?: []
+}
+
+// Form type for adding/editing users
+interface UserForm {
+  username: string
+  email: string
+  password: string
+  role: string[]
+  devices: number[]
+  location: string[]
+  Remarks: string
+  pay?: string
+
+}
+
+interface Users extends User {
+  devices: devices[]
+}
+interface UserDevice {
+  deviceId: number
+}
+
+export default function UsersTable() {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([])
+  const [users, setUsers] = useState<Users[]>([])
+  const [devices, setDevices] = useState<devices[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+  const [status, setStatus] = useState<string>("")
+  // Modal states
+  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [importModalOpen, setImportModalOpen] = useState(false)
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [importPreview, setImportPreview] = useState<Record<string, string | number | undefined>[]>([])
+  const [isImporting, setIsImporting] = useState(false)
+
+  // Form state
+  const [userForm, setUserForm] = useState<UserForm>({
+    username: "",
+    email: "",
+    password: "",
+    role: [], // Changed from "USER" to ["USER"]
+    devices: [],
+    location: [],
+    Remarks: "",
+  })
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  // Add a new state for roles
+  const [roles, setRoles] = useState<Roles[]>([])
+  const [locations, setLocations] = useState<location[]>([])
+
+  // Add a function to fetch roles
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch("/api/roles")
+      const data = await response.json()
+      setRoles(data.roles)
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to fetch roles")
+    }
+  }
+  // Add a function to fetch roles
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch("/api/locations")
+      const data = await response.json()
+      setLocations(data.roles)
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to fetch locations")
+    }
+  }
+
+  // Apply debounced search
+  const debouncedSearch = debounceString((value) => {
+    setDebouncedSearchQuery(value)
+    setCurrentPage(1)
+  }, 300)
+
+
+  // Update search query and trigger debounced search
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchQuery(value)
+    debouncedSearch(value)
+  }
+
+  // Fetch users with filters
+  const fetchUsers = async () => {
+    setIsLoading(true)
+    try {
+      const result = await getUsers({
+        search: debouncedSearchQuery,
+        page: currentPage,
+        pageSize: pageSize,
+      })
+      console.log(result.users)
+      setUsers(result.users.map((user) => ({
+        ...user,
+        devices: user.devices.map((d) => d.device),
+      })))
+      setTotalPages(result.pageCount)
+      setTotalItems(result.totalCount)
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to fetch users")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Fetch all devices for device selection
+  const fetchDevices = async () => {
+    try {
+      const result = await getDevices({ pageSize: 1000 }) // Get all devices
+      if (result) {
+        setDevices(result.devices)
+      }
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to fetch devices")
+    }
+  }
+
+  // Load users when filters or pagination changes
+  useEffect(() => {
+    fetchUsers()
+  }, [debouncedSearchQuery, currentPage, pageSize])
+
+  // Update the useEffect to fetch roles on component mount
+  useEffect(() => {
+    fetchUsers()
+    fetchDevices()
+    fetchRoles() // Add this line
+    fetchLocations() // Add this line
+  }, [])
+
+  // Handle user selection
+  const handleSelectUser = (id: number) => {
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter((userId) => userId !== id))
+    } else {
+      setSelectedUsers([...selectedUsers, id])
+    }
+  }
+
+  // Handle select all users
+  const handleSelectAll = () => {
+    if (selectedUsers.length === users.length) {
+      setSelectedUsers([])
+    } else {
+      setSelectedUsers(users.map((user) => user.id))
+    }
+  }
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  // Handle page size change
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when changing page size
+  }
+
+  // Open add user modal
+  const openAddModal = () => {
+    setUserForm({
+      username: "",
+      email: "",
+      password: "",
+      role: [], // Changed from "USER" to ["USER"]
+      devices: [],
+      location: [],
+      Remarks: ""
+    })
+    setAddModalOpen(true)
+  }
+
+  // Open edit user modal
+  const openEditModal = async (user: User) => {
+    setCurrentUser(user)
+
+    try {
+      // Get user's devices
+      const userDevices = await getUserDevices(user.id)
+
+      setUserForm({
+        username: user.username || "",
+        email: user.email || "",
+        password: user.password || "",
+        role: Array.isArray(user.role) ? user.role : [user.role], // Handle both array and string
+        location: Array.isArray(user.location) ? user.location : [user.location], // Handle both array and string
+        devices: userDevices.map((d) => d.deviceId),
+        Remarks: user.Remarks || ""
+      })
+
+      setEditModalOpen(true)
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to load user details")
+    }
+  }
+
+  // Open delete user modal
+  const openDeleteModal = (user: User) => {
+    setCurrentUser(user)
+    setDeleteModalOpen(true)
+  }
+
+  // Handle form input change
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+
+    if (name === "role") {
+      // For backward compatibility with single select
+      setUserForm((prev) => ({
+        ...prev,
+        [name]: [value],
+      }))
+    } else {
+      setUserForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    }
+  }
+
+  // Handle device selection change
+  const handleDeviceChange = (selectedDevices: string[]) => {
+    setUserForm((prev) => ({
+      ...prev,
+      devices: selectedDevices.map((id) => Number(id)),
+    }))
+  }
+
+  // Handle add user
+  const handleAddUser = async () => {
+    if (!userForm.username) {
+      toast.error("Username is required")
+      return
+    }
+
+    if (!userForm.password) {
+      toast.error("Password is required")
+      return
+    }
+
+    try {
+      const newUser = await addUser({
+        username: userForm.username,
+        email: userForm.email || null,
+        password: userForm.password,
+        Remarks: userForm.Remarks || null,
+        role: userForm.role,
+        location: userForm.location,
+        Pay: userForm.pay ? parseInt(userForm.pay) : null,
+
+      })
+
+      // Assign devices if selected
+      if (userForm.devices.length > 0) {
+        await Promise.all(userForm.devices.map((deviceId) => assignDeviceToUser({ userId: newUser.id, deviceId })))
+      }
+
+      toast.success("User added successfully")
+      setAddModalOpen(false)
+      fetchUsers()
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to add user")
+
+    }
+  }
+
+  // Handle update user
+  const handleUpdateUser = async () => {
+    if (!currentUser || !userForm.username) {
+      toast.error("Username is required")
+      return
+    }
+
+    try {
+      // Update user details
+      await updateUser({
+        id: currentUser.id,
+        username: userForm.username,
+        email: userForm.email || null,
+        password: userForm.password || undefined,
+        role: userForm.role,
+        location: userForm.location,
+        Remarks: userForm.Remarks || null,
+        Pay: userForm.pay ? parseInt(userForm.pay) : null,
+
+      })
+
+
+      // Get current user devices
+      const currentDevices: UserDevice[] = await getUserDevices(currentUser.id)
+      const currentDeviceIds = currentDevices.map((d) => d.deviceId)
+
+      // Determine which devices to add and which to remove
+      const devicesToAdd = userForm.devices.filter((id) => !currentDeviceIds.includes(id))
+      const devicesToRemove = currentDeviceIds.filter((id) => !userForm.devices.includes(id))
+
+      // Add new device associations
+      await Promise.all(devicesToAdd.map((deviceId) => assignDeviceToUser({ userId: currentUser.id, deviceId })))
+
+      // Remove device associations
+      await Promise.all(devicesToRemove.map((deviceId) => removeDeviceFromUser({ userId: currentUser.id, deviceId })))
+
+      toast.success("User updated successfully")
+      setEditModalOpen(false)
+      fetchUsers()
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to update user")
+    }
+  }
+
+  // Handle delete user
+  const handleDeleteUser = async () => {
+    if (!currentUser) return
+
+    try {
+      await deleteUser(currentUser.id)
+      toast.success("User deleted successfully")
+      setDeleteModalOpen(false)
+      fetchUsers()
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to delete user")
+    }
+  }
+
+  // Handle delete selected users
+  const handleDeleteSelected = async () => {
+    if (!selectedUsers.length) return
+
+    try {
+      // Delete each selected user
+      await Promise.all(selectedUsers.map((id) => deleteUser(id)))
+      toast.success(`Deleted ${selectedUsers.length} users`)
+      setSelectedUsers([])
+      fetchUsers()
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+
+      toast.error("Failed to delete users")
+    }
+  }
+
+  // Generate pagination items
+  const getPaginationItems = () => {
+    const items = []
+    const maxVisiblePages = 5
+
+    // Always show first page
+    items.push(
+      <PaginationItem key="first">
+        <PaginationLink onClick={() => handlePageChange(1)} isActive={currentPage === 1}>
+          1
+        </PaginationLink>
+      </PaginationItem>,
+    )
+
+    // Calculate range of pages to show
+    const startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2))
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 3)
+
+    // Adjust if we're near the beginning
+    if (startPage > 2) {
+      items.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>,
+      )
+    }
+
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink onClick={() => handlePageChange(i)} isActive={currentPage === i}>
+            {i}
+          </PaginationLink>
+        </PaginationItem>,
+      )
+    }
+
+    // Add ellipsis if needed
+    if (endPage < totalPages - 1) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>,
+      )
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink onClick={() => handlePageChange(totalPages)} isActive={currentPage === totalPages}>
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>,
+      )
+    }
+
+    return items
+  }
+
+  // Format date for display
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleString()
+  }
+
+  // Export users to Excel
+  const handleExport = () => {
+    if (users.length === 0) {
+      toast.error("No data to export")
+      return
+    }
+
+    try {
+      const exportData = prepareUsersForExport(users)
+      exportToExcel(exportData, `users-export-${new Date().toISOString().split("T")[0]}`)
+      toast.success("Users exported successfully")
+    } catch (error) {
+      console.error("Export error:", error)
+      toast.error("Failed to export users")
+    }
+  }
+
+  // Handle file change for import
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setImportFile(file)
+
+    // Read the file to preview
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      try {
+        const binaryStr = evt.target?.result
+        const workbook = XLSX.read(binaryStr, { type: "binary" })
+        const sheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[sheetName]
+
+        const data = XLSX.utils.sheet_to_json<Record<string, string | number | undefined>>(worksheet)
+        setImportPreview(data.slice(0, 5))
+      } catch (error) {
+        console.error("Error reading Excel file:", error)
+        toast.error("Failed to read Excel file")
+      }
+    }
+    reader.readAsBinaryString(file)
+  }
+
+  // Import users from Excel
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error("Please select a file to import")
+      return
+    }
+
+    setIsImporting(true)
+    try {
+      const reader = new FileReader()
+      reader.onload = async (evt) => {
+        try {
+          const binaryStr = evt.target?.result
+          const workbook = XLSX.read(binaryStr, { type: "binary" })
+          const sheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[sheetName]
+          const data: UserRow[] = XLSX.utils.sheet_to_json(worksheet)
+
+          let successCount = 0
+          let errorCount = 0
+
+          for (const row of data) {
+            try {
+              const userData = {
+                username: row.Username || row.username || "",
+                email: row.Email || row.email || null,
+                password: row.Password || row.password || "",
+                Remarks: row.Remarks || row.remarks || "",
+                role: row.Role || row.role || [],
+                location: row.Location || row.location || []
+              }
+
+              if (!userData.username || !userData.password) {
+                errorCount++
+                continue
+              }
+
+              await addUser(userData)
+              successCount++
+            } catch (error) {
+              console.error("Error importing user:", error)
+              errorCount++
+            }
+          }
+
+          if (successCount > 0) {
+            toast.success(`Successfully imported ${successCount} users`)
+            fetchUsers()
+            router.refresh()
+            setImportModalOpen(false)
+          }
+
+          if (errorCount > 0) {
+            toast.error(`Failed to import ${errorCount} users`)
+          }
+        } catch (error) {
+          console.error("Error processing Excel file:", error)
+          toast.error("Failed to process Excel file")
+        } finally {
+          setIsImporting(false)
+        }
+      }
+      reader.readAsBinaryString(importFile)
+    } catch (error) {
+      console.error("Import error:", error)
+      toast.error("Failed to import users")
+      setIsImporting(false)
+    }
+  }
+
+  // Prepare device options for the combobox
+  const deviceOptions = devices.map((device) => ({
+    label: device.name,
+    value: device.id.toString(),
+  }))
+
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!file) {
+      setStatus("Please select a file.")
+      return
+    }
+
+    const formData = new FormData()
+    formData.append("file", file)
+
+    setStatus("Uploading...")
+
+    try {
+      const res = await fetch("/api/user-upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await res.json()
+
+      if (res.ok) {
+        setStatus(`✅ ${result.message}`)
+      } else {
+        setStatus(`❌ Error: ${result.error || "Upload failed"}`)
+      }
+    } catch (err) {
+      console.error(err)
+      setStatus("❌ Upload error occurred.")
+    }
+  }
+  const handleGeneratePassword = () => {
+    const newPassword = generatePassword()
+    setUserForm((prev) => ({
+      ...prev,
+      password: newPassword,
+    }))
+    setShowPassword(true) // Show the password when generated
+    toast.success("Password generated")
+  }
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search users..."
+              className="pl-8 w-[200px] sm:w-[300px]"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <Button variant="outline" size="icon" onClick={() => fetchUsers()} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <Button onClick={openAddModal} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add User
+          </Button>
+          <form onSubmit={handleUpload} className="space-y-4">
+            <input
+              type="file"
+              accept=".html"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+              Upload HTML
+            </button>
+            {status && <div className="text-sm text-gray-700">{status}</div>}
+          </form>
+
+          <Button variant="outline" onClick={handleExport} className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+
+          <Button variant="outline" onClick={() => setImportModalOpen(true)} className="gap-2">
+            <Upload className="h-4 w-4" />
+            Import
+          </Button>
+
+          {selectedUsers.length > 0 && (
+            <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2">
+              <Trash2 className="h-4 w-4" />
+              Delete ({selectedUsers.length})
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={users.length > 0 && selectedUsers.length === users.length}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
+              <TableHead className="w-[200px]">Username</TableHead>
+              <TableHead className="w-[250px]">Email</TableHead><TableHead>Pay</TableHead>
+              <TableHead className="w-[250px]">Pay</TableHead>
+              <TableHead className="w-[150px]">Roles</TableHead>
+              <TableHead className="w-[150px]">Created</TableHead>
+              <TableHead className="w-[150px]">Updated</TableHead>
+              <TableHead className="w-[150px]">Remarks</TableHead>
+              <TableHead className="w-[150px]">Location</TableHead>
+              <TableHead>Devices</TableHead>
+
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="h-24 text-center">
+                  No users found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedUsers.includes(user.id)}
+                      onCheckedChange={() => handleSelectUser(user.id)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <UserPen className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">{user.username}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {user.email ? (
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span>{user.email}</span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>${user.Pay ?? "—"}</TableCell>
+                  <TableCell>
+                    {Array.isArray(user.role) && user.role.length > 0 ? (
+                      <ScrollableRoles roles={user.role} />
+                    ) : (
+                      <span className="text-muted-foreground">No roles</span>
+                    )}
+                  </TableCell>
+
+                  <TableCell>{formatDate(user.createdAt)}</TableCell>
+                  <TableCell>{formatDate(user.updatedAt)}</TableCell>
+                  <TableCell className="max-w-[200px] whitespace-normal break-words">{user.Remarks}</TableCell>
+                  <TableCell className="max-w-[200px] whitespace-normal break-words">{user.location}</TableCell>
+
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {user.devices && user.devices.length > 0 ? (
+                        user.devices.map((device: devices) => (
+                          <Badge key={device.id} variant="outline" className="flex items-center gap-1">
+                            <Server className="h-3 w-3" />
+                            {device.name || `Device ${device.id}`}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground">No devices</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openEditModal(user)} title="Edit User">
+                        <Edit className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openDeleteModal(user)}
+                        title="Delete User"
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Showing {users.length} of {totalItems} results
+          </span>
+          <select
+            className="h-8 w-[70px] rounded-md border border-input bg-background px-2 text-sm"
+            value={pageSize}
+            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+          >
+            {pageSizeOptions.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-muted-foreground">per page</span>
+        </div>
+
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                isActive={currentPage > 1}
+              />
+            </PaginationItem>
+
+            {getPaginationItems()}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                isActive={currentPage < totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+
+      {/* Add User Modal */}
+      <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+            <DialogDescription>Enter the details for the new user.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Username <span className="text-red-500">*</span>
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <UserPen className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="username"
+                  name="username"
+                  value={userForm.username}
+                  onChange={handleFormChange}
+                  className="flex-1"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={userForm.email}
+                  onChange={handleFormChange}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="pay" className="text-right">Pay ($)</Label>
+              <div className="col-span-3">
+                <Input
+                  id="pay"
+                  name="pay"
+                  type="number"
+                  step="0.01"
+                  value={userForm.pay || ""}
+                  onChange={(e) =>
+                    setUserForm((prev) => ({
+                      ...prev,
+                      pay: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="role" className="text-right pt-2">
+                Roles
+              </Label>
+              <div className="col-span-3">
+                <MultiCombobox
+                  options={
+                    roles.map((role) => ({ label: role.name, value: role.name }))
+                  }
+                  selected={userForm.role}
+                  onChange={(selectedRoles) => {
+                    setUserForm((prev) => ({
+                      ...prev,
+                      role: selectedRoles,
+                    }))
+                  }}
+                  placeholder="Select roles..."
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="role" className="text-right pt-2">
+                Locations
+              </Label>
+              <div className="col-span-3">
+                <MultiCombobox
+                  options={
+                    locations.map((role) => ({ label: role.name, value: role.name }))
+                  }
+                  selected={userForm.location}
+                  onChange={(selectedRoles) => {
+                    setUserForm((prev) => ({
+                      ...prev,
+                      location: selectedRoles,
+                    }))
+                  }}
+                  placeholder="Select locations..."
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="password" className="text-right">
+                Password <span className="text-red-500">*</span>
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <Key className="h-4 w-4 text-muted-foreground" />
+                <div className="flex-1 relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={userForm.password}
+                    onChange={handleFormChange}
+                    className="pr-10"
+                    required
+                  />
+                  <div className="absolute right-0 top-0 h-full flex">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-full"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-full"
+                      onClick={handleGeneratePassword}
+                      title="Generate Password"
+                    >
+                      <Wand2 className="h-4 w-4" />
+                      <span className="sr-only">Generate Password</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="devices" className="text-right pt-2">
+                Devices
+              </Label>
+              <div className="col-span-3">
+                <MultiCombobox
+                  options={deviceOptions}
+                  selected={userForm.devices.map((id) => id.toString())}
+                  onChange={handleDeviceChange}
+                  placeholder="Select devices..."
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="Remarks" className="text-right">
+                Remarks
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <Input
+                  id="Remarks"
+                  name="Remarks"
+                  value={userForm.Remarks}
+                  onChange={handleFormChange}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddUser}>Add User</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit User Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>Update the user details.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-username" className="text-right">
+                Username <span className="text-red-500">*</span>
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <UserPen className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="edit-username"
+                  name="username"
+                  value={userForm.username}
+                  onChange={handleFormChange}
+                  className="flex-1"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-email" className="text-right">
+                Email
+              </Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="edit-email"
+                  name="email"
+                  type="email"
+                  value={userForm.email}
+                  onChange={handleFormChange}
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="pay" className="text-right">Pay ($)</Label>
+              <div className="col-span-3">
+                <Input
+                  id="pay"
+                  name="pay"
+                  type="number"
+                  step="0.01"
+                  value={userForm.pay || ""}
+                  onChange={(e) =>
+                    setUserForm((prev) => ({
+                      ...prev,
+                      pay: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="edit-role" className="text-right pt-2">
+                Roles
+              </Label>
+              <div className="col-span-3">
+                <MultiCombobox
+                  options={roles.map((role) => ({ label: role.name, value: role.name }))}
+                  selected={userForm.role}
+                  onChange={(selectedRoles) => {
+                    setUserForm((prev) => ({
+                      ...prev,
+                      role: selectedRoles,
+                    }))
+                  }}
+                  placeholder="Select roles..."
+                />
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="edit-role" className="text-right pt-2">
+              Location
+            </Label>
+            <div className="col-span-3">
+              <MultiCombobox
+                options={locations.map((role) => ({ label: role.name, value: role.name }))}
+                selected={userForm.location}
+                onChange={(selectedLocations) => {
+                  setUserForm((prev) => ({
+                    ...prev,
+                    location: selectedLocations,
+                  }))
+                }}
+                placeholder="Select locations..."
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="edit-password" className="text-right">
+              Password
+            </Label>
+            <div className="col-span-3 flex items-center gap-2">
+              <Key className="h-4 w-4 text-muted-foreground" />
+              <div className="flex-1 relative">
+                <Input
+                  id="edit-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={userForm.password}
+                  onChange={handleFormChange}
+                  className="pr-10"
+                  placeholder="Leave blank to keep current password"
+                />
+                <div className="absolute right-0 top-0 h-full flex">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-full"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-full"
+                    onClick={handleGeneratePassword}
+                    title="Generate Password"
+                  >
+                    <Wand2 className="h-4 w-4" />
+                    <span className="sr-only">Generate Password</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="edit-devices" className="text-right pt-2">
+              Devices
+            </Label>
+            <div className="col-span-3">
+              <MultiCombobox
+                options={deviceOptions}
+                selected={userForm.devices.map((id) => id.toString())}
+                onChange={handleDeviceChange}
+                placeholder="Select devices..."
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="Remarks" className="text-right pt-2">
+              Remarks
+            </Label>
+            <div className="col-span-3">
+              <Input
+                id="Remarks"
+                name="Remarks"
+                value={userForm.Remarks}
+                onChange={handleFormChange}
+                className="flex-1"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateUser}>Update User</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation Modal */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the user &quot;{currentUser?.username}&quot; This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteUser}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Users Modal */}
+      <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Import Users</DialogTitle>
+            <DialogDescription>
+              Upload an Excel file to import users. The file should have columns for Username, Email, and Password.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="import-file">Excel File</Label>
+              <Input
+                id="import-file"
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileChange}
+                disabled={isImporting}
+              />
+              <p className="text-sm text-muted-foreground">Supported formats: .xlsx, .xls</p>
+            </div>
+
+            {importPreview.length > 0 && (
+              <div className="border rounded-md p-4">
+                <h3 className="text-sm font-medium mb-2">Preview (first 5 rows)</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b">
+                        {Object.keys(importPreview[0]).map((key) => (
+                          <th key={key} className="text-left p-2">
+                            {key}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importPreview.map((row, index) => (
+                        <tr key={index} className="border-b">
+                          {Object.values(row).map((value, i) => (
+                            <td key={i} className="p-2">
+                              {String(value)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImportModalOpen(false)} disabled={isImporting}>
+              Cancel
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                try {
+                  generateUserImportTemplate()
+                  toast.success("Template downloaded successfully")
+                } catch (error) {
+                  console.error("Template download error:", error)
+                  toast.error("Failed to download template")
+                }
+              }}
+              disabled={isImporting}
+            >
+              Download Template
+            </Button>
+            <Button onClick={handleImport} disabled={!importFile || isImporting}>
+              {isImporting ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                "Import Users"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+

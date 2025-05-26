@@ -1,3 +1,28 @@
+/**
+ * DatePickerDialog Component
+ * --------------------------
+ * A modal dialog that allows users to:
+ * - Select a single date using a calendar UI
+ * - Optionally enter a title for the event
+ *
+ * Props:
+ * - open (boolean): Controls whether the dialog is visible
+ * - onOpenChange (function): Callback to update the dialog's open state
+ * - onSelect (function): Callback triggered with the selected date and optional title
+ *
+ * Features:
+ * - Integrates `Calendar` component for date selection
+ * - Provides input for optional event title
+ * - Validates that a date is selected before enabling insertion
+ *
+ * Usage Example:
+ * <DatePickerDialog
+ *   open={isOpen}
+ *   onOpenChange={setIsOpen}
+ *   onSelect={(date, title) => handleEventInsert(date, title)}
+ * />
+ */
+
 "use client"
 
 import * as React from "react"

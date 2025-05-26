@@ -1,3 +1,48 @@
+/**
+ * useSSE.ts - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This custom React hook sets up a Server-Sent Event (SSE) connection to listen for real-time events sent to a specific channel.
+ *   It provides listeners for opening, receiving messages, and handling errors. The hook manages the SSE connection lifecycle
+ *   (open, message, error), allowing easy integration of real-time event handling in React components.
+ *
+ * Key Features:
+ *   - Connects to a given SSE channel and listens for messages.
+ *   - Exposes connection state, last event, and any errors encountered.
+ *   - Provides handlers for real-time data and errors.
+ *   - Automatically reconnects when the component is mounted and cleans up when unmounted.
+ *
+ * Key Functions:
+ *   - `useEffect`: Manages the lifecycle of the SSE connection.
+ *   - `onMessage`: Callback that processes the incoming event data.
+ *   - `onError`: Callback that handles errors during the SSE connection.
+ *   - `onOpen`: Callback that handles the opening of the SSE connection.
+ *   - `close`: Method that closes the SSE connection and resets the connection state.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   const { isConnected, lastEvent, error, close } = useSSE("form-1-responses", {
+ *     onMessage: (data) => {
+ *       console.log("New response:", data);
+ *     },
+ *     onError: (err) => {
+ *       console.error("Error in SSE:", err);
+ *     },
+ *     onOpen: () => {
+ *       console.log("SSE connection established");
+ *     },
+ *   });
+ *   ```
+ *
+ * Notes:
+ *   - `channel`: The SSE channel to listen to. This should be a unique identifier for your event source (e.g., "form-1-responses").
+ *   - `onMessage`: Callback to handle incoming data. It will receive the event's data as an object.
+ *   - `onError`: Callback to handle errors during the SSE connection.
+ *   - `onOpen`: Callback to handle when the SSE connection is successfully established.
+ *   - `enabled`: Flag to enable or disable the SSE connection. Set to `true` by default.
+ *   - The hook returns connection state (`isConnected`), the last received event (`lastEvent`), and any error encountered (`error`).
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"

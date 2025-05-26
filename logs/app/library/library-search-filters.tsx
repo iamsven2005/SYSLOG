@@ -1,3 +1,40 @@
+/**
+ * LibrarySearchFilters.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **LibrarySearchFilters** component provides a comprehensive filtering interface for searching through the library's entries.
+ *   Users can filter entries based on various criteria such as title, reference number, category, publication year, creation date, and attachment presence.
+ *   It includes dropdowns for categories, sorting options, and date pickers for filtering by creation dates.
+ *   The component is designed for use in library management pages to allow users to fine-tune their search results.
+ *
+ * Key Features:
+ *   - Allows users to search by multiple fields: title, reference number, author, category, etc.
+ *   - Includes options for filtering based on publication year range and creation date range.
+ *   - Sort library entries by various fields such as reference number, title, and publication year.
+ *   - Provides options to filter by the presence of file attachments (with options like "Any", "Has Attachment", and "No Attachment").
+ *   - Includes a reset button to clear all filters and return to default search settings.
+ *
+ * Key Components:
+ *   - `LibrarySearchFilters`: Main filtering component to handle search criteria.
+ *   - `Button`: Used for submitting the search form and resetting filters.
+ *   - `Input`: Allows users to type search queries for title, reference number, and author.
+ *   - `Select`: Dropdown components for category, sorting, and attachment filters.
+ *   - `Calendar`: Date picker to select start and end dates for creation date filtering.
+ *   - `Popover` and `PopoverContent`: To display the calendar date picker popups.
+ *   - `Search`: Icon button used for submitting the search form.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <LibrarySearchFilters onSearch={handleSearch} />
+ *   ```
+ *
+ * Notes:
+ *   - **Search Filters**: The component allows filtering by several parameters (e.g., title, category, pub year, creation date) and updates the search results dynamically.
+ *   - **Date Pickers**: Used to select ranges for publication year and creation date.
+ *   - **Sort By**: Allows users to specify how the search results should be sorted, with options for ascending or descending order.
+ *   - **Reset**: Clears all selected filters and allows users to start a new search.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogOut, User, TicketIcon } from "lucide-react"
 import { toast } from "sonner"
-import { getCurrentUser, logoutUser } from "@/app/login/actions"
+import { getCurrentUser, logoutUser } from "@/app/login/auth"
 
 export function UserNav() {
   const router = useRouter()

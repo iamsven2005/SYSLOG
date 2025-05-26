@@ -1,3 +1,15 @@
+/**
+ * Page for creating a new interaction related to a specific project.
+ * 
+ * - Fetches the project details using the project ID.
+ * - Displays a form to record interactions with the project.
+ * - If no project is found or if an error occurs, returns a 404 error page.
+ * - Includes a back button to return to the project's detail page.
+ * 
+ * Route Params:
+ * - id: The ID of the project to associate with the interaction.
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"

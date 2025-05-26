@@ -1,3 +1,35 @@
+/*
+ * command-monitoring-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side logic for monitoring system/auth logs against defined command rules.
+ *   Handles command match detection, notifications, logging, and administrative actions.
+ *
+ * Features:
+ *   - `checkCommandMatches`: Matches incoming logs against command rules and triggers notifications
+ *   - `sendCommandMatchNotification`: Sends email notifications to assigned users for matched commands
+ *   - `processBatchForCommandMatches`: Batch processes system/auth logs for command detection
+ *   - `getCommandMatches`: Retrieves paginated and filterable list of command matches
+ *   - `markCommandMatchAsAddressed`: Marks a command match as handled with optional notes
+ *   - `unmarkCommandMatchAsAddressed`: Reverts a match to unaddressed state
+ *   - `deleteCommandMatch`: Deletes a command match record
+ *   - `getUnaddressedCommandMatchCount`: Returns count of all unaddressed matches
+ *   - `markAllCommandMatchesAsAddressed`: Bulk marks all unaddressed matches as handled
+ *
+ * Dependencies:
+ *   - Prisma client (`db`) and types (`logs`, `auth`)
+ *   - Activity logger (`logActivity`)
+ *   - Email template system (`sendEmailWithTemplate`)
+ *   - Session handler (`getCurrentUser`)
+ *   - Notification system (`sonner.toast`)
+ *   - Next.js routing (`notFound`)
+ *
+ * Notes:
+ *   - Supports hierarchical email template resolution: Command → Rule → Group
+ *   - Deduplicates matches using unique constraints: logId, logType, commandId, ruleId
+ *   - Supports live and batch processing scenarios
+ *   - Modular and scalable for rule-based threat detection
+ */
+
 "use server"
 
 import { db } from "@/lib/db"
@@ -6,7 +38,7 @@ import { sendEmailWithTemplate } from "../email-templates/email-template-actions
 // Import the toast at the top of the file
 import { toast } from "sonner"
 import { auth, logs, Prisma } from "@/prisma/generated/main"
-import { getCurrentUser } from "../login/actions"
+import { getCurrentUser } from "../login/auth"
 import { notFound } from "next/navigation"
 
 interface CommandMatch {

@@ -1,3 +1,25 @@
+/*
+ * project-actions.ts - 2025-05-26 by sven.tan
+ * Description:
+ *   Server-side actions for managing infrastructure projects and their associated bridge data, companies, materials, and interactions.
+ *
+ * Features:
+ *   - Project CRUD operations (`getProjects`, `getProject`, `createProject`, `updateProject`, `deleteProject`)
+ *   - Nested bridge project creation and upsert via Prisma relations
+ *   - Company linking to projects via `addCompanyToProject`
+ *   - Deep include chaining: phases, inspections, materials, bids, vendors, companies
+ *   - Cache revalidation via `revalidatePath` for CRM project routes
+ *
+ * Notes:
+ *   - Designed for a civil engineering CRM context managing bridge projects
+ *   - Structured for extensibility with bridge-specific types (`BridgeType`) and statuses (`ProjectStatus`)
+ *   - Ensures consistent hydration of related tables for dashboard and project detail views
+ *
+ * Dependencies:
+ *   - Prisma Client (`db`) and generated enums (`BridgeType`, `ProjectStatus`)
+ *   - Next.js cache revalidation (`revalidatePath`)
+ */
+
 "use server"
 
 import { revalidatePath } from "next/cache"
@@ -10,7 +32,7 @@ export async function getProjects() {
       include: {
         bridgeProject: {
           include: {
-            materials: true, // 👈 Add this line
+            materials: true,
           },
         },
         projectType: true,

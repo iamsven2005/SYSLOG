@@ -1,10 +1,29 @@
+/**
+ * app/crm/projects/page.tsx
+ * 
+ * Displays a searchable and filterable list of bridge construction projects.
+ * 
+ * Features:
+ * - Search projects by name or location (case-insensitive).
+ * - Filter projects by status (e.g., PLANNING, BIDDING, COMPLETED).
+ * - Shows project details: name, bridge type, location, status badge, timeline.
+ * - Provides links to view or edit each project.
+ * - Uses ShadCN UI components for consistent styling.
+ * 
+ * Query Params:
+ * - search: string (optional) - Filters projects matching name or location.
+ * - status: string (optional) - Filters projects by status; "all" disables filtering.
+ * 
+ * Route: /crm/projects
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search, Plus} from "lucide-react"
 import { getProjects } from "../actions/projects"
-import ProjectListSkeleton from "@/app/crm/components/skeletons/project-list-skeleton"
+import ProjectListSkeleton from "@/app/crm/projects/project-list-skeleton"
 
 export default async function ProjectsPage({
   searchParams,

@@ -1,3 +1,46 @@
+/**
+ * ChatMessages Component
+ * ----------------------
+ * Displays all messages in a selected group chat, including polling messages and file attachments.
+ * Supports real-time updates, message editing, deletion, member management, and search functionality.
+ *
+ * Props:
+ * - groupId: number — ID of the chat group to fetch and display messages from.
+ * - id: number — ID of the currently logged-in user.
+ *
+ * Features:
+ * ---------
+ * ✅ Fetch and render all messages for a group using `getGroupMessages`.
+ * ✅ Periodically refresh messages every 3 seconds.
+ * ✅ Display group name and member count via `getGroupWithMembers`.
+ * ✅ Group messages by date and visually segment them.
+ * ✅ Support editing and deleting messages by the original sender.
+ * ✅ Render special message types:
+ *    - Poll messages using <PollMessage />
+ *    - File attachments with icons and download links
+ * ✅ Apply WhatsApp-style formatting (bold, italic, strike, code).
+ * ✅ Auto-scroll to the bottom on new messages unless editing.
+ * ✅ Scroll to a specific message when selected from search.
+ * ✅ Integrate dialogs:
+ *    - <ManageMembersDialog /> for group member management
+ *    - <MessageSearch /> for searching past messages
+ *
+ * Styling & UX:
+ * -------------
+ * - Uses contextual styling for current user vs. other senders.
+ * - Highlights a message briefly when scrolled to via search.
+ * - Graceful fallbacks for unknown usernames or missing data.
+ *
+ * Dependencies:
+ * -------------
+ * - External data: `chat-actions.ts` for message operations.
+ * - UI components: `lucide-react`, `shadcn/ui`, `sonner` for toast notifications.
+ *
+ * Usage:
+ * ------
+ * Used inside `<ChatContainer />` to render the main chat conversation view.
+ */
+
 "use client"
 
 import { useEffect, useState, useRef, useCallback } from "react"

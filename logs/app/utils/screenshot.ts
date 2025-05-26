@@ -1,3 +1,24 @@
+/**
+ * takeScreenshot function
+ * 
+ * This function captures a screenshot of a specified DOM element by its ID and provides two features:
+ * 1. It downloads the image as a JPEG file.
+ * 2. It attempts to copy the image to the clipboard.
+ * 
+ * Features:
+ * - Captures the screenshot of the DOM element with background color adjustments based on the page's theme (dark or light).
+ * - Excludes invisible elements (those with `display: none` or `visibility: hidden`).
+ * - Allows the user to download the screenshot and also attempts to copy it to the clipboard.
+ * 
+ * Parameters:
+ * - `elementId` (string): The ID of the DOM element to capture.
+ * - `filename` (string): The name of the file to download (default: "chat-screenshot.png").
+ * 
+ * Returns:
+ * - `Promise<boolean>`: Resolves to `true` if the screenshot is successfully captured, downloaded, and copied to the clipboard; otherwise, it throws an error.
+ */
+
+
 import domtoimage from "dom-to-image"
 
 export async function takeScreenshot(elementId: string, filename = "chat-screenshot.png") {

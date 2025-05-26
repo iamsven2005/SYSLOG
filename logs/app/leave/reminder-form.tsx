@@ -1,3 +1,35 @@
+/**
+ * reminder-form.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   The **ReminderForm** component allows users to add or edit personal reminders that will be displayed on their calendar.
+ *   The form supports custom colors for reminders and allows users to pick dates using a calendar interface.
+ * 
+ * Key Features:
+ *   - **Title**: Required field to provide a title for the reminder.
+ *   - **Date**: A date picker that allows the user to choose the date for the reminder.
+ *   - **Description**: An optional field for additional notes or information about the reminder.
+ *   - **Color**: A set of color options for the user to choose from, which will be displayed as the reminder color.
+ *   - **Add/Edit Modes**: The form supports both adding new reminders and editing existing ones.
+ * 
+ * Key Components:
+ *   - `ReminderForm`: The main form component for adding or editing reminders.
+ *   - `Popover`, `Calendar`: For date selection functionality.
+ *   - `Button`, `Input`, `Textarea`: UI elements to collect reminder data from the user.
+ *   - `Form`: A wrapper component that utilizes React Hook Form for handling form validation and submission.
+ *   - `toast`: For displaying success or error messages based on the outcome of the submission.
+ *
+ * Example Usage:
+ *   ```tsx
+ *   <ReminderForm onSuccess={handleSuccess} />
+ *   ```
+ *
+ * Notes:
+ *   - **Color Picker**: Users can select a color for their reminder. The available colors are defined in the `REMINDER_COLORS` array.
+ *   - **Date Picker**: The `Calendar` component is used to pick the date, and it is integrated with the `react-hook-form` using the `Popover` component.
+ *   - **Validation**: Uses `zod` for schema validation and `react-hook-form` for form handling.
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

@@ -1,5 +1,5 @@
 /*
- * logs-page-1.0.tsx - 2025-05-25 by sven.tan:
+ * client.tsx - 2025-05-25 by sven.tan:
  * Initial implementation of LogsPage dashboard.
  * Features:
  *   - Backup & restore for main and vector databases (individually or together)

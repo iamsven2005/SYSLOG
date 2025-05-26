@@ -1,3 +1,19 @@
+/*
+ * crm/companies/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Main page for listing and managing companies in the BridgeCRM system.
+ *
+ * Features:
+ *   - Displays list of companies (filtered by type if specified via URL query)
+ *   - Provides quick filters for company types (Contractor, Vendor, etc.)
+ *   - Includes "Add Company" button linking to new company form
+ *   - Dynamically fetches company data and handles loading/error states
+ *
+ * Notes:
+ *   - Uses `getCompanies()` server action to retrieve company data from the database
+ *   - Respects `searchParams` for filter type (e.g., ?type=VENDOR)
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { getCompanies } from "../actions/companies"
 import CompanyList from "../components/company-list"
-import CompanyListSkeleton from "../components/skeletons/company-list-skeleton"
+import CompanyListSkeleton from "./company-list-skeleton"
 import { CompanyType } from "@/prisma/generated/main"
 
 export default async function CompaniesPage({

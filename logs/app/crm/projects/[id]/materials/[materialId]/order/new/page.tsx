@@ -1,3 +1,27 @@
+/*
+ * crm/projects/[id]/materials/[materialId]/order/new/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server component for the "Create Material Order" page.
+ *   It fetches the material by ID and verifies it is associated with the correct project.
+ *   Displays a form for creating a new order for the selected material in the specified project.
+ *
+ * Props:
+ *   - params: Route parameters, specifically the `id` of the project and `materialId` of the material (as a string promise)
+ *
+ * Features:
+ *   - Fetches material data via `getMaterial`
+ *   - Verifies the material is associated with the correct project
+ *   - Displays `MaterialOrderForm` to create a new order
+ *   - If the material is not found or doesn't match the project, redirects to a "Not Found" page
+ *
+ * Dependencies:
+ *   - UI Components: Card, Button, Link, ArrowLeft icon
+ *   - Actions: `getMaterial`
+ *   - Subcomponent: `MaterialOrderForm`
+ *   - Uses `notFound()` to handle invalid or missing material data
+ */
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"

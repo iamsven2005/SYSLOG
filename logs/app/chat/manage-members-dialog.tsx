@@ -1,3 +1,25 @@
+/*
+ * ManageMembersDialog.tsx - 2025-05-26 by Tan
+ * Description:
+ *   A React component to manage group chat members. It supports viewing current members,
+ *   searching users by name or role, and adding or removing users from the group.
+ *   Integrates with group management server actions and supports role-based filtering.
+ *
+ * Features:
+ *   - Fetch and display group members with roles and creator highlight
+ *   - Remove non-creator users from the group
+ *   - Search users by keyword and/or role
+ *   - Add new users to the group, avoiding duplicates
+ *   - Role filtering with predefined role options
+ *   - Tab-based UI for viewing vs. adding members
+ *
+ * Dependencies:
+ *   - ShadCN UI components (Dialog, Tabs, Button, Input, etc.)
+ *   - Icons from Lucide React (Search, UserPlus, X, Shield, etc.)
+ *   - Toast notifications via 'sonner'
+ *   - Custom server actions: getGroupWithMembers, addUserToGroup, removeUserFromGroup, searchUsers, searchUsersByRole
+ */
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"

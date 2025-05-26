@@ -1,3 +1,17 @@
+/*
+ * crm/companies/new/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Page for creating a new company entry in the CRM system.
+ *
+ * Features:
+ *   - Renders a form for company data entry (CompanyForm)
+ *   - Provides a back button to the companies list
+ *   - Uses ShadCN UI components with consistent layout and styling
+ *
+ * Notes:
+ *   - This page does not handle submission directly — relies on CompanyForm's internal logic
+ */
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import CompanyForm from "@/app/crm/components/company-form"
 import Link from "next/link"

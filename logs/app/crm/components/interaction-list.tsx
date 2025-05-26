@@ -1,3 +1,24 @@
+/*
+ * crm/interactions/components/interaction-list.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Component for displaying a list of CRM interactions, each linked to its detail view.
+ *
+ * Features:
+ *   - Displays key interaction details including type, date, company, contact, and project
+ *   - Shows follow-up information when required
+ *   - Wraps each interaction in a clickable card linking to the detail page
+ *   - Optional "View All Interactions" button when `showViewAll` is enabled
+ *
+ * Props:
+ *   - `interactions`: Array of interaction records with optional related company/contact/project
+ *   - `showViewAll`: Whether to show a "View All" button (default: false)
+ *   - `limit`: Optional limit to number of interactions displayed
+ *
+ * Notes:
+ *   - Uses `date-fns` for formatting interaction and follow-up dates
+ *   - Designed to be reusable across dashboards or detail views
+ */
+
 import Link from "next/link"
 import { format } from "date-fns"
 import { Building2, Calendar, Clock, FileText, User } from "lucide-react"

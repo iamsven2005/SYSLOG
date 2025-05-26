@@ -1,3 +1,28 @@
+/**
+ * This module provides functions for managing and manipulating message data in XML format.
+ * It allows for parsing XML strings, converting message data to XML, and exporting messages as XML files.
+ * Additionally, it provides utilities for parsing dates, formatting messages, and handling file uploads/downloads.
+ * 
+ * Features:
+ * - `parseXMLTranscript`: Parses an XML string into a transcript of messages.
+ * - `parseXMLDate`: Converts a date string from XML format into a JavaScript `Date` object.
+ * - `generateXMLTranscript`: Converts message data into XML format.
+ * - `downloadXML`: Downloads the generated XML as a file.
+ * - `takeScreenshot`: Captures a screenshot of a DOM element and optionally copies it to the clipboard.
+ * - `escapeXML`: Escapes special XML characters to ensure valid XML output.
+ * - `formatDate`: Formats a JavaScript `Date` object into a string matching the XML format.
+
+ * Dependencies:
+ * - `dom-to-image`: For taking screenshots of DOM elements.
+ * - `XLSX`: For handling Excel files in the import/export functionality.
+ * 
+ * Use Cases:
+ * - Exporting chat transcripts in XML format.
+ * - Importing and processing messages from XML files.
+ * - Handling messages and attachments in a chat system.
+ */
+
+
 interface MessageData {
   id?: number
   content: string

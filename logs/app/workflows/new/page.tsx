@@ -1,3 +1,49 @@
+/**
+ * NewWorkflowPage Component
+ * 
+ * This component is used to create a new workflow. It allows users to input workflow details, add steps to the workflow, and reorder those steps.
+ * The workflow creation process includes:
+ * - Adding a name and description for the workflow.
+ * - Creating and managing steps for the workflow.
+ * - Drag-and-drop reordering of steps within the workflow.
+ * - Handling the creation of the workflow and its steps on the backend.
+ * 
+ * Features:
+ * - Allows users to input a name and description for the workflow.
+ * - Provides a drag-and-drop interface to reorder workflow steps.
+ * - Supports adding new steps to the workflow dynamically.
+ * - Workflow steps can be updated or deleted.
+ * - The workflow and steps are saved to the backend, ensuring persistence.
+ * 
+ * Props:
+ * - `params` (Promise<{ id: string }>): A promise that resolves to the workflow's ID.
+ * 
+ * Dependencies:
+ * - `useState`, `useEffect` from React for managing local component state.
+ * - `Button`, `Input`, `Textarea`, `Label`, `Card`, `CardContent`, `CardHeader`, `CardTitle` for UI elements.
+ * - `ArrowLeft`, `GripVertical` from "lucide-react" for icons.
+ * - `DragDropContext`, `Droppable`, `Draggable`, and `DropResult` from "@hello-pangea/dnd" for drag-and-drop functionality.
+ * - `createWorkflow`, `createStep`, `getUsers` for backend interactions related to workflow creation, step management, and user fetching.
+ * - `EditStepItem` and `AddStepForm` for displaying and adding workflow steps.
+ * - `toast` for feedback on success or error states.
+ * 
+ * Methods:
+ * - `handleDragEnd`: Handles the reordering of workflow steps when drag-and-drop occurs.
+ * - `handleUpdateStep`: Updates a workflow step after editing.
+ * - `handleDeleteStep`: Deletes a workflow step.
+ * - `handleAddTempStep`: Adds a temporary step while the user is still creating the workflow.
+ * - `handleCreateWorkflow`: Creates the workflow and associated steps on the backend.
+ * 
+ * State:
+ * - `name`, `description`: Stores the workflow name and description input by the user.
+ * - `steps`: Tracks the steps within the workflow.
+ * - `isSubmitting`: Indicates whether the workflow is being created.
+ * - `error`: Stores any error messages encountered during the creation process.
+ * - `users`: Fetches and stores the list of users for step assignments.
+ */
+
+
+
 "use client"
 
 import { useState, useEffect } from "react"

@@ -1,3 +1,28 @@
+/*
+ * crm/projects/[id]/phases/[phaseId]/edit/page.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   Server component for the "Edit Phase" page.
+ *   It fetches the project and phase by their respective IDs and ensures that the phase belongs to the correct project.
+ *   Displays a form for editing the phase details within the specified project.
+ *
+ * Props:
+ *   - params: Route parameters, specifically the `id` of the project and `phaseId` of the phase (as a string promise)
+ *
+ * Features:
+ *   - Fetches project data via `getProject`
+ *   - Fetches phase data via `getPhase`
+ *   - Verifies that the phase is associated with the correct project
+ *   - Displays `PhaseForm` to edit phase details
+ *   - If the project or phase is not found or there are errors, redirects to a "Not Found" page
+ *
+ * Dependencies:
+ *   - UI Components: Card, Button, Link, ArrowLeft icon
+ *   - Actions: `getProject`, `getPhase`
+ *   - Subcomponent: `PhaseForm`
+ *   - Uses `notFound()` to handle invalid or missing project/phase data
+ */
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

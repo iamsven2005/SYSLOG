@@ -1,3 +1,28 @@
+/*
+ * CommandMatchAlert.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A client-side React component that displays real-time alerts for unaddressed command matches.
+ *   Includes dropdown menu options to view matches, mark all as addressed, or hide alerts temporarily.
+ *
+ * Features:
+ *   - Displays notification icon with unaddressed match count as badge
+ *   - Periodic polling for latest unaddressed match count via `getUnaddressedCommandMatchCount`
+ *   - Optional live `matches` prop for instant detection with toast alerts
+ *   - Dropdown menu to view all, mark all addressed, or snooze notifications for 1/4/8 hours
+ *   - Persists hide state via `localStorage` with expiry tracking
+ *
+ * Dependencies:
+ *   - UI components from ShadCN (DropdownMenu, Button, Badge)
+ *   - Icons from Lucide React (Bell, X)
+ *   - `toast` from `sonner`
+ *   - Navigation via Next.js `useRouter`
+ *   - Server actions: `getUnaddressedCommandMatchCount`, POST `/api/command-matches/mark-all-addressed`
+ *
+ * Notes:
+ *   - Component is hidden if count is zero or alerts are snoozed
+ *   - `matches` prop is optional and used for pushing live alerts
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"

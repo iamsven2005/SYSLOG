@@ -1,3 +1,36 @@
+/**
+ * question-view.tsx - 2025-05-26 by sven.tan
+ *
+ * Description:
+ *   This component renders an individual question in a form based on its type (e.g., text, textarea, radio, checkbox, dropdown, or file).
+ *   It allows users to input their responses to the question, handling different input types with appropriate UI components.
+ *
+ * Key Features:
+ *   - Supports multiple question types, including text, textarea, radio buttons, checkboxes, dropdowns, and file uploads.
+ *   - Dynamically handles user input, including text-based responses, multiple choices, file uploads, and checkbox selections.
+ *   - Provides feedback on required fields by displaying an asterisk (*) next to required questions.
+ *   - Handles file selection and displays the selected file name.
+ *
+ * Props:
+ *   - `question`: The question object that defines the content and type of the question to be displayed.
+ *   - `value`: The current value or answer of the question (e.g., text, selected options, or file).
+ *   - `onChange`: A function to propagate changes in the value of the question to the parent component.
+ *   - `onFileChange`: A function to propagate changes in the file input (if applicable) to the parent component.
+ *
+ * Question Types:
+ *   - `TEXT`: Renders a short text input field.
+ *   - `TEXTAREA`: Renders a larger text area input for longer answers.
+ *   - `RADIO`: Renders a group of radio buttons for single-choice questions.
+ *   - `CHECKBOX`: Renders checkboxes for multi-choice questions.
+ *   - `DROPDOWN`: Renders a dropdown menu for selecting a single option.
+ *   - `FILE`: Renders a file input for users to upload files.
+ *
+ * Notes:
+ *   - For radio, checkbox, and dropdown questions, the component renders the corresponding options.
+ *   - For file input, it displays the selected file's name, allowing the user to select or change the file.
+ *   - The `required` property in the question object determines if an asterisk (*) is shown beside the question text to indicate that the question is mandatory.
+ */
+
 "use client"
 
 import type React from "react"

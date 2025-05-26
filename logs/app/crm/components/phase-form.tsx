@@ -1,3 +1,19 @@
+/*
+ * crm/phases/components/phase-form.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Form component to create or edit a bridge project phase in the BridgeCRM system.
+ *
+ * Features:
+ *   - Allows creation or editing of a bridge phase with fields like name, status, dates, and description
+ *   - Uses a slider to capture percentage completion visually
+ *   - Validates inputs with Zod and handles form submission via server actions (`createPhase`, `updatePhase`)
+ *
+ * Notes:
+ *   - Integrates with the bridge project via `project.bridgeProject.id`
+ *   - Redirects back to the parent project page upon successful submission
+ *   - Handles optional start and end dates using a popover calendar
+ */
+
 "use client"
 
 import { useState } from "react"

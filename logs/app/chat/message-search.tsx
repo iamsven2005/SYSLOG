@@ -1,3 +1,22 @@
+/*
+ * MessageSearch.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   A React component to search for chat messages within a specific group.
+ *   Allows users to enter keywords, execute search, and select a message to jump to.
+ *
+ * Features:
+ *   - Debounced message search by keyword (min 2 characters)
+ *   - Displays sender's name, avatar fallback, timestamp, and content snippet
+ *   - Selects a message and closes dialog on click
+ *   - Keyboard interaction: Enter key triggers search
+ *   - Clear search query button
+ *
+ * Dependencies:
+ *   - ShadCN UI components (Dialog, Input, Button, Avatar)
+ *   - Icons from Lucide React (Search, X)
+ *   - Date formatting via `date-fns`
+ *   - Custom server action: `searchMessages(groupId, query)`
+ */
 "use client"
 
 import type React from "react"

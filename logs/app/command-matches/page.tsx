@@ -1,3 +1,29 @@
+/*
+ * command-matches/page.tsx - 2025-05-26 by sven.tan
+ * Description:
+ *   Server component that renders the Command Matches dashboard with tabbed views
+ *   for unaddressed matches, bulk address handling, and addressed match history.
+ *
+ * Features:
+ *   - Access control via `allowed("/command-matches")`, returns 404 if unauthorized
+ *   - Dynamically fetches paginated command matches based on selected tab and query params
+ *   - Displays matches in tabbed interface:
+ *     - "Unaddressed": Individual cards for each match with marking/deletion
+ *     - "Bulk Address": Multi-select interface for batch processing
+ *     - "Addressed": Table listing with metadata and actions
+ *   - Supports pagination and dynamic tab switching with persisted search params
+ *   - Uses `Suspense` for async loading fallbacks
+ *
+ * Dependencies:
+ *   - UI components: Tabs, Cards, Table, Buttons (from ShadCN)
+ *   - Components: `CommandMatchNotification`, `BulkAddressCommandMatches`, `AddressedCommandMatchesTable`
+ *   - Server logic: `getCommandMatches`, `allowed`
+ *
+ * Notes:
+ *   - Automatically normalizes missing or partial data to maintain UI stability
+ *   - `revalidate = 0` ensures the page does not cache on fetch
+ */
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getCommandMatches } from "@/app/command-matches/command-monitoring-actions"
 import { CommandMatchNotification } from "@/app/command-matches/command-match-notification"
