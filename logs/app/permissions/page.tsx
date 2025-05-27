@@ -19,7 +19,7 @@ import { allowed } from "@/components/navbar";
 import PermissionsTable from "./PermissionsTable";
 import { notFound } from "next/navigation";
 
-export default async function CreateFormPage() {
+export default async function Page() {
 const a = await allowed("/permissions")
 if(a === false) notFound()
   return (

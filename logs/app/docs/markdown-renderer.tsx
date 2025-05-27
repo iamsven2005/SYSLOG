@@ -42,7 +42,9 @@ interface MarkdownRendererProps {
 export function MarkdownRenderer({ content, title }: MarkdownRendererProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
-  const copyToClipboard = async (text: string, id: string) => {
+const copyToClipboard = async (text: string, id: string) => {
+  if (typeof window !== "undefined" && navigator.clipboard) {
+    // Use Clipboard API if available
     try {
       await navigator.clipboard.writeText(text)
       setCopiedCode(id)
@@ -50,7 +52,25 @@ export function MarkdownRenderer({ content, title }: MarkdownRendererProps) {
     } catch (err) {
       console.error("Failed to copy text: ", err)
     }
+  } else {
+    // Fallback for legacy browsers
+    try {
+      const textArea = document.createElement("textarea")
+      textArea.value = text
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textArea)
+      setCopiedCode(id)
+      setTimeout(() => setCopiedCode(null), 2000)
+    } catch (err) {
+      console.error("Failed to copy text using fallback: ", err)
+    }
   }
+}
+
+
+
 
   // Simple markdown parser - in a real app, you'd use react-markdown or similar
   const parseMarkdown = (markdown: string) => {

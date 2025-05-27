@@ -52,7 +52,6 @@ const navigationItems = [
       { title: "Auth logs", href: "/docs/auth" },
       { title: "Chat", href: "/docs/chat" },      
       { title: "Command Matching", href: "/docs/command-matches" },
-      { title: "library-uploads", href: "/docs/crm" },
       { title: "Devices", href: "/docs/devices" },
       { title: "Docs", href: "/docs/docs" },
       { title: "Drive", href: "/docs/drive" },
