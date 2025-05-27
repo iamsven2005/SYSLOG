@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     for (const filePath of markdownFiles) {
       const content = await fs.readFile(filePath, "utf8")
-      const slug = path.relative(docsDir, filePath).replace(".md", "")
+const slug = path.relative(docsDir, filePath).replace(/README\.md$/, "");
 
       // Extract title from first # header
       const titleMatch = content.match(/^# (.+)$/m)
