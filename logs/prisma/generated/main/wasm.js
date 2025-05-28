@@ -1005,6 +1005,42 @@ exports.Prisma.ProjectEquipmentAllocationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MonitoredUrlScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  name: 'name',
+  status: 'status',
+  responseTime: 'responseTime',
+  lastChecked: 'lastChecked',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StatusUpdateScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  message: 'message',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UptimeHistoryScalarFieldEnum = {
+  id: 'id',
+  monitoredUrlId: 'monitoredUrlId',
+  status: 'status',
+  responseTime: 'responseTime',
+  timestamp: 'timestamp'
+};
+
+exports.Prisma.DashboardLayoutScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  layouts: 'layouts',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1012,6 +1048,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -1209,7 +1249,11 @@ exports.Prisma.ModelName = {
   Equipment: 'Equipment',
   EquipmentLoan: 'EquipmentLoan',
   EquipmentMaintenance: 'EquipmentMaintenance',
-  ProjectEquipmentAllocation: 'ProjectEquipmentAllocation'
+  ProjectEquipmentAllocation: 'ProjectEquipmentAllocation',
+  MonitoredUrl: 'MonitoredUrl',
+  StatusUpdate: 'StatusUpdate',
+  UptimeHistory: 'UptimeHistory',
+  DashboardLayout: 'DashboardLayout'
 };
 
 /**

@@ -413,6 +413,26 @@ export type EquipmentMaintenance = $Result.DefaultSelection<Prisma.$EquipmentMai
  * 
  */
 export type ProjectEquipmentAllocation = $Result.DefaultSelection<Prisma.$ProjectEquipmentAllocationPayload>
+/**
+ * Model MonitoredUrl
+ * 
+ */
+export type MonitoredUrl = $Result.DefaultSelection<Prisma.$MonitoredUrlPayload>
+/**
+ * Model StatusUpdate
+ * 
+ */
+export type StatusUpdate = $Result.DefaultSelection<Prisma.$StatusUpdatePayload>
+/**
+ * Model UptimeHistory
+ * 
+ */
+export type UptimeHistory = $Result.DefaultSelection<Prisma.$UptimeHistoryPayload>
+/**
+ * Model DashboardLayout
+ * 
+ */
+export type DashboardLayout = $Result.DefaultSelection<Prisma.$DashboardLayoutPayload>
 
 /**
  * Enums
@@ -1519,6 +1539,46 @@ export class PrismaClient<
     * ```
     */
   get projectEquipmentAllocation(): Prisma.ProjectEquipmentAllocationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.monitoredUrl`: Exposes CRUD operations for the **MonitoredUrl** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MonitoredUrls
+    * const monitoredUrls = await prisma.monitoredUrl.findMany()
+    * ```
+    */
+  get monitoredUrl(): Prisma.MonitoredUrlDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.statusUpdate`: Exposes CRUD operations for the **StatusUpdate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StatusUpdates
+    * const statusUpdates = await prisma.statusUpdate.findMany()
+    * ```
+    */
+  get statusUpdate(): Prisma.StatusUpdateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.uptimeHistory`: Exposes CRUD operations for the **UptimeHistory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UptimeHistories
+    * const uptimeHistories = await prisma.uptimeHistory.findMany()
+    * ```
+    */
+  get uptimeHistory(): Prisma.UptimeHistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.dashboardLayout`: Exposes CRUD operations for the **DashboardLayout** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DashboardLayouts
+    * const dashboardLayouts = await prisma.dashboardLayout.findMany()
+    * ```
+    */
+  get dashboardLayout(): Prisma.DashboardLayoutDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -2038,7 +2098,11 @@ export namespace Prisma {
     Equipment: 'Equipment',
     EquipmentLoan: 'EquipmentLoan',
     EquipmentMaintenance: 'EquipmentMaintenance',
-    ProjectEquipmentAllocation: 'ProjectEquipmentAllocation'
+    ProjectEquipmentAllocation: 'ProjectEquipmentAllocation',
+    MonitoredUrl: 'MonitoredUrl',
+    StatusUpdate: 'StatusUpdate',
+    UptimeHistory: 'UptimeHistory',
+    DashboardLayout: 'DashboardLayout'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2054,7 +2118,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "logs" | "auth" | "memory_usage" | "system_metrics" | "diskmetric" | "notes" | "devices" | "deviceUser" | "command" | "rule" | "ruleGroup" | "commandMatch" | "activityLog" | "emailTemplate" | "user" | "group" | "groupMember" | "message" | "userEmailTemplate" | "roles" | "notification" | "notificationRead" | "savedQuery" | "ticketComment" | "supportTicket" | "ticketAttachment" | "alertCondition" | "alertEvent" | "libraryEntry" | "feedback" | "feedbackRecipient" | "pagePermission" | "rolePermission" | "userPermission" | "pages" | "projectType" | "project" | "modelEntry" | "projectAssignment" | "sambaLog" | "location" | "ldapuser" | "driveFolder" | "driveFile" | "driveFilePermission" | "jobTitle" | "userActivity" | "team" | "teamLeader" | "teamMember" | "teamLocation" | "auditWorkflow" | "auditStep" | "stepLog" | "company" | "contactPerson" | "cRMInteraction" | "projectCompanyLink" | "bridgeProject" | "bridgePhase" | "phaseInspection" | "bridgeMaterial" | "materialOrder" | "bidSubmission" | "poll" | "pollOption" | "pollVote" | "leave" | "holiday" | "reminder" | "form" | "question" | "questionOption" | "formResponse" | "answer" | "equipmentCategory" | "equipment" | "equipmentLoan" | "equipmentMaintenance" | "projectEquipmentAllocation"
+      modelProps: "logs" | "auth" | "memory_usage" | "system_metrics" | "diskmetric" | "notes" | "devices" | "deviceUser" | "command" | "rule" | "ruleGroup" | "commandMatch" | "activityLog" | "emailTemplate" | "user" | "group" | "groupMember" | "message" | "userEmailTemplate" | "roles" | "notification" | "notificationRead" | "savedQuery" | "ticketComment" | "supportTicket" | "ticketAttachment" | "alertCondition" | "alertEvent" | "libraryEntry" | "feedback" | "feedbackRecipient" | "pagePermission" | "rolePermission" | "userPermission" | "pages" | "projectType" | "project" | "modelEntry" | "projectAssignment" | "sambaLog" | "location" | "ldapuser" | "driveFolder" | "driveFile" | "driveFilePermission" | "jobTitle" | "userActivity" | "team" | "teamLeader" | "teamMember" | "teamLocation" | "auditWorkflow" | "auditStep" | "stepLog" | "company" | "contactPerson" | "cRMInteraction" | "projectCompanyLink" | "bridgeProject" | "bridgePhase" | "phaseInspection" | "bridgeMaterial" | "materialOrder" | "bidSubmission" | "poll" | "pollOption" | "pollVote" | "leave" | "holiday" | "reminder" | "form" | "question" | "questionOption" | "formResponse" | "answer" | "equipmentCategory" | "equipment" | "equipmentLoan" | "equipmentMaintenance" | "projectEquipmentAllocation" | "monitoredUrl" | "statusUpdate" | "uptimeHistory" | "dashboardLayout"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -7978,6 +8042,302 @@ export namespace Prisma {
           }
         }
       }
+      MonitoredUrl: {
+        payload: Prisma.$MonitoredUrlPayload<ExtArgs>
+        fields: Prisma.MonitoredUrlFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MonitoredUrlFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MonitoredUrlFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          findFirst: {
+            args: Prisma.MonitoredUrlFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MonitoredUrlFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          findMany: {
+            args: Prisma.MonitoredUrlFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>[]
+          }
+          create: {
+            args: Prisma.MonitoredUrlCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          createMany: {
+            args: Prisma.MonitoredUrlCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MonitoredUrlCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>[]
+          }
+          delete: {
+            args: Prisma.MonitoredUrlDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          update: {
+            args: Prisma.MonitoredUrlUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          deleteMany: {
+            args: Prisma.MonitoredUrlDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MonitoredUrlUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MonitoredUrlUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>[]
+          }
+          upsert: {
+            args: Prisma.MonitoredUrlUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonitoredUrlPayload>
+          }
+          aggregate: {
+            args: Prisma.MonitoredUrlAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMonitoredUrl>
+          }
+          groupBy: {
+            args: Prisma.MonitoredUrlGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MonitoredUrlGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MonitoredUrlCountArgs<ExtArgs>
+            result: $Utils.Optional<MonitoredUrlCountAggregateOutputType> | number
+          }
+        }
+      }
+      StatusUpdate: {
+        payload: Prisma.$StatusUpdatePayload<ExtArgs>
+        fields: Prisma.StatusUpdateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StatusUpdateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StatusUpdateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          findFirst: {
+            args: Prisma.StatusUpdateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StatusUpdateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          findMany: {
+            args: Prisma.StatusUpdateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>[]
+          }
+          create: {
+            args: Prisma.StatusUpdateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          createMany: {
+            args: Prisma.StatusUpdateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StatusUpdateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>[]
+          }
+          delete: {
+            args: Prisma.StatusUpdateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          update: {
+            args: Prisma.StatusUpdateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          deleteMany: {
+            args: Prisma.StatusUpdateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StatusUpdateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StatusUpdateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>[]
+          }
+          upsert: {
+            args: Prisma.StatusUpdateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusUpdatePayload>
+          }
+          aggregate: {
+            args: Prisma.StatusUpdateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStatusUpdate>
+          }
+          groupBy: {
+            args: Prisma.StatusUpdateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StatusUpdateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StatusUpdateCountArgs<ExtArgs>
+            result: $Utils.Optional<StatusUpdateCountAggregateOutputType> | number
+          }
+        }
+      }
+      UptimeHistory: {
+        payload: Prisma.$UptimeHistoryPayload<ExtArgs>
+        fields: Prisma.UptimeHistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UptimeHistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UptimeHistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.UptimeHistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UptimeHistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          findMany: {
+            args: Prisma.UptimeHistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>[]
+          }
+          create: {
+            args: Prisma.UptimeHistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          createMany: {
+            args: Prisma.UptimeHistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UptimeHistoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>[]
+          }
+          delete: {
+            args: Prisma.UptimeHistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          update: {
+            args: Prisma.UptimeHistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.UptimeHistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UptimeHistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UptimeHistoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.UptimeHistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UptimeHistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.UptimeHistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUptimeHistory>
+          }
+          groupBy: {
+            args: Prisma.UptimeHistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UptimeHistoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UptimeHistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<UptimeHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      DashboardLayout: {
+        payload: Prisma.$DashboardLayoutPayload<ExtArgs>
+        fields: Prisma.DashboardLayoutFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DashboardLayoutFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DashboardLayoutFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          findFirst: {
+            args: Prisma.DashboardLayoutFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DashboardLayoutFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          findMany: {
+            args: Prisma.DashboardLayoutFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>[]
+          }
+          create: {
+            args: Prisma.DashboardLayoutCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          createMany: {
+            args: Prisma.DashboardLayoutCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DashboardLayoutCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>[]
+          }
+          delete: {
+            args: Prisma.DashboardLayoutDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          update: {
+            args: Prisma.DashboardLayoutUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          deleteMany: {
+            args: Prisma.DashboardLayoutDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DashboardLayoutUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DashboardLayoutUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>[]
+          }
+          upsert: {
+            args: Prisma.DashboardLayoutUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DashboardLayoutPayload>
+          }
+          aggregate: {
+            args: Prisma.DashboardLayoutAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDashboardLayout>
+          }
+          groupBy: {
+            args: Prisma.DashboardLayoutGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DashboardLayoutGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DashboardLayoutCountArgs<ExtArgs>
+            result: $Utils.Optional<DashboardLayoutCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -8142,6 +8502,10 @@ export namespace Prisma {
     equipmentLoan?: EquipmentLoanOmit
     equipmentMaintenance?: EquipmentMaintenanceOmit
     projectEquipmentAllocation?: ProjectEquipmentAllocationOmit
+    monitoredUrl?: MonitoredUrlOmit
+    statusUpdate?: StatusUpdateOmit
+    uptimeHistory?: UptimeHistoryOmit
+    dashboardLayout?: DashboardLayoutOmit
   }
 
   /* Types for Logging */
@@ -9853,6 +10217,37 @@ export namespace Prisma {
    */
   export type EquipmentCountOutputTypeCountAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectEquipmentAllocationWhereInput
+  }
+
+
+  /**
+   * Count Type MonitoredUrlCountOutputType
+   */
+
+  export type MonitoredUrlCountOutputType = {
+    history: number
+  }
+
+  export type MonitoredUrlCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    history?: boolean | MonitoredUrlCountOutputTypeCountHistoryArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MonitoredUrlCountOutputType without action
+   */
+  export type MonitoredUrlCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrlCountOutputType
+     */
+    select?: MonitoredUrlCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MonitoredUrlCountOutputType without action
+   */
+  export type MonitoredUrlCountOutputTypeCountHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UptimeHistoryWhereInput
   }
 
 
@@ -103473,6 +103868,4240 @@ export namespace Prisma {
 
 
   /**
+   * Model MonitoredUrl
+   */
+
+  export type AggregateMonitoredUrl = {
+    _count: MonitoredUrlCountAggregateOutputType | null
+    _avg: MonitoredUrlAvgAggregateOutputType | null
+    _sum: MonitoredUrlSumAggregateOutputType | null
+    _min: MonitoredUrlMinAggregateOutputType | null
+    _max: MonitoredUrlMaxAggregateOutputType | null
+  }
+
+  export type MonitoredUrlAvgAggregateOutputType = {
+    responseTime: number | null
+  }
+
+  export type MonitoredUrlSumAggregateOutputType = {
+    responseTime: number | null
+  }
+
+  export type MonitoredUrlMinAggregateOutputType = {
+    id: string | null
+    url: string | null
+    name: string | null
+    status: string | null
+    responseTime: number | null
+    lastChecked: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MonitoredUrlMaxAggregateOutputType = {
+    id: string | null
+    url: string | null
+    name: string | null
+    status: string | null
+    responseTime: number | null
+    lastChecked: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MonitoredUrlCountAggregateOutputType = {
+    id: number
+    url: number
+    name: number
+    status: number
+    responseTime: number
+    lastChecked: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MonitoredUrlAvgAggregateInputType = {
+    responseTime?: true
+  }
+
+  export type MonitoredUrlSumAggregateInputType = {
+    responseTime?: true
+  }
+
+  export type MonitoredUrlMinAggregateInputType = {
+    id?: true
+    url?: true
+    name?: true
+    status?: true
+    responseTime?: true
+    lastChecked?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MonitoredUrlMaxAggregateInputType = {
+    id?: true
+    url?: true
+    name?: true
+    status?: true
+    responseTime?: true
+    lastChecked?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MonitoredUrlCountAggregateInputType = {
+    id?: true
+    url?: true
+    name?: true
+    status?: true
+    responseTime?: true
+    lastChecked?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MonitoredUrlAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonitoredUrl to aggregate.
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonitoredUrls to fetch.
+     */
+    orderBy?: MonitoredUrlOrderByWithRelationInput | MonitoredUrlOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MonitoredUrlWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonitoredUrls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonitoredUrls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MonitoredUrls
+    **/
+    _count?: true | MonitoredUrlCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MonitoredUrlAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MonitoredUrlSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MonitoredUrlMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MonitoredUrlMaxAggregateInputType
+  }
+
+  export type GetMonitoredUrlAggregateType<T extends MonitoredUrlAggregateArgs> = {
+        [P in keyof T & keyof AggregateMonitoredUrl]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMonitoredUrl[P]>
+      : GetScalarType<T[P], AggregateMonitoredUrl[P]>
+  }
+
+
+
+
+  export type MonitoredUrlGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonitoredUrlWhereInput
+    orderBy?: MonitoredUrlOrderByWithAggregationInput | MonitoredUrlOrderByWithAggregationInput[]
+    by: MonitoredUrlScalarFieldEnum[] | MonitoredUrlScalarFieldEnum
+    having?: MonitoredUrlScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MonitoredUrlCountAggregateInputType | true
+    _avg?: MonitoredUrlAvgAggregateInputType
+    _sum?: MonitoredUrlSumAggregateInputType
+    _min?: MonitoredUrlMinAggregateInputType
+    _max?: MonitoredUrlMaxAggregateInputType
+  }
+
+  export type MonitoredUrlGroupByOutputType = {
+    id: string
+    url: string
+    name: string
+    status: string
+    responseTime: number | null
+    lastChecked: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MonitoredUrlCountAggregateOutputType | null
+    _avg: MonitoredUrlAvgAggregateOutputType | null
+    _sum: MonitoredUrlSumAggregateOutputType | null
+    _min: MonitoredUrlMinAggregateOutputType | null
+    _max: MonitoredUrlMaxAggregateOutputType | null
+  }
+
+  type GetMonitoredUrlGroupByPayload<T extends MonitoredUrlGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MonitoredUrlGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MonitoredUrlGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MonitoredUrlGroupByOutputType[P]>
+            : GetScalarType<T[P], MonitoredUrlGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MonitoredUrlSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    url?: boolean
+    name?: boolean
+    status?: boolean
+    responseTime?: boolean
+    lastChecked?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    history?: boolean | MonitoredUrl$historyArgs<ExtArgs>
+    _count?: boolean | MonitoredUrlCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["monitoredUrl"]>
+
+  export type MonitoredUrlSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    url?: boolean
+    name?: boolean
+    status?: boolean
+    responseTime?: boolean
+    lastChecked?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["monitoredUrl"]>
+
+  export type MonitoredUrlSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    url?: boolean
+    name?: boolean
+    status?: boolean
+    responseTime?: boolean
+    lastChecked?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["monitoredUrl"]>
+
+  export type MonitoredUrlSelectScalar = {
+    id?: boolean
+    url?: boolean
+    name?: boolean
+    status?: boolean
+    responseTime?: boolean
+    lastChecked?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MonitoredUrlOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "url" | "name" | "status" | "responseTime" | "lastChecked" | "createdAt" | "updatedAt", ExtArgs["result"]["monitoredUrl"]>
+  export type MonitoredUrlInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    history?: boolean | MonitoredUrl$historyArgs<ExtArgs>
+    _count?: boolean | MonitoredUrlCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type MonitoredUrlIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type MonitoredUrlIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $MonitoredUrlPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MonitoredUrl"
+    objects: {
+      history: Prisma.$UptimeHistoryPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      url: string
+      name: string
+      status: string
+      responseTime: number | null
+      lastChecked: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["monitoredUrl"]>
+    composites: {}
+  }
+
+  type MonitoredUrlGetPayload<S extends boolean | null | undefined | MonitoredUrlDefaultArgs> = $Result.GetResult<Prisma.$MonitoredUrlPayload, S>
+
+  type MonitoredUrlCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MonitoredUrlFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MonitoredUrlCountAggregateInputType | true
+    }
+
+  export interface MonitoredUrlDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MonitoredUrl'], meta: { name: 'MonitoredUrl' } }
+    /**
+     * Find zero or one MonitoredUrl that matches the filter.
+     * @param {MonitoredUrlFindUniqueArgs} args - Arguments to find a MonitoredUrl
+     * @example
+     * // Get one MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MonitoredUrlFindUniqueArgs>(args: SelectSubset<T, MonitoredUrlFindUniqueArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one MonitoredUrl that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MonitoredUrlFindUniqueOrThrowArgs} args - Arguments to find a MonitoredUrl
+     * @example
+     * // Get one MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MonitoredUrlFindUniqueOrThrowArgs>(args: SelectSubset<T, MonitoredUrlFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first MonitoredUrl that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlFindFirstArgs} args - Arguments to find a MonitoredUrl
+     * @example
+     * // Get one MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MonitoredUrlFindFirstArgs>(args?: SelectSubset<T, MonitoredUrlFindFirstArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first MonitoredUrl that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlFindFirstOrThrowArgs} args - Arguments to find a MonitoredUrl
+     * @example
+     * // Get one MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MonitoredUrlFindFirstOrThrowArgs>(args?: SelectSubset<T, MonitoredUrlFindFirstOrThrowArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more MonitoredUrls that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MonitoredUrls
+     * const monitoredUrls = await prisma.monitoredUrl.findMany()
+     * 
+     * // Get first 10 MonitoredUrls
+     * const monitoredUrls = await prisma.monitoredUrl.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const monitoredUrlWithIdOnly = await prisma.monitoredUrl.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MonitoredUrlFindManyArgs>(args?: SelectSubset<T, MonitoredUrlFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a MonitoredUrl.
+     * @param {MonitoredUrlCreateArgs} args - Arguments to create a MonitoredUrl.
+     * @example
+     * // Create one MonitoredUrl
+     * const MonitoredUrl = await prisma.monitoredUrl.create({
+     *   data: {
+     *     // ... data to create a MonitoredUrl
+     *   }
+     * })
+     * 
+     */
+    create<T extends MonitoredUrlCreateArgs>(args: SelectSubset<T, MonitoredUrlCreateArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many MonitoredUrls.
+     * @param {MonitoredUrlCreateManyArgs} args - Arguments to create many MonitoredUrls.
+     * @example
+     * // Create many MonitoredUrls
+     * const monitoredUrl = await prisma.monitoredUrl.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MonitoredUrlCreateManyArgs>(args?: SelectSubset<T, MonitoredUrlCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MonitoredUrls and returns the data saved in the database.
+     * @param {MonitoredUrlCreateManyAndReturnArgs} args - Arguments to create many MonitoredUrls.
+     * @example
+     * // Create many MonitoredUrls
+     * const monitoredUrl = await prisma.monitoredUrl.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MonitoredUrls and only return the `id`
+     * const monitoredUrlWithIdOnly = await prisma.monitoredUrl.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MonitoredUrlCreateManyAndReturnArgs>(args?: SelectSubset<T, MonitoredUrlCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a MonitoredUrl.
+     * @param {MonitoredUrlDeleteArgs} args - Arguments to delete one MonitoredUrl.
+     * @example
+     * // Delete one MonitoredUrl
+     * const MonitoredUrl = await prisma.monitoredUrl.delete({
+     *   where: {
+     *     // ... filter to delete one MonitoredUrl
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MonitoredUrlDeleteArgs>(args: SelectSubset<T, MonitoredUrlDeleteArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one MonitoredUrl.
+     * @param {MonitoredUrlUpdateArgs} args - Arguments to update one MonitoredUrl.
+     * @example
+     * // Update one MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MonitoredUrlUpdateArgs>(args: SelectSubset<T, MonitoredUrlUpdateArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more MonitoredUrls.
+     * @param {MonitoredUrlDeleteManyArgs} args - Arguments to filter MonitoredUrls to delete.
+     * @example
+     * // Delete a few MonitoredUrls
+     * const { count } = await prisma.monitoredUrl.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MonitoredUrlDeleteManyArgs>(args?: SelectSubset<T, MonitoredUrlDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonitoredUrls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MonitoredUrls
+     * const monitoredUrl = await prisma.monitoredUrl.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MonitoredUrlUpdateManyArgs>(args: SelectSubset<T, MonitoredUrlUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonitoredUrls and returns the data updated in the database.
+     * @param {MonitoredUrlUpdateManyAndReturnArgs} args - Arguments to update many MonitoredUrls.
+     * @example
+     * // Update many MonitoredUrls
+     * const monitoredUrl = await prisma.monitoredUrl.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MonitoredUrls and only return the `id`
+     * const monitoredUrlWithIdOnly = await prisma.monitoredUrl.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MonitoredUrlUpdateManyAndReturnArgs>(args: SelectSubset<T, MonitoredUrlUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one MonitoredUrl.
+     * @param {MonitoredUrlUpsertArgs} args - Arguments to update or create a MonitoredUrl.
+     * @example
+     * // Update or create a MonitoredUrl
+     * const monitoredUrl = await prisma.monitoredUrl.upsert({
+     *   create: {
+     *     // ... data to create a MonitoredUrl
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MonitoredUrl we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MonitoredUrlUpsertArgs>(args: SelectSubset<T, MonitoredUrlUpsertArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of MonitoredUrls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlCountArgs} args - Arguments to filter MonitoredUrls to count.
+     * @example
+     * // Count the number of MonitoredUrls
+     * const count = await prisma.monitoredUrl.count({
+     *   where: {
+     *     // ... the filter for the MonitoredUrls we want to count
+     *   }
+     * })
+    **/
+    count<T extends MonitoredUrlCountArgs>(
+      args?: Subset<T, MonitoredUrlCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MonitoredUrlCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MonitoredUrl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MonitoredUrlAggregateArgs>(args: Subset<T, MonitoredUrlAggregateArgs>): Prisma.PrismaPromise<GetMonitoredUrlAggregateType<T>>
+
+    /**
+     * Group by MonitoredUrl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonitoredUrlGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MonitoredUrlGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MonitoredUrlGroupByArgs['orderBy'] }
+        : { orderBy?: MonitoredUrlGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MonitoredUrlGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMonitoredUrlGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MonitoredUrl model
+   */
+  readonly fields: MonitoredUrlFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MonitoredUrl.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MonitoredUrlClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    history<T extends MonitoredUrl$historyArgs<ExtArgs> = {}>(args?: Subset<T, MonitoredUrl$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MonitoredUrl model
+   */ 
+  interface MonitoredUrlFieldRefs {
+    readonly id: FieldRef<"MonitoredUrl", 'String'>
+    readonly url: FieldRef<"MonitoredUrl", 'String'>
+    readonly name: FieldRef<"MonitoredUrl", 'String'>
+    readonly status: FieldRef<"MonitoredUrl", 'String'>
+    readonly responseTime: FieldRef<"MonitoredUrl", 'Int'>
+    readonly lastChecked: FieldRef<"MonitoredUrl", 'DateTime'>
+    readonly createdAt: FieldRef<"MonitoredUrl", 'DateTime'>
+    readonly updatedAt: FieldRef<"MonitoredUrl", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MonitoredUrl findUnique
+   */
+  export type MonitoredUrlFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter, which MonitoredUrl to fetch.
+     */
+    where: MonitoredUrlWhereUniqueInput
+  }
+
+  /**
+   * MonitoredUrl findUniqueOrThrow
+   */
+  export type MonitoredUrlFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter, which MonitoredUrl to fetch.
+     */
+    where: MonitoredUrlWhereUniqueInput
+  }
+
+  /**
+   * MonitoredUrl findFirst
+   */
+  export type MonitoredUrlFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter, which MonitoredUrl to fetch.
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonitoredUrls to fetch.
+     */
+    orderBy?: MonitoredUrlOrderByWithRelationInput | MonitoredUrlOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonitoredUrls.
+     */
+    cursor?: MonitoredUrlWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonitoredUrls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonitoredUrls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonitoredUrls.
+     */
+    distinct?: MonitoredUrlScalarFieldEnum | MonitoredUrlScalarFieldEnum[]
+  }
+
+  /**
+   * MonitoredUrl findFirstOrThrow
+   */
+  export type MonitoredUrlFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter, which MonitoredUrl to fetch.
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonitoredUrls to fetch.
+     */
+    orderBy?: MonitoredUrlOrderByWithRelationInput | MonitoredUrlOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonitoredUrls.
+     */
+    cursor?: MonitoredUrlWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonitoredUrls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonitoredUrls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonitoredUrls.
+     */
+    distinct?: MonitoredUrlScalarFieldEnum | MonitoredUrlScalarFieldEnum[]
+  }
+
+  /**
+   * MonitoredUrl findMany
+   */
+  export type MonitoredUrlFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter, which MonitoredUrls to fetch.
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonitoredUrls to fetch.
+     */
+    orderBy?: MonitoredUrlOrderByWithRelationInput | MonitoredUrlOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MonitoredUrls.
+     */
+    cursor?: MonitoredUrlWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonitoredUrls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonitoredUrls.
+     */
+    skip?: number
+    distinct?: MonitoredUrlScalarFieldEnum | MonitoredUrlScalarFieldEnum[]
+  }
+
+  /**
+   * MonitoredUrl create
+   */
+  export type MonitoredUrlCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MonitoredUrl.
+     */
+    data: XOR<MonitoredUrlCreateInput, MonitoredUrlUncheckedCreateInput>
+  }
+
+  /**
+   * MonitoredUrl createMany
+   */
+  export type MonitoredUrlCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MonitoredUrls.
+     */
+    data: MonitoredUrlCreateManyInput | MonitoredUrlCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MonitoredUrl createManyAndReturn
+   */
+  export type MonitoredUrlCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * The data used to create many MonitoredUrls.
+     */
+    data: MonitoredUrlCreateManyInput | MonitoredUrlCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MonitoredUrl update
+   */
+  export type MonitoredUrlUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MonitoredUrl.
+     */
+    data: XOR<MonitoredUrlUpdateInput, MonitoredUrlUncheckedUpdateInput>
+    /**
+     * Choose, which MonitoredUrl to update.
+     */
+    where: MonitoredUrlWhereUniqueInput
+  }
+
+  /**
+   * MonitoredUrl updateMany
+   */
+  export type MonitoredUrlUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MonitoredUrls.
+     */
+    data: XOR<MonitoredUrlUpdateManyMutationInput, MonitoredUrlUncheckedUpdateManyInput>
+    /**
+     * Filter which MonitoredUrls to update
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * Limit how many MonitoredUrls to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonitoredUrl updateManyAndReturn
+   */
+  export type MonitoredUrlUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * The data used to update MonitoredUrls.
+     */
+    data: XOR<MonitoredUrlUpdateManyMutationInput, MonitoredUrlUncheckedUpdateManyInput>
+    /**
+     * Filter which MonitoredUrls to update
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * Limit how many MonitoredUrls to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonitoredUrl upsert
+   */
+  export type MonitoredUrlUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MonitoredUrl to update in case it exists.
+     */
+    where: MonitoredUrlWhereUniqueInput
+    /**
+     * In case the MonitoredUrl found by the `where` argument doesn't exist, create a new MonitoredUrl with this data.
+     */
+    create: XOR<MonitoredUrlCreateInput, MonitoredUrlUncheckedCreateInput>
+    /**
+     * In case the MonitoredUrl was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MonitoredUrlUpdateInput, MonitoredUrlUncheckedUpdateInput>
+  }
+
+  /**
+   * MonitoredUrl delete
+   */
+  export type MonitoredUrlDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+    /**
+     * Filter which MonitoredUrl to delete.
+     */
+    where: MonitoredUrlWhereUniqueInput
+  }
+
+  /**
+   * MonitoredUrl deleteMany
+   */
+  export type MonitoredUrlDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonitoredUrls to delete
+     */
+    where?: MonitoredUrlWhereInput
+    /**
+     * Limit how many MonitoredUrls to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonitoredUrl.history
+   */
+  export type MonitoredUrl$historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    where?: UptimeHistoryWhereInput
+    orderBy?: UptimeHistoryOrderByWithRelationInput | UptimeHistoryOrderByWithRelationInput[]
+    cursor?: UptimeHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UptimeHistoryScalarFieldEnum | UptimeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * MonitoredUrl without action
+   */
+  export type MonitoredUrlDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonitoredUrl
+     */
+    select?: MonitoredUrlSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonitoredUrl
+     */
+    omit?: MonitoredUrlOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonitoredUrlInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model StatusUpdate
+   */
+
+  export type AggregateStatusUpdate = {
+    _count: StatusUpdateCountAggregateOutputType | null
+    _min: StatusUpdateMinAggregateOutputType | null
+    _max: StatusUpdateMaxAggregateOutputType | null
+  }
+
+  export type StatusUpdateMinAggregateOutputType = {
+    id: string | null
+    type: string | null
+    message: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StatusUpdateMaxAggregateOutputType = {
+    id: string | null
+    type: string | null
+    message: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StatusUpdateCountAggregateOutputType = {
+    id: number
+    type: number
+    message: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StatusUpdateMinAggregateInputType = {
+    id?: true
+    type?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StatusUpdateMaxAggregateInputType = {
+    id?: true
+    type?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type StatusUpdateCountAggregateInputType = {
+    id?: true
+    type?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StatusUpdateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StatusUpdate to aggregate.
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusUpdates to fetch.
+     */
+    orderBy?: StatusUpdateOrderByWithRelationInput | StatusUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StatusUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StatusUpdates
+    **/
+    _count?: true | StatusUpdateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StatusUpdateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StatusUpdateMaxAggregateInputType
+  }
+
+  export type GetStatusUpdateAggregateType<T extends StatusUpdateAggregateArgs> = {
+        [P in keyof T & keyof AggregateStatusUpdate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStatusUpdate[P]>
+      : GetScalarType<T[P], AggregateStatusUpdate[P]>
+  }
+
+
+
+
+  export type StatusUpdateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatusUpdateWhereInput
+    orderBy?: StatusUpdateOrderByWithAggregationInput | StatusUpdateOrderByWithAggregationInput[]
+    by: StatusUpdateScalarFieldEnum[] | StatusUpdateScalarFieldEnum
+    having?: StatusUpdateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StatusUpdateCountAggregateInputType | true
+    _min?: StatusUpdateMinAggregateInputType
+    _max?: StatusUpdateMaxAggregateInputType
+  }
+
+  export type StatusUpdateGroupByOutputType = {
+    id: string
+    type: string
+    message: string
+    createdAt: Date
+    updatedAt: Date
+    _count: StatusUpdateCountAggregateOutputType | null
+    _min: StatusUpdateMinAggregateOutputType | null
+    _max: StatusUpdateMaxAggregateOutputType | null
+  }
+
+  type GetStatusUpdateGroupByPayload<T extends StatusUpdateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StatusUpdateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StatusUpdateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StatusUpdateGroupByOutputType[P]>
+            : GetScalarType<T[P], StatusUpdateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StatusUpdateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["statusUpdate"]>
+
+  export type StatusUpdateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["statusUpdate"]>
+
+  export type StatusUpdateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["statusUpdate"]>
+
+  export type StatusUpdateSelectScalar = {
+    id?: boolean
+    type?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StatusUpdateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "message" | "createdAt" | "updatedAt", ExtArgs["result"]["statusUpdate"]>
+
+  export type $StatusUpdatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StatusUpdate"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: string
+      message: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["statusUpdate"]>
+    composites: {}
+  }
+
+  type StatusUpdateGetPayload<S extends boolean | null | undefined | StatusUpdateDefaultArgs> = $Result.GetResult<Prisma.$StatusUpdatePayload, S>
+
+  type StatusUpdateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StatusUpdateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StatusUpdateCountAggregateInputType | true
+    }
+
+  export interface StatusUpdateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StatusUpdate'], meta: { name: 'StatusUpdate' } }
+    /**
+     * Find zero or one StatusUpdate that matches the filter.
+     * @param {StatusUpdateFindUniqueArgs} args - Arguments to find a StatusUpdate
+     * @example
+     * // Get one StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StatusUpdateFindUniqueArgs>(args: SelectSubset<T, StatusUpdateFindUniqueArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one StatusUpdate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StatusUpdateFindUniqueOrThrowArgs} args - Arguments to find a StatusUpdate
+     * @example
+     * // Get one StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StatusUpdateFindUniqueOrThrowArgs>(args: SelectSubset<T, StatusUpdateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first StatusUpdate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateFindFirstArgs} args - Arguments to find a StatusUpdate
+     * @example
+     * // Get one StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StatusUpdateFindFirstArgs>(args?: SelectSubset<T, StatusUpdateFindFirstArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first StatusUpdate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateFindFirstOrThrowArgs} args - Arguments to find a StatusUpdate
+     * @example
+     * // Get one StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StatusUpdateFindFirstOrThrowArgs>(args?: SelectSubset<T, StatusUpdateFindFirstOrThrowArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more StatusUpdates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StatusUpdates
+     * const statusUpdates = await prisma.statusUpdate.findMany()
+     * 
+     * // Get first 10 StatusUpdates
+     * const statusUpdates = await prisma.statusUpdate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const statusUpdateWithIdOnly = await prisma.statusUpdate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StatusUpdateFindManyArgs>(args?: SelectSubset<T, StatusUpdateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a StatusUpdate.
+     * @param {StatusUpdateCreateArgs} args - Arguments to create a StatusUpdate.
+     * @example
+     * // Create one StatusUpdate
+     * const StatusUpdate = await prisma.statusUpdate.create({
+     *   data: {
+     *     // ... data to create a StatusUpdate
+     *   }
+     * })
+     * 
+     */
+    create<T extends StatusUpdateCreateArgs>(args: SelectSubset<T, StatusUpdateCreateArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many StatusUpdates.
+     * @param {StatusUpdateCreateManyArgs} args - Arguments to create many StatusUpdates.
+     * @example
+     * // Create many StatusUpdates
+     * const statusUpdate = await prisma.statusUpdate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StatusUpdateCreateManyArgs>(args?: SelectSubset<T, StatusUpdateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StatusUpdates and returns the data saved in the database.
+     * @param {StatusUpdateCreateManyAndReturnArgs} args - Arguments to create many StatusUpdates.
+     * @example
+     * // Create many StatusUpdates
+     * const statusUpdate = await prisma.statusUpdate.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StatusUpdates and only return the `id`
+     * const statusUpdateWithIdOnly = await prisma.statusUpdate.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StatusUpdateCreateManyAndReturnArgs>(args?: SelectSubset<T, StatusUpdateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a StatusUpdate.
+     * @param {StatusUpdateDeleteArgs} args - Arguments to delete one StatusUpdate.
+     * @example
+     * // Delete one StatusUpdate
+     * const StatusUpdate = await prisma.statusUpdate.delete({
+     *   where: {
+     *     // ... filter to delete one StatusUpdate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StatusUpdateDeleteArgs>(args: SelectSubset<T, StatusUpdateDeleteArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one StatusUpdate.
+     * @param {StatusUpdateUpdateArgs} args - Arguments to update one StatusUpdate.
+     * @example
+     * // Update one StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StatusUpdateUpdateArgs>(args: SelectSubset<T, StatusUpdateUpdateArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more StatusUpdates.
+     * @param {StatusUpdateDeleteManyArgs} args - Arguments to filter StatusUpdates to delete.
+     * @example
+     * // Delete a few StatusUpdates
+     * const { count } = await prisma.statusUpdate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StatusUpdateDeleteManyArgs>(args?: SelectSubset<T, StatusUpdateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StatusUpdates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StatusUpdates
+     * const statusUpdate = await prisma.statusUpdate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StatusUpdateUpdateManyArgs>(args: SelectSubset<T, StatusUpdateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StatusUpdates and returns the data updated in the database.
+     * @param {StatusUpdateUpdateManyAndReturnArgs} args - Arguments to update many StatusUpdates.
+     * @example
+     * // Update many StatusUpdates
+     * const statusUpdate = await prisma.statusUpdate.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StatusUpdates and only return the `id`
+     * const statusUpdateWithIdOnly = await prisma.statusUpdate.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StatusUpdateUpdateManyAndReturnArgs>(args: SelectSubset<T, StatusUpdateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one StatusUpdate.
+     * @param {StatusUpdateUpsertArgs} args - Arguments to update or create a StatusUpdate.
+     * @example
+     * // Update or create a StatusUpdate
+     * const statusUpdate = await prisma.statusUpdate.upsert({
+     *   create: {
+     *     // ... data to create a StatusUpdate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StatusUpdate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StatusUpdateUpsertArgs>(args: SelectSubset<T, StatusUpdateUpsertArgs<ExtArgs>>): Prisma__StatusUpdateClient<$Result.GetResult<Prisma.$StatusUpdatePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of StatusUpdates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateCountArgs} args - Arguments to filter StatusUpdates to count.
+     * @example
+     * // Count the number of StatusUpdates
+     * const count = await prisma.statusUpdate.count({
+     *   where: {
+     *     // ... the filter for the StatusUpdates we want to count
+     *   }
+     * })
+    **/
+    count<T extends StatusUpdateCountArgs>(
+      args?: Subset<T, StatusUpdateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StatusUpdateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StatusUpdate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StatusUpdateAggregateArgs>(args: Subset<T, StatusUpdateAggregateArgs>): Prisma.PrismaPromise<GetStatusUpdateAggregateType<T>>
+
+    /**
+     * Group by StatusUpdate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusUpdateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StatusUpdateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StatusUpdateGroupByArgs['orderBy'] }
+        : { orderBy?: StatusUpdateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StatusUpdateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStatusUpdateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StatusUpdate model
+   */
+  readonly fields: StatusUpdateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StatusUpdate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StatusUpdateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StatusUpdate model
+   */ 
+  interface StatusUpdateFieldRefs {
+    readonly id: FieldRef<"StatusUpdate", 'String'>
+    readonly type: FieldRef<"StatusUpdate", 'String'>
+    readonly message: FieldRef<"StatusUpdate", 'String'>
+    readonly createdAt: FieldRef<"StatusUpdate", 'DateTime'>
+    readonly updatedAt: FieldRef<"StatusUpdate", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StatusUpdate findUnique
+   */
+  export type StatusUpdateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter, which StatusUpdate to fetch.
+     */
+    where: StatusUpdateWhereUniqueInput
+  }
+
+  /**
+   * StatusUpdate findUniqueOrThrow
+   */
+  export type StatusUpdateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter, which StatusUpdate to fetch.
+     */
+    where: StatusUpdateWhereUniqueInput
+  }
+
+  /**
+   * StatusUpdate findFirst
+   */
+  export type StatusUpdateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter, which StatusUpdate to fetch.
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusUpdates to fetch.
+     */
+    orderBy?: StatusUpdateOrderByWithRelationInput | StatusUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StatusUpdates.
+     */
+    cursor?: StatusUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StatusUpdates.
+     */
+    distinct?: StatusUpdateScalarFieldEnum | StatusUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * StatusUpdate findFirstOrThrow
+   */
+  export type StatusUpdateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter, which StatusUpdate to fetch.
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusUpdates to fetch.
+     */
+    orderBy?: StatusUpdateOrderByWithRelationInput | StatusUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StatusUpdates.
+     */
+    cursor?: StatusUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusUpdates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StatusUpdates.
+     */
+    distinct?: StatusUpdateScalarFieldEnum | StatusUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * StatusUpdate findMany
+   */
+  export type StatusUpdateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter, which StatusUpdates to fetch.
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusUpdates to fetch.
+     */
+    orderBy?: StatusUpdateOrderByWithRelationInput | StatusUpdateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StatusUpdates.
+     */
+    cursor?: StatusUpdateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusUpdates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusUpdates.
+     */
+    skip?: number
+    distinct?: StatusUpdateScalarFieldEnum | StatusUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * StatusUpdate create
+   */
+  export type StatusUpdateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * The data needed to create a StatusUpdate.
+     */
+    data: XOR<StatusUpdateCreateInput, StatusUpdateUncheckedCreateInput>
+  }
+
+  /**
+   * StatusUpdate createMany
+   */
+  export type StatusUpdateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StatusUpdates.
+     */
+    data: StatusUpdateCreateManyInput | StatusUpdateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StatusUpdate createManyAndReturn
+   */
+  export type StatusUpdateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * The data used to create many StatusUpdates.
+     */
+    data: StatusUpdateCreateManyInput | StatusUpdateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StatusUpdate update
+   */
+  export type StatusUpdateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * The data needed to update a StatusUpdate.
+     */
+    data: XOR<StatusUpdateUpdateInput, StatusUpdateUncheckedUpdateInput>
+    /**
+     * Choose, which StatusUpdate to update.
+     */
+    where: StatusUpdateWhereUniqueInput
+  }
+
+  /**
+   * StatusUpdate updateMany
+   */
+  export type StatusUpdateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StatusUpdates.
+     */
+    data: XOR<StatusUpdateUpdateManyMutationInput, StatusUpdateUncheckedUpdateManyInput>
+    /**
+     * Filter which StatusUpdates to update
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * Limit how many StatusUpdates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StatusUpdate updateManyAndReturn
+   */
+  export type StatusUpdateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * The data used to update StatusUpdates.
+     */
+    data: XOR<StatusUpdateUpdateManyMutationInput, StatusUpdateUncheckedUpdateManyInput>
+    /**
+     * Filter which StatusUpdates to update
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * Limit how many StatusUpdates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StatusUpdate upsert
+   */
+  export type StatusUpdateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * The filter to search for the StatusUpdate to update in case it exists.
+     */
+    where: StatusUpdateWhereUniqueInput
+    /**
+     * In case the StatusUpdate found by the `where` argument doesn't exist, create a new StatusUpdate with this data.
+     */
+    create: XOR<StatusUpdateCreateInput, StatusUpdateUncheckedCreateInput>
+    /**
+     * In case the StatusUpdate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StatusUpdateUpdateInput, StatusUpdateUncheckedUpdateInput>
+  }
+
+  /**
+   * StatusUpdate delete
+   */
+  export type StatusUpdateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+    /**
+     * Filter which StatusUpdate to delete.
+     */
+    where: StatusUpdateWhereUniqueInput
+  }
+
+  /**
+   * StatusUpdate deleteMany
+   */
+  export type StatusUpdateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StatusUpdates to delete
+     */
+    where?: StatusUpdateWhereInput
+    /**
+     * Limit how many StatusUpdates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StatusUpdate without action
+   */
+  export type StatusUpdateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusUpdate
+     */
+    select?: StatusUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusUpdate
+     */
+    omit?: StatusUpdateOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UptimeHistory
+   */
+
+  export type AggregateUptimeHistory = {
+    _count: UptimeHistoryCountAggregateOutputType | null
+    _avg: UptimeHistoryAvgAggregateOutputType | null
+    _sum: UptimeHistorySumAggregateOutputType | null
+    _min: UptimeHistoryMinAggregateOutputType | null
+    _max: UptimeHistoryMaxAggregateOutputType | null
+  }
+
+  export type UptimeHistoryAvgAggregateOutputType = {
+    responseTime: number | null
+  }
+
+  export type UptimeHistorySumAggregateOutputType = {
+    responseTime: number | null
+  }
+
+  export type UptimeHistoryMinAggregateOutputType = {
+    id: string | null
+    monitoredUrlId: string | null
+    status: string | null
+    responseTime: number | null
+    timestamp: Date | null
+  }
+
+  export type UptimeHistoryMaxAggregateOutputType = {
+    id: string | null
+    monitoredUrlId: string | null
+    status: string | null
+    responseTime: number | null
+    timestamp: Date | null
+  }
+
+  export type UptimeHistoryCountAggregateOutputType = {
+    id: number
+    monitoredUrlId: number
+    status: number
+    responseTime: number
+    timestamp: number
+    _all: number
+  }
+
+
+  export type UptimeHistoryAvgAggregateInputType = {
+    responseTime?: true
+  }
+
+  export type UptimeHistorySumAggregateInputType = {
+    responseTime?: true
+  }
+
+  export type UptimeHistoryMinAggregateInputType = {
+    id?: true
+    monitoredUrlId?: true
+    status?: true
+    responseTime?: true
+    timestamp?: true
+  }
+
+  export type UptimeHistoryMaxAggregateInputType = {
+    id?: true
+    monitoredUrlId?: true
+    status?: true
+    responseTime?: true
+    timestamp?: true
+  }
+
+  export type UptimeHistoryCountAggregateInputType = {
+    id?: true
+    monitoredUrlId?: true
+    status?: true
+    responseTime?: true
+    timestamp?: true
+    _all?: true
+  }
+
+  export type UptimeHistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UptimeHistory to aggregate.
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UptimeHistories to fetch.
+     */
+    orderBy?: UptimeHistoryOrderByWithRelationInput | UptimeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UptimeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UptimeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UptimeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UptimeHistories
+    **/
+    _count?: true | UptimeHistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UptimeHistoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UptimeHistorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UptimeHistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UptimeHistoryMaxAggregateInputType
+  }
+
+  export type GetUptimeHistoryAggregateType<T extends UptimeHistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateUptimeHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUptimeHistory[P]>
+      : GetScalarType<T[P], AggregateUptimeHistory[P]>
+  }
+
+
+
+
+  export type UptimeHistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UptimeHistoryWhereInput
+    orderBy?: UptimeHistoryOrderByWithAggregationInput | UptimeHistoryOrderByWithAggregationInput[]
+    by: UptimeHistoryScalarFieldEnum[] | UptimeHistoryScalarFieldEnum
+    having?: UptimeHistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UptimeHistoryCountAggregateInputType | true
+    _avg?: UptimeHistoryAvgAggregateInputType
+    _sum?: UptimeHistorySumAggregateInputType
+    _min?: UptimeHistoryMinAggregateInputType
+    _max?: UptimeHistoryMaxAggregateInputType
+  }
+
+  export type UptimeHistoryGroupByOutputType = {
+    id: string
+    monitoredUrlId: string
+    status: string
+    responseTime: number | null
+    timestamp: Date
+    _count: UptimeHistoryCountAggregateOutputType | null
+    _avg: UptimeHistoryAvgAggregateOutputType | null
+    _sum: UptimeHistorySumAggregateOutputType | null
+    _min: UptimeHistoryMinAggregateOutputType | null
+    _max: UptimeHistoryMaxAggregateOutputType | null
+  }
+
+  type GetUptimeHistoryGroupByPayload<T extends UptimeHistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UptimeHistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UptimeHistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UptimeHistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], UptimeHistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UptimeHistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    monitoredUrlId?: boolean
+    status?: boolean
+    responseTime?: boolean
+    timestamp?: boolean
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uptimeHistory"]>
+
+  export type UptimeHistorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    monitoredUrlId?: boolean
+    status?: boolean
+    responseTime?: boolean
+    timestamp?: boolean
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uptimeHistory"]>
+
+  export type UptimeHistorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    monitoredUrlId?: boolean
+    status?: boolean
+    responseTime?: boolean
+    timestamp?: boolean
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["uptimeHistory"]>
+
+  export type UptimeHistorySelectScalar = {
+    id?: boolean
+    monitoredUrlId?: boolean
+    status?: boolean
+    responseTime?: boolean
+    timestamp?: boolean
+  }
+
+  export type UptimeHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "monitoredUrlId" | "status" | "responseTime" | "timestamp", ExtArgs["result"]["uptimeHistory"]>
+  export type UptimeHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }
+  export type UptimeHistoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }
+  export type UptimeHistoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    monitoredUrl?: boolean | MonitoredUrlDefaultArgs<ExtArgs>
+  }
+
+  export type $UptimeHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UptimeHistory"
+    objects: {
+      monitoredUrl: Prisma.$MonitoredUrlPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      monitoredUrlId: string
+      status: string
+      responseTime: number | null
+      timestamp: Date
+    }, ExtArgs["result"]["uptimeHistory"]>
+    composites: {}
+  }
+
+  type UptimeHistoryGetPayload<S extends boolean | null | undefined | UptimeHistoryDefaultArgs> = $Result.GetResult<Prisma.$UptimeHistoryPayload, S>
+
+  type UptimeHistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UptimeHistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UptimeHistoryCountAggregateInputType | true
+    }
+
+  export interface UptimeHistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UptimeHistory'], meta: { name: 'UptimeHistory' } }
+    /**
+     * Find zero or one UptimeHistory that matches the filter.
+     * @param {UptimeHistoryFindUniqueArgs} args - Arguments to find a UptimeHistory
+     * @example
+     * // Get one UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UptimeHistoryFindUniqueArgs>(args: SelectSubset<T, UptimeHistoryFindUniqueArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one UptimeHistory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UptimeHistoryFindUniqueOrThrowArgs} args - Arguments to find a UptimeHistory
+     * @example
+     * // Get one UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UptimeHistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, UptimeHistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first UptimeHistory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryFindFirstArgs} args - Arguments to find a UptimeHistory
+     * @example
+     * // Get one UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UptimeHistoryFindFirstArgs>(args?: SelectSubset<T, UptimeHistoryFindFirstArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first UptimeHistory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryFindFirstOrThrowArgs} args - Arguments to find a UptimeHistory
+     * @example
+     * // Get one UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UptimeHistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, UptimeHistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more UptimeHistories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UptimeHistories
+     * const uptimeHistories = await prisma.uptimeHistory.findMany()
+     * 
+     * // Get first 10 UptimeHistories
+     * const uptimeHistories = await prisma.uptimeHistory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const uptimeHistoryWithIdOnly = await prisma.uptimeHistory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UptimeHistoryFindManyArgs>(args?: SelectSubset<T, UptimeHistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a UptimeHistory.
+     * @param {UptimeHistoryCreateArgs} args - Arguments to create a UptimeHistory.
+     * @example
+     * // Create one UptimeHistory
+     * const UptimeHistory = await prisma.uptimeHistory.create({
+     *   data: {
+     *     // ... data to create a UptimeHistory
+     *   }
+     * })
+     * 
+     */
+    create<T extends UptimeHistoryCreateArgs>(args: SelectSubset<T, UptimeHistoryCreateArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many UptimeHistories.
+     * @param {UptimeHistoryCreateManyArgs} args - Arguments to create many UptimeHistories.
+     * @example
+     * // Create many UptimeHistories
+     * const uptimeHistory = await prisma.uptimeHistory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UptimeHistoryCreateManyArgs>(args?: SelectSubset<T, UptimeHistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UptimeHistories and returns the data saved in the database.
+     * @param {UptimeHistoryCreateManyAndReturnArgs} args - Arguments to create many UptimeHistories.
+     * @example
+     * // Create many UptimeHistories
+     * const uptimeHistory = await prisma.uptimeHistory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UptimeHistories and only return the `id`
+     * const uptimeHistoryWithIdOnly = await prisma.uptimeHistory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UptimeHistoryCreateManyAndReturnArgs>(args?: SelectSubset<T, UptimeHistoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a UptimeHistory.
+     * @param {UptimeHistoryDeleteArgs} args - Arguments to delete one UptimeHistory.
+     * @example
+     * // Delete one UptimeHistory
+     * const UptimeHistory = await prisma.uptimeHistory.delete({
+     *   where: {
+     *     // ... filter to delete one UptimeHistory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UptimeHistoryDeleteArgs>(args: SelectSubset<T, UptimeHistoryDeleteArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one UptimeHistory.
+     * @param {UptimeHistoryUpdateArgs} args - Arguments to update one UptimeHistory.
+     * @example
+     * // Update one UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UptimeHistoryUpdateArgs>(args: SelectSubset<T, UptimeHistoryUpdateArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more UptimeHistories.
+     * @param {UptimeHistoryDeleteManyArgs} args - Arguments to filter UptimeHistories to delete.
+     * @example
+     * // Delete a few UptimeHistories
+     * const { count } = await prisma.uptimeHistory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UptimeHistoryDeleteManyArgs>(args?: SelectSubset<T, UptimeHistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UptimeHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UptimeHistories
+     * const uptimeHistory = await prisma.uptimeHistory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UptimeHistoryUpdateManyArgs>(args: SelectSubset<T, UptimeHistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UptimeHistories and returns the data updated in the database.
+     * @param {UptimeHistoryUpdateManyAndReturnArgs} args - Arguments to update many UptimeHistories.
+     * @example
+     * // Update many UptimeHistories
+     * const uptimeHistory = await prisma.uptimeHistory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UptimeHistories and only return the `id`
+     * const uptimeHistoryWithIdOnly = await prisma.uptimeHistory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UptimeHistoryUpdateManyAndReturnArgs>(args: SelectSubset<T, UptimeHistoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one UptimeHistory.
+     * @param {UptimeHistoryUpsertArgs} args - Arguments to update or create a UptimeHistory.
+     * @example
+     * // Update or create a UptimeHistory
+     * const uptimeHistory = await prisma.uptimeHistory.upsert({
+     *   create: {
+     *     // ... data to create a UptimeHistory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UptimeHistory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UptimeHistoryUpsertArgs>(args: SelectSubset<T, UptimeHistoryUpsertArgs<ExtArgs>>): Prisma__UptimeHistoryClient<$Result.GetResult<Prisma.$UptimeHistoryPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of UptimeHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryCountArgs} args - Arguments to filter UptimeHistories to count.
+     * @example
+     * // Count the number of UptimeHistories
+     * const count = await prisma.uptimeHistory.count({
+     *   where: {
+     *     // ... the filter for the UptimeHistories we want to count
+     *   }
+     * })
+    **/
+    count<T extends UptimeHistoryCountArgs>(
+      args?: Subset<T, UptimeHistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UptimeHistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UptimeHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UptimeHistoryAggregateArgs>(args: Subset<T, UptimeHistoryAggregateArgs>): Prisma.PrismaPromise<GetUptimeHistoryAggregateType<T>>
+
+    /**
+     * Group by UptimeHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UptimeHistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UptimeHistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UptimeHistoryGroupByArgs['orderBy'] }
+        : { orderBy?: UptimeHistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UptimeHistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUptimeHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UptimeHistory model
+   */
+  readonly fields: UptimeHistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UptimeHistory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UptimeHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    monitoredUrl<T extends MonitoredUrlDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MonitoredUrlDefaultArgs<ExtArgs>>): Prisma__MonitoredUrlClient<$Result.GetResult<Prisma.$MonitoredUrlPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UptimeHistory model
+   */ 
+  interface UptimeHistoryFieldRefs {
+    readonly id: FieldRef<"UptimeHistory", 'String'>
+    readonly monitoredUrlId: FieldRef<"UptimeHistory", 'String'>
+    readonly status: FieldRef<"UptimeHistory", 'String'>
+    readonly responseTime: FieldRef<"UptimeHistory", 'Int'>
+    readonly timestamp: FieldRef<"UptimeHistory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UptimeHistory findUnique
+   */
+  export type UptimeHistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which UptimeHistory to fetch.
+     */
+    where: UptimeHistoryWhereUniqueInput
+  }
+
+  /**
+   * UptimeHistory findUniqueOrThrow
+   */
+  export type UptimeHistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which UptimeHistory to fetch.
+     */
+    where: UptimeHistoryWhereUniqueInput
+  }
+
+  /**
+   * UptimeHistory findFirst
+   */
+  export type UptimeHistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which UptimeHistory to fetch.
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UptimeHistories to fetch.
+     */
+    orderBy?: UptimeHistoryOrderByWithRelationInput | UptimeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UptimeHistories.
+     */
+    cursor?: UptimeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UptimeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UptimeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UptimeHistories.
+     */
+    distinct?: UptimeHistoryScalarFieldEnum | UptimeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * UptimeHistory findFirstOrThrow
+   */
+  export type UptimeHistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which UptimeHistory to fetch.
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UptimeHistories to fetch.
+     */
+    orderBy?: UptimeHistoryOrderByWithRelationInput | UptimeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UptimeHistories.
+     */
+    cursor?: UptimeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UptimeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UptimeHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UptimeHistories.
+     */
+    distinct?: UptimeHistoryScalarFieldEnum | UptimeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * UptimeHistory findMany
+   */
+  export type UptimeHistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which UptimeHistories to fetch.
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UptimeHistories to fetch.
+     */
+    orderBy?: UptimeHistoryOrderByWithRelationInput | UptimeHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UptimeHistories.
+     */
+    cursor?: UptimeHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UptimeHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UptimeHistories.
+     */
+    skip?: number
+    distinct?: UptimeHistoryScalarFieldEnum | UptimeHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * UptimeHistory create
+   */
+  export type UptimeHistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UptimeHistory.
+     */
+    data: XOR<UptimeHistoryCreateInput, UptimeHistoryUncheckedCreateInput>
+  }
+
+  /**
+   * UptimeHistory createMany
+   */
+  export type UptimeHistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UptimeHistories.
+     */
+    data: UptimeHistoryCreateManyInput | UptimeHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UptimeHistory createManyAndReturn
+   */
+  export type UptimeHistoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many UptimeHistories.
+     */
+    data: UptimeHistoryCreateManyInput | UptimeHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UptimeHistory update
+   */
+  export type UptimeHistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UptimeHistory.
+     */
+    data: XOR<UptimeHistoryUpdateInput, UptimeHistoryUncheckedUpdateInput>
+    /**
+     * Choose, which UptimeHistory to update.
+     */
+    where: UptimeHistoryWhereUniqueInput
+  }
+
+  /**
+   * UptimeHistory updateMany
+   */
+  export type UptimeHistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UptimeHistories.
+     */
+    data: XOR<UptimeHistoryUpdateManyMutationInput, UptimeHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which UptimeHistories to update
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * Limit how many UptimeHistories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UptimeHistory updateManyAndReturn
+   */
+  export type UptimeHistoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to update UptimeHistories.
+     */
+    data: XOR<UptimeHistoryUpdateManyMutationInput, UptimeHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which UptimeHistories to update
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * Limit how many UptimeHistories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UptimeHistory upsert
+   */
+  export type UptimeHistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UptimeHistory to update in case it exists.
+     */
+    where: UptimeHistoryWhereUniqueInput
+    /**
+     * In case the UptimeHistory found by the `where` argument doesn't exist, create a new UptimeHistory with this data.
+     */
+    create: XOR<UptimeHistoryCreateInput, UptimeHistoryUncheckedCreateInput>
+    /**
+     * In case the UptimeHistory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UptimeHistoryUpdateInput, UptimeHistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * UptimeHistory delete
+   */
+  export type UptimeHistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+    /**
+     * Filter which UptimeHistory to delete.
+     */
+    where: UptimeHistoryWhereUniqueInput
+  }
+
+  /**
+   * UptimeHistory deleteMany
+   */
+  export type UptimeHistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UptimeHistories to delete
+     */
+    where?: UptimeHistoryWhereInput
+    /**
+     * Limit how many UptimeHistories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UptimeHistory without action
+   */
+  export type UptimeHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UptimeHistory
+     */
+    select?: UptimeHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UptimeHistory
+     */
+    omit?: UptimeHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UptimeHistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DashboardLayout
+   */
+
+  export type AggregateDashboardLayout = {
+    _count: DashboardLayoutCountAggregateOutputType | null
+    _min: DashboardLayoutMinAggregateOutputType | null
+    _max: DashboardLayoutMaxAggregateOutputType | null
+  }
+
+  export type DashboardLayoutMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    isDefault: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DashboardLayoutMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    isDefault: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DashboardLayoutCountAggregateOutputType = {
+    id: number
+    name: number
+    layouts: number
+    isDefault: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DashboardLayoutMinAggregateInputType = {
+    id?: true
+    name?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DashboardLayoutMaxAggregateInputType = {
+    id?: true
+    name?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DashboardLayoutCountAggregateInputType = {
+    id?: true
+    name?: true
+    layouts?: true
+    isDefault?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DashboardLayoutAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DashboardLayout to aggregate.
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DashboardLayouts to fetch.
+     */
+    orderBy?: DashboardLayoutOrderByWithRelationInput | DashboardLayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DashboardLayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DashboardLayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DashboardLayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DashboardLayouts
+    **/
+    _count?: true | DashboardLayoutCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DashboardLayoutMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DashboardLayoutMaxAggregateInputType
+  }
+
+  export type GetDashboardLayoutAggregateType<T extends DashboardLayoutAggregateArgs> = {
+        [P in keyof T & keyof AggregateDashboardLayout]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDashboardLayout[P]>
+      : GetScalarType<T[P], AggregateDashboardLayout[P]>
+  }
+
+
+
+
+  export type DashboardLayoutGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DashboardLayoutWhereInput
+    orderBy?: DashboardLayoutOrderByWithAggregationInput | DashboardLayoutOrderByWithAggregationInput[]
+    by: DashboardLayoutScalarFieldEnum[] | DashboardLayoutScalarFieldEnum
+    having?: DashboardLayoutScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DashboardLayoutCountAggregateInputType | true
+    _min?: DashboardLayoutMinAggregateInputType
+    _max?: DashboardLayoutMaxAggregateInputType
+  }
+
+  export type DashboardLayoutGroupByOutputType = {
+    id: string
+    name: string
+    layouts: JsonValue
+    isDefault: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: DashboardLayoutCountAggregateOutputType | null
+    _min: DashboardLayoutMinAggregateOutputType | null
+    _max: DashboardLayoutMaxAggregateOutputType | null
+  }
+
+  type GetDashboardLayoutGroupByPayload<T extends DashboardLayoutGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DashboardLayoutGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DashboardLayoutGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DashboardLayoutGroupByOutputType[P]>
+            : GetScalarType<T[P], DashboardLayoutGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DashboardLayoutSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    layouts?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["dashboardLayout"]>
+
+  export type DashboardLayoutSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    layouts?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["dashboardLayout"]>
+
+  export type DashboardLayoutSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    layouts?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["dashboardLayout"]>
+
+  export type DashboardLayoutSelectScalar = {
+    id?: boolean
+    name?: boolean
+    layouts?: boolean
+    isDefault?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DashboardLayoutOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "layouts" | "isDefault" | "createdAt" | "updatedAt", ExtArgs["result"]["dashboardLayout"]>
+
+  export type $DashboardLayoutPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DashboardLayout"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      layouts: Prisma.JsonValue
+      isDefault: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["dashboardLayout"]>
+    composites: {}
+  }
+
+  type DashboardLayoutGetPayload<S extends boolean | null | undefined | DashboardLayoutDefaultArgs> = $Result.GetResult<Prisma.$DashboardLayoutPayload, S>
+
+  type DashboardLayoutCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DashboardLayoutFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DashboardLayoutCountAggregateInputType | true
+    }
+
+  export interface DashboardLayoutDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DashboardLayout'], meta: { name: 'DashboardLayout' } }
+    /**
+     * Find zero or one DashboardLayout that matches the filter.
+     * @param {DashboardLayoutFindUniqueArgs} args - Arguments to find a DashboardLayout
+     * @example
+     * // Get one DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DashboardLayoutFindUniqueArgs>(args: SelectSubset<T, DashboardLayoutFindUniqueArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one DashboardLayout that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DashboardLayoutFindUniqueOrThrowArgs} args - Arguments to find a DashboardLayout
+     * @example
+     * // Get one DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DashboardLayoutFindUniqueOrThrowArgs>(args: SelectSubset<T, DashboardLayoutFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first DashboardLayout that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutFindFirstArgs} args - Arguments to find a DashboardLayout
+     * @example
+     * // Get one DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DashboardLayoutFindFirstArgs>(args?: SelectSubset<T, DashboardLayoutFindFirstArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first DashboardLayout that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutFindFirstOrThrowArgs} args - Arguments to find a DashboardLayout
+     * @example
+     * // Get one DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DashboardLayoutFindFirstOrThrowArgs>(args?: SelectSubset<T, DashboardLayoutFindFirstOrThrowArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more DashboardLayouts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DashboardLayouts
+     * const dashboardLayouts = await prisma.dashboardLayout.findMany()
+     * 
+     * // Get first 10 DashboardLayouts
+     * const dashboardLayouts = await prisma.dashboardLayout.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dashboardLayoutWithIdOnly = await prisma.dashboardLayout.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DashboardLayoutFindManyArgs>(args?: SelectSubset<T, DashboardLayoutFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a DashboardLayout.
+     * @param {DashboardLayoutCreateArgs} args - Arguments to create a DashboardLayout.
+     * @example
+     * // Create one DashboardLayout
+     * const DashboardLayout = await prisma.dashboardLayout.create({
+     *   data: {
+     *     // ... data to create a DashboardLayout
+     *   }
+     * })
+     * 
+     */
+    create<T extends DashboardLayoutCreateArgs>(args: SelectSubset<T, DashboardLayoutCreateArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many DashboardLayouts.
+     * @param {DashboardLayoutCreateManyArgs} args - Arguments to create many DashboardLayouts.
+     * @example
+     * // Create many DashboardLayouts
+     * const dashboardLayout = await prisma.dashboardLayout.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DashboardLayoutCreateManyArgs>(args?: SelectSubset<T, DashboardLayoutCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DashboardLayouts and returns the data saved in the database.
+     * @param {DashboardLayoutCreateManyAndReturnArgs} args - Arguments to create many DashboardLayouts.
+     * @example
+     * // Create many DashboardLayouts
+     * const dashboardLayout = await prisma.dashboardLayout.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DashboardLayouts and only return the `id`
+     * const dashboardLayoutWithIdOnly = await prisma.dashboardLayout.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DashboardLayoutCreateManyAndReturnArgs>(args?: SelectSubset<T, DashboardLayoutCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a DashboardLayout.
+     * @param {DashboardLayoutDeleteArgs} args - Arguments to delete one DashboardLayout.
+     * @example
+     * // Delete one DashboardLayout
+     * const DashboardLayout = await prisma.dashboardLayout.delete({
+     *   where: {
+     *     // ... filter to delete one DashboardLayout
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DashboardLayoutDeleteArgs>(args: SelectSubset<T, DashboardLayoutDeleteArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one DashboardLayout.
+     * @param {DashboardLayoutUpdateArgs} args - Arguments to update one DashboardLayout.
+     * @example
+     * // Update one DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DashboardLayoutUpdateArgs>(args: SelectSubset<T, DashboardLayoutUpdateArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more DashboardLayouts.
+     * @param {DashboardLayoutDeleteManyArgs} args - Arguments to filter DashboardLayouts to delete.
+     * @example
+     * // Delete a few DashboardLayouts
+     * const { count } = await prisma.dashboardLayout.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DashboardLayoutDeleteManyArgs>(args?: SelectSubset<T, DashboardLayoutDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DashboardLayouts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DashboardLayouts
+     * const dashboardLayout = await prisma.dashboardLayout.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DashboardLayoutUpdateManyArgs>(args: SelectSubset<T, DashboardLayoutUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DashboardLayouts and returns the data updated in the database.
+     * @param {DashboardLayoutUpdateManyAndReturnArgs} args - Arguments to update many DashboardLayouts.
+     * @example
+     * // Update many DashboardLayouts
+     * const dashboardLayout = await prisma.dashboardLayout.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DashboardLayouts and only return the `id`
+     * const dashboardLayoutWithIdOnly = await prisma.dashboardLayout.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DashboardLayoutUpdateManyAndReturnArgs>(args: SelectSubset<T, DashboardLayoutUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one DashboardLayout.
+     * @param {DashboardLayoutUpsertArgs} args - Arguments to update or create a DashboardLayout.
+     * @example
+     * // Update or create a DashboardLayout
+     * const dashboardLayout = await prisma.dashboardLayout.upsert({
+     *   create: {
+     *     // ... data to create a DashboardLayout
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DashboardLayout we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DashboardLayoutUpsertArgs>(args: SelectSubset<T, DashboardLayoutUpsertArgs<ExtArgs>>): Prisma__DashboardLayoutClient<$Result.GetResult<Prisma.$DashboardLayoutPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of DashboardLayouts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutCountArgs} args - Arguments to filter DashboardLayouts to count.
+     * @example
+     * // Count the number of DashboardLayouts
+     * const count = await prisma.dashboardLayout.count({
+     *   where: {
+     *     // ... the filter for the DashboardLayouts we want to count
+     *   }
+     * })
+    **/
+    count<T extends DashboardLayoutCountArgs>(
+      args?: Subset<T, DashboardLayoutCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DashboardLayoutCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DashboardLayout.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DashboardLayoutAggregateArgs>(args: Subset<T, DashboardLayoutAggregateArgs>): Prisma.PrismaPromise<GetDashboardLayoutAggregateType<T>>
+
+    /**
+     * Group by DashboardLayout.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DashboardLayoutGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DashboardLayoutGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DashboardLayoutGroupByArgs['orderBy'] }
+        : { orderBy?: DashboardLayoutGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DashboardLayoutGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDashboardLayoutGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DashboardLayout model
+   */
+  readonly fields: DashboardLayoutFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DashboardLayout.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DashboardLayoutClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DashboardLayout model
+   */ 
+  interface DashboardLayoutFieldRefs {
+    readonly id: FieldRef<"DashboardLayout", 'String'>
+    readonly name: FieldRef<"DashboardLayout", 'String'>
+    readonly layouts: FieldRef<"DashboardLayout", 'Json'>
+    readonly isDefault: FieldRef<"DashboardLayout", 'Boolean'>
+    readonly createdAt: FieldRef<"DashboardLayout", 'DateTime'>
+    readonly updatedAt: FieldRef<"DashboardLayout", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DashboardLayout findUnique
+   */
+  export type DashboardLayoutFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter, which DashboardLayout to fetch.
+     */
+    where: DashboardLayoutWhereUniqueInput
+  }
+
+  /**
+   * DashboardLayout findUniqueOrThrow
+   */
+  export type DashboardLayoutFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter, which DashboardLayout to fetch.
+     */
+    where: DashboardLayoutWhereUniqueInput
+  }
+
+  /**
+   * DashboardLayout findFirst
+   */
+  export type DashboardLayoutFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter, which DashboardLayout to fetch.
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DashboardLayouts to fetch.
+     */
+    orderBy?: DashboardLayoutOrderByWithRelationInput | DashboardLayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DashboardLayouts.
+     */
+    cursor?: DashboardLayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DashboardLayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DashboardLayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DashboardLayouts.
+     */
+    distinct?: DashboardLayoutScalarFieldEnum | DashboardLayoutScalarFieldEnum[]
+  }
+
+  /**
+   * DashboardLayout findFirstOrThrow
+   */
+  export type DashboardLayoutFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter, which DashboardLayout to fetch.
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DashboardLayouts to fetch.
+     */
+    orderBy?: DashboardLayoutOrderByWithRelationInput | DashboardLayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DashboardLayouts.
+     */
+    cursor?: DashboardLayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DashboardLayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DashboardLayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DashboardLayouts.
+     */
+    distinct?: DashboardLayoutScalarFieldEnum | DashboardLayoutScalarFieldEnum[]
+  }
+
+  /**
+   * DashboardLayout findMany
+   */
+  export type DashboardLayoutFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter, which DashboardLayouts to fetch.
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DashboardLayouts to fetch.
+     */
+    orderBy?: DashboardLayoutOrderByWithRelationInput | DashboardLayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DashboardLayouts.
+     */
+    cursor?: DashboardLayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DashboardLayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DashboardLayouts.
+     */
+    skip?: number
+    distinct?: DashboardLayoutScalarFieldEnum | DashboardLayoutScalarFieldEnum[]
+  }
+
+  /**
+   * DashboardLayout create
+   */
+  export type DashboardLayoutCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * The data needed to create a DashboardLayout.
+     */
+    data: XOR<DashboardLayoutCreateInput, DashboardLayoutUncheckedCreateInput>
+  }
+
+  /**
+   * DashboardLayout createMany
+   */
+  export type DashboardLayoutCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DashboardLayouts.
+     */
+    data: DashboardLayoutCreateManyInput | DashboardLayoutCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DashboardLayout createManyAndReturn
+   */
+  export type DashboardLayoutCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * The data used to create many DashboardLayouts.
+     */
+    data: DashboardLayoutCreateManyInput | DashboardLayoutCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DashboardLayout update
+   */
+  export type DashboardLayoutUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * The data needed to update a DashboardLayout.
+     */
+    data: XOR<DashboardLayoutUpdateInput, DashboardLayoutUncheckedUpdateInput>
+    /**
+     * Choose, which DashboardLayout to update.
+     */
+    where: DashboardLayoutWhereUniqueInput
+  }
+
+  /**
+   * DashboardLayout updateMany
+   */
+  export type DashboardLayoutUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DashboardLayouts.
+     */
+    data: XOR<DashboardLayoutUpdateManyMutationInput, DashboardLayoutUncheckedUpdateManyInput>
+    /**
+     * Filter which DashboardLayouts to update
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * Limit how many DashboardLayouts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DashboardLayout updateManyAndReturn
+   */
+  export type DashboardLayoutUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * The data used to update DashboardLayouts.
+     */
+    data: XOR<DashboardLayoutUpdateManyMutationInput, DashboardLayoutUncheckedUpdateManyInput>
+    /**
+     * Filter which DashboardLayouts to update
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * Limit how many DashboardLayouts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DashboardLayout upsert
+   */
+  export type DashboardLayoutUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * The filter to search for the DashboardLayout to update in case it exists.
+     */
+    where: DashboardLayoutWhereUniqueInput
+    /**
+     * In case the DashboardLayout found by the `where` argument doesn't exist, create a new DashboardLayout with this data.
+     */
+    create: XOR<DashboardLayoutCreateInput, DashboardLayoutUncheckedCreateInput>
+    /**
+     * In case the DashboardLayout was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DashboardLayoutUpdateInput, DashboardLayoutUncheckedUpdateInput>
+  }
+
+  /**
+   * DashboardLayout delete
+   */
+  export type DashboardLayoutDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+    /**
+     * Filter which DashboardLayout to delete.
+     */
+    where: DashboardLayoutWhereUniqueInput
+  }
+
+  /**
+   * DashboardLayout deleteMany
+   */
+  export type DashboardLayoutDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DashboardLayouts to delete
+     */
+    where?: DashboardLayoutWhereInput
+    /**
+     * Limit how many DashboardLayouts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DashboardLayout without action
+   */
+  export type DashboardLayoutDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DashboardLayout
+     */
+    select?: DashboardLayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DashboardLayout
+     */
+    omit?: DashboardLayoutOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -104614,6 +109243,54 @@ export namespace Prisma {
   export type ProjectEquipmentAllocationScalarFieldEnum = (typeof ProjectEquipmentAllocationScalarFieldEnum)[keyof typeof ProjectEquipmentAllocationScalarFieldEnum]
 
 
+  export const MonitoredUrlScalarFieldEnum: {
+    id: 'id',
+    url: 'url',
+    name: 'name',
+    status: 'status',
+    responseTime: 'responseTime',
+    lastChecked: 'lastChecked',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MonitoredUrlScalarFieldEnum = (typeof MonitoredUrlScalarFieldEnum)[keyof typeof MonitoredUrlScalarFieldEnum]
+
+
+  export const StatusUpdateScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    message: 'message',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StatusUpdateScalarFieldEnum = (typeof StatusUpdateScalarFieldEnum)[keyof typeof StatusUpdateScalarFieldEnum]
+
+
+  export const UptimeHistoryScalarFieldEnum: {
+    id: 'id',
+    monitoredUrlId: 'monitoredUrlId',
+    status: 'status',
+    responseTime: 'responseTime',
+    timestamp: 'timestamp'
+  };
+
+  export type UptimeHistoryScalarFieldEnum = (typeof UptimeHistoryScalarFieldEnum)[keyof typeof UptimeHistoryScalarFieldEnum]
+
+
+  export const DashboardLayoutScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    layouts: 'layouts',
+    isDefault: 'isDefault',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DashboardLayoutScalarFieldEnum = (typeof DashboardLayoutScalarFieldEnum)[keyof typeof DashboardLayoutScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -104628,6 +109305,13 @@ export namespace Prisma {
   };
 
   export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -111067,6 +115751,245 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ProjectEquipmentAllocation"> | Date | string
   }
 
+  export type MonitoredUrlWhereInput = {
+    AND?: MonitoredUrlWhereInput | MonitoredUrlWhereInput[]
+    OR?: MonitoredUrlWhereInput[]
+    NOT?: MonitoredUrlWhereInput | MonitoredUrlWhereInput[]
+    id?: StringFilter<"MonitoredUrl"> | string
+    url?: StringFilter<"MonitoredUrl"> | string
+    name?: StringFilter<"MonitoredUrl"> | string
+    status?: StringFilter<"MonitoredUrl"> | string
+    responseTime?: IntNullableFilter<"MonitoredUrl"> | number | null
+    lastChecked?: DateTimeNullableFilter<"MonitoredUrl"> | Date | string | null
+    createdAt?: DateTimeFilter<"MonitoredUrl"> | Date | string
+    updatedAt?: DateTimeFilter<"MonitoredUrl"> | Date | string
+    history?: UptimeHistoryListRelationFilter
+  }
+
+  export type MonitoredUrlOrderByWithRelationInput = {
+    id?: SortOrder
+    url?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrderInput | SortOrder
+    lastChecked?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    history?: UptimeHistoryOrderByRelationAggregateInput
+  }
+
+  export type MonitoredUrlWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MonitoredUrlWhereInput | MonitoredUrlWhereInput[]
+    OR?: MonitoredUrlWhereInput[]
+    NOT?: MonitoredUrlWhereInput | MonitoredUrlWhereInput[]
+    url?: StringFilter<"MonitoredUrl"> | string
+    name?: StringFilter<"MonitoredUrl"> | string
+    status?: StringFilter<"MonitoredUrl"> | string
+    responseTime?: IntNullableFilter<"MonitoredUrl"> | number | null
+    lastChecked?: DateTimeNullableFilter<"MonitoredUrl"> | Date | string | null
+    createdAt?: DateTimeFilter<"MonitoredUrl"> | Date | string
+    updatedAt?: DateTimeFilter<"MonitoredUrl"> | Date | string
+    history?: UptimeHistoryListRelationFilter
+  }, "id">
+
+  export type MonitoredUrlOrderByWithAggregationInput = {
+    id?: SortOrder
+    url?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrderInput | SortOrder
+    lastChecked?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MonitoredUrlCountOrderByAggregateInput
+    _avg?: MonitoredUrlAvgOrderByAggregateInput
+    _max?: MonitoredUrlMaxOrderByAggregateInput
+    _min?: MonitoredUrlMinOrderByAggregateInput
+    _sum?: MonitoredUrlSumOrderByAggregateInput
+  }
+
+  export type MonitoredUrlScalarWhereWithAggregatesInput = {
+    AND?: MonitoredUrlScalarWhereWithAggregatesInput | MonitoredUrlScalarWhereWithAggregatesInput[]
+    OR?: MonitoredUrlScalarWhereWithAggregatesInput[]
+    NOT?: MonitoredUrlScalarWhereWithAggregatesInput | MonitoredUrlScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MonitoredUrl"> | string
+    url?: StringWithAggregatesFilter<"MonitoredUrl"> | string
+    name?: StringWithAggregatesFilter<"MonitoredUrl"> | string
+    status?: StringWithAggregatesFilter<"MonitoredUrl"> | string
+    responseTime?: IntNullableWithAggregatesFilter<"MonitoredUrl"> | number | null
+    lastChecked?: DateTimeNullableWithAggregatesFilter<"MonitoredUrl"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MonitoredUrl"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MonitoredUrl"> | Date | string
+  }
+
+  export type StatusUpdateWhereInput = {
+    AND?: StatusUpdateWhereInput | StatusUpdateWhereInput[]
+    OR?: StatusUpdateWhereInput[]
+    NOT?: StatusUpdateWhereInput | StatusUpdateWhereInput[]
+    id?: StringFilter<"StatusUpdate"> | string
+    type?: StringFilter<"StatusUpdate"> | string
+    message?: StringFilter<"StatusUpdate"> | string
+    createdAt?: DateTimeFilter<"StatusUpdate"> | Date | string
+    updatedAt?: DateTimeFilter<"StatusUpdate"> | Date | string
+  }
+
+  export type StatusUpdateOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StatusUpdateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StatusUpdateWhereInput | StatusUpdateWhereInput[]
+    OR?: StatusUpdateWhereInput[]
+    NOT?: StatusUpdateWhereInput | StatusUpdateWhereInput[]
+    type?: StringFilter<"StatusUpdate"> | string
+    message?: StringFilter<"StatusUpdate"> | string
+    createdAt?: DateTimeFilter<"StatusUpdate"> | Date | string
+    updatedAt?: DateTimeFilter<"StatusUpdate"> | Date | string
+  }, "id">
+
+  export type StatusUpdateOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StatusUpdateCountOrderByAggregateInput
+    _max?: StatusUpdateMaxOrderByAggregateInput
+    _min?: StatusUpdateMinOrderByAggregateInput
+  }
+
+  export type StatusUpdateScalarWhereWithAggregatesInput = {
+    AND?: StatusUpdateScalarWhereWithAggregatesInput | StatusUpdateScalarWhereWithAggregatesInput[]
+    OR?: StatusUpdateScalarWhereWithAggregatesInput[]
+    NOT?: StatusUpdateScalarWhereWithAggregatesInput | StatusUpdateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StatusUpdate"> | string
+    type?: StringWithAggregatesFilter<"StatusUpdate"> | string
+    message?: StringWithAggregatesFilter<"StatusUpdate"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"StatusUpdate"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StatusUpdate"> | Date | string
+  }
+
+  export type UptimeHistoryWhereInput = {
+    AND?: UptimeHistoryWhereInput | UptimeHistoryWhereInput[]
+    OR?: UptimeHistoryWhereInput[]
+    NOT?: UptimeHistoryWhereInput | UptimeHistoryWhereInput[]
+    id?: StringFilter<"UptimeHistory"> | string
+    monitoredUrlId?: StringFilter<"UptimeHistory"> | string
+    status?: StringFilter<"UptimeHistory"> | string
+    responseTime?: IntNullableFilter<"UptimeHistory"> | number | null
+    timestamp?: DateTimeFilter<"UptimeHistory"> | Date | string
+    monitoredUrl?: XOR<MonitoredUrlScalarRelationFilter, MonitoredUrlWhereInput>
+  }
+
+  export type UptimeHistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    monitoredUrlId?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrderInput | SortOrder
+    timestamp?: SortOrder
+    monitoredUrl?: MonitoredUrlOrderByWithRelationInput
+  }
+
+  export type UptimeHistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: UptimeHistoryWhereInput | UptimeHistoryWhereInput[]
+    OR?: UptimeHistoryWhereInput[]
+    NOT?: UptimeHistoryWhereInput | UptimeHistoryWhereInput[]
+    monitoredUrlId?: StringFilter<"UptimeHistory"> | string
+    status?: StringFilter<"UptimeHistory"> | string
+    responseTime?: IntNullableFilter<"UptimeHistory"> | number | null
+    timestamp?: DateTimeFilter<"UptimeHistory"> | Date | string
+    monitoredUrl?: XOR<MonitoredUrlScalarRelationFilter, MonitoredUrlWhereInput>
+  }, "id">
+
+  export type UptimeHistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    monitoredUrlId?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrderInput | SortOrder
+    timestamp?: SortOrder
+    _count?: UptimeHistoryCountOrderByAggregateInput
+    _avg?: UptimeHistoryAvgOrderByAggregateInput
+    _max?: UptimeHistoryMaxOrderByAggregateInput
+    _min?: UptimeHistoryMinOrderByAggregateInput
+    _sum?: UptimeHistorySumOrderByAggregateInput
+  }
+
+  export type UptimeHistoryScalarWhereWithAggregatesInput = {
+    AND?: UptimeHistoryScalarWhereWithAggregatesInput | UptimeHistoryScalarWhereWithAggregatesInput[]
+    OR?: UptimeHistoryScalarWhereWithAggregatesInput[]
+    NOT?: UptimeHistoryScalarWhereWithAggregatesInput | UptimeHistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UptimeHistory"> | string
+    monitoredUrlId?: StringWithAggregatesFilter<"UptimeHistory"> | string
+    status?: StringWithAggregatesFilter<"UptimeHistory"> | string
+    responseTime?: IntNullableWithAggregatesFilter<"UptimeHistory"> | number | null
+    timestamp?: DateTimeWithAggregatesFilter<"UptimeHistory"> | Date | string
+  }
+
+  export type DashboardLayoutWhereInput = {
+    AND?: DashboardLayoutWhereInput | DashboardLayoutWhereInput[]
+    OR?: DashboardLayoutWhereInput[]
+    NOT?: DashboardLayoutWhereInput | DashboardLayoutWhereInput[]
+    id?: StringFilter<"DashboardLayout"> | string
+    name?: StringFilter<"DashboardLayout"> | string
+    layouts?: JsonFilter<"DashboardLayout">
+    isDefault?: BoolFilter<"DashboardLayout"> | boolean
+    createdAt?: DateTimeFilter<"DashboardLayout"> | Date | string
+    updatedAt?: DateTimeFilter<"DashboardLayout"> | Date | string
+  }
+
+  export type DashboardLayoutOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    layouts?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DashboardLayoutWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name_isDefault?: DashboardLayoutNameIsDefaultCompoundUniqueInput
+    AND?: DashboardLayoutWhereInput | DashboardLayoutWhereInput[]
+    OR?: DashboardLayoutWhereInput[]
+    NOT?: DashboardLayoutWhereInput | DashboardLayoutWhereInput[]
+    name?: StringFilter<"DashboardLayout"> | string
+    layouts?: JsonFilter<"DashboardLayout">
+    isDefault?: BoolFilter<"DashboardLayout"> | boolean
+    createdAt?: DateTimeFilter<"DashboardLayout"> | Date | string
+    updatedAt?: DateTimeFilter<"DashboardLayout"> | Date | string
+  }, "id" | "name_isDefault">
+
+  export type DashboardLayoutOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    layouts?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DashboardLayoutCountOrderByAggregateInput
+    _max?: DashboardLayoutMaxOrderByAggregateInput
+    _min?: DashboardLayoutMinOrderByAggregateInput
+  }
+
+  export type DashboardLayoutScalarWhereWithAggregatesInput = {
+    AND?: DashboardLayoutScalarWhereWithAggregatesInput | DashboardLayoutScalarWhereWithAggregatesInput[]
+    OR?: DashboardLayoutScalarWhereWithAggregatesInput[]
+    NOT?: DashboardLayoutScalarWhereWithAggregatesInput | DashboardLayoutScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DashboardLayout"> | string
+    name?: StringWithAggregatesFilter<"DashboardLayout"> | string
+    layouts?: JsonWithAggregatesFilter<"DashboardLayout">
+    isDefault?: BoolWithAggregatesFilter<"DashboardLayout"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"DashboardLayout"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DashboardLayout"> | Date | string
+  }
+
   export type logsCreateInput = {
     name: string
     host?: string | null
@@ -117346,6 +122269,261 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MonitoredUrlCreateInput = {
+    id?: string
+    url: string
+    name: string
+    status?: string
+    responseTime?: number | null
+    lastChecked?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    history?: UptimeHistoryCreateNestedManyWithoutMonitoredUrlInput
+  }
+
+  export type MonitoredUrlUncheckedCreateInput = {
+    id?: string
+    url: string
+    name: string
+    status?: string
+    responseTime?: number | null
+    lastChecked?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    history?: UptimeHistoryUncheckedCreateNestedManyWithoutMonitoredUrlInput
+  }
+
+  export type MonitoredUrlUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    history?: UptimeHistoryUpdateManyWithoutMonitoredUrlNestedInput
+  }
+
+  export type MonitoredUrlUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    history?: UptimeHistoryUncheckedUpdateManyWithoutMonitoredUrlNestedInput
+  }
+
+  export type MonitoredUrlCreateManyInput = {
+    id?: string
+    url: string
+    name: string
+    status?: string
+    responseTime?: number | null
+    lastChecked?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MonitoredUrlUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonitoredUrlUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusUpdateCreateInput = {
+    id?: string
+    type: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StatusUpdateUncheckedCreateInput = {
+    id?: string
+    type: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StatusUpdateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusUpdateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusUpdateCreateManyInput = {
+    id?: string
+    type: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StatusUpdateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusUpdateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryCreateInput = {
+    id?: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+    monitoredUrl: MonitoredUrlCreateNestedOneWithoutHistoryInput
+  }
+
+  export type UptimeHistoryUncheckedCreateInput = {
+    id?: string
+    monitoredUrlId: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+  }
+
+  export type UptimeHistoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    monitoredUrl?: MonitoredUrlUpdateOneRequiredWithoutHistoryNestedInput
+  }
+
+  export type UptimeHistoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    monitoredUrlId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryCreateManyInput = {
+    id?: string
+    monitoredUrlId: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+  }
+
+  export type UptimeHistoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    monitoredUrlId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DashboardLayoutCreateInput = {
+    id?: string
+    name?: string
+    layouts: JsonNullValueInput | InputJsonValue
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DashboardLayoutUncheckedCreateInput = {
+    id?: string
+    name?: string
+    layouts: JsonNullValueInput | InputJsonValue
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DashboardLayoutUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    layouts?: JsonNullValueInput | InputJsonValue
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DashboardLayoutUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    layouts?: JsonNullValueInput | InputJsonValue
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DashboardLayoutCreateManyInput = {
+    id?: string
+    name?: string
+    layouts: JsonNullValueInput | InputJsonValue
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DashboardLayoutUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    layouts?: JsonNullValueInput | InputJsonValue
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DashboardLayoutUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    layouts?: JsonNullValueInput | InputJsonValue
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -122407,6 +127585,197 @@ export namespace Prisma {
     projectId?: SortOrder
     equipmentId?: SortOrder
     quantity?: SortOrder
+  }
+
+  export type UptimeHistoryListRelationFilter = {
+    every?: UptimeHistoryWhereInput
+    some?: UptimeHistoryWhereInput
+    none?: UptimeHistoryWhereInput
+  }
+
+  export type UptimeHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MonitoredUrlCountOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    lastChecked?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonitoredUrlAvgOrderByAggregateInput = {
+    responseTime?: SortOrder
+  }
+
+  export type MonitoredUrlMaxOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    lastChecked?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonitoredUrlMinOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    name?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    lastChecked?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonitoredUrlSumOrderByAggregateInput = {
+    responseTime?: SortOrder
+  }
+
+  export type StatusUpdateCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StatusUpdateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StatusUpdateMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonitoredUrlScalarRelationFilter = {
+    is?: MonitoredUrlWhereInput
+    isNot?: MonitoredUrlWhereInput
+  }
+
+  export type UptimeHistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    monitoredUrlId?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UptimeHistoryAvgOrderByAggregateInput = {
+    responseTime?: SortOrder
+  }
+
+  export type UptimeHistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    monitoredUrlId?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UptimeHistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    monitoredUrlId?: SortOrder
+    status?: SortOrder
+    responseTime?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UptimeHistorySumOrderByAggregateInput = {
+    responseTime?: SortOrder
+  }
+  export type JsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type DashboardLayoutNameIsDefaultCompoundUniqueInput = {
+    name: string
+    isDefault: boolean
+  }
+
+  export type DashboardLayoutCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    layouts?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DashboardLayoutMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DashboardLayoutMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    isDefault?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -128037,6 +133406,62 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutProjectEquipmentAllocationInput, ProjectUpdateWithoutProjectEquipmentAllocationInput>, ProjectUncheckedUpdateWithoutProjectEquipmentAllocationInput>
   }
 
+  export type UptimeHistoryCreateNestedManyWithoutMonitoredUrlInput = {
+    create?: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput> | UptimeHistoryCreateWithoutMonitoredUrlInput[] | UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput[]
+    connectOrCreate?: UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput | UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput[]
+    createMany?: UptimeHistoryCreateManyMonitoredUrlInputEnvelope
+    connect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+  }
+
+  export type UptimeHistoryUncheckedCreateNestedManyWithoutMonitoredUrlInput = {
+    create?: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput> | UptimeHistoryCreateWithoutMonitoredUrlInput[] | UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput[]
+    connectOrCreate?: UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput | UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput[]
+    createMany?: UptimeHistoryCreateManyMonitoredUrlInputEnvelope
+    connect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+  }
+
+  export type UptimeHistoryUpdateManyWithoutMonitoredUrlNestedInput = {
+    create?: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput> | UptimeHistoryCreateWithoutMonitoredUrlInput[] | UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput[]
+    connectOrCreate?: UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput | UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput[]
+    upsert?: UptimeHistoryUpsertWithWhereUniqueWithoutMonitoredUrlInput | UptimeHistoryUpsertWithWhereUniqueWithoutMonitoredUrlInput[]
+    createMany?: UptimeHistoryCreateManyMonitoredUrlInputEnvelope
+    set?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    disconnect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    delete?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    connect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    update?: UptimeHistoryUpdateWithWhereUniqueWithoutMonitoredUrlInput | UptimeHistoryUpdateWithWhereUniqueWithoutMonitoredUrlInput[]
+    updateMany?: UptimeHistoryUpdateManyWithWhereWithoutMonitoredUrlInput | UptimeHistoryUpdateManyWithWhereWithoutMonitoredUrlInput[]
+    deleteMany?: UptimeHistoryScalarWhereInput | UptimeHistoryScalarWhereInput[]
+  }
+
+  export type UptimeHistoryUncheckedUpdateManyWithoutMonitoredUrlNestedInput = {
+    create?: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput> | UptimeHistoryCreateWithoutMonitoredUrlInput[] | UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput[]
+    connectOrCreate?: UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput | UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput[]
+    upsert?: UptimeHistoryUpsertWithWhereUniqueWithoutMonitoredUrlInput | UptimeHistoryUpsertWithWhereUniqueWithoutMonitoredUrlInput[]
+    createMany?: UptimeHistoryCreateManyMonitoredUrlInputEnvelope
+    set?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    disconnect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    delete?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    connect?: UptimeHistoryWhereUniqueInput | UptimeHistoryWhereUniqueInput[]
+    update?: UptimeHistoryUpdateWithWhereUniqueWithoutMonitoredUrlInput | UptimeHistoryUpdateWithWhereUniqueWithoutMonitoredUrlInput[]
+    updateMany?: UptimeHistoryUpdateManyWithWhereWithoutMonitoredUrlInput | UptimeHistoryUpdateManyWithWhereWithoutMonitoredUrlInput[]
+    deleteMany?: UptimeHistoryScalarWhereInput | UptimeHistoryScalarWhereInput[]
+  }
+
+  export type MonitoredUrlCreateNestedOneWithoutHistoryInput = {
+    create?: XOR<MonitoredUrlCreateWithoutHistoryInput, MonitoredUrlUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: MonitoredUrlCreateOrConnectWithoutHistoryInput
+    connect?: MonitoredUrlWhereUniqueInput
+  }
+
+  export type MonitoredUrlUpdateOneRequiredWithoutHistoryNestedInput = {
+    create?: XOR<MonitoredUrlCreateWithoutHistoryInput, MonitoredUrlUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: MonitoredUrlCreateOrConnectWithoutHistoryInput
+    upsert?: MonitoredUrlUpsertWithoutHistoryInput
+    connect?: MonitoredUrlWhereUniqueInput
+    update?: XOR<XOR<MonitoredUrlUpdateToOneWithWhereWithoutHistoryInput, MonitoredUrlUpdateWithoutHistoryInput>, MonitoredUrlUncheckedUpdateWithoutHistoryInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -128616,6 +134041,29 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumMaintenanceTypeFilter<$PrismaModel>
     _max?: NestedEnumMaintenanceTypeFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type DeviceUserCreateWithoutDeviceInput = {
@@ -144751,6 +150199,117 @@ export namespace Prisma {
     companies?: ProjectCompanyLinkUncheckedUpdateManyWithoutProjectNestedInput
   }
 
+  export type UptimeHistoryCreateWithoutMonitoredUrlInput = {
+    id?: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+  }
+
+  export type UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput = {
+    id?: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+  }
+
+  export type UptimeHistoryCreateOrConnectWithoutMonitoredUrlInput = {
+    where: UptimeHistoryWhereUniqueInput
+    create: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput>
+  }
+
+  export type UptimeHistoryCreateManyMonitoredUrlInputEnvelope = {
+    data: UptimeHistoryCreateManyMonitoredUrlInput | UptimeHistoryCreateManyMonitoredUrlInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UptimeHistoryUpsertWithWhereUniqueWithoutMonitoredUrlInput = {
+    where: UptimeHistoryWhereUniqueInput
+    update: XOR<UptimeHistoryUpdateWithoutMonitoredUrlInput, UptimeHistoryUncheckedUpdateWithoutMonitoredUrlInput>
+    create: XOR<UptimeHistoryCreateWithoutMonitoredUrlInput, UptimeHistoryUncheckedCreateWithoutMonitoredUrlInput>
+  }
+
+  export type UptimeHistoryUpdateWithWhereUniqueWithoutMonitoredUrlInput = {
+    where: UptimeHistoryWhereUniqueInput
+    data: XOR<UptimeHistoryUpdateWithoutMonitoredUrlInput, UptimeHistoryUncheckedUpdateWithoutMonitoredUrlInput>
+  }
+
+  export type UptimeHistoryUpdateManyWithWhereWithoutMonitoredUrlInput = {
+    where: UptimeHistoryScalarWhereInput
+    data: XOR<UptimeHistoryUpdateManyMutationInput, UptimeHistoryUncheckedUpdateManyWithoutMonitoredUrlInput>
+  }
+
+  export type UptimeHistoryScalarWhereInput = {
+    AND?: UptimeHistoryScalarWhereInput | UptimeHistoryScalarWhereInput[]
+    OR?: UptimeHistoryScalarWhereInput[]
+    NOT?: UptimeHistoryScalarWhereInput | UptimeHistoryScalarWhereInput[]
+    id?: StringFilter<"UptimeHistory"> | string
+    monitoredUrlId?: StringFilter<"UptimeHistory"> | string
+    status?: StringFilter<"UptimeHistory"> | string
+    responseTime?: IntNullableFilter<"UptimeHistory"> | number | null
+    timestamp?: DateTimeFilter<"UptimeHistory"> | Date | string
+  }
+
+  export type MonitoredUrlCreateWithoutHistoryInput = {
+    id?: string
+    url: string
+    name: string
+    status?: string
+    responseTime?: number | null
+    lastChecked?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MonitoredUrlUncheckedCreateWithoutHistoryInput = {
+    id?: string
+    url: string
+    name: string
+    status?: string
+    responseTime?: number | null
+    lastChecked?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MonitoredUrlCreateOrConnectWithoutHistoryInput = {
+    where: MonitoredUrlWhereUniqueInput
+    create: XOR<MonitoredUrlCreateWithoutHistoryInput, MonitoredUrlUncheckedCreateWithoutHistoryInput>
+  }
+
+  export type MonitoredUrlUpsertWithoutHistoryInput = {
+    update: XOR<MonitoredUrlUpdateWithoutHistoryInput, MonitoredUrlUncheckedUpdateWithoutHistoryInput>
+    create: XOR<MonitoredUrlCreateWithoutHistoryInput, MonitoredUrlUncheckedCreateWithoutHistoryInput>
+    where?: MonitoredUrlWhereInput
+  }
+
+  export type MonitoredUrlUpdateToOneWithWhereWithoutHistoryInput = {
+    where?: MonitoredUrlWhereInput
+    data: XOR<MonitoredUrlUpdateWithoutHistoryInput, MonitoredUrlUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type MonitoredUrlUpdateWithoutHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonitoredUrlUncheckedUpdateWithoutHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    lastChecked?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DeviceUserCreateManyDeviceInput = {
     id?: number
     userId: number
@@ -148635,6 +154194,34 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryCreateManyMonitoredUrlInput = {
+    id?: string
+    status: string
+    responseTime?: number | null
+    timestamp?: Date | string
+  }
+
+  export type UptimeHistoryUpdateWithoutMonitoredUrlInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryUncheckedUpdateWithoutMonitoredUrlInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UptimeHistoryUncheckedUpdateManyWithoutMonitoredUrlInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    responseTime?: NullableIntFieldUpdateOperationsInput | number | null
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

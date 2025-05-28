@@ -1230,3 +1230,48 @@ enum MaintenanceType {
   INSPECTION
   REPLACEMENT
 }
+
+model MonitoredUrl {
+  id           String          @id @default(cuid())
+  url          String
+  name         String
+  status       String          @default("pending") // "up", "down", "pending"
+  responseTime Int? // in milliseconds
+  lastChecked  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  history      UptimeHistory[]
+
+  @@index([url])
+}
+
+model StatusUpdate {
+  id        String   @id @default(cuid())
+  type      String // "feature", "maintenance", "incident"
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UptimeHistory {
+  id             String       @id @default(cuid())
+  monitoredUrl   MonitoredUrl @relation(fields: [monitoredUrlId], references: [id], onDelete: Cascade)
+  monitoredUrlId String
+  status         String // "up", "down"
+  responseTime   Int? // in milliseconds
+  timestamp      DateTime     @default(now())
+
+  @@index([monitoredUrlId])
+  @@index([timestamp])
+}
+
+model DashboardLayout {
+  id        String   @id @default(cuid())
+  name      String   @default("default")
+  layouts   Json // Store the layout configuration as JSON
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, isDefault])
+}
