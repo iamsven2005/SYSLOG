@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { isWithinInterval, parseISO } from "date-fns"
 import { MonitoredUrl } from "@/prisma/generated/main"
 import { getUrls } from "./actions"
+import { UptimeHistoryModal } from "./uptime-history-modal"
 
 
 export default function UrlList() {
@@ -28,10 +29,16 @@ export default function UrlList() {
     statuses: [] as string[],
     dateRange: { from: undefined as Date | undefined, to: undefined as Date | undefined },
   })
+  const [historyUrl, setHistoryUrl] = useState<{ id: string; name: string } | null>(null)
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
 
   useEffect(() => {
     fetchUrls()
   }, [])
+const handleViewHistory = (url: MonitoredUrl) => {
+  setHistoryUrl({ id: url.id, name: url.name })
+  setIsHistoryModalOpen(true)
+}
 
   // Memoize the applyFilters function to prevent unnecessary re-renders
   const applyFilters = useCallback(
@@ -186,6 +193,7 @@ export default function UrlList() {
       onCheck={checkUrlHealth}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onView={handleViewHistory}
     />
   ))
 
@@ -224,6 +232,15 @@ export default function UrlList() {
             description="Are you sure you want to delete this URL? This action cannot be undone."
             onConfirm={confirmDelete}
           />
+            {historyUrl && (
+  <UptimeHistoryModal
+    isOpen={isHistoryModalOpen}
+    onOpenChange={setIsHistoryModalOpen}
+    urlId={historyUrl.id}
+    urlName={historyUrl.name}
+  />
+)}
+
     </div>
   )
 }

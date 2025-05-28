@@ -31,7 +31,7 @@ export default async function ChatPage() {
   if (!id || a === false) notFound()
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-screen">
       <GroupSidebar groups={groups} />
       <ChatContainer id={id} />
     </div>

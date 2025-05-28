@@ -14,12 +14,12 @@ import { MonitoredUrl } from "@/prisma/generated/main"
 interface MonitoredUrlCardProps {
   url: MonitoredUrl
   onCheck: (id: string) => Promise<void>
-  onEdit: (url:MonitoredUrl) => void
-  onDelete: (url:MonitoredUrl) => void
+  onEdit: (url: MonitoredUrl) => void
+  onDelete: (url: MonitoredUrl) => void
+  onView: (url: MonitoredUrl) => void
 }
 
-export function UrlCard({ url, onCheck, onEdit, onDelete }:MonitoredUrlCardProps) {
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
+export function UrlCard({ url, onCheck, onEdit, onDelete, onView }: MonitoredUrlCardProps) {
 
   return (
     <Card className="h-full">
@@ -33,41 +33,33 @@ export function UrlCard({ url, onCheck, onEdit, onDelete }:MonitoredUrlCardProps
             <p className="text-xs sm:text-sm text-muted-foreground break-all">{url.url}</p>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 self-end sm:self-start">
-            <Button
-              onClick={() => onCheck(url.id)}
-              variant="outline"
-              size="sm"
-              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              Check Now
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsHistoryModalOpen(true)}
-              className="p-0 h-7 w-7 sm:h-8 sm:w-8"
-              aria-label="View uptime history"
-            >
-              <BarChart2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 sm:h-8 sm:w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onEdit(url)}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDelete(url)} className="text-red-600 focus:text-red-600">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-7 w-7 sm:h-8 sm:w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onView(url)}>
+                  <BarChart2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onCheck(url.id)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Check Now
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(url)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onDelete(url)} className="text-red-600 focus:text-red-600">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -86,13 +78,7 @@ export function UrlCard({ url, onCheck, onEdit, onDelete }:MonitoredUrlCardProps
           )}
         </div>
 
-        {/* Uptime History Modal */}
-        <UptimeHistoryModal
-          isOpen={isHistoryModalOpen}
-          onOpenChange={setIsHistoryModalOpen}
-          urlId={url.id}
-          urlName={url.name}
-        />
+
       </CardContent>
     </Card>
   )

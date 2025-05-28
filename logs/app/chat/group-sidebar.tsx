@@ -173,12 +173,12 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
   }
 
   return (
-    <div className="w-64 border-r flex flex-col dark:bg-gray-800 dark:border-gray-700">
-      <div className="p-4 border-b dark:border-gray-700">
-        <h2 className="font-bold text-lg mb-2 dark:text-white">Chats</h2>
+    <div className="w-64 border-r flex flex-col">
+      <div className="p-4 border-b">
+        <h2 className="font-bold text-lg mb-2">Chats</h2>
         <Button
           onClick={() => setIsCreateGroupOpen(true)}
-          className="w-full mb-3 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+          className="w-full mb-3"
           variant="outline"
         >
           <PlusCircle className="h-4 w-4 mr-2" />
@@ -187,10 +187,10 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
 
         <div className="space-y-2">
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground " />
             <Input
               placeholder="Search chats..."
-              className="pl-8 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+              className="pl-8 "
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -198,17 +198,17 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={selectedRole} onValueChange={handleRoleFilter} disabled={isLoadingRoles}>
-              <SelectTrigger className="flex-1 h-8 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
+              <SelectTrigger className="flex-1 h-8">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
-              <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                <SelectItem value="all" className="dark:text-gray-200 dark:focus:bg-gray-700">
+              <SelectContent>
+                <SelectItem value="all">
                   All roles
                 </SelectItem>
                 {availableRoles.map((role) => (
-                  <SelectItem key={role} value={role} className="dark:text-gray-200 dark:focus:bg-gray-700">
+                  <SelectItem key={role} value={role}>
                     {role.charAt(0).toUpperCase() + role.slice(1)}
                   </SelectItem>
                 ))}
@@ -221,12 +221,12 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
       <ScrollArea className="flex-1">
         {isSearching ? (
           <div className="flex justify-center items-center p-4">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground dark:text-gray-400" />
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <div className="p-2">
             {groups.length === 0 ? (
-              <div className="text-center p-4 text-muted-foreground dark:text-gray-400">
+              <div className="text-center p-4 text-muted-foreground">
                 {searchQuery.length > 0 || selectedRole !== "all"
                   ? "No chats match your search criteria"
                   : "No chats yet. Create a new one to get started."}
@@ -240,20 +240,20 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                 return (
                   <div
                     key={group.id}
-                    className={`p-2 rounded-md cursor-pointer mb-1 ${isActive ? "bg-primary/10 dark:bg-blue-900/30" : "hover:bg-muted/50 dark:hover:bg-gray-700"
+                    className={`p-2 rounded-md cursor-pointer mb-1 ${isActive ? "bg-primary/10 bg-blue-900/30" : "hover:bg-muted/50"
                       }`}
                     onClick={() => handleSelectGroup(group.id)}
                   >
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
-                        <AvatarFallback className="dark:bg-gray-700 dark:text-gray-200">
+                        <AvatarFallback>
                           {getInitials(group.name)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 overflow-hidden">
-                        <div className="font-medium truncate dark:text-white">{group.name}</div>
+                        <div className="font-medium truncate">{group.name}</div>
                         {lastMessage && (
-                          <div className="text-xs text-muted-foreground truncate dark:text-gray-400">
+                          <div className="text-xs text-muted-foreground truncate ">
                             <span className="font-medium">{lastMessage.sender.username ?? "Unknown"}:</span>
                           </div>
                         )}
@@ -263,7 +263,7 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                               <Badge
                                 key={role}
                                 variant="outline"
-                                className="text-[10px] px-1 py-0 h-4 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
+                                className="text-[10px] px-1 py-0 h-4"
                               >
                                 {role}
                               </Badge>
@@ -271,7 +271,7 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                             {groupRoles.length > 2 && (
                               <Badge
                                 variant="outline"
-                                className="text-[10px] px-1 py-0 h-4 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
+                                className="text-[10px] px-1 py-0 h-4 bg-gray-700"
                               >
                                 +{groupRoles.length - 2}
                               </Badge>
@@ -280,7 +280,7 @@ export function GroupSidebar({ groups: initialGroups }: { groups: Group[] }) {
                         )}
                       </div>
                       {lastMessage && (
-                        <div className="text-xs text-muted-foreground whitespace-nowrap dark:text-gray-500">
+                        <div className="text-xs text-muted-foreground whitespace-nowrap">
                           {formatMessageDate(new Date(lastMessage.createdAt))}
                         </div>
                       )}

@@ -76,7 +76,7 @@ export function ChatContainer({ id }: { id: number }) {
 
   if (!groupId) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-muted/20 dark:bg-gray-900">
+      <div className="flex-1 flex items-center justify-center bg-muted/20">
         <div className="text-center space-y-4">
           <h2 className="text-xl font-medium dark:text-gray-200">Select a chat from the sidebar</h2>
           <p className="text-muted-foreground dark:text-gray-400">
@@ -85,9 +85,7 @@ export function ChatContainer({ id }: { id: number }) {
           <div className="flex justify-center gap-2">
             <Button
               variant="outline"
-              onClick={() => setIsUsersListOpen(true)}
-              className="dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
+              onClick={() => setIsUsersListOpen(true)}>
               <Users className="h-4 w-4 mr-2" />
               View All Users
             </Button>
@@ -99,23 +97,19 @@ export function ChatContainer({ id }: { id: number }) {
   }
 
   return (
-    <div className="flex-1 flex flex-col dark:bg-gray-900">
-      <div className="flex justify-end p-2 gap-2 border-b dark:border-gray-700">
+    <div className="flex-1 flex flex-col">
+      <div className="flex justify-end p-2 gap-2 border-b">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsImportExportOpen(true)}
-          className="dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-        >
+          onClick={() => setIsImportExportOpen(true)}>
           <FileUp className="h-4 w-4 mr-2" />
           Import/Export
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={handleScreenshot}
-          className="dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-        >
+          onClick={handleScreenshot}>
           <Camera className="h-4 w-4 mr-2" />
           Screenshot
         </Button>

@@ -1,3 +1,4 @@
+//alerts\alert-debug-panel.tsx
 import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { evaluateAlertCondition, getAlertConditions, createAlertEvent } from "@/app/alerts/alert-actions"

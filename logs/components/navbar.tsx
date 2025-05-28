@@ -20,7 +20,6 @@ export async function getUserPermissions() {
       pagePermission: true,
     },
   })
-
   const userPermissions = await db.userPermission.findMany({
     where: { userId: user.id },
     include: {
@@ -45,7 +44,8 @@ export async function getUserPermissions() {
 }
 export async function allowed(path: string) {
   const permissions = await getUserPermissions()
-  return permissions.some((perm) => perm.path === path)
+  console.log("hello", permissions)
+  return permissions.some((perm) => perm.route === path)
 }
 
 
