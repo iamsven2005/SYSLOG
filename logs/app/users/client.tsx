@@ -105,6 +105,7 @@ import {
   getUserDevices,
   assignDeviceToUser,
   removeDeviceFromUser,
+  getRoles,
 } from "../email-templates/user-actions"
 import { getDevices } from "../devices/device-actions"
 import { exportToExcel, prepareUsersForExport, generateUserImportTemplate } from "../../lib/export-utils"
@@ -113,6 +114,7 @@ import { MultiCombobox } from "@/components/multi-combobox"
 import ScrollableRoles from "./Scroll"
 import { generatePassword } from "@/lib/utils"
 import { devices, location, Roles, User } from "@/prisma/generated/main"
+import { getAllLocations } from "../locations/location-actions"
 
 // Debounce function to limit how often a function can run
 function debounceString(fn: (value: string) => void, wait: number) {
@@ -208,9 +210,8 @@ export default function UsersTable() {
   // Add a function to fetch roles
   const fetchRoles = async () => {
     try {
-      const response = await fetch("/api/roles")
-      const data = await response.json()
-      setRoles(data.roles)
+      const response = await getRoles()
+      setRoles(response)
     } catch (error) {
       console.log(error)
       toast.error("Failed to fetch roles")
@@ -219,9 +220,8 @@ export default function UsersTable() {
   // Add a function to fetch roles
   const fetchLocations = async () => {
     try {
-      const response = await fetch("/api/locations")
-      const data = await response.json()
-      setLocations(data.roles)
+      const response = await getAllLocations()
+      setLocations(response.roles || [])
     } catch (error) {
       console.log(error)
 

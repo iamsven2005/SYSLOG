@@ -1,3 +1,4 @@
+// Taking a screenshot and saving it to the public/uploads directory
 import { writeFile } from "fs/promises"
 import path from "path"
 import { NextResponse } from "next/server"

@@ -1,3 +1,5 @@
+// Polls API - Get Poll by Message ID
+// This API endpoint retrieves a poll by its associated message ID.
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest, { params }: { params: Promise<{ messageId: string }> }) {

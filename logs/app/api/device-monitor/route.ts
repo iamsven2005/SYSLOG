@@ -1,3 +1,4 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\app\devices\use-device-status.ts
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { pingDevice } from "./ping"

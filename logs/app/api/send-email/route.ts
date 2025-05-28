@@ -1,3 +1,4 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\app\email-templates\email-template-actions.ts
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 

@@ -1,3 +1,4 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\public\scripts\new.sh
 import { db } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
 

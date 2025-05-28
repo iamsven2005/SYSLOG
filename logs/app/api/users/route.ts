@@ -1,3 +1,5 @@
+//logs\public\scripts\users.py
+//To be used for importing users from LDAP to the database
 import { db } from '@/lib/db';
 import { Prisma } from '@/prisma/generated/main';
 import { NextRequest, NextResponse } from 'next/server';

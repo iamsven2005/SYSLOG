@@ -1,3 +1,4 @@
+// Get Polls API - Create Poll
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
 

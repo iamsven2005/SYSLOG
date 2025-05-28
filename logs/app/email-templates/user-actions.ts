@@ -86,7 +86,15 @@ if (role) {
   }
 }
 
+export async function getRoles() {
+  const roles = await db.roles.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  })
 
+  return roles
+}
 export async function getAdminUsers() {
   const adminUsers = await db.user.findMany({
     where: {

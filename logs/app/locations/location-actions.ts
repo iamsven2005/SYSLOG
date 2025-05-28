@@ -73,7 +73,20 @@ export async function getLocations({
     totalCount,
   }
 }
-
+export async function getAllLocations() {
+  try {
+          const roles = await db.location.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    })
+    return { roles }
+  }
+  catch (error) {
+    console.error("Error fetching locations:", error)
+    return { error: "Failed to fetch locations" }
+  } 
+}
 // Add a new location
 export async function addLocation({
   code,

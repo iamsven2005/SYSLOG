@@ -1,3 +1,4 @@
+//Uploads a file to the server and saves its metadata to the database for a ticket or comment.
 import { type NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join, dirname } from "path"

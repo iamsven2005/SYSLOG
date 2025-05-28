@@ -1,3 +1,4 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\components\database-status-bar.tsx
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 

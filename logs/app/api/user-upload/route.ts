@@ -1,4 +1,5 @@
 // app/api/user-upload/route.ts
+// Mass upload users from HTML file
 import { NextRequest, NextResponse } from "next/server"
 import { JSDOM } from "jsdom"
 import { addUser } from "@/app/email-templates/user-actions"

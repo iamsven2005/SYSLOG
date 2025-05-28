@@ -1,3 +1,4 @@
+// Notifications API route for handling notifications in the application
 import { NextResponse } from "next/server"
 import { getNotifications, getAllNotificationsAdmin } from "@/app/notifications/notification-actions"
 import { getCurrentUser } from "@/app/login/auth"

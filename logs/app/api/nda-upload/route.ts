@@ -1,3 +1,4 @@
+//Allows uploading of NDA documents for users, ensuring only the user or an admin can upload
 import { type NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"

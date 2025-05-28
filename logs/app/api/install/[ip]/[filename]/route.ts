@@ -1,3 +1,6 @@
+//for installing scripts with dynamic IP and filename
+// C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\app\api\install\[ip]\[filename]\route.ts
+
 import { NextRequest, NextResponse } from "next/server"
 import { readFile } from "fs/promises"
 import path from "path"

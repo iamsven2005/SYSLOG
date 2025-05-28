@@ -1,3 +1,4 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\public\scripts\disk.py
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 

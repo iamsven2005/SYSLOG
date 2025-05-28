@@ -1,3 +1,5 @@
+//For the SSE (Server-Sent Events) endpoint to stream logs or events from drive
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\app\forms\use-sse.ts
 import { subscribe } from "@/app/forms/broadcast"
 import type { NextRequest } from "next/server"
 export const runtime = "nodejs"

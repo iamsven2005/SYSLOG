@@ -1,4 +1,4 @@
-// This is for documentation
+// This is for documentation search For all README.md files in the app directory
 import { type NextRequest, NextResponse } from "next/server"
 import { promises as fs } from "fs"
 import path from "path"

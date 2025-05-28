@@ -1,3 +1,5 @@
+//incase user is added without a root folder
+// This script resets the drive folders for all users by deleting existing folders and creating a new root folder for each user.
 import { db } from "@/lib/db"
 import { NextResponse } from "next/server"
 

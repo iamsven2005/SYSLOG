@@ -1,3 +1,4 @@
+// Scaning API route for memory usage data
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 

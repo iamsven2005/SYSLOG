@@ -1,3 +1,5 @@
+//To upload nda document for a user, we need to ensure that the user is either an admin or the user themselves.
+//Part of user profile management, this route allows admins to view or download the NDA document of a user.
 import { type NextRequest, NextResponse } from "next/server"
 import path from "path"
 import fs from "fs/promises"

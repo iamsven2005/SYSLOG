@@ -1,3 +1,5 @@
+//C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\public\scripts\sensors.py
+//For the pc to send sensor data to the server
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 

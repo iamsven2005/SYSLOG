@@ -1,4 +1,4 @@
-// /app/api/embed-text/route.ts
+// C:\Users\sven.tan.YWLSG217\Desktop\SYSLOG\logs\app\drive\file-grid.tsx
 import { db2 } from "@/lib/db2";
 import { NextRequest } from "next/server";
 

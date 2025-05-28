@@ -1,3 +1,4 @@
+//Mark a notification as read
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getCurrentUser } from "@/app/login/auth"
