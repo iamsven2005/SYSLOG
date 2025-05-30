@@ -13,7 +13,7 @@ sven@sventan:~$ ip a
        valid_lft forever preferred_lft forever
 2: enp4s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     link/ether 30:5a:3a:08:d9:36 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.1.26/24 brd 192.168.1.255 scope global noprefixroute enp4s0
+    inet 192.168.1.96/24 brd 192.168.1.255 scope global noprefixroute enp4s0
        valid_lft forever preferred_lft forever
     inet6 fe80::325a:3aff:fe08:d936/64 scope link 
        valid_lft forever preferred_lft forever
@@ -30,7 +30,7 @@ network:
   ethernets:
     enp4s0:
       addresses:
-      - 192.168.1.26/24
+      - 192.168.1.96/24
       nameservers:
         addresses:
         - 192.168.1.253
@@ -63,15 +63,15 @@ sudo netplan apply
 Using smb windows share
 
 ~/.pgpass
-192.168.1.26:5432:logs_database:admin:host-machine
+192.168.1.96:5432:logs_database:admin:host-machine
 
-sven@sventan:~$ sudo PGPASSFILE=~/.pgpass pg_dump -h 192.168.1.26 -U admin -d logs_database -F c -b -v -f "/mnt/nas/sven.tan/MyDocs/new.sql"
+sven@sventan:~$ sudo PGPASSFILE=~/.pgpass pg_dump -h 192.168.1.96 -U admin -d logs_database -F c -b -v -f "/mnt/nas/sven.tan/MyDocs/new.sql"
 
 
 sudo nano /usr/local/bin/db_backup.sh
 #!/bin/bash
 export PGPASSFILE=/home/sven/.pgpass
-sudo /usr/bin/pg_dump -h 192.168.1.26 -U admin -d logs_database -F c -b -v -f "/mnt/nas/sven.tan/MyDocs/backup-$(date +'%Y-%m-%d_%H-%M-%S').sql"
+sudo /usr/bin/pg_dump -h 192.168.1.96 -U admin -d logs_database -F c -b -v -f "/mnt/nas/sven.tan/MyDocs/backup-$(date +'%Y-%m-%d_%H-%M-%S').sql"
 sudo chmod +x /usr/local/bin/db_backup.sh
 
 
@@ -81,7 +81,7 @@ todo: change all prisma to db.
 
 #!/bin/bash
 
-SCRIPT_URL="http://192.168.1.102:3000/latest_script.sh"  # Update with actual URL
+SCRIPT_URL="http://192.168.1.96:3000/latest_script.sh"  # Update with actual URL
 INSTALL_PATH="/usr/local/bin/install.sh"
 CRON_JOB="*/10 * * * * root /bin/bash $INSTALL_PATH"  # Runs every 10 minutes
 
@@ -108,7 +108,7 @@ FOr logout /etc/gdm3/PostSession/Default
 
 #!/bin/bash
 
-SCRIPT_URL="http://192.168.1.26:3000/latest_script.sh"
+SCRIPT_URL="http://192.168.1.96:3000/latest_script.sh"
 INSTALL_PATH="/usr/local/bin/install.sh"
 
 # Function to update the script
@@ -139,7 +139,7 @@ self_update
 echo "[INFO] Running main script tasks..."
 
 
-curl -o ~/Desktop/script.sh http://192.168.1.102:3000/script.sh
+curl -o ~/Desktop/script.sh http://192.168.1.96:3000/script.sh
 
 
 sudo apt update
@@ -155,6 +155,9 @@ cd /etc/postgres/16/main/postgresql.conf
 listen_addresses = '*'
 
 cd /etc/postgres/16/main/pg_hba.conf
+0.0.0.0/0
+::/0
+sudo systemctl restart postgresql
 
 
 Mounting nas
@@ -173,51 +176,14 @@ df -h | grep userdocuments
 
 
 ALTER DATABASE logs_database OWNER TO admin;
-PGPASSFILE=~/.pgpass dropdb -h 192.168.1.26 -U admin logs_database
+PGPASSFILE=~/.pgpass dropdb -h 192.168.1.96 -U admin logs_database
 
-createdb -h 192.168.1.26 -U postgres logs_database
-pg_restore -h 192.168.1.26 -U postgres -d logs_database /path/to/backup-file.sql
+createdb -h 192.168.1.96 -U postgres logs_database
+pg_restore -h 192.168.1.96 -U postgres -d logs_database /path/to/backup-file.sql
 
 
 file /mnt/userdocuments/sven.tan/MyDocs/backup-*.sql
 
-
-model Suggestion {
-  id           String      @id @default(cuid())
-  title        String
-  content      String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  author       user        @relation(fields: [authorId], references: [id])
-  authorId     String
-  isUseful     Boolean     @default(false) // Marked by admin
-  votes        SuggestionVote[]
-  comments     SuggestionComment[]
-}
-
-model SuggestionVote {
-  id           String   @id @default(cuid())
-  user         user     @relation(fields: [userId], references: [id])
-  userId       String
-  suggestion   Suggestion @relation(fields: [suggestionId], references: [id])
-  suggestionId String
-
-  createdAt    DateTime @default(now())
-
-  @@unique([userId, suggestionId]) // Prevent multiple votes by same user
-}
-
-
-model SuggestionComment {
-  id           String      @id @default(cuid())
-  content      String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  author       user        @relation(fields: [authorId], references: [id])
-  authorId     String
-  suggestion   Suggestion  @relation(fields: [suggestionId], references: [id])
-  suggestionId String
-}
 
 https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/releases
 Unblock-File "C:\Users\sven.tan.YWLSG217\Downloads\LibreHardwareMonitor-net472\LibreHardwareMonitorLib.dll"
@@ -245,11 +211,6 @@ For perm access
     throw new Error("User not authenticated")
   }
 
-  #ToDO frequent backups
-
-  text, csv, pdf, world, xlsx
-
-
 
 
 sudo apt install postresql-server-dev-16
@@ -262,6 +223,4 @@ sudo docker run -d --name pgvector-db -e POSTGRES_USER=admin -e POSTGRES_PASSWOR
 
 npx @marp-team/marp-cli main.md -o output.pdf --allow-local-files
 
-reveal-md slides.md   
-
-allowed
+reveal-md slides.md

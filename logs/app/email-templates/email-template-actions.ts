@@ -17,7 +17,7 @@
  *   - getUsersAssignedToEmailTemplate: Fetches user objects assigned to a specific template.
  *
  * Notes:
- *   - Emails are sent via a local API endpoint at http://192.168.1.102:3000/api/send-email.
+ *   - Emails are sent via a local API endpoint at http://192.168.1.96:3000/api/send-email.
  *   - Logs activity for each key action using `logActivity`.
  *   - All paths involving user assignments reference the `userEmailTemplate` join table.
  */
@@ -194,7 +194,7 @@ Object.entries({ ...data, username: recipient.username ?? "" }).forEach(([key, v
 
 
       try {
-        const response = await fetch("http://192.168.1.102:3000/api/send-email", {
+        const response = await fetch("http://192.168.1.96:3000/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

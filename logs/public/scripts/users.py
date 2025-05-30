@@ -4,7 +4,7 @@ import requests
 
 # Hardcoded sudo password (⚠️ for internal use only)
 SUDO_PASSWORD = "PW^316>mn"
-API_ENDPOINT = "http://192.168.1.26:3000/api/users"
+API_ENDPOINT = "http://192.168.1.96:3000/api/users"
 
 def run_sudo_command(command: list):
     try:

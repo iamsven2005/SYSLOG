@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const arrayBuffer = await image.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  const response = await fetch("http://192.168.1.102:5000/analyze", {
+  const response = await fetch("http://192.168.1.96:5000/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/octet-stream" },
     body: buffer,

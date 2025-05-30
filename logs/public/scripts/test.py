@@ -3,7 +3,7 @@ import requests
 import socket
 
 # --- API Endpoint and Host ---
-API_ENDPOINT = "http://192.168.1.26:3000/api/scan"  # Replace with actual IP or domain
+API_ENDPOINT = "http://192.168.1.96:3000/api/scan"  # Replace with actual IP or domain
 DEVICE_HOST = socket.gethostname()
 
 # --- Get memory usage ---

@@ -35,8 +35,8 @@ export async function POST() {
       return NextResponse.json({ success: false, message: "No .sql backup file found" }, { status: 404 })
     }
 
-    const dropSchema = `psql -h 192.168.1.26 -U admin -d logs_database -c 'DROP SCHEMA IF EXISTS logs CASCADE;'`
-    const restoreCommand = `PGPASSFILE=~/.pgpass2 pg_restore -h 192.168.1.26 -U admin -d logs_database -v "${latestBackup}"`
+    const dropSchema = `psql -h 192.168.1.96 -U admin -d logs_database -c 'DROP SCHEMA IF EXISTS logs CASCADE;'`
+    const restoreCommand = `PGPASSFILE=~/.pgpass2 pg_restore -h 192.168.1.96 -U admin -d logs_database -v "${latestBackup}"`
 
     // Drop schema
     await execPromise(dropSchema)

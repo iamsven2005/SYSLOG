@@ -34,7 +34,7 @@ foreach ($proc in $processes) {
 
 # === Collect Sensor Info from LibreHardwareMonitor ===
 try {
-    $sensorData = Invoke-RestMethod -Uri "http://192.168.1.102:8080/data.json"
+    $sensorData = Invoke-RestMethod -Uri "http://192.168.1.96:8080/data.json"
 } catch {
     Write-Host "⚠️ Failed to fetch sensor data from LibreHardwareMonitor"
     $sensorData = $null
@@ -78,7 +78,7 @@ $payload = [PSCustomObject]@{
 # === Send to API ===
 $jsonPayload = $payload | ConvertTo-Json -Depth 6
 
-Invoke-RestMethod -Uri "http://192.168.1.102:3000/api/deviceinfo" `
+Invoke-RestMethod -Uri "http://192.168.1.96:3000/api/deviceinfo" `
                   -Method Post `
                   -ContentType "application/json" `
                   -Body $jsonPayload

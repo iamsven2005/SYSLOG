@@ -8,7 +8,7 @@ DB_CONFIG = {
     "dbname": "logs_database",
     "user": "admin",
     "password": "host-machine",
-    "host": "192.168.1.26",
+    "host": "192.168.1.96",
     "port": "5432"
 }
 

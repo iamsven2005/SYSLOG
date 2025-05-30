@@ -27,7 +27,7 @@ export async function GET() {
     const filePath = path.join(targetFolder, fileName)
 
     // Construct pg_dump command
-    const dumpCommand = `PGPASSFILE=~/.pgpass2 pg_dump -h 192.168.1.26 -U admin -d logs_database -F c -b -v -f "${filePath}"`
+    const dumpCommand = `PGPASSFILE=~/.pgpass2 pg_dump -h 192.168.1.96 -U admin -d logs_database -F c -b -v -f "${filePath}"`
 
     // Execute and wait
     const { stdout } = await execAsync(dumpCommand)

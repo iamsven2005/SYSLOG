@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { text, userId, name } = body;
 
-  const res = await fetch("http://192.168.1.102:5000/embed", {
+  const res = await fetch("http://192.168.1.96:5000/embed", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ texts: [text] }),
