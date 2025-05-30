@@ -1,6 +1,5 @@
 FROM python:3.10-slim
 
-# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     libgl1-mesa-glx \
@@ -8,12 +7,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Install Python deps
+# Create and activate virtual environment, then install deps inside it
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app
 COPY flask_app.py .
 
-# Run app
 CMD ["python", "flask_app.py"]
