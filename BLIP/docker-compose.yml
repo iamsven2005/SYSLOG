@@ -101,16 +101,16 @@ services:
       POSTGRES_DB: logs_database
     volumes:
       - pgvector-data:/var/lib/postgresql/data
-  caption-server:
-    build:
-      context: .
-      dockerfile: Dockerfile.flask
-    ports:
-      - "5000:5000"
-    restart: always
-    volumes:
-      - ./flask_app.py:/app/flask_app.py
-      - ./requirements.txt:/app/requirements.txt
+  # caption-server:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.flask
+  #   ports:
+  #     - "5000:5000"
+  #   restart: always
+  #   volumes:
+  #     - ./flask_app.py:/app/flask_app.py
+  #     - ./requirements.txt:/app/requirements.txt
 
 volumes:
   grafana-storage:
