@@ -112,6 +112,7 @@ services:
   #     - ./flask_app.py:/app/flask_app.py
   #     - ./requirements.txt:/app/requirements.txt
 
+
 volumes:
   grafana-storage:
   elastic-data:
