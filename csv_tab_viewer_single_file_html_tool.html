@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSV Tab Viewer</title>
+  <style>
+    :root{--bg:#f8fafc;--card:#ffffff;--muted:#e2e8f0;--text:#1e293b;--soft:#64748b;--accent:#0284c7;--accent-2:#0ea5e9}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Inter,Arial,sans-serif;background:#f1f5f9;color:var(--text)}
+    header{padding:20px 16px;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:5}
+    .container{max-width:1200px;margin:0 auto}
+    h1{margin:0;font-size:20px;display:flex;align-items:center;gap:10px}
+    h1 .chip{font-size:12px;color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc;padding:2px 8px;border-radius:999px}
+
+    .uploader{margin:16px 0;padding:16px;border:1px dashed #94a3b8;border-radius:14px;background:#ffffff}
+    .uploader:hover{border-color:#64748b}
+    .uploader input{display:none}
+    .uploader .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+    .btn{appearance:none;border:1px solid #cbd5e1;background:#ffffff;color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+    .btn:hover{background:#f1f5f9}
+    .btn-primary{border-color:#0284c7;background:linear-gradient(180deg,#38bdf8,#0ea5e9);color:#fff}
+    .btn-primary:hover{filter:brightness(1.05)}
+
+    .tabs{margin-top:18px;border-bottom:1px solid #cbd5e1;display:flex;gap:6px;flex-wrap:wrap}
+    .tab{padding:8px 10px;border:1px solid #cbd5e1;border-bottom:none;background:#f8fafc;color:#334155;border-top-left-radius:10px;border-top-right-radius:10px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px}
+    .tab.active{background:#ffffff;color:#0f172a;border-color:#94a3b8}
+    .tab .close{cursor:pointer;font-size:12px;color:#64748b}
+    .tab .close:hover{color:#dc2626}
+
+    .panel{display:none;background:#ffffff;border:1px solid #cbd5e1;border-radius:0 10px 10px 10px;padding:16px;margin-top:-1px}
+    .panel.active{display:block}
+
+    .panel .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+    .search{flex:1 1 260px;display:flex;gap:8px;align-items:center;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:6px 8px}
+    .search input{flex:1;background:transparent;border:none;outline:none;color:var(--text)}
+    .counter{font-size:12px;color:#475569}
+
+    .table-wrap{max-height:65vh;overflow:auto;border:1px solid #cbd5e1;border-radius:10px}
+    table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+    thead th{position:sticky;top:0;background:#f1f5f9;border-bottom:1px solid #cbd5e1;padding:8px;text-align:left;font-weight:600;font-size:13px}
+    tbody td{border-bottom:1px solid #e2e8f0;padding:6px 8px;color:#1e293b}
+    tbody tr:nth-child(odd){background:#f8fafc}
+    tbody tr.hide{display:none}
+    tbody td.editable{cursor:text}
+
+    footer{padding:14px;color:#475569;text-align:center;font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>CSV Tab Viewer <span class="chip">Editable</span></h1>
+      <div class="uploader" id="dropzone">
+        <div class="row">
+          <label class="btn btn-primary" for="fileInput">➕ Add CSV files</label>
+          <input id="fileInput" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" multiple />
+          <button class="btn" id="loadExample">📄 Load Example CSV</button>
+          <div class="drop-hint">Drag & drop files here • Multiple CSV/TSV become tabs • Editable & reorderable • Nothing leaves your browser</div>
+        </div>
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="panels"></section>
+  </main>
+
+  <footer>Tip: Double‑click a cell to edit • Drag row handle to reorder • Use delete button to remove row • Close tabs when done</footer>
+
+<script>
+(function(){
+  const fileInput=document.getElementById('fileInput');
+  const tabsEl=document.getElementById('tabs');
+  const panelsEl=document.getElementById('panels');
+  const dropzone=document.getElementById('dropzone');
+  const loadExample=document.getElementById('loadExample');
+
+  const state={tabs:[],active:-1};
+  function uid(){return Math.random().toString(36).slice(2,9)}
+
+  function createTab(title){
+    const id=uid();
+    const tabBtn=document.createElement('div');
+    tabBtn.className='tab';
+    tabBtn.innerHTML=`<span class="label">${title}</span><span class="close">✖</span>`;
+    tabBtn.dataset.target=id;
+    tabBtn.querySelector('.label').addEventListener('click',()=>activate(id));
+    tabBtn.querySelector('.close').addEventListener('click',(e)=>{e.stopPropagation();closeTab(id)});
+
+    const panel=document.createElement('div');
+    panel.className='panel';
+    panel.id=id;
+    panel.innerHTML=`<div class="tools">
+      <div class="search"><span>🔎</span><input type="search" placeholder="Search rows"/></div>
+      <button class="btn" data-action="add">➕ Add Row</button>
+      <button class="btn" data-action="download">⬇️ Download CSV</button>
+      <span class="counter"></span></div>
+      <div class="table-wrap"><table><thead></thead><tbody></tbody></table></div>`;
+
+    tabsEl.appendChild(tabBtn);
+    panelsEl.appendChild(panel);
+
+    const tab={id,title,tabBtn,panel,data:null,delimiter:',',filteredCount:0,totalCount:0};
+    state.tabs.push(tab);
+    return tab;
+  }
+
+  function activate(id){
+    state.active=state.tabs.findIndex(t=>t.id===id);
+    for(const t of state.tabs){t.tabBtn.classList.toggle('active',t.id===id);t.panel.classList.toggle('active',t.id===id)}
+  }
+
+  function closeTab(id){
+    const idx=state.tabs.findIndex(t=>t.id===id);
+    if(idx===-1) return;
+    const tab=state.tabs[idx];
+    tab.tabBtn.remove();
+    tab.panel.remove();
+    state.tabs.splice(idx,1);
+    if(state.active===idx){
+      if(state.tabs.length>0){activate(state.tabs[0].id);} else {state.active=-1;}
+    }
+  }
+
+  function parseCSV(text){
+    const rows=[];let i=0,field='',row=[],inQuotes=false,c;let delim=',';
+    if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+    const firstLine=text.split(/\r?\n/)[0];if((firstLine.match(/\t/g)||[]).length>(firstLine.match(/,/g)||[]).length)delim='\t';
+    for(i=0;i<text.length;i++){c=text[i];if(inQuotes){if(c==='\"'){if(text[i+1]==='\"'){field+='\"';i++;}else{inQuotes=false}}else{field+=c}}else{if(c==='\"'){inQuotes=true}else if(c===delim){row.push(field);field=''}else if(c==='\n'){row.push(field);rows.push(row);row=[];field=''}else if(c==='\r'){}else{field+=c}}}
+    if(field.length>0||row.length>0){row.push(field);rows.push(row)}
+    return{rows,delimiter:delim}
+  }
+
+  function renderTable(tab){
+    const table=tab.panel.querySelector('table');const thead=table.querySelector('thead');const tbody=table.querySelector('tbody');
+    thead.innerHTML='';tbody.innerHTML='';
+    const data=tab.data;if(!data||data.length===0)return;
+    const headers=data[0];const trh=document.createElement('tr');headers.forEach(h=>{const th=document.createElement('th');th.textContent=h||'';trh.appendChild(th)});thead.appendChild(trh);
+    for(let r=1;r<data.length;r++){appendRow(tab,data[r])}
+    tab.totalCount=Math.max(0,data.length-1);tab.filteredCount=tab.totalCount;updateCounter(tab);
+    enableRowDrag(tbody,tab);
+  }
+
+  function appendRow(tab,row){
+    const tbody=tab.panel.querySelector('tbody');const tr=document.createElement('tr');tr.draggable=true;
+    row.forEach(cell=>{const td=document.createElement('td');td.textContent=cell||'';td.contentEditable=true;td.classList.add('editable');tr.appendChild(td)});
+    const tdActions=document.createElement('td');const delBtn=document.createElement('button');delBtn.textContent='🗑️';delBtn.className='btn';delBtn.onclick=()=>{tr.remove();tab.data=extractData(tab);updateCounter(tab)};tdActions.appendChild(delBtn);tr.appendChild(tdActions);
+    tbody.appendChild(tr);
+  }
+
+  function extractData(tab){
+    const table=tab.panel.querySelector('table');const rows=[];const header=[...table.querySelectorAll('thead th')].map(th=>th.textContent);rows.push(header);
+    for(const tr of table.querySelectorAll('tbody tr')){const row=[];for(const td of tr.querySelectorAll('td.editable')){row.push(td.textContent)}rows.push(row)}
+    return rows;
+  }
+
+  function updateCounter(tab){const counter=tab.panel.querySelector('.counter');counter.textContent=`${tab.filteredCount}/${tab.totalCount} rows`}
+
+  function filterActiveTab(q){const tab=state.tabs[state.active];if(!tab)return;const tbody=tab.panel.querySelector('tbody');q=q.trim().toLowerCase();let shown=0;for(const tr of tbody.rows){if(!q){tr.classList.remove('hide');shown++;continue}let hit=false;for(const td of tr.querySelectorAll('td.editable')){if(td.textContent.toLowerCase().includes(q)){hit=true;break}}tr.classList.toggle('hide',!hit);if(hit)shown++}tab.filteredCount=shown;updateCounter(tab)}
+
+  function downloadCSV(tab){tab.data=extractData(tab);const rows=tab.data;const delim=tab.delimiter;const esc=v=>{v=(v==null?'':String(v));if(v.includes('"'))v=v.replace(/"/g,'""');const needsQuotes=v.includes(delim)||v.includes('\n')||v.includes('"');return needsQuotes?`"${v}"`:v};const csv=rows.map(r=>r.map(esc).join(delim)).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(tab.title.replace(/\.[^.]+$/,'')||'data')+'.csv';a.click();URL.revokeObjectURL(a.href)}
+
+  function enableRowDrag(tbody,tab){let dragEl;tbody.addEventListener('dragstart',e=>{dragEl=e.target;e.dataTransfer.effectAllowed='move'});tbody.addEventListener('dragover',e=>{e.preventDefault();const target=e.target.closest('tr');if(target&&target!==dragEl){tbody.insertBefore(dragEl,target.nextSibling)}});tbody.addEventListener('drop',()=>{tab.data=extractData(tab)})}
+
+  async function handleFile(file){const text=await file.text();const {rows,delimiter}=parseCSV(text);const tab=createTab(file.name);tab.data=rows;tab.delimiter=delimiter;renderTable(tab);if(state.active===-1)activate(tab.id);
+    const search=tab.panel.querySelector('input[type="search"]');search.addEventListener('input',()=>filterActiveTab(search.value));
+    tab.panel.querySelector('[data-action="download"]').addEventListener('click',()=>downloadCSV(tab));
+    tab.panel.querySelector('[data-action="add"]').addEventListener('click',()=>{const cols=tab.data[0].length;const newRow=new Array(cols).fill('');appendRow(tab,newRow);tab.data=extractData(tab);tab.totalCount++;updateCounter(tab)});
+  }
+
+  fileInput.addEventListener('change',async e=>{for(const file of e.target.files){await handleFile(file)}fileInput.value=''});
+  ;['dragenter','dragover'].forEach(ev=>dropzone.addEventListener(ev,e=>{e.preventDefault();dropzone.style.borderColor='#0ea5e9'}));
+  ;['dragleave','drop'].forEach(ev=>dropzone.addEventListener(ev,e=>{e.preventDefault();dropzone.style.borderColor='#94a3b8'}));
+  dropzone.addEventListener('drop',async e=>{const files=[...(e.dataTransfer?.files||[])].filter(f=>/\.(csv|tsv)$/i.test(f.name));for(const f of files){await handleFile(f)}});
+
+  // Load example CSV
+  loadExample.addEventListener('click',()=>{
+    const example=`Name,Age,Role\nAlice,30,Engineer\nBob,25,Designer\nCharlie,35,Manager`;
+    const {rows,delimiter}=parseCSV(example);
+    const tab=createTab('Example.csv');
+    tab.data=rows;tab.delimiter=delimiter;renderTable(tab);
+    if(state.active===-1)activate(tab.id);
+    const search=tab.panel.querySelector('input[type="search"]');search.addEventListener('input',()=>filterActiveTab(search.value));
+    tab.panel.querySelector('[data-action="download"]').addEventListener('click',()=>downloadCSV(tab));
+    tab.panel.querySelector('[data-action="add"]').addEventListener('click',()=>{const cols=tab.data[0].length;const newRow=new Array(cols).fill('');appendRow(tab,newRow);tab.data=extractData(tab);tab.totalCount++;updateCounter(tab)});
+  });
+})();
+</script>
+</body>
+</html>
